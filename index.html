@@ -3,19 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VIVET - Premium Player</title>
+    <title>VIVET - Ultra Premium Player</title>
     <style>
         :root {
             --accent-color: #ffffff;
-            --accent-glow: rgba(255, 255, 255, 0.4);
+            --accent-glow: rgba(255, 255, 255, 0.3);
             --bg-dark: #000000;
+            --glass: rgba(255, 255, 255, 0.05);
             --text-main: #ffffff;
-            --text-sub: rgba(255, 255, 255, 0.7);
+            --text-sub: rgba(255, 255, 255, 0.5);
+            --transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
         }
 
         * {
             margin: 0; padding: 0; box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+            font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
 
@@ -27,116 +29,130 @@
             overflow: hidden; position: relative;
         }
 
-        /* --- VIDEOS DE FONDO --- */
+        /* --- VIDEOS DE FONDO CON CROSSFADE --- */
         .video-background {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             object-fit: cover; z-index: 1; opacity: 0; 
-            filter: brightness(0.7) saturate(1.2); 
-            transition: opacity 1s ease-in-out;
+            filter: brightness(0.5) saturate(1.4) blur(10px);
+            transform: scale(1.1);
+            transition: opacity 1.5s ease-in-out;
         }
         .video-background.active { opacity: 1; z-index: 2; }
         
         .overlay { 
             position: absolute; inset: 0; 
-            background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.4) 60%, rgba(0,0,0,0.9) 100%); 
+            background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.9) 100%); 
             z-index: 3; 
         }
 
-        /* --- CONTENEDOR PRINCIPAL --- */
+        /* --- CONTENEDOR APP --- */
         .player-app {
             position: relative; z-index: 10;
-            width: 100%; max-width: 420px; height: 100vh; max-height: 850px;
-            padding: 40px 30px; display: flex; flex-direction: column;
-            justify-content: space-between;
+            width: 100%; max-width: 400px; height: 90vh;
+            display: flex; flex-direction: column;
+            justify-content: space-between; padding: 20px;
         }
 
-        /* --- HEADER Y LOGO --- */
+        /* --- HEADER --- */
         .header { 
-            display: flex; justify-content: center; align-items: center; gap: 8px;
-            font-size: 13px; font-weight: 700; letter-spacing: 2px; color: var(--accent-color); 
-            text-transform: uppercase; margin-bottom: 20px; transition: color 0.5s; position: relative; 
+            display: flex; justify-content: center; align-items: center; gap: 10px;
+            font-size: 11px; font-weight: 900; letter-spacing: 4px; color: var(--text-main); 
+            text-transform: uppercase; position: relative; opacity: 0.8;
         }
 
         .site-logo {
-            width: 32px; height: 32px;
-            background-color: var(--accent-color);
-            -webkit-mask-image: url('covers/LOGO.png'); -webkit-mask-size: contain; -webkit-mask-repeat: no-repeat; -webkit-mask-position: center;
-            mask-image: url('covers/LOGO.png'); mask-size: contain; mask-repeat: no-repeat; mask-position: center;
-            transition: background-color 0.5s ease;
+            width: 28px; height: 28px; background-color: var(--accent-color);
+            -webkit-mask: url('covers/LOGO.png') no-repeat center / contain;
+            transition: var(--transition);
         }
         
-        /* EQ Visualizer mini */
-        .mini-eq { display: flex; align-items: flex-end; gap: 3px; height: 12px; opacity: 0; transition: opacity 0.3s; }
-        body:not(.player-paused) .mini-eq { opacity: 1; }
-        .eq-bar { width: 3px; background-color: var(--accent-color); border-radius: 2px; animation: eqBounce 0.5s infinite alternate ease-in-out; }
-        @keyframes eqBounce { 0% { height: 3px; } 100% { height: 12px; } }
-
-        /* BADGE MIXING */
+        /* MIXING BADGE */
         .mixing-badge {
-            position: absolute; top: -25px; left: 50%; transform: translateX(-50%);
-            background-color: var(--accent-color); color: #000;
-            padding: 4px 12px; border-radius: 12px; font-size: 10px; font-weight: 800;
-            box-shadow: 0 0 15px var(--accent-glow); opacity: 0; visibility: hidden; transition: 0.4s;
+            position: absolute; top: -30px; left: 50%; transform: translateX(-50%);
+            background: var(--accent-color); color: #000;
+            padding: 5px 15px; border-radius: 20px; font-size: 9px; font-weight: 900;
+            box-shadow: 0 0 20px var(--accent-glow); opacity: 0; visibility: hidden; transition: 0.4s;
         }
-        .mixing-badge.active { opacity: 1; visibility: visible; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { transform: translateX(-50%) scale(0.95); } 50% { transform: translateX(-50%) scale(1.05); } 100% { transform: translateX(-50%) scale(0.95); } }
+        .mixing-badge.active { opacity: 1; visibility: visible; animation: pulse 1s infinite alternate; }
+        @keyframes pulse { from { opacity: 0.7; transform: translateX(-50%) scale(0.9); } to { opacity: 1; transform: translateX(-50%) scale(1); } }
 
-        /* --- PORTADA Y LETRAS --- */
-        #artwork-wrapper { position: relative; margin-bottom: 30px; }
+        /* --- ARTWORK & LYRICS --- */
+        .main-visual {
+            position: relative; width: 100%; aspect-ratio: 1;
+            margin: 20px 0;
+        }
+
         .artwork-container {
-            width: 100%; aspect-ratio: 1; border-radius: 24px; overflow: hidden;
-            position: relative; z-index: 10;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.6), 0 0 40px var(--accent-glow);
-            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-            transform-origin: center bottom;
+            width: 100%; height: 100%; border-radius: 30px; overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.8), 0 0 40px var(--accent-glow);
+            transition: var(--transition);
+            transform: scale(1);
         }
-        .artwork-container img { width: 100%; height: 100%; object-fit: cover; }
-        .player-paused .artwork-container { transform: scale(0.85); box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
+        .player-paused .artwork-container { transform: scale(0.88); opacity: 0.7; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
 
-        /* Letras Overlay */
+        .artwork-container img { width: 100%; height: 100%; object-fit: cover; transition: 1s ease; }
+
+        /* LYRICS GLASS OVERLAY */
         .lyrics-overlay {
             position: absolute; inset: 0; z-index: 15;
-            background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            display: flex; flex-direction: column; overflow: hidden;
-            opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
+            background: rgba(0, 0, 0, 0.4); 
+            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            border-radius: 30px; display: flex; flex-direction: column;
+            opacity: 0; pointer-events: none; transition: var(--transition);
         }
         .lyrics-overlay.show { opacity: 1; pointer-events: auto; }
-        .lyrics-content { width: 100%; height: 100%; overflow-y: auto; padding: 60% 20px; text-align: center; scroll-behavior: smooth; scrollbar-width: none; }
+        
+        .lyrics-content { 
+            width: 100%; height: 100%; overflow-y: auto; 
+            padding: 50% 25px; text-align: left; 
+            scroll-behavior: smooth; mask-image: linear-gradient(to bottom, transparent, black 20%, black 80%, transparent);
+            -webkit-mask-image: linear-gradient(to bottom, transparent, black 20%, black 80%, transparent);
+        }
         .lyrics-content::-webkit-scrollbar { display: none; }
-        .lyric-line { font-size: 18px; font-weight: 600; color: rgba(255,255,255,0.3); margin: 20px 0; transition: all 0.4s; cursor: pointer; }
-        .lyric-line.active { font-size: 26px; font-weight: 800; color: var(--accent-color); transform: scale(1.05); text-shadow: 0 0 20px var(--accent-glow); }
 
-        /* --- INFO TRACK --- */
-        .track-info { display: flex; align-items: center; justify-content: space-between; margin-bottom: 25px; }
-        .track-title { font-size: 24px; font-weight: 800; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .track-artist { font-size: 16px; font-weight: 500; color: var(--text-sub); }
+        .lyric-line { font-size: 20px; font-weight: 700; color: rgba(255,255,255,0.2); margin: 25px 0; transition: var(--transition); line-height: 1.3; }
+        .lyric-line.active { color: var(--accent-color); transform: scale(1.05); text-shadow: 0 0 15px var(--accent-glow); }
+
+        /* --- TRACK INFO --- */
+        .info-container { margin-bottom: 25px; }
+        .track-title { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 5px; }
+        .track-artist { font-size: 16px; font-weight: 500; color: var(--text-sub); display: flex; align-items: center; gap: 8px; }
+        .track-artist::before { content: ''; width: 12px; height: 2px; background: var(--accent-color); display: inline-block; transition: var(--transition); }
 
         /* --- PROGRESS BAR --- */
-        .progress-area { margin-bottom: 30px; }
+        .progress-bar-container { margin-bottom: 30px; }
         .progress-bar {
-            -webkit-appearance: none; width: 100%; height: 6px; border-radius: 10px;
-            background: rgba(255, 255, 255, 0.2); outline: none;
-            background-image: linear-gradient(var(--accent-color), var(--accent-color));
+            -webkit-appearance: none; width: 100%; height: 5px; background: rgba(255,255,255,0.1);
+            border-radius: 5px; outline: none; cursor: pointer;
+            background-image: linear-gradient(to right, var(--accent-color), var(--accent-color));
             background-size: var(--progress, 0%) 100%; background-repeat: no-repeat;
         }
-        .progress-bar::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 12px; background: #fff; border-radius: 50%; box-shadow: 0 0 10px var(--accent-glow); }
-        .time-info { display: flex; justify-content: space-between; margin-top: 10px; font-size: 12px; font-weight: 700; color: var(--text-sub); }
+        .progress-bar::-webkit-slider-thumb { 
+            -webkit-appearance: none; width: 14px; height: 14px; background: #fff; 
+            border-radius: 50%; box-shadow: 0 0 15px var(--accent-color); 
+        }
+
+        .time-labels { display: flex; justify-content: space-between; margin-top: 10px; font-size: 11px; font-weight: 800; color: var(--text-sub); font-variant-numeric: tabular-nums; }
 
         /* --- CONTROLES --- */
-        .controls { display: flex; align-items: center; justify-content: space-between; }
-        .btn { background: none; border: none; cursor: pointer; color: var(--accent-color); transition: 0.3s; display: flex; align-items: center; }
-        .btn svg { width: 28px; height: 28px; fill: currentColor; }
-        .btn:active { transform: scale(0.9); }
+        .controls-row { display: flex; justify-content: space-between; align-items: center; }
         
-        .btn-play {
-            width: 70px; height: 70px; border-radius: 50%; background: var(--accent-color); color: #000;
-            justify-content: center; box-shadow: 0 10px 25px var(--accent-glow);
+        .btn { background: none; border: none; cursor: pointer; color: var(--text-main); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .btn svg { width: 30px; height: 30px; fill: currentColor; }
+        .btn:active { transform: scale(0.8); }
+
+        .play-btn {
+            width: 80px; height: 80px; border-radius: 50%;
+            background: var(--text-main); color: #000;
+            display: flex; justify-content: center; align-items: center;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.4);
         }
-        .btn-play svg { width: 32px; height: 32px; fill: #000; }
-        .btn-secondary.active { color: var(--accent-color); filter: drop-shadow(0 0 8px var(--accent-glow)); }
-        .btn-secondary.active::after { content: '•'; position: absolute; bottom: -12px; left: 50%; transform: translateX(-50%); }
-        .btn-secondary { position: relative; opacity: 0.7; }
-        .btn-secondary.active { opacity: 1; }
+        .play-btn svg { width: 35px; height: 35px; fill: #000; }
+        
+        .secondary-btn { opacity: 0.4; transform: scale(0.85); }
+        .secondary-btn.active { opacity: 1; color: var(--accent-color); transform: scale(1); filter: drop-shadow(0 0 8px var(--accent-glow)); }
+
+        .lyrics-toggle.active { color: var(--accent-color); opacity: 1; }
 
     </style>
 </head>
@@ -147,55 +163,49 @@
     <div class="overlay"></div>
 
     <div class="player-app">
-        <div class="header">
-            <div class="mixing-badge" id="mixing-badge">MIXING...</div>
-            <div class="site-logo"></div> V I V E T
-            <div class="mini-eq">
-                <div class="eq-bar" style="animation-delay: 0.1s;"></div>
-                <div class="eq-bar" style="animation-delay: 0.3s;"></div>
-                <div class="eq-bar" style="animation-delay: 0s;"></div>
-            </div>
-        </div>
-        
-        <div id="artwork-wrapper">
-            <div class="artwork-container">
-                <img id="cover" src="" alt="Portada" crossorigin="anonymous">
+        <header class="header">
+            <div class="mixing-badge" id="mixing-badge">MIXING SESSION</div>
+            <div class="site-logo" id="ui-logo"></div>
+            <span>Vivet Premium</span>
+        </header>
+
+        <main class="main-visual">
+            <div class="artwork-container" id="ui-artwork">
+                <img id="cover" src="" crossorigin="anonymous">
                 <div id="lyrics-overlay" class="lyrics-overlay">
                     <div id="lyrics-content" class="lyrics-content"></div>
                 </div>
             </div>
-        </div>
+        </main>
 
-        <div>
-            <div class="track-info">
-                <div style="flex:1; overflow:hidden;">
-                    <div class="track-title" id="title">Cargando...</div>
-                    <div class="track-artist" id="artist">VIVET Music</div>
-                </div>
-                <button class="btn btn-secondary" id="btn-lyrics">
-                    <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.17L4 17.17V4h16v12zM7 9h10v2H7zm0-3h10v2H7zm0 6h7v2H7z"/></svg>
-                </button>
+        <section class="player-controls">
+            <div class="info-container">
+                <h1 class="track-title" id="title">Cargando...</h1>
+                <div class="track-artist" id="artist">VIVET Music</div>
             </div>
 
-            <div class="progress-area">
-                <input type="range" class="progress-bar" id="progress" min="0" max="100" step="0.1" value="0">
-                <div class="time-info">
+            <div class="progress-bar-container">
+                <input type="range" class="progress-bar" id="progress" value="0" min="0" max="100" step="0.1">
+                <div class="time-labels">
                     <span id="time-current">0:00</span>
+                    <button class="btn lyrics-toggle" id="btn-lyrics" style="font-size: 10px; font-weight: 900; letter-spacing: 1px;">LETRAS</button>
                     <span id="time-total">0:00</span>
                 </div>
             </div>
 
-            <div class="controls">
-                <button class="btn btn-secondary" id="btn-shuffle"><svg viewBox="0 0 24 24"><path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/></svg></button>
+            <div class="controls-row">
+                <button class="btn secondary-btn" id="btn-shuffle"><svg viewBox="0 0 24 24"><path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/></svg></button>
                 <button class="btn" id="btn-prev"><svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg></button>
-                <button class="btn btn-play" id="btn-play">
+                
+                <button class="btn play-btn" id="btn-play">
                     <svg id="icon-play" viewBox="0 0 24 24"><path d="M8 5.14v14.72a1 1 0 001.5.86l11-7.36a1 1 0 000-1.72l-11-7.36a1 1 0 00-1.5.86z"/></svg>
                     <svg id="icon-pause" viewBox="0 0 24 24" style="display: none;"><path d="M6 5h3v14H6zm9 0h3v14h-3z"/></svg>
                 </button>
+
                 <button class="btn" id="btn-next"><svg viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg></button>
-                <button class="btn btn-secondary" id="btn-repeat"><svg viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/></svg></button>
+                <button class="btn secondary-btn" id="btn-repeat"><svg viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/></svg></button>
             </div>
-        </div>
+        </section>
     </div>
 
     <script>
@@ -218,137 +228,122 @@
         const playBtn = document.getElementById('btn-play');
         const mixingBadge = document.getElementById('mixing-badge');
 
-        let currentLyrics = [], activeLyricIndex = -1, isLyricsVisible = false, lyricsRequestCount = 0;
+        let currentLyrics = [], activeLyricIndex = -1, isLyricsVisible = false;
 
-        // --- BÚSQUEDA DE LETRAS POR DURACIÓN, ARTISTA Y NOMBRE ---
+        // --- SISTEMA DE COLOR MEJORADO ---
+        function updateThemeColor(imgElement) {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 50; canvas.height = 50; // Muestreo de 50x50 píxeles
+            ctx.drawImage(imgElement, 0, 0, 50, 50);
+            
+            const data = ctx.getImageData(0, 0, 50, 50).data;
+            let r=0, g=0, b=0, count=0;
+            let maxVibrancy = -1;
+            let bestColor = [255, 255, 255];
+
+            for (let i = 0; i < data.length; i += 4) {
+                let ri = data[i], gi = data[i+1], bi = data[i+2];
+                // Calcular vibración (diferencia entre canales)
+                let max = Math.max(ri, gi, bi), min = Math.min(ri, gi, bi);
+                let vibrancy = (max - min) * (max / 255); 
+                
+                // Evitar grises, blancos y negros puros
+                if (vibrancy > maxVibrancy && max > 100 && max < 240) {
+                    maxVibrancy = vibrancy;
+                    bestColor = [ri, gi, bi];
+                }
+            }
+
+            // Asegurar que el color sea lo suficientemente brillante
+            let [br, bg, bb] = bestColor;
+            let luminance = (br * 0.299 + bg * 0.587 + bb * 0.114);
+            if (luminance < 120) {
+                let factor = 1.5;
+                br = Math.min(255, br * factor); bg = Math.min(255, bg * factor); bb = Math.min(255, bb * factor);
+            }
+
+            const color = `rgb(${br}, ${bg}, ${bb})`;
+            const glow = `rgba(${br}, ${bg}, ${bb}, 0.35)`;
+            
+            document.documentElement.style.setProperty('--accent-color', color);
+            document.documentElement.style.setProperty('--accent-glow', glow);
+        }
+
+        // --- BÚSQUEDA DE LETRAS (MISMA LÓGICA DE PRECISIÓN) ---
         async function loadLyrics(track, audioDuration) {
-            lyricsRequestCount++;
-            let currentReq = lyricsRequestCount;
             currentLyrics = []; activeLyricIndex = -1;
             const content = document.getElementById('lyrics-content');
-            content.innerHTML = '<div class="lyric-line" style="margin-top:40%;">Buscando letra exacta...</div>';
+            content.innerHTML = '<div class="lyric-line">Buscando letra...</div>';
 
-            // Limpieza básica
             let cleanArtist = track.artist.split(',')[0].split(' y ')[0].trim();
             let cleanTitle = track.title.split('(')[0].trim();
             let duration = Math.round(audioDuration);
 
-            // 1. Intento por duración exacta (API GET)
             try {
-                const exactUrl = `https://lrclib.net/api/get?artist_name=${encodeURIComponent(cleanArtist)}&track_name=${encodeURIComponent(cleanTitle)}&duration=${duration}`;
-                const res = await fetch(exactUrl);
+                // Intento 1: API GET exacta
+                const res = await fetch(`https://lrclib.net/api/get?artist_name=${encodeURIComponent(cleanArtist)}&track_name=${encodeURIComponent(cleanTitle)}&duration=${duration}`);
                 if (res.ok) {
                     const data = await res.json();
-                    if (currentReq !== lyricsRequestCount) return;
                     if (data.syncedLyrics) { currentLyrics = parseLRC(data.syncedLyrics); renderLyrics(); return; }
                 }
-            } catch(e) {}
-
-            // 2. Fallback por búsqueda general filtrada
-            try {
-                const searchUrl = `https://lrclib.net/api/search?q=${encodeURIComponent(cleanTitle + " " + cleanArtist)}`;
-                const res = await fetch(searchUrl);
-                const data = await res.json();
-                if (currentReq !== lyricsRequestCount) return;
-
-                let bestMatch = null; let bestScore = -1;
-                data.forEach(item => {
-                    let score = 0;
-                    let diff = Math.abs(item.duration - audioDuration);
-                    if (diff <= 3) score += 1000;
-                    else if (diff <= 10) score += 100;
-                    if (item.syncedLyrics) score += 500;
-                    if (score > bestScore) { bestScore = score; bestMatch = item; }
-                });
-
-                if (bestMatch && bestScore > 0) {
-                    if (bestMatch.syncedLyrics) { currentLyrics = parseLRC(bestMatch.syncedLyrics); renderLyrics(); }
-                    else if (bestMatch.plainLyrics) renderPlainLyrics(bestMatch.plainLyrics);
-                } else {
-                    content.innerHTML = '<div class="lyric-line" style="margin-top:40%;">Letra no encontrada</div>';
-                }
-            } catch(e) { content.innerHTML = '<div class="lyric-line" style="margin-top:40%;">Error de conexión</div>'; }
+                // Intento 2: Búsqueda manual
+                const searchRes = await fetch(`https://lrclib.net/api/search?q=${encodeURIComponent(cleanTitle + " " + cleanArtist)}`);
+                const results = await searchRes.json();
+                let best = results.find(i => Math.abs(i.duration - audioDuration) < 4 && i.syncedLyrics);
+                if (best) { currentLyrics = parseLRC(best.syncedLyrics); renderLyrics(); }
+                else { content.innerHTML = '<div class="lyric-line">Letra no disponible instrumental / sin sincronizar</div>'; }
+            } catch(e) { content.innerHTML = '<div class="lyric-line">Error al cargar letras</div>'; }
         }
 
         function parseLRC(lrc) {
-            const lines = lrc.split('\n'); const result = [];
-            const regex = /^\[(\d{2}):(\d{2}(?:\.\d{1,3})?)\](.*)/;
-            lines.forEach(line => {
-                const match = line.match(regex);
-                if (match) result.push({ time: parseInt(match[1]) * 60 + parseFloat(match[2]), text: match[3].trim() || "•••" });
-            });
-            return result;
+            return lrc.split('\n').map(line => {
+                const m = line.match(/^\[(\d{2}):(\d{2}(?:\.\d{1,3})?)\](.*)/);
+                return m ? { time: parseInt(m[1])*60 + parseFloat(m[2]), text: m[3].trim() || "•••" } : null;
+            }).filter(i => i);
         }
 
         function renderLyrics() {
-            const content = document.getElementById('lyrics-content'); content.innerHTML = '';
-            currentLyrics.forEach((lyric, i) => {
-                const div = document.createElement('div'); div.className = 'lyric-line';
-                div.textContent = lyric.text; div.id = `lyric-${i}`;
-                div.onclick = () => { 
-                    let activeA = activeLayer === 1 ? a1 : a2; 
-                    let activeV = activeLayer === 1 ? v1 : v2;
-                    activeA.currentTime = lyric.time; activeV.currentTime = lyric.time;
-                };
-                content.appendChild(div);
+            const content = document.getElementById('lyrics-content');
+            content.innerHTML = currentLyrics.map((l, i) => `<div class="lyric-line" id="lyric-${i}">${l.text}</div>`).join('');
+            document.querySelectorAll('.lyric-line').forEach((el, i) => {
+                el.onclick = () => { (activeLayer === 1 ? a1 : a2).currentTime = currentLyrics[i].time; };
             });
         }
 
-        function renderPlainLyrics(text) {
-            const content = document.getElementById('lyrics-content');
-            content.innerHTML = text.split('\n').map(l => `<div class="lyric-line active">${l}</div>`).join('');
-            currentLyrics = [];
-        }
-
-        // --- LÓGICA DEL REPRODUCTOR ---
+        // --- REPRODUCTOR & MEZCLA ---
         function playTrack(idx, isManual = true) {
-            if (isCrossfading) { isCrossfading = false; mixingBadge.classList.remove('active'); }
-            
             let nextLayer = activeLayer === 1 ? 2 : 1;
-            let currentA = activeLayer === 1 ? a1 : a2; let currentV = activeLayer === 1 ? v1 : v2;
-            let nextA = nextLayer === 1 ? a1 : a2; let nextV = nextLayer === 1 ? v1 : v2;
+            let currentA = activeLayer === 1 ? a1 : a2; let nextA = nextLayer === 1 ? a1 : a2;
+            let nextV = nextLayer === 1 ? v1 : v2;
 
             currentIdx = idx; let track = playlist[currentIdx];
             nextA.src = track.file; nextV.src = track.video;
-            nextA.volume = 1; nextA.currentTime = 0; nextV.currentTime = 0;
+            nextA.volume = 1; nextA.currentTime = 0;
 
             if (isManual) {
-                currentA.pause(); currentV.pause();
+                isCrossfading = false; mixingBadge.classList.remove('active');
+                currentA.pause(); 
                 if (isPlaying) { nextA.play(); nextV.play(); }
                 activeLayer = nextLayer;
                 updateUI(track, nextLayer);
             }
         }
 
-        function startCrossfade() {
-            isCrossfading = true; mixingBadge.classList.add('active');
-            let nextIdx = isShuffle ? Math.floor(Math.random()*playlist.length) : (currentIdx + 1) % playlist.length;
-            let nextLayer = activeLayer === 1 ? 2 : 1;
-            let fadingOutA = activeLayer === 1 ? a1 : a2; let fadingInA = nextLayer === 1 ? a1 : a2;
-            let nextV = nextLayer === 1 ? v1 : v2;
-            let track = playlist[nextIdx];
-
-            fadingInA.src = track.file; nextV.src = track.video;
-            fadingInA.volume = 0; fadingInA.play(); nextV.play();
-            fadeStartTime = Date.now();
-            currentIdx = nextIdx; activeLayer = nextLayer;
-            updateUI(track, nextLayer);
-        }
-
         function updateUI(track, layerNum) {
             document.getElementById('title').textContent = track.title;
             document.getElementById('artist').textContent = track.artist;
-            document.getElementById('cover').src = track.cover;
+            const coverImg = document.getElementById('cover');
+            coverImg.src = track.cover;
+            coverImg.onload = () => updateThemeColor(coverImg);
 
-            if (layerNum === 1) { v1.classList.add('active'); v2.classList.remove('active'); }
-            else { v2.classList.add('active'); v1.classList.remove('active'); }
+            v1.classList.toggle('active', layerNum === 1);
+            v2.classList.toggle('active', layerNum === 2);
 
             let activeA = layerNum === 1 ? a1 : a2;
             let check = setInterval(() => {
                 if (activeA.duration) { clearInterval(check); loadLyrics(track, activeA.duration); }
-            }, 200);
-
-            extractColor(track.cover);
+            }, 300);
         }
 
         function handleTimeUpdate(e) {
@@ -357,29 +352,36 @@
 
             if (!isDragging) {
                 let pct = (activeA.currentTime / activeA.duration) * 100;
-                progressBar.value = pct;
                 progressBar.style.setProperty('--progress', `${pct}%`);
                 document.getElementById('time-current').textContent = formatTime(activeA.currentTime);
                 document.getElementById('time-total').textContent = formatTime(activeA.duration);
             }
 
-            // Crossfade trigger
+            // Crossfade automático
             if (!isCrossfading && activeA.duration - activeA.currentTime <= CROSSFADE_TIME && activeA.currentTime > 10) {
-                startCrossfade();
+                isCrossfading = true; mixingBadge.classList.add('active');
+                let nextIdx = isShuffle ? Math.floor(Math.random()*playlist.length) : (currentIdx + 1) % playlist.length;
+                let nextLayer = activeLayer === 1 ? 2 : 1;
+                let nextA = nextLayer === 1 ? a1 : a2; let nextV = nextLayer === 1 ? v1 : v2;
+                let track = playlist[nextIdx];
+                
+                nextA.src = track.file; nextV.src = track.video;
+                nextA.volume = 0; nextA.play(); nextV.play();
+                fadeStartTime = Date.now();
+                currentIdx = nextIdx; activeLayer = nextLayer;
+                updateUI(track, nextLayer);
             }
 
-            // Mixing logic
             if (isCrossfading) {
-                let elapsed = (Date.now() - fadeStartTime) / 1000;
-                let progress = Math.min(elapsed / CROSSFADE_TIME, 1);
-                let fadingOutA = activeLayer === 2 ? a1 : a2;
+                let progress = Math.min((Date.now() - fadeStartTime) / (CROSSFADE_TIME * 1000), 1);
+                let fadingOutA = activeLayer === 1 ? a2 : a1;
                 let fadingInA = activeLayer === 1 ? a1 : a2;
                 fadingOutA.volume = 1 - progress;
                 fadingInA.volume = progress;
                 if (progress >= 1) { isCrossfading = false; fadingOutA.pause(); mixingBadge.classList.remove('active'); }
             }
 
-            // Sync Lyrics
+            // Sincronizar letras
             if (currentLyrics.length > 0) {
                 let idx = currentLyrics.findIndex((l, i) => activeA.currentTime >= l.time && (!currentLyrics[i+1] || activeA.currentTime < currentLyrics[i+1].time));
                 if (idx !== -1 && idx !== activeLyricIndex) {
@@ -388,33 +390,13 @@
                     let activeEl = document.getElementById(`lyric-${idx}`);
                     if (activeEl) {
                         activeEl.classList.add('active');
-                        if (isLyricsVisible) {
-                            let container = document.getElementById('lyrics-content');
-                            container.scrollTo({ top: activeEl.offsetTop - container.clientHeight / 2, behavior: 'smooth' });
-                        }
+                        if (isLyricsVisible) document.getElementById('lyrics-content').scrollTo({ top: activeEl.offsetTop - 150, behavior: 'smooth' });
                     }
                 }
             }
         }
 
-        function formatTime(s) {
-            let m = Math.floor(s/60); let sec = Math.floor(s%60);
-            return `${m}:${sec < 10 ? '0' : ''}${sec}`;
-        }
-
-        function extractColor(src) {
-            const img = new Image(); img.crossOrigin = "Anonymous";
-            img.onload = () => {
-                const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
-                canvas.width = 1; canvas.height = 1; ctx.drawImage(img, 0, 0, 1, 1);
-                const [r, g, b] = ctx.getImageData(0,0,1,1).data;
-                document.documentElement.style.setProperty('--accent-color', `rgb(${r},${g},${b})`);
-                document.documentElement.style.setProperty('--accent-glow', `rgba(${r},${g},${b},0.4)`);
-            };
-            img.src = src;
-        }
-
-        // EVENTOS
+        // --- INTERACCIONES ---
         playBtn.onclick = () => {
             let activeA = activeLayer === 1 ? a1 : a2; let activeV = activeLayer === 1 ? v1 : v2;
             if (isPlaying) { a1.pause(); a2.pause(); v1.pause(); v2.pause(); document.body.classList.add('player-paused'); }
@@ -433,16 +415,17 @@
         };
 
         a1.ontimeupdate = handleTimeUpdate; a2.ontimeupdate = handleTimeUpdate;
-        
-        progressBar.oninput = () => isDragging = true;
+        progressBar.oninput = (e) => { isDragging = true; progressBar.style.setProperty('--progress', `${e.target.value}%`); };
         progressBar.onchange = (e) => {
             isDragging = false;
-            let activeA = activeLayer === 1 ? a1 : a2; let activeV = activeLayer === 1 ? v1 : v2;
-            let time = (e.target.value / 100) * activeA.duration;
-            activeA.currentTime = time; activeV.currentTime = time;
+            let activeA = activeLayer === 1 ? a1 : a2;
+            activeA.currentTime = (e.target.value / 100) * activeA.duration;
+            (activeLayer === 1 ? v1 : v2).currentTime = activeA.currentTime;
         };
 
-        // Inicio
+        function formatTime(s) { let m=Math.floor(s/60), sc=Math.floor(s%60); return `${m}:${sc<10?'0':''}${sc}`; }
+
+        // Iniciar
         playTrack(0, true);
     </script>
 </body>
