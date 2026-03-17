@@ -292,7 +292,7 @@
         const trackAnimator = document.getElementById('track-animator');
         const colorCache = {};
 
-        /* === SISTEMA MEJORADO DE LETRAS (LYRICS) === */
+        /* === SISTEMA ULTRA-PRECISO DE LETRAS (LYRICS) === */
         let currentLyrics =[];
         let activeLyricIndex = -1;
         let isLyricsVisible = false;
@@ -309,7 +309,6 @@
             const lines = lrc.split('\n');
             const result = [];
             const regex = /^\[(\d{2}):(\d{2}(?:\.\d{1,3})?)\](.*)/;
-            
             for (let line of lines) {
                 const match = line.match(regex);
                 if (match) {
@@ -322,7 +321,6 @@
             return result;
         }
 
-        // BÚSQUEDA INTELIGENTE CON DURACIÓN EXACTA
         async function loadLyrics(track, audioDuration) {
             lyricsRequestCount++;
             let currentReq = lyricsRequestCount;
@@ -331,57 +329,69 @@
             activeLyricIndex = -1;
             const content = document.getElementById('lyrics-content');
             
-            // Extraer el artista principal para simplificar la búsqueda
+            // 1. Extraer los nombres y filtrarlos a minúsculas sin espacios
             let cleanArtist = track.artist.split(',')[0].split(' y ')[0].trim();
+            let trackArtists = track.artist.toLowerCase().split(/,| y |&/).map(a => a.trim().replace(/[^a-z0-9]/g, '')).filter(a => a.length > 0);
+            let trackTitleNorm = track.title.toLowerCase().replace(/[^a-z0-9]/g, '');
             
-            // Variaciones del título para capturar Remixes
-            let queries =[];
-            queries.push(`q=${encodeURIComponent(track.title + ' ' + cleanArtist)}`);
-            
-            if (track.title.toUpperCase().includes('REMIX')) {
-                let baseTitle = track.title.replace(/ REMIX$/i, '').trim();
-                queries.push(`q=${encodeURIComponent(baseTitle + ' (Remix) ' + cleanArtist)}`);
-                queries.push(`q=${encodeURIComponent(track.title)}`); 
-            }
-            
-            queries.push(`track_name=${encodeURIComponent(track.title)}&artist_name=${encodeURIComponent(cleanArtist)}`);
-            queries.push(`q=${encodeURIComponent(track.title)}`);
+            // Diferentes intentos de búsqueda por si el nombre está formateado distinto en la base de datos
+            let queries =[
+                `q=${encodeURIComponent(track.title + ' ' + cleanArtist)}`,
+                `q=${encodeURIComponent(track.title + ' ' + track.artist)}`,
+                `track_name=${encodeURIComponent(track.title)}&artist_name=${encodeURIComponent(cleanArtist)}`,
+                `q=${encodeURIComponent(track.title)}` // Este último buscará solo el título, pero filtramos luego
+            ];
 
-            let match = null;
+            let bestMatch = null;
+            let bestScore = -10000;
 
             for (let q of queries) {
                 try {
                     const res = await fetch(`https://lrclib.net/api/search?${q}`);
                     if (!res.ok) continue;
                     const data = await res.json();
-                    
-                    if (data && data.length > 0) {
-                        // Filtrar los que tienen letras sincronizadas
-                        let synced = data.filter(item => item.syncedLyrics);
-                        
-                        if (synced.length > 0) {
-                            // Si tenemos la duración del audio, buscamos la que más se acerque
-                            if (audioDuration && !isNaN(audioDuration)) {
-                                // Ordenar de menor a mayor diferencia de tiempo
-                                synced.sort((a, b) => Math.abs(a.duration - audioDuration) - Math.abs(b.duration - audioDuration));
-                                match = synced[0]; 
-                            } else {
-                                match = synced[0];
-                            }
-                            break; // Se encontró, detenemos el loop de queries
+                    if (!data || data.length === 0) continue;
+
+                    let synced = data.filter(item => item.syncedLyrics);
+                    if (synced.length === 0) continue;
+
+                    for (let item of synced) {
+                        let itemArtist = item.artistName.toLowerCase().replace(/[^a-z0-9]/g, '');
+                        let itemTitle = item.trackName.toLowerCase().replace(/[^a-z0-9]/g, '');
+
+                        // REGLA DE ORO 1: El Artista DEBE estar involucrado (Evita letras de Camila, Gente de Zona, etc.)
+                        let artistMatch = trackArtists.some(ta => itemArtist.includes(ta) || ta.includes(itemArtist));
+                        if (!artistMatch) continue; 
+
+                        // REGLA DE ORO 2: El Título DEBE coincidir
+                        let titleMatch = itemTitle.includes(trackTitleNorm) || trackTitleNorm.includes(itemTitle);
+                        if (!titleMatch) continue;
+
+                        // PUNTUACIÓN DE DURACIÓN: Si pasó las reglas de arriba, escogemos el que mejor cuadre con el tiempo
+                        let score = 0;
+                        if (audioDuration && !isNaN(audioDuration)) {
+                            let diff = Math.abs(item.duration - audioDuration);
+                            score -= diff; // Entre menos diferencia, mayor puntuación
+                        }
+
+                        if (score > bestScore) {
+                            bestScore = score;
+                            bestMatch = item;
                         }
                     }
+
+                    if (bestMatch) break; // Si encontramos una coincidencia estricta, paramos de buscar
                 } catch (e) { console.warn("LRC API Error:", e); }
             }
 
-            // Si cambió de canción mientras se buscaba, se ignora el resultado
+            // Evitar cruces si el usuario saltó rápido de canción
             if (currentReq !== lyricsRequestCount) return;
 
-            if (match && match.syncedLyrics) {
-                currentLyrics = parseLRC(match.syncedLyrics);
+            if (bestMatch && bestMatch.syncedLyrics) {
+                currentLyrics = parseLRC(bestMatch.syncedLyrics);
                 renderLyrics();
             } else {
-                content.innerHTML = '<div class="lyric-line" style="margin-top:40%;">Letras no encontradas</div>';
+                content.innerHTML = '<div class="lyric-line" style="margin-top:40%;">Letras no encontradas para esta versión</div>';
             }
         }
 
@@ -459,9 +469,6 @@
             }
         }
 
-        // Cargar letras solo cuando sabemos la duración real del audio (Metadata cargada)
-        a1.addEventListener('loadedmetadata', () => { if(activeLayer === 1) loadLyrics(playlist[currentIdx], a1.duration); });
-        a2.addEventListener('loadedmetadata', () => { if(activeLayer === 2) loadLyrics(playlist[currentIdx], a2.duration); });
         a1.addEventListener('timeupdate', handleAudioTick);
         a2.addEventListener('timeupdate', handleAudioTick);
 
@@ -542,8 +549,23 @@
             document.getElementById('artist').textContent = track.artist;
             document.getElementById('cover').src = track.cover;
             
-            // Mostrar estado mientras cargan los metadatos de audio para buscar las letras precisas
-            document.getElementById('lyrics-content').innerHTML = '<div class="lyric-line" style="margin-top:40%;">Sincronizando...</div>';
+            // Estado de búsqueda de letras
+            document.getElementById('lyrics-content').innerHTML = '<div class="lyric-line" style="margin-top:40%;">Analizando audio para sincronizar...</div>';
+
+            let activeAudio = layerNum === 1 ? a1 : a2;
+            let attempts = 0;
+            
+            // Esperar activamente la duración para asegurar la versión exacta de la canción
+            let checkDur = setInterval(() => {
+                if (activeAudio.duration && !isNaN(activeAudio.duration)) {
+                    clearInterval(checkDur);
+                    loadLyrics(track, activeAudio.duration);
+                } else if (attempts > 30) {
+                    clearInterval(checkDur);
+                    loadLyrics(track, 0); // Falla de seguridad: buscar sin tiempo exacto
+                }
+                attempts++;
+            }, 100);
 
             let videoTransition = isManual ? "0.5s" : `${CROSSFADE_TIME}s`;
             v1.style.transition = `opacity ${videoTransition} ease-in-out`;
