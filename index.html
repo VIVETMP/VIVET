@@ -292,7 +292,7 @@
         const trackAnimator = document.getElementById('track-animator');
         const colorCache = {};
 
-        /* === SISTEMA INFALIBLE DE LETRAS (LYRICS) === */
+        /* === SISTEMA VERIFICADOR EXACTO DE DURACIÓN (LYRICS) === */
         let currentLyrics =[];
         let activeLyricIndex = -1;
         let isLyricsVisible = false;
@@ -329,10 +329,8 @@
             activeLyricIndex = -1;
             const content = document.getElementById('lyrics-content');
             
-            // Extraer solo el artista principal quitando comas, "y", "&"
             let cleanArtist = track.artist.split(',')[0].split(' y ')[0].split(' & ')[0].trim();
             
-            // Varias estrategias de búsqueda por si LRCLIB está rebelde
             let queries =[
                 `track_name=${encodeURIComponent(track.title)}&artist_name=${encodeURIComponent(cleanArtist)}`, 
                 `q=${encodeURIComponent(track.title + ' ' + cleanArtist)}`, 
@@ -342,7 +340,6 @@
             let bestMatch = null;
             let bestScore = -Infinity;
 
-            // Filtros de texto súper seguros (solo letras minúsculas y números)
             let targetArtist = cleanArtist.toLowerCase().replace(/[^a-z0-9]/g, '');
             let targetTitle = track.title.toLowerCase().replace(/[^a-z0-9]/g, '');
 
@@ -353,58 +350,59 @@
                     const data = await res.json();
                     if (!data || data.length === 0) continue;
 
-                    // Si hay letras sincronizadas las prioriza, sino acepta plain text
                     let validOptions = data.filter(item => item.syncedLyrics || item.plainLyrics);
                     if (validOptions.length === 0) continue;
 
-                    // Evaluar todas las opciones encontradas con un SISTEMA DE PUNTUACIÓN
                     for (let item of validOptions) {
                         let score = 0;
                         let itemArtist = (item.artistName || "").toLowerCase().replace(/[^a-z0-9]/g, '');
                         let itemTitle = (item.trackName || "").toLowerCase().replace(/[^a-z0-9]/g, '');
 
-                        // REGLA 1: EL ARTISTA DEBE COINCIDIR (ej: evita que "Yo Quiero" de Camila pase)
+                        // MATCH DE ARTISTA
                         if (itemArtist.includes(targetArtist) || targetArtist.includes(itemArtist)) {
                             score += 2000;
                         } else {
-                            score -= 5000; // Penalización mortal si es de otro artista
+                            score -= 5000; 
                         }
 
-                        // REGLA 2: EL TÍTULO DEBE COINCIDIR
+                        // MATCH DE TÍTULO
                         if (itemTitle.includes(targetTitle) || targetTitle.includes(itemTitle)) {
                             score += 2000;
                         } else {
                             score -= 2000;
                         }
 
-                        // REGLA 3: PREFERIR LETRAS SINCRONIZADAS (+1000 puntos extras)
-                        if (item.syncedLyrics) {
-                            score += 1000;
-                        }
+                        if (item.syncedLyrics) score += 1000;
 
-                        // REGLA 4: DURACIÓN TOLERANTE. (Resta 1 punto por cada segundo de diferencia)
-                        // Así el video puede durar más que la canción de spotify y seguir ganando.
+                        // ==== VERIFICACIÓN ESTRICTA DE DURACIÓN ====
                         if (audioDuration && !isNaN(audioDuration) && item.duration) {
                             let diff = Math.abs(item.duration - audioDuration);
-                            score -= diff; 
+                            
+                            if (diff <= 3) {
+                                // ES LA MISMA CANCIÓN EXACTA (Match Perfecto +10,000 Puntos)
+                                score += 10000; 
+                            } else if (diff <= 10) {
+                                // Versión aceptable, pequeña variación de segundos
+                                score += 500;
+                            } else {
+                                // Penalización severa por ser una versión/remix diferente
+                                score -= (diff * 50); 
+                            }
                         }
 
-                        // Guardamos el ganador absoluto
                         if (score > bestScore) {
                             bestScore = score;
                             bestMatch = item;
                         }
                     }
 
-                    // Si la coincidencia es prácticamente perfecta (>2000), paramos la búsqueda
-                    if (bestMatch && bestScore > 2000) break;
+                    // Si encontró el Match Perfecto (+10,000 puntos), detener la búsqueda
+                    if (bestMatch && bestScore >= 10000) break;
                 } catch (e) { console.warn("LRC API Error:", e); }
             }
 
-            // Evitar problemas si el usuario salta rápido de canción
             if (currentReq !== lyricsRequestCount) return;
 
-            // Si a pesar de buscar todo, el score quedó en números negativos (Ej. no coincidió el artista) descartamos.
             if (bestScore < 0) bestMatch = null;
 
             if (bestMatch) {
@@ -412,22 +410,20 @@
                     currentLyrics = parseLRC(bestMatch.syncedLyrics);
                     renderLyrics();
                 } else if (bestMatch.plainLyrics) {
-                    // PLAN B: Si la canción tiene letra pero nadie la sincronizó, la mostramos estática
                     renderPlainLyrics(bestMatch.plainLyrics);
                 }
             } else {
-                content.innerHTML = '<div class="lyric-line" style="margin-top:40%;">Letras no encontradas en la base de datos</div>';
+                content.innerHTML = '<div class="lyric-line" style="margin-top:40%;">Letras exactas no encontradas</div>';
             }
         }
 
-        // Función para renderizar letras SIN sincronización (Plan B)
         function renderPlainLyrics(text) {
             const content = document.getElementById('lyrics-content');
             content.innerHTML = '';
             const lines = text.split('\n');
             lines.forEach((line) => {
                 const div = document.createElement('div');
-                div.className = 'lyric-line active'; // Las forzamos como 'activas' visualmente
+                div.className = 'lyric-line active'; 
                 div.style.margin = '15px 0';
                 div.style.fontSize = '18px';
                 div.style.transform = 'none';
@@ -436,10 +432,9 @@
                 div.textContent = line.trim() || "•••";
                 content.appendChild(div);
             });
-            currentLyrics =[]; // Evita que la función updateVisualLoop intente sincronizarlas
+            currentLyrics =[]; 
         }
 
-        // Función original para renderizar letras sincronizadas
         function renderLyrics() {
             const content = document.getElementById('lyrics-content');
             content.innerHTML = '';
@@ -448,7 +443,6 @@
                 const div = document.createElement('div');
                 div.className = 'lyric-line'; div.textContent = lyric.text; div.id = `lyric-${i}`;
                 
-                // Si la tocas, salta la canción a ese minuto
                 div.onclick = () => {
                     let activeAudio = activeLayer === 1 ? a1 : a2;
                     let activeVideo = activeLayer === 1 ? v1 : v2;
@@ -529,7 +523,6 @@
                 timeCurrentEl.textContent = formatTime(currentTime);
                 timeTotalEl.textContent = formatTime(activeAudio.duration);
 
-                // Evitamos que intente sincronizar las letras estáticas de Plain Text
                 if (currentLyrics.length > 0) {
                     let newIdx = currentLyrics.findIndex((lyric, idx) => {
                         let nextTime = currentLyrics[idx+1] ? currentLyrics[idx+1].time : Infinity;
@@ -596,20 +589,19 @@
             document.getElementById('artist').textContent = track.artist;
             document.getElementById('cover').src = track.cover;
             
-            // Estado visual mientras ocurre la búsqueda Exhaustiva
-            document.getElementById('lyrics-content').innerHTML = '<div class="lyric-line" style="margin-top:40%;">Buscando coincidencia exacta...</div>';
+            document.getElementById('lyrics-content').innerHTML = '<div class="lyric-line" style="margin-top:40%;">Verificando duración exacta...</div>';
 
             let activeAudio = layerNum === 1 ? a1 : a2;
             let attempts = 0;
             
-            // Espera hasta cargar la duración del audio para buscar la letra más idéntica a tu video
+            // EL MOMENTO CLAVE: Extraemos la duración exacta de tu canción para hacer un Match de +10,000 puntos
             let checkDur = setInterval(() => {
                 if (activeAudio.duration && !isNaN(activeAudio.duration)) {
                     clearInterval(checkDur);
                     loadLyrics(track, activeAudio.duration);
                 } else if (attempts > 30) {
                     clearInterval(checkDur);
-                    loadLyrics(track, 0); // Falla de seguridad, busca igual
+                    loadLyrics(track, 0); 
                 }
                 attempts++;
             }, 100);
