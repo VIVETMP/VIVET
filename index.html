@@ -12,9 +12,8 @@
             --accent-glow: rgba(255, 255, 255, 0.4);
             --bg-dark: #000000;
             --text-main: #ffffff;
-            --text-sub: rgba(255, 255, 255, 0.5);
+            --text-sub: rgba(255, 255, 255, 0.6);
             --lyric-inactive: rgba(255, 255, 255, 0.2);
-            --glass: rgba(255, 255, 255, 0.05);
         }
 
         * {
@@ -31,206 +30,155 @@
             overflow: hidden; position: relative;
         }
 
-        /* --- VIDEOS Y FONDOS --- */
+        /* --- FONDOS --- */
         .video-background, .image-fallback {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             object-fit: cover; z-index: 1; opacity: 0; 
-            transition: opacity 1.5s ease-in-out;
-            transform: scale(1.05);
+            transition: opacity 1s ease-in-out;
         }
-        .video-background.active, .image-fallback.active { opacity: 0.7; z-index: 2; animation: bgSlowMotion 20s infinite alternate linear; }
-        
-        @keyframes bgSlowMotion {
-            from { transform: scale(1.05) translate(0, 0); }
-            to { transform: scale(1.15) translate(-1%, -1%); }
-        }
-
-        .image-fallback {
-            filter: blur(80px) brightness(0.4) saturate(1.5);
-        }
+        .video-background.active, .image-fallback.active { opacity: 0.5; z-index: 2; }
+        .image-fallback { filter: blur(60px) brightness(0.5) saturate(1.4); transform: scale(1.1); }
 
         .overlay { 
             position: absolute; inset: 0; 
-            background: radial-gradient(circle at 50% 30%, transparent 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.9) 100%); 
+            background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.8)); 
             z-index: 3; 
         }
 
         /* --- CONTENEDOR PRINCIPAL --- */
         .player-app {
             position: relative; z-index: 10;
-            width: 100%; max-width: 420px; height: 100vh; max-height: 850px;
+            width: 100%; max-width: 420px; height: 100vh;
             padding: 40px 30px; display: flex; flex-direction: column;
             justify-content: space-between;
         }
 
         /* --- HEADER --- */
         .header { 
-            display: flex; justify-content: center; align-items: center; gap: 10px;
-            font-size: 13px; font-weight: 800; letter-spacing: 4px; color: var(--accent-color); 
-            text-transform: uppercase; margin-bottom: 20px;
-            text-shadow: 0 0 15px var(--accent-glow);
+            display: flex; justify-content: center; align-items: center; gap: 12px;
+            font-size: 13px; font-weight: 800; letter-spacing: 3px; color: var(--accent-color); 
+            text-transform: uppercase; position: relative;
         }
 
         .site-logo {
-            width: 28px; height: 28px;
+            width: 32px; height: 32px;
             background-color: var(--accent-color);
             -webkit-mask: url('covers/LOGO.png') no-repeat center / contain;
             mask: url('covers/LOGO.png') no-repeat center / contain;
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        
-        .header:hover .site-logo { transform: rotate(180deg) scale(1.2); }
 
-        .mini-eq {
-            display: flex; align-items: flex-end; gap: 2px; height: 14px; width: 20px;
-        }
-        .eq-bar {
-            width: 3px; background-color: var(--accent-color); border-radius: 1px;
-            animation: eqBounce 0.6s infinite alternate ease-in-out;
-            box-shadow: 0 0 5px var(--accent-glow);
-        }
-        @keyframes eqBounce { 10% { height: 4px; } 100% { height: 14px; } }
+        .mini-eq { display: flex; align-items: flex-end; gap: 2px; height: 15px; }
+        .eq-bar { width: 3px; background: var(--accent-color); border-radius: 1px; animation: eq 0.6s infinite alternate; }
+        @keyframes eq { 0% { height: 5px; } 100% { height: 15px; } }
 
         /* --- PORTADA --- */
+        #artwork-wrapper { position: relative; width: 100%; margin: 20px 0; }
         .artwork-container {
-            width: 100%; aspect-ratio: 1; border-radius: 28px; overflow: hidden;
-            position: relative; z-index: 10;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.8), 0 0 40px var(--accent-glow);
-            transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
-            animation: floatArtwork 6s infinite ease-in-out;
+            width: 100%; aspect-ratio: 1; border-radius: 24px; overflow: hidden;
+            position: relative; z-index: 5;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 30px var(--accent-glow);
+            transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
+        .artwork-container img { width: 100%; height: 100%; object-fit: cover; display: block; }
         
-        @keyframes floatArtwork {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
+        body.player-paused .artwork-container { transform: scale(0.85); opacity: 0.8; }
 
-        body.player-paused .artwork-container {
-            transform: scale(0.85) !important;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            animation-play-state: paused;
-        }
-
-        /* --- LYRICS (MEJORA ESTILO PREMIUM) --- */
+        /* --- LYRICS UI (CORREGIDO) --- */
         .lyrics-overlay {
-            position: absolute; inset: 0; z-index: 15;
-            background: rgba(0, 0, 0, 0.65); 
-            backdrop-filter: blur(40px) saturate(1.8);
-            -webkit-backdrop-filter: blur(40px) saturate(1.8);
-            display: flex; flex-direction: column; overflow: hidden;
-            opacity: 0; transform: scale(1.05); pointer-events: none; 
-            transition: all 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+            position: absolute; inset: 0; z-index: 100; /* Por encima de todo en el wrapper */
+            background: rgba(0, 0, 0, 0.7); 
+            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            border-radius: 24px;
+            display: flex; flex-direction: column; 
+            opacity: 0; pointer-events: none; 
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .lyrics-overlay.show { opacity: 1; transform: scale(1); pointer-events: auto; }
+        .lyrics-overlay.show { opacity: 1; pointer-events: auto; }
         
         .lyrics-content {
             width: 100%; height: 100%; overflow-y: auto;
-            padding: 80% 30px; scroll-behavior: smooth;
-            scrollbar-width: none;
-            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 25%, black 75%, transparent 100%);
+            padding: 50% 25px; /* Ajustado para que el inicio no esté tan lejos */
+            scroll-behavior: smooth; scrollbar-width: none;
+            -webkit-mask-image: linear-gradient(to bottom, transparent, black 25%, black 75%, transparent);
         }
+        .lyrics-content::-webkit-scrollbar { display: none; }
 
         .lyric-line {
-            font-size: 24px; font-weight: 800; line-height: 1.2;
-            color: var(--lyric-inactive);
-            margin: 28px 0; transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            filter: blur(1.5px); transform: translateX(-5px);
-            cursor: pointer;
+            font-size: clamp(20px, 6vw, 26px); font-weight: 700; line-height: 1.3;
+            margin: 25px 0; transition: all 0.4s ease;
+            color: var(--lyric-inactive); filter: blur(1px);
         }
         .lyric-line.active {
-            color: #ffffff; filter: blur(0); transform: translateX(0) scale(1.1);
-            text-shadow: 0 0 15px rgba(255,255,255,0.3);
+            color: #ffffff; filter: blur(0); transform: scale(1.05);
+            text-shadow: 0 0 15px var(--accent-glow);
         }
-        .lyric-line.passed { color: rgba(255, 255, 255, 0.35); filter: blur(0); transform: scale(0.95); }
+        .lyric-line.passed { color: rgba(255, 255, 255, 0.4); filter: blur(0); }
 
-        /* --- INFO DE CANCIÓN --- */
-        .track-info { display: flex; align-items: center; justify-content: space-between; margin-bottom: 25px; }
-        .track-title { 
-            font-size: 28px; font-weight: 900; letter-spacing: -0.5px; margin-bottom: 4px;
-            background: linear-gradient(to right, #fff, var(--text-sub));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        }
-        .track-artist { font-size: 17px; font-weight: 500; color: var(--text-sub); }
-
-        /* --- PROGRESO --- */
-        .progress-area { margin-bottom: 35px; }
-        .progress-bar {
-            -webkit-appearance: none; width: 100%; height: 5px; border-radius: 10px;
-            background: rgba(255, 255, 255, 0.15); outline: none; cursor: pointer;
-            background-image: linear-gradient(var(--accent-color), var(--accent-color));
-            background-size: var(--progress, 0%) 100%; background-repeat: no-repeat;
-            transition: height 0.3s;
-        }
-        .progress-bar:hover { height: 8px; }
-        .progress-bar::-webkit-slider-thumb {
-            -webkit-appearance: none; width: 14px; height: 14px;
-            background: #fff; border-radius: 50%; opacity: 0;
-            transition: opacity 0.2s; box-shadow: 0 0 10px var(--accent-color);
-        }
-        .progress-bar:hover::-webkit-slider-thumb { opacity: 1; }
-        
-        .time-info { display: flex; justify-content: space-between; margin-top: 10px; font-size: 11px; font-weight: 800; color: var(--text-sub); letter-spacing: 1px; }
+        /* --- INFO TRACK --- */
+        .track-info { margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; }
+        .track-title { font-size: 26px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .track-artist { font-size: 16px; color: var(--text-sub); }
 
         /* --- CONTROLES --- */
-        .controls { display: flex; align-items: center; justify-content: space-between; }
-        
-        .btn { 
-            background: none; border: none; cursor: pointer; color: var(--accent-color); 
-            display: flex; align-items: center; justify-content: center; 
-            transition: all 0.3s var(--spring-easing);
+        .progress-area { margin-bottom: 30px; }
+        .progress-bar {
+            -webkit-appearance: none; width: 100%; height: 6px; border-radius: 10px;
+            background: rgba(255,255,255,0.1); outline: none;
+            background-image: linear-gradient(var(--accent-color), var(--accent-color));
+            background-size: var(--progress, 0%) 100%; background-repeat: no-repeat;
+            cursor: pointer;
         }
-        .btn:hover { transform: scale(1.15); filter: drop-shadow(0 0 10px var(--accent-glow)); }
+        .progress-bar::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 12px; background: #fff; border-radius: 50%; }
+
+        .controls { display: flex; align-items: center; justify-content: space-between; }
+        .btn { background: none; border: none; cursor: pointer; color: var(--accent-color); transition: 0.3s; display: flex; align-items: center; }
         .btn:active { transform: scale(0.85); }
-        .btn svg { width: 30px; height: 30px; fill: currentColor; }
+        .btn svg { width: 28px; height: 28px; fill: currentColor; }
         
         .btn-play {
-            width: 76px; height: 76px; border-radius: 50%;
-            background-color: var(--accent-color); color: #000;
-            box-shadow: 0 15px 35px var(--accent-glow);
+            width: 75px; height: 75px; border-radius: 50%;
+            background: var(--accent-color); color: #000;
+            justify-content: center; box-shadow: 0 10px 30px var(--accent-glow);
         }
-        .btn-play svg { width: 38px; height: 38px; fill: #000; }
+        .btn-play svg { width: 35px; height: 35px; }
 
-        /* Efecto pulsante en pausa */
-        .player-paused .btn-play { animation: heartbeat 2s infinite linear; }
-        @keyframes heartbeat { 
-            0% { box-shadow: 0 0 0 0 var(--accent-glow); transform: scale(1); }
-            50% { box-shadow: 0 0 0 20px rgba(255,255,255,0); transform: scale(1.05); }
-            100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); transform: scale(1); }
-        }
-
-        .btn-secondary { opacity: 0.6; }
-        .btn-secondary.active { opacity: 1; filter: drop-shadow(0 0 8px var(--accent-color)); }
+        .btn-secondary { color: var(--text-sub); }
+        .btn-secondary.active { color: var(--accent-color); }
 
         .mixing-badge {
-            position: absolute; top: -40px; left: 50%; transform: translateX(-50%);
-            background: var(--accent-color); color: #000;
-            padding: 5px 15px; border-radius: 20px; font-size: 10px; font-weight: 900;
-            letter-spacing: 2px; box-shadow: 0 0 20px var(--accent-glow);
+            position: absolute; top: -35px; left: 50%; transform: translateX(-50%);
+            background: var(--accent-color); color: #000; padding: 4px 12px;
+            border-radius: 12px; font-size: 10px; font-weight: 900;
+            opacity: 0; transition: 0.3s;
         }
+        .mixing-badge.active { opacity: 1; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 0.8; } 50% { opacity: 1; } }
+
     </style>
 </head>
 <body class="player-paused">
 
-    <img id="fallback-bg" class="image-fallback" src="" alt="Fondo">
-    <video id="vid1" class="video-background active" crossorigin="anonymous" muted playsinline></video>
-    <video id="vid2" class="video-background" crossorigin="anonymous" muted playsinline></video>
+    <img id="fallback-bg" class="image-fallback" src="">
+    <video id="vid1" class="video-background active" muted playsinline></video>
+    <video id="vid2" class="video-background" muted playsinline></video>
     <div class="overlay"></div>
 
     <div class="player-app">
         <div class="header">
-            <div class="mixing-badge" id="mixing-badge" style="opacity:0; visibility:hidden;">MIXING...</div>
+            <div class="mixing-badge" id="mixing-badge">MIXING...</div>
             <div class="site-logo"></div> 
             <span>V I V E T</span>
             <div class="mini-eq">
                 <div class="eq-bar" style="animation-delay: 0.1s;"></div>
                 <div class="eq-bar" style="animation-delay: 0.3s;"></div>
-                <div class="eq-bar" style="animation-delay: 0s;"></div>
+                <div class="eq-bar"></div>
             </div>
         </div>
         
         <div id="artwork-wrapper">
             <div class="artwork-container">
-                <img id="cover" src="" alt="Portada" crossorigin="anonymous">
+                <img id="cover" src="" alt="Portada">
+                <!-- Lyrics dentro de la portada para el efecto overlay -->
                 <div id="lyrics-overlay" class="lyrics-overlay">
                     <div id="lyrics-content" class="lyrics-content"></div>
                 </div>
@@ -239,18 +187,18 @@
 
         <div>
             <div class="track-info">
-                <div class="track-info-animated" id="track-animator">
+                <div id="track-animator" style="flex:1; min-width:0;">
                     <div class="track-title" id="title">Cargando...</div>
                     <div class="track-artist" id="artist">VIVET Music</div>
                 </div>
-                <button class="btn btn-secondary" id="btn-lyrics">
+                <button class="btn btn-secondary" id="btn-lyrics" style="margin-left: 15px;">
                     <svg viewBox="0 0 24 24"><path d="M21 3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-1 16H4c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h16c.55 0 1 .45 1 1v12c0 .55-.45 1-1 1zM7 8h10v2H7zm0 4h10v2H7z"/></svg>
                 </button>
             </div>
 
             <div class="progress-area">
                 <input type="range" class="progress-bar" id="progress" min="0" max="100" step="0.1" value="0">
-                <div class="time-info">
+                <div style="display:flex; justify-content:space-between; margin-top:10px; font-size:12px; color:var(--text-sub);">
                     <span id="time-current">0:00</span>
                     <span id="time-total">0:00</span>
                 </div>
@@ -270,7 +218,7 @@
     </div>
 
     <script>
-        // --- COPIA EXACTA DE TU DATA Y LÓGICA ORIGINAL ---
+        /* === TU LÓGICA DE JAVASCRIPT INTACTA === */
         const playlist =[
             { title: "WOH OH OH", artist: "OMAR COURTZ, ROA", cover: "covers/WOH OH OH.jpg", file: "songs/WOH OH OH.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1773772525/WOH_OH_OH_dgjixz.mp4" },
             { title: "444", artist: "YAN BLOCK", cover: "covers/444.jpg", file: "songs/444.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1773772039/444_r0lopi.mp4" },
@@ -332,7 +280,8 @@
             let currentReq = lyricsRequestCount;
             currentLyrics =[]; activeLyricIndex = -1;
             const content = document.getElementById('lyrics-content');
-            content.innerHTML = '<div class="lyric-line" style="opacity:1; text-align:center; margin-top:20%;">Buscando letra...</div>';
+            content.innerHTML = '<div class="lyric-line" style="opacity:0.5; text-align:center;">Buscando letra...</div>';
+
             let cleanArtist = track.artist.split(',')[0].split(' y ')[0].split(' & ')[0].trim();
             let queries =[`track_name=${encodeURIComponent(track.title)}&artist_name=${encodeURIComponent(cleanArtist)}`, `q=${encodeURIComponent(track.title + ' ' + cleanArtist)}`];
             let bestMatch = null; let bestScore = -Infinity;
@@ -366,7 +315,7 @@
             if (bestMatch) {
                 if (bestMatch.syncedLyrics) { currentLyrics = parseLRC(bestMatch.syncedLyrics); renderLyrics(); }
                 else if (bestMatch.plainLyrics) renderPlainLyrics(bestMatch.plainLyrics);
-            } else content.innerHTML = '<div class="lyric-line" style="opacity:0.5; text-align:center; margin-top:20%;">Letra no disponible</div>';
+            } else content.innerHTML = '<div class="lyric-line" style="opacity:0.5; text-align:center;">Letra no disponible</div>';
         }
 
         function renderPlainLyrics(text) {
@@ -441,7 +390,7 @@
                 fadingInAudio.volume = Math.sin(progress * 0.5 * Math.PI);
                 if (progress >= 1) {
                     fadingOutAudio.pause(); fadingOutAudio.volume = 0;
-                    isCrossfading = false; mixingBadge.style.opacity = "0"; mixingBadge.style.visibility = "hidden";
+                    isCrossfading = false; mixingBadge.classList.remove('active');
                     fadingOutAudio = null; fadingInAudio = null;
                 }
             }
@@ -472,7 +421,7 @@
         requestAnimationFrame(updateVisualLoop);
 
         function playTrack(idx, isManualSkip = true) {
-            isCrossfading = false; mixingBadge.style.opacity = "0"; mixingBadge.style.visibility = "hidden";
+            isCrossfading = false; mixingBadge.classList.remove('active');
             if (fadingOutAudio) { fadingOutAudio.pause(); fadingOutAudio.volume = 0; }
             let nextLayer = activeLayer === 1 ? 2 : 1;
             let currentAudio = activeLayer === 1 ? a1 : a2; 
@@ -490,7 +439,7 @@
         }
 
         function startAutomaticCrossfade() {
-            isCrossfading = true; mixingBadge.style.opacity = "1"; mixingBadge.style.visibility = "visible";
+            isCrossfading = true; mixingBadge.classList.add('active');
             let nextIdx = getNextTrackIndex(true); let nextLayer = activeLayer === 1 ? 2 : 1;
             fadingOutAudio = activeLayer === 1 ? a1 : a2; fadingInAudio = nextLayer === 1 ? a1 : a2;
             let nextVideo = nextLayer === 1 ? v1 : v2; let track = playlist[nextIdx];
@@ -508,7 +457,7 @@
             document.getElementById('title').textContent = track.title;
             document.getElementById('artist').textContent = track.artist;
             document.getElementById('cover').src = track.cover;
-            document.getElementById('lyrics-content').innerHTML = '<div class="lyric-line" style="opacity:0.5; text-align:center; margin-top:20%;">Preparando audio...</div>';
+            document.getElementById('lyrics-content').innerHTML = '<div class="lyric-line" style="opacity:0.5; text-align:center;">Verificando audio...</div>';
             let activeAudio = layerNum === 1 ? a1 : a2;
             let attempts = 0;
             let checkDur = setInterval(() => {
@@ -556,12 +505,12 @@
             let track = playlist[currentIdx];
             if (isPlaying) {
                 a1.pause(); a2.pause(); if(v1.src) v1.pause(); if(v2.src) v2.pause(); document.body.classList.add('player-paused');
-                document.getElementById('icon-play').style.display = 'block'; document.getElementById('icon-pause').style.display = 'none'; playBtn.classList.remove('is-playing');
+                document.getElementById('icon-play').style.display = 'block'; document.getElementById('icon-pause').style.display = 'none';
             } else {
                 if(a1.volume > 0) { a1.play(); if(track.video && activeLayer === 1) v1.play(); }
                 if(a2.volume > 0) { a2.play(); if(track.video && activeLayer === 2) v2.play(); }
                 document.body.classList.remove('player-paused');
-                document.getElementById('icon-play').style.display = 'none'; document.getElementById('icon-pause').style.display = 'block'; playBtn.classList.add('is-playing');
+                document.getElementById('icon-play').style.display = 'none'; document.getElementById('icon-pause').style.display = 'block';
             }
             isPlaying = !isPlaying;
         }
