@@ -113,31 +113,38 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.4), 0 0 15px rgba(255,255,255,0.02);
         }
 
-        /* CAPA DE LETRAS (LYRICS) */
+        /* CAPA DE LETRAS (ESTILO APPLE MUSIC) */
         .lyrics-overlay {
             position: absolute; inset: 0; z-index: 15;
-            background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            background: rgba(0, 0, 0, 0.45); 
+            backdrop-filter: blur(50px) brightness(0.6); 
+            -webkit-backdrop-filter: blur(50px) brightness(0.6);
             display: flex; flex-direction: column; overflow: hidden;
-            opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
+            opacity: 0; pointer-events: none; 
+            transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .lyrics-overlay.show { opacity: 1; pointer-events: auto; }
         
         .lyrics-content {
             width: 100%; height: 100%; overflow-y: auto;
-            padding: 50% 20px; text-align: center; scroll-behavior: smooth;
+            padding: 85% 35px 60% 35px; text-align: left; scroll-behavior: smooth;
             scrollbar-width: none; 
+            -webkit-mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
+            mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
         }
         .lyrics-content::-webkit-scrollbar { display: none; } 
 
         .lyric-line {
-            font-size: 16px; font-weight: 600; color: rgba(255,255,255,0.35);
-            margin: 18px 0; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-            cursor: pointer; text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+            font-size: 26px; font-weight: 700; line-height: 1.25;
+            color: rgba(255, 255, 255, 0.25);
+            margin: 28px 0; transition: all 0.5s cubic-bezier(0.33, 1, 0.68, 1);
+            cursor: pointer; transform-origin: left center;
+            filter: blur(0.5px);
         }
         .lyric-line.active {
-            font-size: 24px; font-weight: 800; color: var(--accent-color);
-            transform: scale(1.05); text-shadow: 0 0 25px var(--accent-glow);
-            margin: 28px 0;
+            font-size: 32px; font-weight: 800; color: #ffffff;
+            transform: scale(1.03); filter: blur(0);
+            text-shadow: 0 0 25px rgba(255,255,255,0.15);
         }
 
         /* --- INFO DE CANCIÓN --- */
@@ -221,7 +228,7 @@
             <div class="artwork-container">
                 <img id="cover" src="" alt="Portada" crossorigin="anonymous">
                 
-                <!-- Overlay de Letras -->
+                <!-- Capa de Letras (Actualizada) -->
                 <div id="lyrics-overlay" class="lyrics-overlay">
                     <div id="lyrics-content" class="lyrics-content">
                         <!-- Las letras se insertan dinámicamente aquí -->
@@ -359,14 +366,12 @@
                         let itemArtist = (item.artistName || "").toLowerCase().replace(/[^a-z0-9]/g, '');
                         let itemTitle = (item.trackName || "").toLowerCase().replace(/[^a-z0-9]/g, '');
 
-                        // MATCH DE ARTISTA
                         if (itemArtist.includes(targetArtist) || targetArtist.includes(itemArtist)) {
                             score += 2000;
                         } else {
                             score -= 5000; 
                         }
 
-                        // MATCH DE TÍTULO
                         if (itemTitle.includes(targetTitle) || targetTitle.includes(itemTitle)) {
                             score += 2000;
                         } else {
@@ -375,20 +380,11 @@
 
                         if (item.syncedLyrics) score += 1000;
 
-                        // ==== VERIFICACIÓN ESTRICTA DE DURACIÓN ====
                         if (audioDuration && !isNaN(audioDuration) && item.duration) {
                             let diff = Math.abs(item.duration - audioDuration);
-                            
-                            if (diff <= 3) {
-                                // ES LA MISMA CANCIÓN EXACTA (Match Perfecto +10,000 Puntos)
-                                score += 10000; 
-                            } else if (diff <= 10) {
-                                // Versión aceptable, pequeña variación de segundos
-                                score += 500;
-                            } else {
-                                // Penalización severa por ser una versión/remix diferente
-                                score -= (diff * 50); 
-                            }
+                            if (diff <= 3) score += 10000; 
+                            else if (diff <= 10) score += 500;
+                            else score -= (diff * 50); 
                         }
 
                         if (score > bestScore) {
@@ -396,14 +392,11 @@
                             bestMatch = item;
                         }
                     }
-
-                    // Si encontró el Match Perfecto (+10,000 puntos), detener la búsqueda
                     if (bestMatch && bestScore >= 10000) break;
                 } catch (e) { console.warn("LRC API Error:", e); }
             }
 
             if (currentReq !== lyricsRequestCount) return;
-
             if (bestScore < 0) bestMatch = null;
 
             if (bestMatch) {
@@ -414,7 +407,7 @@
                     renderPlainLyrics(bestMatch.plainLyrics);
                 }
             } else {
-                content.innerHTML = '<div class="lyric-line" style="margin-top:40%;">Letras exactas no encontradas</div>';
+                content.innerHTML = '<div class="lyric-line" style="margin-top:40%; text-align: center;">Letras exactas no encontradas</div>';
             }
         }
 
@@ -425,11 +418,8 @@
             lines.forEach((line) => {
                 const div = document.createElement('div');
                 div.className = 'lyric-line active'; 
-                div.style.margin = '15px 0';
-                div.style.fontSize = '18px';
-                div.style.transform = 'none';
-                div.style.textShadow = '0 0 10px rgba(255,255,255,0.2)';
-                div.style.color = 'var(--text-main)';
+                div.style.color = '#fff';
+                div.style.filter = 'none';
                 div.textContent = line.trim() || "•••";
                 content.appendChild(div);
             });
@@ -455,13 +445,16 @@
 
         function updateLyricsScroll() {
             if (activeLyricIndex === -1 || !isLyricsVisible) return;
-            document.querySelectorAll('.lyric-line').forEach(el => el.classList.remove('active'));
-            const activeEl = document.getElementById(`lyric-${activeLyricIndex}`);
             
+            const lines = document.querySelectorAll('.lyric-line');
+            lines.forEach(el => el.classList.remove('active'));
+            
+            const activeEl = document.getElementById(`lyric-${activeLyricIndex}`);
             if (activeEl) {
                 activeEl.classList.add('active');
                 const container = document.getElementById('lyrics-content');
-                const offset = activeEl.offsetTop - (container.clientHeight / 2) + (activeEl.clientHeight / 2);
+                // Desplazamiento tipo Apple Music (centrado superior)
+                const offset = activeEl.offsetTop - (container.clientHeight * 0.4);
                 container.scrollTo({ top: offset, behavior: 'smooth' });
             }
         }
@@ -503,7 +496,6 @@
                     fadingOutAudio.pause(); fadingOutAudio.volume = 0;
                     let fadingOutVideo = (fadingOutAudio === a1) ? v1 : v2;
                     fadingOutVideo.pause(); 
-
                     isCrossfading = false; mixingBadge.classList.remove('active');
                     fadingOutAudio = null; fadingInAudio = null;
                 }
@@ -590,12 +582,11 @@
             document.getElementById('artist').textContent = track.artist;
             document.getElementById('cover').src = track.cover;
             
-            document.getElementById('lyrics-content').innerHTML = '<div class="lyric-line" style="margin-top:40%;">Verificando duración exacta...</div>';
+            document.getElementById('lyrics-content').innerHTML = '<div class="lyric-line" style="margin-top:40%; text-align:center;">Verificando duración exacta...</div>';
 
             let activeAudio = layerNum === 1 ? a1 : a2;
             let attempts = 0;
             
-            // EL MOMENTO CLAVE: Extraemos la duración exacta de tu canción para hacer un Match de +10,000 puntos
             let checkDur = setInterval(() => {
                 if (activeAudio.duration && !isNaN(activeAudio.duration)) {
                     clearInterval(checkDur);
