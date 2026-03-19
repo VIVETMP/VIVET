@@ -37,7 +37,7 @@
         .video-background, .image-fallback {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             object-fit: cover; z-index: 1; opacity: 0; 
-            transition: opacity 1.2s ease-in-out;
+            transition: opacity 1.5s ease-in-out;
         }
         .video-background.active, .image-fallback.active { opacity: 0.5; z-index: 2; }
         .image-fallback { filter: blur(60px) brightness(0.4) saturate(1.4); transform: scale(1.1); }
@@ -72,6 +72,12 @@
             transform: scale(var(--beat-scale));
         }
         
+        /* Animación de rotación lenta cuando NO está pausado */
+        body:not(.player-paused) .site-logo {
+            animation: rotateLogo 10s infinite linear;
+        }
+        @keyframes rotateLogo { from { transform: scale(var(--beat-scale)) rotate(0deg); } to { transform: scale(var(--beat-scale)) rotate(360deg); } }
+
         .mini-eq { display: flex; align-items: flex-end; gap: 3px; height: 16px; width: 25px; }
         .eq-bar { 
             flex: 1; background: var(--accent-color); border-radius: 1px; 
@@ -125,7 +131,7 @@
         .lyric-line.passed { color: rgba(255, 255, 255, 0.3); filter: blur(0); transform: scale(0.95); }
 
         /* --- INFO TRACK (EFECTO BOP) --- */
-        .track-info { display: flex; align-items: center; justify-content: space-between; margin-bottom: 25px; overflow: hidden; }
+        .track-info { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; overflow: hidden; }
         
         .track-info-animated { flex: 1; min-width: 0; }
         .bop-animation { animation: trackBop 0.6s var(--spring-easing); }
@@ -137,19 +143,34 @@
         .track-title { font-size: 26px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: -0.5px; }
         .track-artist { font-size: 16px; font-weight: 500; color: var(--text-sub); transition: color 0.5s; }
 
-        /* --- CONTROLES DINÁMICOS --- */
-        .progress-area { margin-bottom: 30px; }
+        /* --- BARRA DE PROGRESO MEJORADA --- */
+        .progress-area { margin-bottom: 30px; position: relative; padding: 10px 0; cursor: pointer; }
+        
         .progress-bar {
-            -webkit-appearance: none; width: 100%; height: 6px; border-radius: 10px;
-            background: rgba(255,255,255,0.15); outline: none;
+            -webkit-appearance: none; width: 100%; height: 4px; border-radius: 10px;
+            background: rgba(255,255,255,0.1); outline: none;
             background-image: linear-gradient(var(--accent-color), var(--accent-color));
             background-size: var(--progress, 0%) 100%; background-repeat: no-repeat;
-            cursor: pointer; transition: height 0.3s;
+            transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s;
         }
-        .progress-bar:active { height: 10px; }
+        
+        .progress-area:hover .progress-bar { height: 8px; box-shadow: 0 0 15px var(--accent-glow); }
+        
+        /* Thumb (bolita) personalizado */
+        .progress-bar::-webkit-slider-thumb {
+            -webkit-appearance: none; width: 14px; height: 14px;
+            background: #fff; border-radius: 50%;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5), 0 0 15px var(--accent-color);
+            cursor: pointer; opacity: 0;
+            transition: opacity 0.2s, transform 0.2s var(--spring-easing);
+            border: 2px solid var(--accent-color);
+        }
+        
+        .progress-area:hover .progress-bar::-webkit-slider-thumb { opacity: 1; transform: scale(1.2); }
         
         .time-info { display: flex; justify-content: space-between; margin-top: 10px; font-size: 11px; font-weight: 800; color: var(--text-sub); letter-spacing: 1px; }
 
+        /* --- CONTROLES --- */
         .controls { display: flex; align-items: center; justify-content: space-between; }
         
         .btn { 
@@ -165,6 +186,7 @@
             width: 76px; height: 76px; border-radius: 50%;
             background: var(--accent-color); color: #000; justify-content: center; 
             box-shadow: 0 12px 30px var(--accent-glow);
+            transform: scale(var(--beat-scale)); /* El play button también pulsa */
         }
         .btn-play svg { width: 36px; height: 36px; fill: #000; }
 
@@ -233,7 +255,7 @@
                 <button class="btn" id="btn-prev"><svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg></button>
                 <button class="btn btn-play" id="btn-play">
                     <svg id="icon-play" viewBox="0 0 24 24"><path d="M8 5.14v14.72a1 1 0 001.5.86l11-7.36a1 1 0 000-1.72l-11-7.36a1 1 0 00-1.5.86z"/></svg>
-                    <svg id="icon-pause" viewBox="0 0 24 24" style="display: none;"><path d="M6 5h3v14H6zm9 0h3v14h-3z"/></svg>
+                    <svg id="icon-pause" viewBox="0 0 24 24" style="display: none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
                 </button>
                 <button class="btn" id="btn-next"><svg viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg></button>
                 <button class="btn btn-secondary" id="btn-repeat"><svg viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/></svg></button>
@@ -242,7 +264,7 @@
     </div>
 
     <script>
-        // --- DATA ---
+        // --- DATA (SIN CAMBIOS) ---
         const playlist =[
             { title: "WOH OH OH", artist: "OMAR COURTZ, ROA", cover: "covers/WOH OH OH.jpg", file: "songs/WOH OH OH.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1773772525/WOH_OH_OH_dgjixz.mp4" },
             { title: "444", artist: "YAN BLOCK", cover: "covers/444.jpg", file: "songs/444.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1773772039/444_r0lopi.mp4" },
@@ -255,6 +277,7 @@
             { title: "TATE QUIETA", artist: "ROA y CDOBLETA", cover: "covers/TATE QUIETA.jpg", file: "songs/TATE QUIETA.mp3", video: "" }
         ];
 
+        // --- LÓGICA DE AUDIO (CROSSFADE INTACTA) ---
         let currentIdx = 0; let isPlaying = false; let isDragging = false;
         let isShuffle = false; let isRepeat = false; let isCrossfading = false;
         let fadeStartTime = 0; let fadingOutAudio = null; let fadingInAudio = null;
@@ -304,7 +327,7 @@
             requestAnimationFrame(drawEQ);
         }
 
-        /* === LYRICS SYSTEM (LÓGICA ORIGINAL) === */
+        /* === LYRICS SYSTEM (INALTERADO) === */
         let currentLyrics =[];
         let activeLyricIndex = -1;
         let isLyricsVisible = false;
@@ -419,7 +442,7 @@
             }
         }
 
-        /* === CORE LOGIC (ORIGINAL) === */
+        /* === CORE LOGIC (SIN CAMBIOS) === */
         document.getElementById('btn-shuffle').addEventListener('click', function() { isShuffle = !isShuffle; this.classList.toggle('active', isShuffle); });
         document.getElementById('btn-repeat').addEventListener('click', function() { isRepeat = !isRepeat; this.classList.toggle('active', isRepeat); });
 
@@ -511,7 +534,6 @@
         }
 
         function updateUI(track, layerNum, isManual = false) {
-            // Trigger Bop Animation
             trackAnimator.classList.remove('bop-animation');
             void trackAnimator.offsetWidth;
             trackAnimator.classList.add('bop-animation');
@@ -519,7 +541,7 @@
             document.getElementById('title').textContent = track.title;
             document.getElementById('artist').textContent = track.artist;
             document.getElementById('cover').src = track.cover;
-            document.getElementById('lyrics-content').innerHTML = '<div class="lyric-line" style="opacity:0.5; text-align:center;">Verificando audio...</div>';
+            document.getElementById('lyrics-content').innerHTML = '<div class="lyric-line" style="opacity:0.5; text-align:center;">Preparando...</div>';
             
             let activeAudio = layerNum === 1 ? a1 : a2;
             let attempts = 0;
@@ -562,7 +584,10 @@
             img.src = imgSrc;
         }
 
-        function applyColor(r, g, b) { document.documentElement.style.setProperty('--accent-color', `rgb(${r}, ${g}, ${b})`); document.documentElement.style.setProperty('--accent-glow', `rgba(${r}, ${g}, ${b}, 0.5)`); }
+        function applyColor(r, g, b) { 
+            document.documentElement.style.setProperty('--accent-color', `rgb(${r}, ${g}, ${b})`); 
+            document.documentElement.style.setProperty('--accent-glow', `rgba(${r}, ${g}, ${b}, 0.5)`); 
+        }
 
         function togglePlay() {
             initAudioContext();
