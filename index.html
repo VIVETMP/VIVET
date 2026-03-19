@@ -228,7 +228,7 @@
             <div class="artwork-container">
                 <img id="cover" src="" alt="Portada" crossorigin="anonymous">
                 
-                <!-- Capa de Letras (Actualizada) -->
+                <!-- Capa de Letras -->
                 <div id="lyrics-overlay" class="lyrics-overlay">
                     <div id="lyrics-content" class="lyrics-content">
                         <!-- Las letras se insertan dinámicamente aquí -->
@@ -276,9 +276,10 @@
 
     <script>
         const playlist =[
-            { title: "WOH OH OH", artist: "OMAR COURTZ y ROA", cover: "covers/WOH OH OH.jpg", file: "songs/WOH OH OH.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1773772525/WOH_OH_OH_dgjixz.mp4" },
+            { title: "PPC", artist: "ROA y HADES66", cover: "covers/PPC.jpg", file: "songs/PPC.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1773938740/PPC_zgzvc8.mp4" },
+            { title: "WOH OH OH", artist: "OMAR COURTZ, ROA", cover: "covers/WOH OH OH.jpg", file: "songs/WOH OH OH.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1773772525/WOH_OH_OH_dgjixz.mp4" },
             { title: "444", artist: "YAN BLOCK", cover: "covers/444.jpg", file: "songs/444.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1773772039/444_r0lopi.mp4" },
-            { title: "FOREVEL TU GANTEL", artist: "OMAR COURTZ y NENGO FLOW", cover: "covers/FOREVEL TU GANTEL.jpg", file: "songs/FOREVEL TU GANTEL.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1773772748/FOREVEL_TU_GANTEL_sgatna.mp4" },
+            { title: "FOREVEL TU GANTEL", artist: "OMAR COURTZ, NENGO FLOW", cover: "covers/FOREVEL TU GANTEL.jpg", file: "songs/FOREVEL TU GANTEL.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1773772748/FOREVEL_TU_GANTEL_sgatna.mp4" },
             { title: "YO QUIERO", artist: "HADES66", cover: "covers/YO QUIERO.jpg", file: "songs/YO QUIERO.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1773773312/YO_QUIERO_jqrgmo.mp4" },
             { title: "DEJA VU", artist: "HADES66 y ROA", cover: "covers/DEJA VU.jpg", file: "songs/DEJA VU.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1773712366/DEJA_VU_ymnvuw.mp4" },
             { title: "FALSAS PROMESAS REMIX", artist: "MVDNIGHT, MORA, ROA, ELADIO CARRION y CLARENT", cover: "covers/FALSAS PROMESAS REMIX.jpg", file: "songs/FALSAS PROMESAS REMIX.mp3", video: "videos/FALSAS PROMESAS REMIX.mp4" },
@@ -453,7 +454,6 @@
             if (activeEl) {
                 activeEl.classList.add('active');
                 const container = document.getElementById('lyrics-content');
-                // Desplazamiento tipo Apple Music (centrado superior)
                 const offset = activeEl.offsetTop - (container.clientHeight * 0.4);
                 container.scrollTo({ top: offset, behavior: 'smooth' });
             }
