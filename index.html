@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VIVET - Premium Player</title>
+    <!-- FAVICON AGREGADO -->
+    <link rel="icon" type="image/png" href="covers/LOGO.png">
+    
     <style>
         :root {
             --accent-color: #ffffff;
@@ -56,7 +59,7 @@
 
         /* --- HEADER Y LOGO --- */
         .header { 
-            display: flex; justify-content: center; align-items: center; gap: 8px;
+            display: flex; justify(content): center; align-items: center; gap: 8px;
             font-size: 13px; font-weight: 700; letter-spacing: 2px; color: var(--accent-color); 
             text-transform: uppercase; margin-bottom: 20px; transition: color 0.5s; position: relative; 
             text-shadow: 0 2px 4px rgba(0,0,0,0.8); 
@@ -83,7 +86,6 @@
         }
         @keyframes eqBounce { 0% { height: 3px; } 100% { height: 12px; } }
 
-        /* --- INDICADOR "MIXING..." --- */
         .mixing-badge {
             position: absolute; top: -25px; left: 50%; transform: translateX(-50%);
             background-color: var(--accent-color); color: #000;
@@ -95,7 +97,7 @@
         .mixing-badge.active { opacity: 1; visibility: visible; animation: pulseMixing 1.5s infinite; }
         @keyframes pulseMixing { 0% { transform: translateX(-50%) scale(0.95); opacity: 0.8; } 50% { transform: translateX(-50%) scale(1.05); opacity: 1; } 100% { transform: translateX(-50%) scale(0.95); opacity: 0.8; } }
 
-        /* --- PORTADA Y LETRAS --- */
+        /* --- PORTADA --- */
         #artwork-wrapper { position: relative; margin-bottom: 30px; }
         
         .artwork-container {
@@ -118,12 +120,12 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.4), 0 0 15px rgba(255,255,255,0.02);
         }
 
-        /* LETRAS (ESTILO APPLE MUSIC) */
+        /* --- MEJORA DE LETRAS (LYRICS) --- */
         .lyrics-overlay {
             position: absolute; inset: 0; z-index: 15;
-            background: rgba(0, 0, 0, 0.45); 
-            backdrop-filter: blur(50px) brightness(0.6); 
-            -webkit-backdrop-filter: blur(50px) brightness(0.6);
+            background: rgba(0, 0, 0, 0.55); 
+            backdrop-filter: blur(50px) brightness(0.5); 
+            -webkit-backdrop-filter: blur(50px) brightness(0.5);
             display: flex; flex-direction: column; overflow: hidden;
             opacity: 0; pointer-events: none; 
             transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
@@ -132,24 +134,29 @@
         
         .lyrics-content {
             width: 100%; height: 100%; overflow-y: auto;
-            padding: 85% 35px 60% 35px; text-align: left; scroll-behavior: smooth;
+            /* Padding ajustado para mejor centrado: 50% arriba y abajo */
+            padding: 60% 25px; text-align: left; scroll-behavior: smooth;
             scrollbar-width: none; 
-            -webkit-mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
-            mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
+            -webkit-mask-image: linear-gradient(to bottom, transparent, black 25%, black 75%, transparent);
+            mask-image: linear-gradient(to bottom, transparent, black 25%, black 75%, transparent);
         }
         .lyrics-content::-webkit-scrollbar { display: none; } 
 
         .lyric-line {
-            font-size: 26px; font-weight: 700; line-height: 1.25;
+            /* Fuente fluida: mínimo 18px, escala con el ancho, máximo 24px */
+            font-size: clamp(18px, 5.5vw, 24px); 
+            font-weight: 700; line-height: 1.3;
             color: rgba(255, 255, 255, 0.25);
-            margin: 28px 0; transition: all 0.5s cubic-bezier(0.33, 1, 0.68, 1);
+            margin: 22px 0; transition: all 0.4s cubic-bezier(0.33, 1, 0.68, 1);
             cursor: pointer; transform-origin: left center;
             filter: blur(0.5px);
+            word-wrap: break-word; /* Evita que palabras largas rompan el diseño */
         }
         .lyric-line.active {
-            font-size: 32px; font-weight: 800; color: #ffffff;
-            transform: scale(1.03); filter: blur(0);
-            text-shadow: 0 0 25px rgba(255,255,255,0.15);
+            font-size: clamp(22px, 7vw, 28px); /* Línea activa un poco más pequeña que antes */
+            font-weight: 800; color: #ffffff;
+            transform: scale(1.02); filter: blur(0);
+            text-shadow: 0 0 20px rgba(255,255,255,0.2);
         }
 
         /* --- INFO DE CANCIÓN --- */
@@ -280,6 +287,7 @@
     </div>
 
     <script>
+        // --- DATA ---
         const playlist =[
             { title: "WOH OH OH", artist: "OMAR COURTZ, ROA", cover: "covers/WOH OH OH.jpg", file: "songs/WOH OH OH.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1773772525/WOH_OH_OH_dgjixz.mp4" },
             { title: "444", artist: "YAN BLOCK", cover: "covers/444.jpg", file: "songs/444.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1773772039/444_r0lopi.mp4" },
@@ -318,7 +326,10 @@
             isLyricsVisible = !isLyricsVisible;
             this.classList.toggle('active', isLyricsVisible);
             document.getElementById('lyrics-overlay').classList.toggle('show', isLyricsVisible);
-            if(isLyricsVisible) updateLyricsScroll();
+            if(isLyricsVisible) {
+                // Pequeño timeout para asegurar que el DOM se ha actualizado antes de scrollear
+                setTimeout(updateLyricsScroll, 100);
+            }
         });
 
         function parseLRC(lrc) {
@@ -342,6 +353,9 @@
             let currentReq = lyricsRequestCount;
             currentLyrics =[]; activeLyricIndex = -1;
             const content = document.getElementById('lyrics-content');
+            
+            content.innerHTML = '<div class="lyric-line" style="opacity:1; text-align:center; margin-top:20%;">Buscando letra...</div>';
+
             let cleanArtist = track.artist.split(',')[0].split(' y ')[0].split(' & ')[0].trim();
             let queries =[`track_name=${encodeURIComponent(track.title)}&artist_name=${encodeURIComponent(cleanArtist)}`, `q=${encodeURIComponent(track.title + ' ' + cleanArtist)}`];
             let bestMatch = null; let bestScore = -Infinity;
@@ -375,7 +389,7 @@
             if (bestMatch) {
                 if (bestMatch.syncedLyrics) { currentLyrics = parseLRC(bestMatch.syncedLyrics); renderLyrics(); }
                 else if (bestMatch.plainLyrics) renderPlainLyrics(bestMatch.plainLyrics);
-            } else content.innerHTML = '<div class="lyric-line" style="margin-top:40%; text-align:center;">Letras no encontradas</div>';
+            } else content.innerHTML = '<div class="lyric-line" style="opacity:0.5; text-align:center; margin-top:20%;">Letra no disponible</div>';
         }
 
         function renderPlainLyrics(text) {
@@ -405,14 +419,23 @@
 
         function updateLyricsScroll() {
             if (activeLyricIndex === -1 || !isLyricsVisible) return;
-            const lines = document.querySelectorAll('.lyric-line');
-            lines.forEach(el => el.classList.remove('active'));
+            const container = document.getElementById('lyrics-content');
             const activeEl = document.getElementById(`lyric-${activeLyricIndex}`);
+            
             if (activeEl) {
+                const lines = document.querySelectorAll('.lyric-line');
+                lines.forEach(el => el.classList.remove('active'));
                 activeEl.classList.add('active');
-                const container = document.getElementById('lyrics-content');
-                const offset = activeEl.offsetTop - (container.clientHeight * 0.4);
-                container.scrollTo({ top: offset, behavior: 'smooth' });
+                
+                // Centrado dinámico
+                const containerHeight = container.clientHeight;
+                const activeOffsetTop = activeEl.offsetTop;
+                const activeHeight = activeEl.clientHeight;
+                
+                // Calculamos la posición para que la línea quede al medio (aprox 40-50% del contenedor)
+                const scrollPos = activeOffsetTop - (containerHeight * 0.45);
+                
+                container.scrollTo({ top: scrollPos, behavior: 'smooth' });
             }
         }
 
@@ -514,7 +537,8 @@
             document.getElementById('artist').textContent = track.artist;
             document.getElementById('cover').src = track.cover;
             
-            document.getElementById('lyrics-content').innerHTML = '<div class="lyric-line" style="margin-top:40%; text-align:center;">Verificando duración...</div>';
+            document.getElementById('lyrics-content').innerHTML = '<div class="lyric-line" style="opacity:0.5; text-align:center; margin-top:20%;">Verificando audio...</div>';
+            
             let activeAudio = layerNum === 1 ? a1 : a2;
             let attempts = 0;
             let checkDur = setInterval(() => {
@@ -562,7 +586,7 @@
         function applyColor(r, g, b) { document.documentElement.style.setProperty('--accent-color', `rgb(${r}, ${g}, ${b})`); document.documentElement.style.setProperty('--accent-glow', `rgba(${r}, ${g}, ${b}, 0.5)`); }
 
         function togglePlay() {
-            let activeAudio = activeLayer === 1 ? a1 : a2; let activeVideo = activeLayer === 1 ? v1 : v2;
+            let activeAudio = activeLayer === 1 ? a1 : a2; 
             let track = playlist[currentIdx];
             if (isPlaying) {
                 a1.pause(); a2.pause(); if(v1.src) v1.pause(); if(v2.src) v2.pause(); document.body.classList.add('player-paused');
