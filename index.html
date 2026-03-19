@@ -37,7 +37,7 @@
         
         .image-fallback {
             filter: blur(60px) brightness(0.6) saturate(1.4);
-            transform: scale(1.1); /* Evita bordes blancos por el blur */
+            transform: scale(1.1);
         }
 
         .overlay { 
@@ -281,15 +281,15 @@
 
     <script>
         const playlist =[
-            { title: "TATE QUIETA", artist: "ROA y CDOBLETA", cover: "covers/TATE QUIETA.jpg", file: "songs/TATE QUIETA.mp3", video: "" },
-            { title: "PPC", artist: "ROA y HADES66", cover: "covers/PPC.jpg", file: "songs/PPC.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1773938740/PPC_zgzvc8.mp4" },
             { title: "WOH OH OH", artist: "OMAR COURTZ, ROA", cover: "covers/WOH OH OH.jpg", file: "songs/WOH OH OH.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1773772525/WOH_OH_OH_dgjixz.mp4" },
             { title: "444", artist: "YAN BLOCK", cover: "covers/444.jpg", file: "songs/444.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1773772039/444_r0lopi.mp4" },
             { title: "FOREVEL TU GANTEL", artist: "OMAR COURTZ, NENGO FLOW", cover: "covers/FOREVEL TU GANTEL.jpg", file: "songs/FOREVEL TU GANTEL.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1773772748/FOREVEL_TU_GANTEL_sgatna.mp4" },
             { title: "YO QUIERO", artist: "HADES66", cover: "covers/YO QUIERO.jpg", file: "songs/YO QUIERO.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1773773312/YO_QUIERO_jqrgmo.mp4" },
             { title: "DEJA VU", artist: "HADES66 y ROA", cover: "covers/DEJA VU.jpg", file: "songs/DEJA VU.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1773712366/DEJA_VU_ymnvuw.mp4" },
             { title: "FALSAS PROMESAS REMIX", artist: "MVDNIGHT, MORA, ROA, ELADIO CARRION y CLARENT", cover: "covers/FALSAS PROMESAS REMIX.jpg", file: "songs/FALSAS PROMESAS REMIX.mp3", video: "videos/FALSAS PROMESAS REMIX.mp4" },
-            { title: "NEVER 2 LATE", artist: "ROA y YAN BLOCK", cover: "covers/NEVER 2 LATE.jpg", file: "songs/NEVER 2 LATE.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1773854580/NEVER_2_LATE_xrfaj2.mp4" }
+            { title: "NEVER 2 LATE", artist: "ROA y YAN BLOCK", cover: "covers/NEVER 2 LATE.jpg", file: "songs/NEVER 2 LATE.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1773854580/NEVER_2_LATE_xrfaj2.mp4" },
+            { title: "PPC", artist: "ROA y HADES66", cover: "covers/PPC.jpg", file: "songs/PPC.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1773938740/PPC_zgzvc8.mp4" },
+            { title: "TATE QUIETA", artist: "ROA y CDOBLETA", cover: "covers/TATE QUIETA.jpg", file: "songs/TATE QUIETA.mp3", video: "" }
         ];
 
         let currentIdx = 0; let isPlaying = false; let isDragging = false;
@@ -340,8 +340,7 @@
         async function loadLyrics(track, audioDuration) {
             lyricsRequestCount++;
             let currentReq = lyricsRequestCount;
-            currentLyrics =[];
-            activeLyricIndex = -1;
+            currentLyrics =[]; activeLyricIndex = -1;
             const content = document.getElementById('lyrics-content');
             let cleanArtist = track.artist.split(',')[0].split(' y ')[0].split(' & ')[0].trim();
             let queries =[`track_name=${encodeURIComponent(track.title)}&artist_name=${encodeURIComponent(cleanArtist)}`, `q=${encodeURIComponent(track.title + ' ' + cleanArtist)}`];
@@ -524,7 +523,6 @@
                 attempts++;
             }, 100);
 
-            // GESTIÓN DE FONDO (VIDEO VS IMAGEN)
             if (track.video) {
                 fallbackBg.classList.remove('active');
                 let videoTransition = isManual ? "0.5s" : `${CROSSFADE_TIME}s`;
@@ -534,10 +532,8 @@
                 else { v2.classList.add('active'); v1.classList.remove('active'); }
             } else {
                 v1.classList.remove('active'); v2.classList.remove('active');
-                fallbackBg.src = track.cover;
-                fallbackBg.classList.add('active');
+                fallbackBg.src = track.cover; fallbackBg.classList.add('active');
             }
-
             extractColor(track.cover);
         }
 
@@ -583,11 +579,10 @@
         playBtn.addEventListener('click', togglePlay);
         document.getElementById('btn-next').addEventListener('click', () => playTrack(getNextTrackIndex(false), true));
         document.getElementById('btn-prev').addEventListener('click', () => playTrack((currentIdx - 1 + playlist.length) % playlist.length, true));
-
         progressBar.addEventListener('input', (e) => { isDragging = true; progressBar.style.setProperty('--progress', `${e.target.value}%`); });
         progressBar.addEventListener('change', (e) => {
             isDragging = false; let activeAudio = activeLayer === 1 ? a1 : a2;
-            if (activeAudio.duration) { activeAudio.currentTime = (e.target.value / 100) * activeAudio.duration; }
+            if (activeAudio.duration) activeAudio.currentTime = (e.target.value / 100) * activeAudio.duration;
         });
 
         function formatTime(s) {
