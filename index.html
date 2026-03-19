@@ -14,6 +14,7 @@
             --text-main: #ffffff;
             --text-sub: rgba(255, 255, 255, 0.6);
             --lyric-inactive: rgba(255, 255, 255, 0.2);
+            --spring-easing: cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         * {
@@ -34,14 +35,14 @@
         .video-background, .image-fallback {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             object-fit: cover; z-index: 1; opacity: 0; 
-            transition: opacity 1s ease-in-out;
+            transition: opacity 1.2s ease-in-out;
         }
         .video-background.active, .image-fallback.active { opacity: 0.5; z-index: 2; }
-        .image-fallback { filter: blur(60px) brightness(0.5) saturate(1.4); transform: scale(1.1); }
+        .image-fallback { filter: blur(60px) brightness(0.4) saturate(1.4); transform: scale(1.1); }
 
         .overlay { 
             position: absolute; inset: 0; 
-            background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.8)); 
+            background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.9)); 
             z-index: 3; 
         }
 
@@ -56,8 +57,8 @@
         /* --- HEADER --- */
         .header { 
             display: flex; justify-content: center; align-items: center; gap: 12px;
-            font-size: 13px; font-weight: 800; letter-spacing: 3px; color: var(--accent-color); 
-            text-transform: uppercase; position: relative;
+            font-size: 13px; font-weight: 800; letter-spacing: 4px; color: var(--accent-color); 
+            text-transform: uppercase; transition: color 0.5s ease;
         }
 
         .site-logo {
@@ -65,94 +66,113 @@
             background-color: var(--accent-color);
             -webkit-mask: url('covers/LOGO.png') no-repeat center / contain;
             mask: url('covers/LOGO.png') no-repeat center / contain;
+            transition: background-color 0.5s ease, transform 0.3s var(--spring-easing);
         }
+        .header:hover .site-logo { transform: scale(1.1); }
 
         .mini-eq { display: flex; align-items: flex-end; gap: 2px; height: 15px; }
-        .eq-bar { width: 3px; background: var(--accent-color); border-radius: 1px; animation: eq 0.6s infinite alternate; }
-        @keyframes eq { 0% { height: 5px; } 100% { height: 15px; } }
+        .eq-bar { width: 3px; background: var(--accent-color); border-radius: 1px; animation: eq 0.6s infinite alternate; transition: background-color 0.5s ease; }
+        @keyframes eq { 0% { height: 4px; } 100% { height: 15px; } }
 
         /* --- PORTADA --- */
         #artwork-wrapper { position: relative; width: 100%; margin: 20px 0; }
         .artwork-container {
-            width: 100%; aspect-ratio: 1; border-radius: 24px; overflow: hidden;
+            width: 100%; aspect-ratio: 1; border-radius: 28px; overflow: hidden;
             position: relative; z-index: 5;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 30px var(--accent-glow);
-            transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 30px var(--accent-glow);
+            transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.5s ease;
+            animation: breathe 8s infinite ease-in-out;
         }
+        @keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
         .artwork-container img { width: 100%; height: 100%; object-fit: cover; display: block; }
         
-        body.player-paused .artwork-container { transform: scale(0.85); opacity: 0.8; }
+        body.player-paused .artwork-container { transform: scale(0.85) !important; opacity: 0.8; animation-play-state: paused; }
 
-        /* --- LYRICS UI (CORREGIDO) --- */
+        /* --- LYRICS UI --- */
         .lyrics-overlay {
-            position: absolute; inset: 0; z-index: 100; /* Por encima de todo en el wrapper */
-            background: rgba(0, 0, 0, 0.7); 
-            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-            border-radius: 24px;
+            position: absolute; inset: 0; z-index: 100;
+            background: rgba(0, 0, 0, 0.75); 
+            backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+            border-radius: 28px;
             display: flex; flex-direction: column; 
             opacity: 0; pointer-events: none; 
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.6s cubic-bezier(0.19, 1, 0.22, 1);
         }
         .lyrics-overlay.show { opacity: 1; pointer-events: auto; }
         
         .lyrics-content {
             width: 100%; height: 100%; overflow-y: auto;
-            padding: 50% 25px; /* Ajustado para que el inicio no esté tan lejos */
+            padding: 50% 25px; 
             scroll-behavior: smooth; scrollbar-width: none;
             -webkit-mask-image: linear-gradient(to bottom, transparent, black 25%, black 75%, transparent);
         }
         .lyrics-content::-webkit-scrollbar { display: none; }
 
         .lyric-line {
-            font-size: clamp(20px, 6vw, 26px); font-weight: 700; line-height: 1.3;
-            margin: 25px 0; transition: all 0.4s ease;
-            color: var(--lyric-inactive); filter: blur(1px);
+            font-size: clamp(20px, 6vw, 24px); font-weight: 700; line-height: 1.3;
+            margin: 28px 0; transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            color: var(--lyric-inactive); filter: blur(1px); transform: scale(0.95);
         }
         .lyric-line.active {
-            color: #ffffff; filter: blur(0); transform: scale(1.05);
-            text-shadow: 0 0 15px var(--accent-glow);
+            color: #ffffff; filter: blur(0); transform: scale(1.1);
+            text-shadow: 0 0 20px var(--accent-glow);
         }
-        .lyric-line.passed { color: rgba(255, 255, 255, 0.4); filter: blur(0); }
+        .lyric-line.passed { color: rgba(255, 255, 255, 0.3); filter: blur(0); transform: scale(0.98); }
 
         /* --- INFO TRACK --- */
-        .track-info { margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; }
-        .track-title { font-size: 26px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .track-artist { font-size: 16px; color: var(--text-sub); }
+        .track-info { margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between; }
+        .track-title { font-size: 26px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: -0.5px; }
+        .track-artist { font-size: 16px; color: var(--text-sub); transition: color 0.5s; }
 
-        /* --- CONTROLES --- */
+        /* --- CONTROLES DINÁMICOS --- */
         .progress-area { margin-bottom: 30px; }
         .progress-bar {
-            -webkit-appearance: none; width: 100%; height: 6px; border-radius: 10px;
+            -webkit-appearance: none; width: 100%; height: 5px; border-radius: 10px;
             background: rgba(255,255,255,0.1); outline: none;
             background-image: linear-gradient(var(--accent-color), var(--accent-color));
             background-size: var(--progress, 0%) 100%; background-repeat: no-repeat;
-            cursor: pointer;
+            cursor: pointer; transition: height 0.3s var(--spring-easing);
         }
-        .progress-bar::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 12px; background: #fff; border-radius: 50%; }
+        .progress-bar:hover { height: 8px; box-shadow: 0 0 15px var(--accent-glow); }
+        .progress-bar::-webkit-slider-thumb { 
+            -webkit-appearance: none; width: 14px; height: 14px; 
+            background: #fff; border-radius: 50%; box-shadow: 0 0 10px var(--accent-glow);
+        }
 
         .controls { display: flex; align-items: center; justify-content: space-between; }
-        .btn { background: none; border: none; cursor: pointer; color: var(--accent-color); transition: 0.3s; display: flex; align-items: center; }
-        .btn:active { transform: scale(0.85); }
-        .btn svg { width: 28px; height: 28px; fill: currentColor; }
+        
+        .btn { 
+            background: none; border: none; cursor: pointer; 
+            color: var(--accent-color); /* AQUÍ SE APLICA EL COLOR DINÁMICO */
+            transition: all 0.4s var(--spring-easing); 
+            display: flex; align-items: center; 
+        }
+        .btn:hover { transform: scale(1.2); filter: drop-shadow(0 0 10px var(--accent-glow)); }
+        .btn:active { transform: scale(0.9); }
+        .btn svg { width: 30px; height: 30px; fill: currentColor; }
         
         .btn-play {
-            width: 75px; height: 75px; border-radius: 50%;
-            background: var(--accent-color); color: #000;
-            justify-content: center; box-shadow: 0 10px 30px var(--accent-glow);
+            width: 76px; height: 76px; border-radius: 50%;
+            background: var(--accent-color); /* FONDO DINÁMICO */
+            color: #000; justify-content: center; 
+            box-shadow: 0 12px 30px var(--accent-glow);
+            transition: all 0.5s var(--spring-easing);
         }
-        .btn-play svg { width: 35px; height: 35px; }
+        .btn-play:hover { transform: scale(1.1); box-shadow: 0 15px 40px var(--accent-glow); }
+        .btn-play svg { width: 36px; height: 36px; fill: #000; }
 
-        .btn-secondary { color: var(--text-sub); }
-        .btn-secondary.active { color: var(--accent-color); }
+        .btn-secondary { opacity: 0.5; color: var(--accent-color); }
+        .btn-secondary.active { opacity: 1; transform: scale(1.1); filter: drop-shadow(0 0 10px var(--accent-color)); }
 
         .mixing-badge {
             position: absolute; top: -35px; left: 50%; transform: translateX(-50%);
-            background: var(--accent-color); color: #000; padding: 4px 12px;
-            border-radius: 12px; font-size: 10px; font-weight: 900;
-            opacity: 0; transition: 0.3s;
+            background: var(--accent-color); color: #000; padding: 5px 15px;
+            border-radius: 20px; font-size: 10px; font-weight: 900;
+            opacity: 0; transition: 0.4s;
+            box-shadow: 0 0 20px var(--accent-glow);
         }
-        .mixing-badge.active { opacity: 1; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 0.8; } 50% { opacity: 1; } }
+        .mixing-badge.active { opacity: 1; animation: badgePulse 1s infinite; }
+        @keyframes badgePulse { 0%, 100% { transform: translateX(-50%) scale(1); } 50% { transform: translateX(-50%) scale(1.05); } }
 
     </style>
 </head>
@@ -178,7 +198,6 @@
         <div id="artwork-wrapper">
             <div class="artwork-container">
                 <img id="cover" src="" alt="Portada">
-                <!-- Lyrics dentro de la portada para el efecto overlay -->
                 <div id="lyrics-overlay" class="lyrics-overlay">
                     <div id="lyrics-content" class="lyrics-content"></div>
                 </div>
@@ -198,7 +217,7 @@
 
             <div class="progress-area">
                 <input type="range" class="progress-bar" id="progress" min="0" max="100" step="0.1" value="0">
-                <div style="display:flex; justify-content:space-between; margin-top:10px; font-size:12px; color:var(--text-sub);">
+                <div style="display:flex; justify-content:space-between; margin-top:10px; font-size:11px; font-weight:800; color:var(--text-sub); letter-spacing:1px;">
                     <span id="time-current">0:00</span>
                     <span id="time-total">0:00</span>
                 </div>
@@ -218,7 +237,7 @@
     </div>
 
     <script>
-        /* === TU LÓGICA DE JAVASCRIPT INTACTA === */
+        // --- DATA Y LÓGICA ORIGINAL (MANTENIDA) ---
         const playlist =[
             { title: "WOH OH OH", artist: "OMAR COURTZ, ROA", cover: "covers/WOH OH OH.jpg", file: "songs/WOH OH OH.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1773772525/WOH_OH_OH_dgjixz.mp4" },
             { title: "444", artist: "YAN BLOCK", cover: "covers/444.jpg", file: "songs/444.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1773772039/444_r0lopi.mp4" },
