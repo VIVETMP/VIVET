@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VIVET - Ultra Premium Player</title>
+    <!-- FAVICON -->
     <link rel="icon" type="image/png" href="covers/LOGO.png">
     
     <style>
@@ -32,11 +33,11 @@
             overflow: hidden; position: relative;
         }
 
-        /* --- FONDOS --- */
+        /* --- VIDEOS Y FONDOS --- */
         .video-background, .image-fallback {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             object-fit: cover; z-index: 1; opacity: 0; 
-            transition: opacity 1.5s ease-in-out;
+            transition: opacity 1.2s ease-in-out;
         }
         .video-background.active, .image-fallback.active { opacity: 0.5; z-index: 2; }
         .image-fallback { filter: blur(60px) brightness(0.4) saturate(1.4); transform: scale(1.1); }
@@ -55,7 +56,7 @@
             justify-content: space-between;
         }
 
-        /* --- HEADER & EQ REAL --- */
+        /* --- HEADER Y EQ REAL --- */
         .header { 
             display: flex; justify-content: center; align-items: center; gap: 12px;
             font-size: 13px; font-weight: 800; letter-spacing: 4px; color: var(--accent-color); 
@@ -67,7 +68,7 @@
             background-color: var(--accent-color);
             -webkit-mask: url('covers/LOGO.png') no-repeat center / contain;
             mask: url('covers/LOGO.png') no-repeat center / contain;
-            transition: all 0.5s ease;
+            transition: all 0.3s var(--spring-easing);
             transform: scale(var(--beat-scale));
         }
         
@@ -79,7 +80,7 @@
 
         /* --- PORTADA CON BEAT PULSE --- */
         #artwork-wrapper { 
-            position: relative; width: 100%; margin-bottom: 30px; 
+            position: relative; margin-bottom: 20px; 
             transform: scale(var(--beat-scale));
             transition: transform 0.1s ease-out;
         }
@@ -108,13 +109,14 @@
         .lyrics-content {
             width: 100%; height: 100%; overflow-y: auto; padding: 60% 25px; 
             scroll-behavior: smooth; scrollbar-width: none;
-            -webkit-mask-image: linear-gradient(to bottom, transparent, black 25%, black 75%, transparent);
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 25%, black 75%, transparent);
         }
 
         .lyric-line {
             font-size: clamp(20px, 6vw, 24px); font-weight: 800; line-height: 1.2;
             margin: 28px 0; transition: all 0.5s var(--spring-easing);
             color: var(--lyric-inactive); filter: blur(1.5px); transform: translateX(-15px);
+            cursor: pointer;
         }
         .lyric-line.active {
             color: #ffffff; filter: blur(0); transform: translateX(0) scale(1.1);
@@ -125,6 +127,7 @@
         /* --- INFO TRACK (EFECTO BOP) --- */
         .track-info { display: flex; align-items: center; justify-content: space-between; margin-bottom: 25px; overflow: hidden; }
         
+        .track-info-animated { flex: 1; min-width: 0; }
         .bop-animation { animation: trackBop 0.6s var(--spring-easing); }
         @keyframes trackBop {
             0% { transform: translateY(30px); opacity: 0; }
@@ -135,6 +138,7 @@
         .track-artist { font-size: 16px; font-weight: 500; color: var(--text-sub); transition: color 0.5s; }
 
         /* --- CONTROLES DINÁMICOS --- */
+        .progress-area { margin-bottom: 30px; }
         .progress-bar {
             -webkit-appearance: none; width: 100%; height: 6px; border-radius: 10px;
             background: rgba(255,255,255,0.15); outline: none;
@@ -143,6 +147,10 @@
             cursor: pointer; transition: height 0.3s;
         }
         .progress-bar:active { height: 10px; }
+        
+        .time-info { display: flex; justify-content: space-between; margin-top: 10px; font-size: 11px; font-weight: 800; color: var(--text-sub); letter-spacing: 1px; }
+
+        .controls { display: flex; align-items: center; justify-content: space-between; }
         
         .btn { 
             background: none; border: none; cursor: pointer; color: var(--accent-color); 
@@ -169,34 +177,32 @@
             border-radius: 20px; font-size: 10px; font-weight: 900;
             opacity: 0; visibility: hidden; transition: 0.4s;
         }
-        .mixing-badge.active { opacity: 1; visibility: visible; animation: pulse 1s infinite; }
-        @keyframes pulse { 0%, 100% { transform: translateX(-50%) scale(1); } 50% { transform: translateX(-50%) scale(1.05); } }
+        .mixing-badge.active { opacity: 1; visibility: visible; animation: pulseBadge 1s infinite; }
+        @keyframes pulseBadge { 0%, 100% { transform: translateX(-50%) scale(1); } 50% { transform: translateX(-50%) scale(1.05); } }
 
     </style>
 </head>
 <body class="player-paused">
 
-    <img id="fallback-bg" class="image-fallback" src="">
-    <video id="vid1" class="video-background active" muted playsinline crossorigin="anonymous"></video>
-    <video id="vid2" class="video-background" muted playsinline crossorigin="anonymous"></video>
+    <!-- Capas de Fondo -->
+    <img id="fallback-bg" class="image-fallback" src="" alt="Fondo">
+    <video id="vid1" class="video-background active" crossorigin="anonymous" muted playsinline></video>
+    <video id="vid2" class="video-background" crossorigin="anonymous" muted playsinline></video>
     <div class="overlay"></div>
 
     <div class="player-app">
         <div class="header">
             <div class="mixing-badge" id="mixing-badge">MIXING...</div>
-            <div class="site-logo"></div> 
-            <span>V I V E T</span>
-            <div class="mini-eq">
-                <div class="eq-bar"></div>
-                <div class="eq-bar"></div>
-                <div class="eq-bar"></div>
-                <div class="eq-bar"></div>
+            <div class="site-logo"></div> V I V E T
+            <div class="mini-eq" id="eq-container">
+                <div class="eq-bar"></div><div class="eq-bar"></div>
+                <div class="eq-bar"></div><div class="eq-bar"></div>
             </div>
         </div>
         
         <div id="artwork-wrapper">
             <div class="artwork-container">
-                <img id="cover" src="" alt="Portada">
+                <img id="cover" src="" alt="Portada" crossorigin="anonymous">
                 <div id="lyrics-overlay" class="lyrics-overlay">
                     <div id="lyrics-content" class="lyrics-content"></div>
                 </div>
@@ -205,7 +211,7 @@
 
         <div>
             <div class="track-info">
-                <div id="track-animator" style="flex:1; min-width:0;">
+                <div class="track-info-animated" id="track-animator">
                     <div class="track-title" id="title">Cargando...</div>
                     <div class="track-artist" id="artist">VIVET Music</div>
                 </div>
@@ -216,7 +222,7 @@
 
             <div class="progress-area">
                 <input type="range" class="progress-bar" id="progress" min="0" max="100" step="0.1" value="0">
-                <div style="display:flex; justify-content:space-between; margin-top:10px; font-size:11px; font-weight:800; color:var(--text-sub); letter-spacing:1px;">
+                <div class="time-info">
                     <span id="time-current">0:00</span>
                     <span id="time-total">0:00</span>
                 </div>
@@ -226,8 +232,8 @@
                 <button class="btn btn-secondary" id="btn-shuffle"><svg viewBox="0 0 24 24"><path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/></svg></button>
                 <button class="btn" id="btn-prev"><svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg></button>
                 <button class="btn btn-play" id="btn-play">
-                    <svg id="icon-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                    <svg id="icon-pause" viewBox="0 0 24 24" style="display: none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                    <svg id="icon-play" viewBox="0 0 24 24"><path d="M8 5.14v14.72a1 1 0 001.5.86l11-7.36a1 1 0 000-1.72l-11-7.36a1 1 0 00-1.5.86z"/></svg>
+                    <svg id="icon-pause" viewBox="0 0 24 24" style="display: none;"><path d="M6 5h3v14H6zm9 0h3v14h-3z"/></svg>
                 </button>
                 <button class="btn" id="btn-next"><svg viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg></button>
                 <button class="btn btn-secondary" id="btn-repeat"><svg viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/></svg></button>
@@ -236,7 +242,7 @@
     </div>
 
     <script>
-        // --- COPIA EXACTA DE TU PLAYLIST ---
+        // --- DATA ---
         const playlist =[
             { title: "WOH OH OH", artist: "OMAR COURTZ, ROA", cover: "covers/WOH OH OH.jpg", file: "songs/WOH OH OH.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1773772525/WOH_OH_OH_dgjixz.mp4" },
             { title: "444", artist: "YAN BLOCK", cover: "covers/444.jpg", file: "songs/444.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1773772039/444_r0lopi.mp4" },
@@ -249,7 +255,6 @@
             { title: "TATE QUIETA", artist: "ROA y CDOBLETA", cover: "covers/TATE QUIETA.jpg", file: "songs/TATE QUIETA.mp3", video: "" }
         ];
 
-        // --- LÓGICA DE AUDIO (CROSSFADE INTACTA) ---
         let currentIdx = 0; let isPlaying = false; let isDragging = false;
         let isShuffle = false; let isRepeat = false; let isCrossfading = false;
         let fadeStartTime = 0; let fadingOutAudio = null; let fadingInAudio = null;
@@ -285,7 +290,6 @@
         }
 
         function drawEQ() {
-            if (!analyser) return;
             analyser.getByteFrequencyData(dataArray);
             const bars = document.querySelectorAll('.eq-bar');
             bars.forEach((bar, i) => {
@@ -300,7 +304,7 @@
             requestAnimationFrame(drawEQ);
         }
 
-        /* === LYRICS SYSTEM (TU LÓGICA DE SCORING INTACTA) === */
+        /* === LYRICS SYSTEM (LÓGICA ORIGINAL) === */
         let currentLyrics =[];
         let activeLyricIndex = -1;
         let isLyricsVisible = false;
@@ -415,7 +419,7 @@
             }
         }
 
-        /* === CORE LOGIC (TU LÓGICA ORIGINAL) === */
+        /* === CORE LOGIC (ORIGINAL) === */
         document.getElementById('btn-shuffle').addEventListener('click', function() { isShuffle = !isShuffle; this.classList.toggle('active', isShuffle); });
         document.getElementById('btn-repeat').addEventListener('click', function() { isRepeat = !isRepeat; this.classList.toggle('active', isRepeat); });
 
@@ -507,7 +511,7 @@
         }
 
         function updateUI(track, layerNum, isManual = false) {
-            // Trigger BOP Animation
+            // Trigger Bop Animation
             trackAnimator.classList.remove('bop-animation');
             void trackAnimator.offsetWidth;
             trackAnimator.classList.add('bop-animation');
@@ -515,7 +519,7 @@
             document.getElementById('title').textContent = track.title;
             document.getElementById('artist').textContent = track.artist;
             document.getElementById('cover').src = track.cover;
-            document.getElementById('lyrics-content').innerHTML = '<div class="lyric-line" style="opacity:0.5; text-align:center;">Preparando...</div>';
+            document.getElementById('lyrics-content').innerHTML = '<div class="lyric-line" style="opacity:0.5; text-align:center;">Verificando audio...</div>';
             
             let activeAudio = layerNum === 1 ? a1 : a2;
             let attempts = 0;
@@ -558,13 +562,9 @@
             img.src = imgSrc;
         }
 
-        function applyColor(r, g, b) { 
-            document.documentElement.style.setProperty('--accent-color', `rgb(${r}, ${g}, ${b})`); 
-            document.documentElement.style.setProperty('--accent-glow', `rgba(${r}, ${g}, ${b}, 0.5)`); 
-        }
+        function applyColor(r, g, b) { document.documentElement.style.setProperty('--accent-color', `rgb(${r}, ${g}, ${b})`); document.documentElement.style.setProperty('--accent-glow', `rgba(${r}, ${g}, ${b}, 0.5)`); }
 
         function togglePlay() {
-            // Init Web Audio API on first click
             initAudioContext();
             if (audioCtx.state === 'suspended') audioCtx.resume();
 
