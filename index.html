@@ -35,14 +35,14 @@
         .video-background, .image-fallback {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             object-fit: cover; z-index: 1; opacity: 0; 
-            transition: opacity 1.2s ease-in-out;
+            transition: opacity 1.5s ease-in-out;
         }
         .video-background.active, .image-fallback.active { opacity: 0.5; z-index: 2; }
         .image-fallback { filter: blur(60px) brightness(0.4) saturate(1.4); transform: scale(1.1); }
 
         .overlay { 
             position: absolute; inset: 0; 
-            background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.9)); 
+            background: radial-gradient(circle at 50% 40%, transparent 0%, rgba(0,0,0,0.4) 60%, rgba(0,0,0,0.9) 100%); 
             z-index: 3; 
         }
 
@@ -68,22 +68,33 @@
             mask: url('covers/LOGO.png') no-repeat center / contain;
             transition: background-color 0.5s ease, transform 0.3s var(--spring-easing);
         }
-        .header:hover .site-logo { transform: scale(1.1); }
 
         .mini-eq { display: flex; align-items: flex-end; gap: 2px; height: 15px; }
         .eq-bar { width: 3px; background: var(--accent-color); border-radius: 1px; animation: eq 0.6s infinite alternate; transition: background-color 0.5s ease; }
+        .eq-bar:nth-child(2) { animation-duration: 0.4s; }
+        .eq-bar:nth-child(3) { animation-duration: 0.8s; }
         @keyframes eq { 0% { height: 4px; } 100% { height: 15px; } }
 
-        /* --- PORTADA --- */
+        /* --- PORTADA & EFECTO BOP --- */
         #artwork-wrapper { position: relative; width: 100%; margin: 20px 0; }
+        
+        /* Resplandor trasero que pulsa */
+        .artwork-glow {
+            position: absolute; inset: 10%; background: var(--accent-color);
+            filter: blur(60px); opacity: 0.3; z-index: 1;
+            transition: background-color 0.8s ease;
+            animation: glowPulse 4s infinite alternate ease-in-out;
+        }
+        @keyframes glowPulse { from { opacity: 0.2; transform: scale(0.9); } to { opacity: 0.4; transform: scale(1.1); } }
+
         .artwork-container {
             width: 100%; aspect-ratio: 1; border-radius: 28px; overflow: hidden;
             position: relative; z-index: 5;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 30px var(--accent-glow);
-            transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.5s ease;
-            animation: breathe 8s infinite ease-in-out;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+            transition: transform 0.8s var(--spring-easing), box-shadow 0.5s ease;
+            animation: breathe 10s infinite ease-in-out;
         }
-        @keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
+        @keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
         .artwork-container img { width: 100%; height: 100%; object-fit: cover; display: block; }
         
         body.player-paused .artwork-container { transform: scale(0.85) !important; opacity: 0.8; animation-play-state: paused; }
@@ -93,16 +104,14 @@
             position: absolute; inset: 0; z-index: 100;
             background: rgba(0, 0, 0, 0.75); 
             backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
-            border-radius: 28px;
-            display: flex; flex-direction: column; 
+            border-radius: 28px; display: flex; flex-direction: column; 
             opacity: 0; pointer-events: none; 
             transition: all 0.6s cubic-bezier(0.19, 1, 0.22, 1);
         }
         .lyrics-overlay.show { opacity: 1; pointer-events: auto; }
         
         .lyrics-content {
-            width: 100%; height: 100%; overflow-y: auto;
-            padding: 50% 25px; 
+            width: 100%; height: 100%; overflow-y: auto; padding: 50% 25px; 
             scroll-behavior: smooth; scrollbar-width: none;
             -webkit-mask-image: linear-gradient(to bottom, transparent, black 25%, black 75%, transparent);
         }
@@ -110,69 +119,76 @@
 
         .lyric-line {
             font-size: clamp(20px, 6vw, 24px); font-weight: 700; line-height: 1.3;
-            margin: 28px 0; transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-            color: var(--lyric-inactive); filter: blur(1px); transform: scale(0.95);
+            margin: 28px 0; transition: all 0.5s var(--spring-easing);
+            color: var(--lyric-inactive); filter: blur(1px); transform: scale(0.95) translateY(10px);
         }
         .lyric-line.active {
-            color: #ffffff; filter: blur(0); transform: scale(1.1);
+            color: #ffffff; filter: blur(0); transform: scale(1.1) translateY(0);
             text-shadow: 0 0 20px var(--accent-glow);
         }
         .lyric-line.passed { color: rgba(255, 255, 255, 0.3); filter: blur(0); transform: scale(0.98); }
 
-        /* --- INFO TRACK --- */
+        /* --- INFO TRACK (EFECTO BOP) --- */
         .track-info { margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between; }
-        .track-title { font-size: 26px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: -0.5px; }
-        .track-artist { font-size: 16px; color: var(--text-sub); transition: color 0.5s; }
+        
+        .bop-animation {
+            animation: trackBop 0.6s var(--spring-easing);
+        }
+        @keyframes trackBop {
+            0% { transform: scale(0.9) translateY(10px); opacity: 0; }
+            50% { transform: scale(1.05) translateY(-5px); }
+            100% { transform: scale(1) translateY(0); opacity: 1; }
+        }
 
-        /* --- CONTROLES DINÁMICOS --- */
+        .track-title { font-size: 26px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: -0.5px; }
+        .track-artist { font-size: 16px; color: var(--text-sub); transition: color 0.5s; font-weight: 500; }
+
+        /* --- CONTROLES --- */
         .progress-area { margin-bottom: 30px; }
         .progress-bar {
             -webkit-appearance: none; width: 100%; height: 5px; border-radius: 10px;
             background: rgba(255,255,255,0.1); outline: none;
             background-image: linear-gradient(var(--accent-color), var(--accent-color));
             background-size: var(--progress, 0%) 100%; background-repeat: no-repeat;
-            cursor: pointer; transition: height 0.3s var(--spring-easing);
+            cursor: pointer; transition: height 0.3s var(--spring-easing), box-shadow 0.3s;
         }
         .progress-bar:hover { height: 8px; box-shadow: 0 0 15px var(--accent-glow); }
         .progress-bar::-webkit-slider-thumb { 
             -webkit-appearance: none; width: 14px; height: 14px; 
             background: #fff; border-radius: 50%; box-shadow: 0 0 10px var(--accent-glow);
+            border: 2px solid var(--accent-color);
         }
 
         .controls { display: flex; align-items: center; justify-content: space-between; }
         
         .btn { 
             background: none; border: none; cursor: pointer; 
-            color: var(--accent-color); /* AQUÍ SE APLICA EL COLOR DINÁMICO */
+            color: var(--accent-color); 
             transition: all 0.4s var(--spring-easing); 
             display: flex; align-items: center; 
         }
-        .btn:hover { transform: scale(1.2); filter: drop-shadow(0 0 10px var(--accent-glow)); }
-        .btn:active { transform: scale(0.9); }
+        .btn:hover { transform: scale(1.2); filter: drop-shadow(0 0 8px var(--accent-glow)); }
+        .btn:active { transform: scale(0.8); }
         .btn svg { width: 30px; height: 30px; fill: currentColor; }
         
         .btn-play {
             width: 76px; height: 76px; border-radius: 50%;
-            background: var(--accent-color); /* FONDO DINÁMICO */
-            color: #000; justify-content: center; 
+            background: var(--accent-color); color: #000; justify-content: center; 
             box-shadow: 0 12px 30px var(--accent-glow);
-            transition: all 0.5s var(--spring-easing);
         }
-        .btn-play:hover { transform: scale(1.1); box-shadow: 0 15px 40px var(--accent-glow); }
         .btn-play svg { width: 36px; height: 36px; fill: #000; }
 
-        .btn-secondary { opacity: 0.5; color: var(--accent-color); }
-        .btn-secondary.active { opacity: 1; transform: scale(1.1); filter: drop-shadow(0 0 10px var(--accent-color)); }
+        .btn-secondary { opacity: 0.5; }
+        .btn-secondary.active { opacity: 1; transform: scale(1.1) translateY(-2px); }
 
         .mixing-badge {
             position: absolute; top: -35px; left: 50%; transform: translateX(-50%);
             background: var(--accent-color); color: #000; padding: 5px 15px;
             border-radius: 20px; font-size: 10px; font-weight: 900;
-            opacity: 0; transition: 0.4s;
-            box-shadow: 0 0 20px var(--accent-glow);
+            opacity: 0; transition: 0.4s; box-shadow: 0 0 20px var(--accent-glow);
         }
-        .mixing-badge.active { opacity: 1; animation: badgePulse 1s infinite; }
-        @keyframes badgePulse { 0%, 100% { transform: translateX(-50%) scale(1); } 50% { transform: translateX(-50%) scale(1.05); } }
+        .mixing-badge.active { opacity: 1; animation: badgePop 1s infinite; }
+        @keyframes badgePop { 0%, 100% { transform: translateX(-50%) scale(1); } 50% { transform: translateX(-50%) scale(1.1); } }
 
     </style>
 </head>
@@ -189,13 +205,14 @@
             <div class="site-logo"></div> 
             <span>V I V E T</span>
             <div class="mini-eq">
-                <div class="eq-bar" style="animation-delay: 0.1s;"></div>
-                <div class="eq-bar" style="animation-delay: 0.3s;"></div>
                 <div class="eq-bar"></div>
+                <div class="eq-bar" style="animation-delay: 0.2s;"></div>
+                <div class="eq-bar" style="animation-delay: 0.4s;"></div>
             </div>
         </div>
         
         <div id="artwork-wrapper">
+            <div class="artwork-glow"></div>
             <div class="artwork-container">
                 <img id="cover" src="" alt="Portada">
                 <div id="lyrics-overlay" class="lyrics-overlay">
@@ -237,7 +254,7 @@
     </div>
 
     <script>
-        // --- DATA Y LÓGICA ORIGINAL (MANTENIDA) ---
+        // --- DATA Y LÓGICA ORIGINAL MANTENIDA AL 100% ---
         const playlist =[
             { title: "WOH OH OH", artist: "OMAR COURTZ, ROA", cover: "covers/WOH OH OH.jpg", file: "songs/WOH OH OH.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1773772525/WOH_OH_OH_dgjixz.mp4" },
             { title: "444", artist: "YAN BLOCK", cover: "covers/444.jpg", file: "songs/444.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1773772039/444_r0lopi.mp4" },
@@ -471,8 +488,11 @@
         }
 
         function updateUI(track, layerNum, isManual = false) {
-            trackAnimator.style.animation = 'none'; trackAnimator.offsetHeight; 
-            trackAnimator.style.animation = 'slideUpFade 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards';
+            // Trigger Bop Animation
+            trackAnimator.classList.remove('bop-animation');
+            void trackAnimator.offsetWidth; // Force reflow
+            trackAnimator.classList.add('bop-animation');
+
             document.getElementById('title').textContent = track.title;
             document.getElementById('artist').textContent = track.artist;
             document.getElementById('cover').src = track.cover;
