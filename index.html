@@ -253,7 +253,8 @@
             { title: "PPC", artist: "ROA y HADES66", cover: "covers/PPC.jpg", file: "songs/PPC.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1773938740/PPC_zgzvc8.mp4" },
             { title: "TATE QUIETA", artist: "ROA y CDOBLETA", cover: "covers/TATE QUIETA.jpg", file: "songs/TATE QUIETA.mp3", video: "" },
             { title: "PASION Y S3XO", artist: "KRIS R y ROA", cover: "covers/PASION Y S3XO.jpg", file: "songs/PASION Y S3XO.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1774028481/PASION_Y_S3XO_vstnjo.mp4" },
-            { title: "PIEZA EXHIBICION", artist: "LUAR LA L, ROA y BLESSD", cover: "covers/PIEZA EXHIBICION.jpg", file: "songs/PIEZA EXHIBICION.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1774030135/PIEZA_EXHIBICION_hjn7nx.mp4" }
+            { title: "PIEZA EXHIBICION", artist: "LUAR LA L, ROA y BLESSD", cover: "covers/PIEZA EXHIBICION.jpg", file: "songs/PIEZA EXHIBICION.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1774030135/PIEZA_EXHIBICION_hjn7nx.mp4" },
+            { title: "PALABRAS SOBRAN REMIX", artist: "BLESSD, RYAN CASTRO, BRYANT MYERS y HADES66", cover: "covers/PALABRAS SOBRAN REMIX.jpg", file: "songs/PALABRAS SOBRAN REMIX.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1774032047/PALABRAS_SOBRAN_REMIX_qwe1hn.mp4" }
         ];
 
         let currentIdx = 0; let isPlaying = false; let isDragging = false;
@@ -435,10 +436,8 @@
                 timeCurrentEl.textContent = formatTime(curTime);
                 timeTotalEl.textContent = formatTime(activeAudio.duration);
                 
-                // MOTOR DE SINCRONIZACIÓN FULL
                 if (currentLyrics.length > 0) {
                     let newIdx = -1;
-                    // Búsqueda del índice actual basada en el tiempo (ajustado -0.1s para respuesta humana)
                     for (let i = 0; i < currentLyrics.length; i++) {
                         if (curTime >= (currentLyrics[i].time - 0.1)) { newIdx = i; } else { break; }
                     }
