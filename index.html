@@ -72,7 +72,6 @@
             transform: scale(var(--beat-scale));
         }
         
-        /* Animación de rotación lenta cuando NO está pausado */
         body:not(.player-paused) .site-logo {
             animation: rotateLogo 10s infinite linear;
         }
@@ -84,7 +83,6 @@
             height: 3px; transition: height 0.1s ease, background-color 0.5s ease;
         }
 
-        /* --- PORTADA CON BEAT PULSE --- */
         #artwork-wrapper { 
             position: relative; margin-bottom: 20px; 
             transform: scale(var(--beat-scale));
@@ -101,7 +99,6 @@
         
         body.player-paused .artwork-container { transform: scale(0.82) !important; opacity: 0.8; }
 
-        /* --- LYRICS UI PREMIUM --- */
         .lyrics-overlay {
             position: absolute; inset: 0; z-index: 100;
             background: rgba(0, 0, 0, 0.75); 
@@ -130,9 +127,7 @@
         }
         .lyric-line.passed { color: rgba(255, 255, 255, 0.3); filter: blur(0); transform: scale(0.95); }
 
-        /* --- INFO TRACK (EFECTO BOP) --- */
         .track-info { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; overflow: hidden; }
-        
         .track-info-animated { flex: 1; min-width: 0; }
         .bop-animation { animation: trackBop 0.6s var(--spring-easing); }
         @keyframes trackBop {
@@ -143,9 +138,7 @@
         .track-title { font-size: 26px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: -0.5px; }
         .track-artist { font-size: 16px; font-weight: 500; color: var(--text-sub); transition: color 0.5s; }
 
-        /* --- BARRA DE PROGRESO MEJORADA --- */
         .progress-area { margin-bottom: 30px; position: relative; padding: 10px 0; cursor: pointer; }
-        
         .progress-bar {
             -webkit-appearance: none; width: 100%; height: 4px; border-radius: 10px;
             background: rgba(255,255,255,0.1); outline: none;
@@ -153,10 +146,7 @@
             background-size: var(--progress, 0%) 100%; background-repeat: no-repeat;
             transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s;
         }
-        
         .progress-area:hover .progress-bar { height: 8px; box-shadow: 0 0 15px var(--accent-glow); }
-        
-        /* Thumb (bolita) personalizado */
         .progress-bar::-webkit-slider-thumb {
             -webkit-appearance: none; width: 14px; height: 14px;
             background: #fff; border-radius: 50%;
@@ -165,14 +155,10 @@
             transition: opacity 0.2s, transform 0.2s var(--spring-easing);
             border: 2px solid var(--accent-color);
         }
-        
         .progress-area:hover .progress-bar::-webkit-slider-thumb { opacity: 1; transform: scale(1.2); }
-        
         .time-info { display: flex; justify-content: space-between; margin-top: 10px; font-size: 11px; font-weight: 800; color: var(--text-sub); letter-spacing: 1px; }
 
-        /* --- CONTROLES --- */
         .controls { display: flex; align-items: center; justify-content: space-between; }
-        
         .btn { 
             background: none; border: none; cursor: pointer; color: var(--accent-color); 
             transition: all 0.3s var(--spring-easing); display: flex; align-items: center; 
@@ -181,15 +167,13 @@
         .btn:hover { transform: scale(1.2); filter: drop-shadow(0 0 10px var(--accent-glow)); }
         .btn:active { transform: scale(0.85); }
         .btn svg { width: 30px; height: 30px; fill: currentColor; }
-        
         .btn-play {
             width: 76px; height: 76px; border-radius: 50%;
             background: var(--accent-color); color: #000; justify-content: center; 
             box-shadow: 0 12px 30px var(--accent-glow);
-            transform: scale(var(--beat-scale)); /* El play button también pulsa */
+            transform: scale(var(--beat-scale));
         }
         .btn-play svg { width: 36px; height: 36px; fill: #000; }
-
         .btn-secondary { opacity: 0.5; }
         .btn-secondary.active { opacity: 1; filter: drop-shadow(0 0 8px var(--accent-color)); }
 
@@ -201,12 +185,10 @@
         }
         .mixing-badge.active { opacity: 1; visibility: visible; animation: pulseBadge 1s infinite; }
         @keyframes pulseBadge { 0%, 100% { transform: translateX(-50%) scale(1); } 50% { transform: translateX(-50%) scale(1.05); } }
-
     </style>
 </head>
 <body class="player-paused">
 
-    <!-- Capas de Fondo -->
     <img id="fallback-bg" class="image-fallback" src="" alt="Fondo">
     <video id="vid1" class="video-background active" crossorigin="anonymous" muted playsinline></video>
     <video id="vid2" class="video-background" crossorigin="anonymous" muted playsinline></video>
@@ -264,7 +246,6 @@
     </div>
 
     <script>
-        // --- DATA ---
         const playlist =[
             { title: "WOH OH OH", artist: "OMAR COURTZ, ROA", cover: "covers/WOH OH OH.jpg", file: "songs/WOH OH OH.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1773772525/WOH_OH_OH_dgjixz.mp4" },
             { title: "444", artist: "YAN BLOCK", cover: "covers/444.jpg", file: "songs/444.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1773772039/444_r0lopi.mp4" },
@@ -279,7 +260,6 @@
             { title: "PIEZA EXHIBICION", artist: "LUAR LA L, ROA y BLESSD", cover: "covers/PIEZA EXHIBICION.jpg", file: "songs/PIEZA EXHIBICION.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1774030135/PIEZA_EXHIBICION_hjn7nx.mp4" }
         ];
 
-        // --- LÓGICA DE AUDIO (CROSSFADE INTACTA) ---
         let currentIdx = 0; let isPlaying = false; let isDragging = false;
         let isShuffle = false; let isRepeat = false; let isCrossfading = false;
         let fadeStartTime = 0; let fadingOutAudio = null; let fadingInAudio = null;
@@ -297,7 +277,6 @@
         const trackAnimator = document.getElementById('track-animator');
         const colorCache = {};
 
-        // ANALIZADOR EQ REAL
         let audioCtx, analyser, dataArray, source1, source2;
 
         function initAudioContext() {
@@ -322,14 +301,12 @@
                 let h = Math.max(3, (val / 255) * 16);
                 bar.style.height = h + 'px';
             });
-            // Beat Pulse
             let bass = dataArray[1] / 255;
             let scale = 1 + (bass * 0.04);
             document.documentElement.style.setProperty('--beat-scale', scale);
             requestAnimationFrame(drawEQ);
         }
 
-        /* === LYRICS SYSTEM (INALTERADO) === */
         let currentLyrics =[];
         let activeLyricIndex = -1;
         let isLyricsVisible = false;
@@ -363,42 +340,43 @@
             let currentReq = lyricsRequestCount;
             currentLyrics =[]; activeLyricIndex = -1;
             const content = document.getElementById('lyrics-content');
-            content.innerHTML = '<div class="lyric-line" style="opacity:0.5; text-align:center;">Buscando letra...</div>';
+            content.innerHTML = '<div class="lyric-line" style="opacity:0.5; text-align:center;">Buscando letra precisa...</div>';
 
             let cleanArtist = track.artist.split(',')[0].split(' y ')[0].split(' & ')[0].trim();
-            let queries =[`track_name=${encodeURIComponent(track.title)}&artist_name=${encodeURIComponent(cleanArtist)}`, `q=${encodeURIComponent(track.title + ' ' + cleanArtist)}`];
-            let bestMatch = null; let bestScore = -Infinity;
-            let targetArtist = cleanArtist.toLowerCase().replace(/[^a-z0-9]/g, '');
-            let targetTitle = track.title.toLowerCase().replace(/[^a-z0-9]/g, '');
+            let bestMatch = null;
 
-            for (let q of queries) {
-                try {
-                    const res = await fetch(`https://lrclib.net/api/search?${q}`);
-                    if (!res.ok) continue;
-                    const data = await res.json();
-                    if (!data || data.length === 0) continue;
-                    for (let item of data) {
-                        if (!item.syncedLyrics && !item.plainLyrics) continue;
-                        let score = 0;
-                        let itemArtist = (item.artistName || "").toLowerCase().replace(/[^a-z0-9]/g, '');
-                        let itemTitle = (item.trackName || "").toLowerCase().replace(/[^a-z0-9]/g, '');
-                        if (itemArtist.includes(targetArtist) || targetArtist.includes(itemArtist)) score += 2000;
-                        if (itemTitle.includes(targetTitle) || targetTitle.includes(itemTitle)) score += 2000;
-                        if (item.syncedLyrics) score += 1000;
-                        if (audioDuration && item.duration) {
-                            let diff = Math.abs(item.duration - audioDuration);
-                            if (diff <= 3) score += 10000; 
+            try {
+                // Paso 1: Intento de coincidencia EXACTA (incluyendo duración)
+                const exactRes = await fetch(`https://lrclib.net/api/get?artist_name=${encodeURIComponent(cleanArtist)}&track_name=${encodeURIComponent(track.title)}&duration=${Math.round(audioDuration)}`);
+                if (exactRes.ok) {
+                    const data = await exactRes.json();
+                    if (data && (data.syncedLyrics || data.plainLyrics)) bestMatch = data;
+                }
+
+                // Paso 2: Si no hay exacta, búsqueda general refinada por proximidad de tiempo
+                if (!bestMatch) {
+                    const searchRes = await fetch(`https://lrclib.net/api/search?track_name=${encodeURIComponent(track.title)}&artist_name=${encodeURIComponent(cleanArtist)}`);
+                    if (searchRes.ok) {
+                        const results = await searchRes.json();
+                        if (results && results.length > 0) {
+                            // Ordenar por la diferencia de duración más pequeña
+                            results.sort((a, b) => {
+                                let diffA = Math.abs((a.duration || 0) - audioDuration);
+                                let diffB = Math.abs((b.duration || 0) - audioDuration);
+                                return diffA - diffB;
+                            });
+                            bestMatch = results[0];
                         }
-                        if (score > bestScore) { bestScore = score; bestMatch = item; }
                     }
-                    if (bestMatch && bestScore >= 10000) break;
-                } catch (e) {}
-            }
+                }
+            } catch (e) { console.error("Error buscando letra", e); }
+
             if (currentReq !== lyricsRequestCount) return;
+
             if (bestMatch) {
                 if (bestMatch.syncedLyrics) { currentLyrics = parseLRC(bestMatch.syncedLyrics); renderLyrics(); }
                 else if (bestMatch.plainLyrics) renderPlainLyrics(bestMatch.plainLyrics);
-            } else content.innerHTML = '<div class="lyric-line" style="opacity:0.5; text-align:center;">Letra no disponible</div>';
+            } else content.innerHTML = '<div class="lyric-line" style="opacity:0.5; text-align:center;">Letra no encontrada</div>';
         }
 
         function renderPlainLyrics(text) {
@@ -444,7 +422,6 @@
             }
         }
 
-        /* === CORE LOGIC (SIN CAMBIOS) === */
         document.getElementById('btn-shuffle').addEventListener('click', function() { isShuffle = !isShuffle; this.classList.toggle('active', isShuffle); });
         document.getElementById('btn-repeat').addEventListener('click', function() { isRepeat = !isRepeat; this.classList.toggle('active', isRepeat); });
 
@@ -543,7 +520,7 @@
             document.getElementById('title').textContent = track.title;
             document.getElementById('artist').textContent = track.artist;
             document.getElementById('cover').src = track.cover;
-            document.getElementById('lyrics-content').innerHTML = '<div class="lyric-line" style="opacity:0.5; text-align:center;">Preparando...</div>';
+            document.getElementById('lyrics-content').innerHTML = '<div class="lyric-line" style="opacity:0.5; text-align:center;">Analizando audio...</div>';
             
             let activeAudio = layerNum === 1 ? a1 : a2;
             let attempts = 0;
@@ -594,7 +571,6 @@
         function togglePlay() {
             initAudioContext();
             if (audioCtx.state === 'suspended') audioCtx.resume();
-
             let activeAudio = activeLayer === 1 ? a1 : a2; 
             let track = playlist[currentIdx];
             if (isPlaying) {
