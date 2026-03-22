@@ -23,76 +23,78 @@
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
 
-        body { height: 100vh; width: 100vw; background-color: var(--bg-dark); color: var(--text-main); display: flex; justify-content: center; align-items: center; overflow: hidden; position: relative; perspective: 1000px; }
+        body { height: 100vh; width: 100vw; background-color: var(--bg-dark); color: var(--text-main); display: flex; justify-content: center; align-items: center; overflow: hidden; position: relative; perspective: 1200px; }
 
-        .video-background, .image-fallback { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; opacity: 0; transition: opacity 1.5s ease-in-out, transform 1.5s ease-in-out; animation: bgMovement 20s infinite alternate ease-in-out; }
-        @keyframes bgMovement { from { transform: scale(1.1) translate(0, 0); } to { transform: scale(1.2) translate(-1%, -1%); } }
+        .video-background, .image-fallback { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; opacity: 0; transition: opacity 1.5s ease, transform 1.5s ease; animation: bgMovement 25s infinite alternate ease-in-out; }
+        @keyframes bgMovement { from { transform: scale(1.1) rotate(0.1deg); } to { transform: scale(1.25) rotate(-0.1deg); } }
 
         .video-background.active, .image-fallback.active { opacity: 0.5; z-index: 2; }
-        .image-fallback { filter: blur(60px) brightness(0.4) saturate(1.4); }
+        .image-fallback { filter: blur(70px) brightness(0.4) saturate(1.6); }
 
-        .overlay { position: absolute; inset: 0; background: radial-gradient(circle at 50% 40%, transparent 0%, rgba(0,0,0,0.4) 60%, rgba(0,0,0,0.9) 100%); z-index: 3; }
+        .overlay { position: absolute; inset: 0; background: radial-gradient(circle at 50% 40%, transparent 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.9) 100%); z-index: 3; }
 
-        .player-app { position: relative; z-index: 10; width: 100%; max-width: 420px; height: 100vh; max-height: 850px; padding: 40px 30px; display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.3s ease; }
+        /* ANIMACIÓN DE FLOTACIÓN AL CONTENEDOR */
+        .player-app { position: relative; z-index: 10; width: 100%; max-width: 420px; height: 100vh; max-height: 850px; padding: 40px 30px; display: flex; flex-direction: column; justify-content: space-between; transition: all 0.5s var(--spring-easing); animation: playerFloat 8s infinite ease-in-out; }
+        @keyframes playerFloat { 0%, 100% { transform: translateY(0) rotateX(0); } 50% { transform: translateY(-10px) rotateX(2deg); } }
 
-        .header { display: flex; justify-content: center; align-items: center; gap: 12px; font-size: 13px; font-weight: 800; letter-spacing: 4px; color: var(--accent-color); text-transform: uppercase; transition: color 0.5s ease; text-shadow: 0 0 15px var(--accent-glow); }
+        .header { display: flex; justify-content: center; align-items: center; gap: 12px; font-size: 13px; font-weight: 800; letter-spacing: 4px; color: var(--accent-color); text-transform: uppercase; transition: color 0.5s ease; text-shadow: 0 0 20px var(--accent-glow); }
 
         .site-logo { width: 32px; height: 32px; background-color: var(--accent-color); -webkit-mask: url('covers/LOGO.png') no-repeat center / contain; mask: url('covers/LOGO.png') no-repeat center / contain; transition: all 0.3s var(--spring-easing); transform: scale(var(--beat-scale)); }
         
-        body:not(.player-paused) .site-logo { animation: rotateLogo 10s infinite linear; }
+        body:not(.player-paused) .site-logo { animation: rotateLogo 12s infinite linear; }
         @keyframes rotateLogo { from { transform: scale(var(--beat-scale)) rotate(0deg); } to { transform: scale(var(--beat-scale)) rotate(360deg); } }
 
         .mini-eq { display: flex; align-items: flex-end; gap: 3px; height: 16px; width: 25px; }
-        .eq-bar { flex: 1; background: var(--accent-color); border-radius: 1px; height: 3px; transition: height 0.1s ease, background-color 0.5s ease; box-shadow: 0 0 5px var(--accent-glow); }
+        .eq-bar { flex: 1; background: var(--accent-color); border-radius: 1px; height: 3px; transition: height 0.15s ease, background-color 0.5s ease; box-shadow: 0 0 10px var(--accent-glow); }
 
-        #artwork-wrapper { position: relative; margin-bottom: 20px; transform: scale(var(--beat-scale)); transition: transform 0.2s cubic-bezier(0.2, 0, 0.4, 2); will-change: transform; }
+        /* ARTWORK CON PULSO DINÁMICO */
+        #artwork-wrapper { position: relative; margin-bottom: 25px; transform: scale(var(--beat-scale)); transition: transform 0.2s cubic-bezier(0.2, 0, 0.4, 2); will-change: transform; filter: drop-shadow(0 0 calc(var(--beat-scale) * 15px) var(--accent-glow)); }
         
-        .artwork-container { width: 100%; aspect-ratio: 1; border-radius: 28px; overflow: hidden; position: relative; z-index: 5; box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 40px var(--accent-glow); transition: all 0.8s var(--spring-easing); }
-        .artwork-container img { width: 100%; height: 100%; object-fit: cover; transition: transform 1s ease; }
-        .artwork-container:hover img { transform: scale(1.05); }
+        .artwork-container { width: 100%; aspect-ratio: 1; border-radius: 32px; overflow: hidden; position: relative; z-index: 5; box-shadow: 0 30px 60px rgba(0,0,0,0.8); transition: all 0.8s var(--spring-easing); }
+        .artwork-container img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s ease; }
+        .artwork-container:hover img { transform: scale(1.1); }
         
-        body.player-paused .artwork-container { transform: scale(0.85) rotateX(10deg) !important; opacity: 0.8; }
+        body.player-paused .artwork-container { transform: scale(0.85) rotateX(15deg) translateY(20px) !important; opacity: 0.6; filter: grayscale(0.5); }
 
-        /* --- LYRICS ULTRA FLUIDOS (MEJORADO) --- */
-        .lyrics-overlay { position: absolute; inset: 0; z-index: 100; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(50px) saturate(2); -webkit-backdrop-filter: blur(50px) saturate(2); display: flex; flex-direction: column; overflow: hidden; opacity: 0; pointer-events: none; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1); }
+        .lyrics-overlay { position: absolute; inset: 0; z-index: 100; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(50px) saturate(2); -webkit-backdrop-filter: blur(50px) saturate(2); display: flex; flex-direction: column; overflow: hidden; opacity: 0; pointer-events: none; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1); }
         .lyrics-overlay.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
         
-        .lyrics-content { width: 100%; height: 100%; overflow-y: auto; padding: 60% 25px; scroll-behavior: smooth; scrollbar-width: none; -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 35%, black 65%, transparent 100%); }
+        .lyrics-content { width: 100%; height: 100%; overflow-y: auto; padding: 65% 25px; scroll-behavior: smooth; scrollbar-width: none; -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 30%, black 70%, transparent 100%); }
 
-        .lyric-line { font-size: clamp(22px, 7vw, 26px); font-weight: 800; line-height: 1.25; margin: 32px 0; transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1); color: var(--lyric-inactive); filter: blur(3px); transform: translateY(20px) scale(0.9); opacity: 0.3; cursor: pointer; transform-origin: left center; will-change: transform, opacity, filter; }
+        .lyric-line { font-size: clamp(22px, 7vw, 26px); font-weight: 800; line-height: 1.2; margin: 35px 0; transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1); color: var(--lyric-inactive); filter: blur(4px); transform: translateY(30px) scale(0.85); opacity: 0.2; cursor: pointer; transform-origin: left center; }
         .lyric-line.active { color: #ffffff; filter: blur(0); transform: translateY(0) scale(1.1); opacity: 1; text-shadow: 0 0 30px var(--accent-glow); }
-        .lyric-line.passed { color: rgba(255, 255, 255, 0.2); filter: blur(1px); transform: translateY(-15px) scale(0.95); opacity: 0.5; }
+        .lyric-line.passed { color: rgba(255, 255, 255, 0.2); filter: blur(1px); transform: translateY(-20px) scale(0.95); opacity: 0.4; }
 
-        .track-info { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; overflow: hidden; }
-        .track-info-animated { flex: 1; min-width: 0; }
+        .track-info { display: flex; align-items: center; justify-content: space-between; margin-bottom: 25px; }
         .bop-animation { animation: trackBop 0.8s var(--spring-easing); }
-        @keyframes trackBop { 0% { transform: translateY(40px) skewY(5deg); opacity: 0; } 100% { transform: translateY(0) skewY(0); opacity: 1; } }
+        @keyframes trackBop { 0% { transform: translateX(-20px); opacity: 0; } 100% { transform: translateX(0); opacity: 1; } }
 
-        .track-title { font-size: 26px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: -0.5px; }
-        .track-artist { font-size: 16px; font-weight: 500; color: var(--text-sub); transition: color 0.5s; }
+        .track-title { font-size: 28px; font-weight: 900; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: -1px; }
+        .track-artist { font-size: 17px; font-weight: 500; color: var(--text-sub); }
 
-        .progress-area { margin-bottom: 30px; position: relative; padding: 10px 0; cursor: pointer; }
-        .progress-bar { -webkit-appearance: none; width: 100%; height: 6px; border-radius: 10px; background: rgba(255,255,255,0.1); outline: none; background-image: linear-gradient(to right, var(--accent-color), var(--accent-color)); background-size: var(--progress, 0%) 100%; background-repeat: no-repeat; transition: height 0.3s var(--spring-easing); }
-        .progress-area:hover .progress-bar { height: 10px; box-shadow: 0 0 20px var(--accent-glow); }
-        .progress-bar::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; background: #fff; border-radius: 50%; box-shadow: 0 0 15px var(--accent-color); cursor: pointer; opacity: 0; transition: all 0.3s var(--spring-easing); border: 3px solid var(--accent-color); }
-        .progress-area:hover .progress-bar::-webkit-slider-thumb { opacity: 1; transform: scale(1.1); }
-        .time-info { display: flex; justify-content: space-between; margin-top: 10px; font-size: 11px; font-weight: 800; color: var(--text-sub); letter-spacing: 1px; }
-
-        .controls { display: flex; align-items: center; justify-content: space-between; }
-        .btn { background: none; border: none; cursor: pointer; color: var(--accent-color); transition: all 0.4s var(--spring-easing); display: flex; align-items: center; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); }
-        .btn:hover { transform: translateY(-5px) scale(1.15); filter: drop-shadow(0 5px 15px var(--accent-glow)); }
-        .btn:active { transform: scale(0.9); }
-        .btn svg { width: 30px; height: 30px; fill: currentColor; }
+        .progress-area { margin-bottom: 35px; cursor: pointer; }
+        /* BARRA CON EFECTO SHIMMER */
+        .progress-bar { -webkit-appearance: none; width: 100%; height: 6px; border-radius: 10px; background: rgba(255,255,255,0.08); outline: none; background-image: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent), linear-gradient(to right, var(--accent-color), var(--accent-color)); background-size: 200% 100%, var(--progress, 0%) 100%; background-repeat: no-repeat; transition: height 0.3s var(--spring-easing); animation: shimmer 3s infinite linear; }
+        @keyframes shimmer { 0% { background-position: -200% 0, 0 0; } 100% { background-position: 200% 0, 0 0; } }
         
-        .btn-play { width: 76px; height: 76px; border-radius: 50%; background: var(--accent-color); color: #000; justify-content: center; box-shadow: 0 15px 35px var(--accent-glow); transform: scale(var(--beat-scale)); }
-        .btn-play:hover { transform: scale(calc(var(--beat-scale) + 0.1)) translateY(-2px); }
-        .btn-play svg { width: 36px; height: 36px; fill: #000; }
-        .btn-secondary { opacity: 0.5; }
-        .btn-secondary.active { opacity: 1; filter: drop-shadow(0 0 12px var(--accent-color)); }
+        .progress-area:hover .progress-bar { height: 10px; box-shadow: 0 0 25px var(--accent-glow); }
+        .progress-bar::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; background: #fff; border-radius: 50%; box-shadow: 0 0 20px var(--accent-color); cursor: pointer; opacity: 0; transition: all 0.3s var(--spring-easing); border: 4px solid var(--accent-color); }
+        .progress-area:hover .progress-bar::-webkit-slider-thumb { opacity: 1; transform: scale(1.2); }
 
-        .mixing-badge { position: absolute; top: -35px; left: 50%; transform: translateX(-50%); background: var(--accent-color); color: #000; padding: 5px 15px; border-radius: 20px; font-size: 10px; font-weight: 900; opacity: 0; visibility: hidden; transition: 0.4s; box-shadow: 0 5px 15px var(--accent-glow); }
-        .mixing-badge.active { opacity: 1; visibility: visible; animation: pulseBadge 1s infinite; }
-        @keyframes pulseBadge { 0%, 100% { transform: translateX(-50%) scale(1); } 50% { transform: translateX(-50%) scale(1.1); } }
+        .controls { display: flex; align-items: center; justify-content: space-between; padding: 0 5px; }
+        .btn { background: none; border: none; cursor: pointer; color: var(--accent-color); transition: all 0.4s var(--spring-easing); filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5)); }
+        .btn:hover { transform: translateY(-8px) scale(1.2); filter: drop-shadow(0 8px 20px var(--accent-glow)); }
+        .btn:active { transform: scale(0.85); }
+        
+        .btn-play { width: 80px; height: 80px; border-radius: 50%; background: var(--accent-color); color: #000; display: flex; align-items: center; justify-content: center; box-shadow: 0 20px 40px var(--accent-glow); transform: scale(var(--beat-scale)); }
+        .btn-play svg { width: 38px; height: 38px; fill: #000; transition: transform 0.3s var(--spring-easing); }
+        .btn-play:hover svg { transform: scale(1.1); }
+        .btn-secondary { opacity: 0.4; transform: scale(0.9); }
+        .btn-secondary.active { opacity: 1; filter: drop-shadow(0 0 15px var(--accent-color)); transform: scale(1.1); }
+
+        .mixing-badge { position: absolute; top: -35px; left: 50%; transform: translateX(-50%); background: var(--accent-color); color: #000; padding: 6px 18px; border-radius: 20px; font-size: 10px; font-weight: 900; opacity: 0; visibility: hidden; transition: 0.5s; box-shadow: 0 8px 20px var(--accent-glow); letter-spacing: 1px; }
+        .mixing-badge.active { opacity: 1; visibility: visible; animation: pulseBadge 1s infinite cubic-bezier(0.4, 0, 0.2, 1); }
+        @keyframes pulseBadge { 0%, 100% { transform: translateX(-50%) scale(1); } 50% { transform: translateX(-50%) scale(1.15); } }
     </style>
 </head>
 <body class="player-paused">
@@ -104,7 +106,7 @@
 
     <div class="player-app">
         <div class="header">
-            <div class="mixing-badge" id="mixing-badge">MIXING...</div>
+            <div class="mixing-badge" id="mixing-badge">LIVE MIXING</div>
             <div class="site-logo"></div> V I V E T
             <div class="mini-eq" id="eq-container">
                 <div class="eq-bar"></div><div class="eq-bar"></div>
@@ -124,8 +126,8 @@
         <div>
             <div class="track-info">
                 <div class="track-info-animated" id="track-animator">
-                    <div class="track-title" id="title">Cargando...</div>
-                    <div class="track-artist" id="artist">VIVET Music</div>
+                    <div class="track-title" id="title">VIVET Premium</div>
+                    <div class="track-artist" id="artist">Cargando experiencia...</div>
                 </div>
                 <button class="btn btn-secondary" id="btn-lyrics" style="margin-left: 15px;">
                     <svg viewBox="0 0 24 24"><path d="M21 3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-1 16H4c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h16c.55 0 1 .45 1 1v12c0 .55.45-1-1 1zM7 8h10v2H7zm0 4h10v2H7z"/></svg>
@@ -176,7 +178,7 @@
 
         const initAudioContext = () => { if (audioCtx) return; audioCtx = new (window.AudioContext || window.webkitAudioContext)(); analyser = audioCtx.createAnalyser(); analyser.fftSize = 64; dataArray = new Uint8Array(analyser.frequencyBinCount); source1 = audioCtx.createMediaElementSource(a1); source2 = audioCtx.createMediaElementSource(a2); source1.connect(analyser); source2.connect(analyser); analyser.connect(audioCtx.destination); drawEQ(); };
 
-        const drawEQ = () => { analyser.getByteFrequencyData(dataArray); document.querySelectorAll('.eq-bar').forEach((bar, i) => bar.style.height = Math.max(3, (dataArray[i * 2] / 255) * 16) + 'px'); document.documentElement.style.setProperty('--beat-scale', 1 + (dataArray[1] / 255 * 0.04)); requestAnimationFrame(drawEQ); };
+        const drawEQ = () => { analyser.getByteFrequencyData(dataArray); document.querySelectorAll('.eq-bar').forEach((bar, i) => bar.style.height = Math.max(3, (dataArray[i * 2] / 255) * 16) + 'px'); document.documentElement.style.setProperty('--beat-scale', 1 + (dataArray[1] / 255 * 0.05)); requestAnimationFrame(drawEQ); };
 
         const parseLRC = lrc => lrc.split('\n').map(l => { const m = l.match(/^\[(\d{2}):(\d{2}(?:\.\d{1,3})?)\](.*)/); return m ? { time: parseInt(m[1]) * 60 + parseFloat(m[2]), text: m[3].trim() || "•••" } : null; }).filter(Boolean).sort((a,b) => a.time - b.time);
 
@@ -270,7 +272,7 @@
             };
         };
 
-        const applyColor = ([r,g,b]) => { document.documentElement.style.setProperty('--accent-color', `rgb(${r},${g},${b})`); document.documentElement.style.setProperty('--accent-glow', `rgba(${r},${g},${b},0.5)`); };
+        const applyColor = ([r,g,b]) => { document.documentElement.style.setProperty('--accent-color', `rgb(${r},${g},${b})`); document.documentElement.style.setProperty('--accent-glow', `rgba(${r},${g},${b},0.6)`); };
         const formatTime = s => isNaN(s) ? "0:00" : `${Math.floor(s/60)}:${Math.floor(s%60).toString().padStart(2,'0')}`;
 
         playBtn.onclick = () => {
