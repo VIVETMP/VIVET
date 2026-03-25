@@ -27,7 +27,7 @@
             height: 100vh; width: 100vw; 
             background-color: var(--bg-dark); 
             display: flex; justify-content: flex-end; align-items: flex-end; 
-            overflow: hidden; position: relative; padding: 30px;
+            overflow: hidden; position: relative; padding: 25px;
         }
 
         /* FONDO */
@@ -36,96 +36,103 @@
         .image-fallback { filter: blur(60px) brightness(0.4); }
         .overlay { position: absolute; inset: 0; background: radial-gradient(circle at 50% 50%, transparent, rgba(0,0,0,0.8)); z-index: 3; }
 
-        /* REPRODUCTOR - MINI ISLA HORIZONTAL */
+        /* REPRODUCTOR - COMPACTO */
         .player-app { 
             position: relative; z-index: 10; 
-            width: 480px; /* Tamaño reducido */
-            background: rgba(15, 15, 15, 0.4);
-            backdrop-filter: blur(40px) saturate(1.8);
-            -webkit-backdrop-filter: blur(40px) saturate(1.8);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 35px;
-            padding: 15px 20px;
-            display: flex; flex-direction: row; align-items: center; gap: 18px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            width: 410px; /* Reducido para ser más "isla" */
+            background: rgba(18, 18, 18, 0.6);
+            backdrop-filter: blur(35px) saturate(1.8);
+            -webkit-backdrop-filter: blur(35px) saturate(1.8);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 28px;
+            padding: 12px 16px;
+            display: flex; flex-direction: row; align-items: center; gap: 14px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.6);
         }
 
-        /* PESTAÑA DE LYRICS (FLOTA ARRIBA) */
+        /* PESTAÑA DE LYRICS */
         .lyrics-overlay { 
             position: absolute; 
-            bottom: calc(100% + 15px); /* Separado de la isla */
+            bottom: calc(100% + 12px); 
             left: 0; right: 0; 
-            height: 220px; /* Altura de la pestaña */
+            height: 190px; 
             z-index: 100; 
-            background: rgba(10, 10, 10, 0.5);
+            background: rgba(10, 10, 10, 0.6);
             backdrop-filter: blur(40px);
             -webkit-backdrop-filter: blur(40px);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 30px;
+            border-radius: 24px;
             opacity: 0; pointer-events: none; 
-            transform: translateY(15px);
+            transform: translateY(10px);
             transition: all 0.5s var(--spring-easing);
         }
         .lyrics-overlay.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
-        .lyrics-content { width: 100%; height: 100%; overflow-y: auto; padding: 60px 20px; scrollbar-width: none; }
-        .lyric-line { font-size: 15px; margin: 12px 0; text-align: center; }
+        .lyrics-content { width: 100%; height: 100%; overflow-y: auto; padding: 40px 15px; scrollbar-width: none; }
+        .lyric-line { font-size: 14px; margin: 10px 0; text-align: center; color: rgba(255,255,255,0.4); transition: 0.3s; }
+        .lyric-line.active { color: #fff; transform: scale(1.05); font-weight: 600; }
 
-        /* PORTADA MINI */
+        /* PORTADA MINI MÁS AJUSTADA */
         #artwork-wrapper { 
-            width: 85px; height: 85px; flex-shrink: 0;
+            width: 78px; height: 78px; flex-shrink: 0;
             transform: scale(var(--beat-scale)); transition: 0.2s;
         }
-        .artwork-container { width: 100%; height: 100%; border-radius: 18px; overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
+        .artwork-container { width: 100%; height: 100%; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
         .artwork-container img { width: 100%; height: 100%; object-fit: cover; }
-        body.player-paused .artwork-container { transform: scale(0.9); opacity: 0.7; }
+        body.player-paused .artwork-container { transform: scale(0.92); opacity: 0.8; }
 
         /* INFO Y CONTROLES */
         .controls-wrapper { flex: 1; display: flex; flex-direction: column; min-width: 0; }
         
         .header { 
             display: flex; align-items: center; justify-content: space-between; 
-            font-size: 9px; font-weight: 900; letter-spacing: 2px; 
-            color: var(--accent-color); margin-bottom: 6px;
+            font-size: 8px; font-weight: 900; letter-spacing: 1.5px; 
+            color: var(--accent-color); margin-bottom: 4px;
         }
-        .site-logo { width: 18px; height: 18px; background-color: var(--accent-color); -webkit-mask: url('covers/LOGO.png') no-repeat center/contain; mask: url('covers/LOGO.png') no-repeat center/contain; animation: rotateLogo 10s infinite linear; }
-        .mini-eq { display: flex; align-items: flex-end; gap: 2px; height: 10px; }
-        .eq-bar { width: 2px; background: var(--accent-color); height: 3px; }
+        .site-logo { width: 14px; height: 14px; background-color: var(--accent-color); -webkit-mask: url('covers/LOGO.png') no-repeat center/contain; mask: url('covers/LOGO.png') no-repeat center/contain; }
+        .mini-eq { display: flex; align-items: flex-end; gap: 2px; height: 8px; }
+        .eq-bar { width: 2px; background: var(--accent-color); height: 2px; transition: height 0.1s; }
 
-        .track-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-        .track-title { font-size: 16px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .track-artist { font-size: 11px; opacity: 0.6; }
+        .track-info { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
+        .track-title { font-size: 14px; font-weight: 700; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.2; }
+        .track-artist { font-size: 10.5px; color: rgba(255, 255, 255, 0.6); margin-top: 1px; }
 
-        /* BARRA DE PROGRESO SLIM */
-        .progress-area { margin-bottom: 10px; }
+        /* BARRA DE PROGRESO */
+        .progress-area { margin-bottom: 8px; position: relative; }
         .progress-bar { 
-            -webkit-appearance: none; width: 100%; height: 3px; border-radius: 4px;
-            background: rgba(255,255,255,0.1); outline: none;
+            -webkit-appearance: none; width: 100%; height: 3px; border-radius: 10px;
+            background: rgba(255,255,255,0.1); outline: none; cursor: pointer;
             background-image: linear-gradient(var(--accent-color), var(--accent-color));
             background-size: var(--progress, 0%) 100%; background-repeat: no-repeat;
         }
         .progress-bar::-webkit-slider-thumb { -webkit-appearance: none; width: 0; height: 0; }
-        .time-info { display: flex; justify-content: space-between; margin-top: 4px; font-size: 8px; font-weight: 800; opacity: 0.4; }
+        .time-info { display: flex; justify-content: space-between; margin-top: 4px; font-size: 8px; font-weight: 700; color: rgba(255,255,255,0.4); }
 
-        /* BOTONES */
-        .controls { display: flex; align-items: center; justify-content: space-between; }
-        .btn { background: none!important; border: none!important; cursor: pointer; color: var(--accent-color); transition: 0.2s; display: flex; align-items: center; }
-        .btn svg { width: 18px; height: 18px; fill: currentColor; }
+        /* BOTONES MÁS CERCANOS */
+        .controls { display: flex; align-items: center; justify-content: space-between; padding: 0 4px; }
+        .btn { background: none!important; border: none!important; cursor: pointer; color: #fff; transition: 0.2s; display: flex; align-items: center; opacity: 0.8; }
+        .btn:hover { opacity: 1; transform: scale(1.1); }
+        .btn svg { width: 16px; height: 16px; fill: currentColor; }
+        
         .btn-play { 
-            width: 42px; height: 42px; border-radius: 50%; 
-            background: var(--accent-color)!important; color: #000!important; 
-            justify-content: center; box-shadow: 0 5px 15px var(--accent-glow);
+            width: 38px; height: 38px; border-radius: 50%; 
+            background: #ffffff!important; color: #000!important; 
+            justify-content: center; box-shadow: 0 4px 12px rgba(255,255,255,0.3);
+            opacity: 1!important;
         }
-        .btn-play svg { width: 20px; height: 20px; fill: #000!important; }
-        .btn-secondary { opacity: 0.3; }
-        .btn-secondary.active { opacity: 1; }
+        .btn-play svg { width: 18px; height: 18px; fill: #000!important; }
+        .btn-secondary { opacity: 0.25; }
+        .btn-secondary.active { opacity: 1; color: var(--accent-color); }
+
+        #btn-lyrics svg { width: 14px; height: 14px; }
 
         /* MIXING BADGE */
         .mixing-badge { 
-            position: absolute; top: -8px; left: 20px; 
+            position: absolute; top: -7px; left: 15px; 
             background: var(--accent-color); color: #000; 
-            padding: 2px 8px; border-radius: 8px; 
+            padding: 1px 6px; border-radius: 6px; 
             font-size: 7px; font-weight: 900; 
             opacity: 0; visibility: hidden; transition: 0.3s;
+            box-shadow: 0 2px 8px var(--accent-glow);
         }
         .mixing-badge.active { opacity: 1; visibility: visible; }
     </style>
@@ -138,7 +145,6 @@
     <div class="overlay"></div>
 
     <div class="player-app">
-        <!-- Lyrics Overlay (Ahora posicionado como pestaña superior mediante CSS) -->
         <div id="lyrics-overlay" class="lyrics-overlay">
             <div id="lyrics-content" class="lyrics-content"></div>
         </div>
@@ -155,7 +161,7 @@
         <!-- Controles -->
         <div class="controls-wrapper">
             <div class="header">
-                <div style="display: flex; align-items: center; gap: 6px;">
+                <div style="display: flex; align-items: center; gap: 5px;">
                     <div class="site-logo"></div> V I V E T
                 </div>
                 <div class="mini-eq" id="eq-container">
@@ -165,11 +171,11 @@
             </div>
 
             <div class="track-info">
-                <div class="track-info-animated" id="track-animator" style="min-width: 0;">
+                <div class="track-info-animated" id="track-animator" style="min-width: 0; flex: 1;">
                     <div class="track-title" id="title">Cargando...</div>
                     <div class="track-artist" id="artist">VIVET Music</div>
                 </div>
-                <button class="btn btn-secondary" id="btn-lyrics">
+                <button class="btn btn-secondary" id="btn-lyrics" style="margin-left: 10px;">
                     <svg viewBox="0 0 24 24"><path d="M21 3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-1 16H4c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h16c.55 0 1 .45 1 1v12c0 .55.45-1-1 1zM7 8h10v2H7zm0 4h10v2H7z"/></svg>
                 </button>
             </div>
@@ -196,7 +202,7 @@
     </div>
 
     <script>
-        // EL SCRIPT SIGUE SIENDO 100% EL TUJO, SIN MODIFICAR
+        // Lógica original intacta
         const playlist =[
             { title: "WOH OH OH", artist: "OMAR COURTZ, ROA", cover: "covers/WOH OH OH.jpg", file: "songs/WOH OH OH.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1773772525/WOH_OH_OH_dgjixz.mp4" },
             { title: "444", artist: "YAN BLOCK", cover: "covers/444.jpg", file: "songs/444.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1773772039/444_r0lopi.mp4" },
@@ -219,7 +225,7 @@
 
         const initAudioContext = () => { if (audioCtx) return; audioCtx = new (window.AudioContext || window.webkitAudioContext)(); analyser = audioCtx.createAnalyser(); analyser.fftSize = 64; dataArray = new Uint8Array(analyser.frequencyBinCount); source1 = audioCtx.createMediaElementSource(a1); source2 = audioCtx.createMediaElementSource(a2); source1.connect(analyser); source2.connect(analyser); analyser.connect(audioCtx.destination); drawEQ(); };
 
-        const drawEQ = () => { analyser.getByteFrequencyData(dataArray); document.querySelectorAll('.eq-bar').forEach((bar, i) => bar.style.height = Math.max(3, (dataArray[i * 2] / 255) * 10) + 'px'); document.documentElement.style.setProperty('--beat-scale', 1 + (dataArray[1] / 255 * 0.04)); requestAnimationFrame(drawEQ); };
+        const drawEQ = () => { analyser.getByteFrequencyData(dataArray); document.querySelectorAll('.eq-bar').forEach((bar, i) => bar.style.height = Math.max(2, (dataArray[i * 2] / 255) * 8) + 'px'); document.documentElement.style.setProperty('--beat-scale', 1 + (dataArray[1] / 255 * 0.03)); requestAnimationFrame(drawEQ); };
 
         const parseLRC = lrc => lrc.split('\n').map(l => { const m = l.match(/^\[(\d{2}):(\d{2}(?:\.\d{1,3})?)\](.*)/); return m ? { time: parseInt(m[1]) * 60 + parseFloat(m[2]), text: m[3].trim() || "•••" } : null; }).filter(Boolean).sort((a,b) => a.time - b.time);
 
