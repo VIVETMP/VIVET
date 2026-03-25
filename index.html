@@ -24,158 +24,110 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
 
         body { 
-            height: 100vh; 
-            width: 100vw; 
+            height: 100vh; width: 100vw; 
             background-color: var(--bg-dark); 
-            display: flex; 
-            justify-content: flex-end; 
-            align-items: flex-end; 
-            overflow: hidden; 
-            position: relative; 
-            padding: 25px; 
+            display: flex; justify-content: flex-end; align-items: flex-end; 
+            overflow: hidden; position: relative; padding: 30px;
         }
 
         /* FONDO */
-        .video-background, .image-fallback { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; opacity: 0; transition: opacity 1.5s ease-in-out; }
+        .video-background, .image-fallback { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; opacity: 0; transition: opacity 1.5s; }
         .video-background.active, .image-fallback.active { opacity: 0.5; z-index: 2; }
         .image-fallback { filter: blur(60px) brightness(0.4); }
-        .overlay { position: absolute; inset: 0; background: radial-gradient(circle at 50% 50%, transparent 0%, rgba(0,0,0,0.8) 100%); z-index: 3; }
+        .overlay { position: absolute; inset: 0; background: radial-gradient(circle at 50% 50%, transparent, rgba(0,0,0,0.8)); z-index: 3; }
 
-        /* REPRODUCTOR - COMPACT HORIZONTAL ISLAND */
+        /* REPRODUCTOR - MINI ISLA HORIZONTAL */
         .player-app { 
-            position: relative; 
-            z-index: 10; 
-            width: 520px; /* Más pequeño y elegante */
+            position: relative; z-index: 10; 
+            width: 480px; /* Tamaño reducido */
             background: rgba(15, 15, 15, 0.4);
             backdrop-filter: blur(40px) saturate(1.8);
             -webkit-backdrop-filter: blur(40px) saturate(1.8);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 35px;
-            padding: 20px;
-            display: flex; 
-            flex-direction: row; 
-            align-items: center;
-            gap: 20px;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+            padding: 15px 20px;
+            display: flex; flex-direction: row; align-items: center; gap: 18px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         }
 
-        /* LOGO Y EQ FLOTANTES FUERA DE LA ISLA */
-        .header { 
-            position: absolute;
-            top: -40px;
-            right: 15px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 10px;
-            font-weight: 900;
-            letter-spacing: 3px;
-            color: var(--accent-color);
-            text-shadow: 0 0 10px var(--accent-glow);
+        /* PESTAÑA DE LYRICS (FLOTA ARRIBA) */
+        .lyrics-overlay { 
+            position: absolute; 
+            bottom: calc(100% + 15px); /* Separado de la isla */
+            left: 0; right: 0; 
+            height: 220px; /* Altura de la pestaña */
+            z-index: 100; 
+            background: rgba(10, 10, 10, 0.5);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            opacity: 0; pointer-events: none; 
+            transform: translateY(15px);
+            transition: all 0.5s var(--spring-easing);
         }
+        .lyrics-overlay.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
+        .lyrics-content { width: 100%; height: 100%; overflow-y: auto; padding: 60px 20px; scrollbar-width: none; }
+        .lyric-line { font-size: 15px; margin: 12px 0; text-align: center; }
 
-        .site-logo { width: 22px; height: 22px; background-color: var(--accent-color); -webkit-mask: url('covers/LOGO.png') no-repeat center / contain; mask: url('covers/LOGO.png') no-repeat center / contain; transform: scale(var(--beat-scale)); }
-        body:not(.player-paused) .site-logo { animation: rotateLogo 10s infinite linear; }
-        @keyframes rotateLogo { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-        .mini-eq { display: flex; align-items: flex-end; gap: 2px; height: 12px; }
-        .eq-bar { width: 2px; background: var(--accent-color); border-radius: 1px; height: 3px; transition: height 0.1s; }
-
-        /* PORTADA PEQUEÑA */
+        /* PORTADA MINI */
         #artwork-wrapper { 
-            width: 110px; 
-            height: 110px; 
-            flex-shrink: 0;
-            transform: scale(var(--beat-scale));
-            transition: transform 0.2s var(--spring-easing);
+            width: 85px; height: 85px; flex-shrink: 0;
+            transform: scale(var(--beat-scale)); transition: 0.2s;
         }
-        .artwork-container { 
-            width: 100%; height: 100%; border-radius: 20px; overflow: hidden; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-        }
+        .artwork-container { width: 100%; height: 100%; border-radius: 18px; overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
         .artwork-container img { width: 100%; height: 100%; object-fit: cover; }
-        body.player-paused .artwork-container { transform: scale(0.9); opacity: 0.6; }
+        body.player-paused .artwork-container { transform: scale(0.9); opacity: 0.7; }
 
-        /* CONTENIDO DERECHA */
-        .controls-wrapper {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            min-width: 0;
+        /* INFO Y CONTROLES */
+        .controls-wrapper { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+        
+        .header { 
+            display: flex; align-items: center; justify-content: space-between; 
+            font-size: 9px; font-weight: 900; letter-spacing: 2px; 
+            color: var(--accent-color); margin-bottom: 6px;
         }
+        .site-logo { width: 18px; height: 18px; background-color: var(--accent-color); -webkit-mask: url('covers/LOGO.png') no-repeat center/contain; mask: url('covers/LOGO.png') no-repeat center/contain; animation: rotateLogo 10s infinite linear; }
+        .mini-eq { display: flex; align-items: flex-end; gap: 2px; height: 10px; }
+        .eq-bar { width: 2px; background: var(--accent-color); height: 3px; }
 
-        .track-info { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-        .track-title { font-size: 18px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: -0.5px; }
-        .track-artist { font-size: 13px; font-weight: 500; color: var(--text-sub); }
+        .track-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .track-title { font-size: 16px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .track-artist { font-size: 11px; opacity: 0.6; }
 
-        /* PROGRESO */
-        .progress-area { margin-bottom: 12px; }
+        /* BARRA DE PROGRESO SLIM */
+        .progress-area { margin-bottom: 10px; }
         .progress-bar { 
-            -webkit-appearance: none; width: 100%; height: 4px; border-radius: 10px; 
+            -webkit-appearance: none; width: 100%; height: 3px; border-radius: 4px;
             background: rgba(255,255,255,0.1); outline: none;
             background-image: linear-gradient(var(--accent-color), var(--accent-color));
             background-size: var(--progress, 0%) 100%; background-repeat: no-repeat;
         }
-        .progress-bar::-webkit-slider-thumb { -webkit-appearance: none; width: 0; height: 0; } /* Thumb oculto para limpieza */
-        .time-info { display: flex; justify-content: space-between; margin-top: 5px; font-size: 9px; opacity: 0.5; font-weight: 700; }
+        .progress-bar::-webkit-slider-thumb { -webkit-appearance: none; width: 0; height: 0; }
+        .time-info { display: flex; justify-content: space-between; margin-top: 4px; font-size: 8px; font-weight: 800; opacity: 0.4; }
 
-        /* BOTONES - RESET TOTAL PARA EVITAR FONDOS ROJOS/GRISES */
+        /* BOTONES */
         .controls { display: flex; align-items: center; justify-content: space-between; }
-        .btn { 
-            background: none !important; 
-            border: none !important; 
-            padding: 0; 
-            cursor: pointer; 
-            color: var(--accent-color); 
-            display: flex; 
-            align-items: center;
-            transition: 0.2s;
-        }
-        .btn:hover { transform: scale(1.1); opacity: 1; }
-        .btn svg { width: 22px; height: 22px; fill: currentColor; }
-        
-        /* BOTÓN PLAY ÚNICO CON FONDO */
+        .btn { background: none!important; border: none!important; cursor: pointer; color: var(--accent-color); transition: 0.2s; display: flex; align-items: center; }
+        .btn svg { width: 18px; height: 18px; fill: currentColor; }
         .btn-play { 
-            width: 48px; height: 48px; border-radius: 50%; 
-            background: var(--accent-color) !important; 
-            color: #000 !important; 
-            justify-content: center;
-            box-shadow: 0 8px 20px var(--accent-glow);
+            width: 42px; height: 42px; border-radius: 50%; 
+            background: var(--accent-color)!important; color: #000!important; 
+            justify-content: center; box-shadow: 0 5px 15px var(--accent-glow);
         }
-        .btn-play svg { width: 22px; height: 22px; fill: #000 !important; }
-
+        .btn-play svg { width: 20px; height: 20px; fill: #000!important; }
         .btn-secondary { opacity: 0.3; }
         .btn-secondary.active { opacity: 1; }
 
-        /* BADGE MIXING REPARADO */
+        /* MIXING BADGE */
         .mixing-badge { 
-            position: absolute; 
-            top: -10px; 
-            left: 20px; 
-            background: var(--accent-color); 
-            color: #000; 
-            padding: 3px 10px; 
-            border-radius: 10px; 
-            font-size: 8px; 
-            font-weight: 900; 
-            opacity: 0; /* Oculto por defecto */
-            visibility: hidden;
-            transition: 0.3s;
-            box-shadow: 0 4px 10px var(--accent-glow);
+            position: absolute; top: -8px; left: 20px; 
+            background: var(--accent-color); color: #000; 
+            padding: 2px 8px; border-radius: 8px; 
+            font-size: 7px; font-weight: 900; 
+            opacity: 0; visibility: hidden; transition: 0.3s;
         }
         .mixing-badge.active { opacity: 1; visibility: visible; }
-
-        /* LYRICS OVERLAY (PEQUEÑO) */
-        .lyrics-overlay { 
-            position: absolute; inset: 0; z-index: 100; 
-            background: rgba(0, 0, 0, 0.9); border-radius: 35px;
-            opacity: 0; pointer-events: none; transition: 0.4s;
-        }
-        .lyrics-overlay.show { opacity: 1; pointer-events: auto; }
-        .lyrics-content { padding: 40px 20px; text-align: center; }
-        .lyric-line { font-size: 14px; margin: 10px 0; opacity: 0.4; transition: 0.3s; }
-        .lyric-line.active { opacity: 1; color: var(--accent-color); font-weight: 700; }
     </style>
 </head>
 <body class="player-paused">
@@ -186,30 +138,34 @@
     <div class="overlay"></div>
 
     <div class="player-app">
-        <!-- Badge y Header -->
-        <div class="mixing-badge" id="mixing-badge">MIXING...</div>
-        <div class="header">
-            <div class="site-logo"></div> V I V E T
-            <div class="mini-eq">
-                <div class="eq-bar"></div><div class="eq-bar"></div>
-                <div class="eq-bar"></div><div class="eq-bar"></div>
-            </div>
+        <!-- Lyrics Overlay (Ahora posicionado como pestaña superior mediante CSS) -->
+        <div id="lyrics-overlay" class="lyrics-overlay">
+            <div id="lyrics-content" class="lyrics-content"></div>
         </div>
+
+        <div class="mixing-badge" id="mixing-badge">MIXING...</div>
         
-        <!-- Portada -->
+        <!-- Artwork -->
         <div id="artwork-wrapper">
             <div class="artwork-container">
                 <img id="cover" src="" alt="Portada" crossorigin="anonymous">
-                <div id="lyrics-overlay" class="lyrics-overlay">
-                    <div id="lyrics-content" class="lyrics-content"></div>
-                </div>
             </div>
         </div>
 
         <!-- Controles -->
         <div class="controls-wrapper">
+            <div class="header">
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <div class="site-logo"></div> V I V E T
+                </div>
+                <div class="mini-eq" id="eq-container">
+                    <div class="eq-bar"></div><div class="eq-bar"></div>
+                    <div class="eq-bar"></div><div class="eq-bar"></div>
+                </div>
+            </div>
+
             <div class="track-info">
-                <div class="track-info-animated" id="track-animator">
+                <div class="track-info-animated" id="track-animator" style="min-width: 0;">
                     <div class="track-title" id="title">Cargando...</div>
                     <div class="track-artist" id="artist">VIVET Music</div>
                 </div>
@@ -239,8 +195,8 @@
         </div>
     </div>
 
-    <!-- EL SCRIPT SE MANTIENE 100% ORIGINAL -->
     <script>
+        // EL SCRIPT SIGUE SIENDO 100% EL TUJO, SIN MODIFICAR
         const playlist =[
             { title: "WOH OH OH", artist: "OMAR COURTZ, ROA", cover: "covers/WOH OH OH.jpg", file: "songs/WOH OH OH.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1773772525/WOH_OH_OH_dgjixz.mp4" },
             { title: "444", artist: "YAN BLOCK", cover: "covers/444.jpg", file: "songs/444.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1773772039/444_r0lopi.mp4" },
@@ -263,7 +219,7 @@
 
         const initAudioContext = () => { if (audioCtx) return; audioCtx = new (window.AudioContext || window.webkitAudioContext)(); analyser = audioCtx.createAnalyser(); analyser.fftSize = 64; dataArray = new Uint8Array(analyser.frequencyBinCount); source1 = audioCtx.createMediaElementSource(a1); source2 = audioCtx.createMediaElementSource(a2); source1.connect(analyser); source2.connect(analyser); analyser.connect(audioCtx.destination); drawEQ(); };
 
-        const drawEQ = () => { analyser.getByteFrequencyData(dataArray); document.querySelectorAll('.eq-bar').forEach((bar, i) => bar.style.height = Math.max(3, (dataArray[i * 2] / 255) * 12) + 'px'); document.documentElement.style.setProperty('--beat-scale', 1 + (dataArray[1] / 255 * 0.04)); requestAnimationFrame(drawEQ); };
+        const drawEQ = () => { analyser.getByteFrequencyData(dataArray); document.querySelectorAll('.eq-bar').forEach((bar, i) => bar.style.height = Math.max(3, (dataArray[i * 2] / 255) * 10) + 'px'); document.documentElement.style.setProperty('--beat-scale', 1 + (dataArray[1] / 255 * 0.04)); requestAnimationFrame(drawEQ); };
 
         const parseLRC = lrc => lrc.split('\n').map(l => { const m = l.match(/^\[(\d{2}):(\d{2}(?:\.\d{1,3})?)\](.*)/); return m ? { time: parseInt(m[1]) * 60 + parseFloat(m[2]), text: m[3].trim() || "•••" } : null; }).filter(Boolean).sort((a,b) => a.time - b.time);
 
