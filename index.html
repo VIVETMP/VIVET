@@ -23,140 +23,154 @@
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
 
-        /* POSICIONAMIENTO EN LA ESQUINA INFERIOR DERECHA */
+        /* FONDO Y POSICIONAMIENTO */
         body { 
             height: 100vh; 
             width: 100vw; 
             background-color: var(--bg-dark); 
-            color: var(--text-main); 
             display: flex; 
             justify-content: flex-end; 
             align-items: flex-end; 
             overflow: hidden; 
             position: relative; 
             perspective: 1000px; 
-            padding: 30px;
+            padding: 40px; 
         }
 
         .video-background, .image-fallback { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; opacity: 0; transition: opacity 1.5s ease-in-out, transform 1.5s ease-in-out; animation: bgMovement 20s infinite alternate ease-in-out; }
         @keyframes bgMovement { from { transform: scale(1.1) translate(0, 0); } to { transform: scale(1.2) translate(-1%, -1%); } }
-
         .video-background.active, .image-fallback.active { opacity: 0.5; z-index: 2; }
         .image-fallback { filter: blur(60px) brightness(0.4) saturate(1.4); }
-
         .overlay { position: absolute; inset: 0; background: radial-gradient(circle at 50% 40%, transparent 0%, rgba(0,0,0,0.4) 60%, rgba(0,0,0,0.9) 100%); z-index: 3; }
 
-        /* REPRODUCTOR HORIZONTAL (GLASSMORPHISM) */
+        /* REPRODUCTOR - ESTILO APPLE ISLAND HORIZONTAL */
         .player-app { 
             position: relative; 
             z-index: 10; 
             width: 100%; 
-            max-width: 650px; /* Ancho horizontal */
-            height: auto;
-            padding: 25px; 
+            max-width: 720px; /* Ancho Pro */
+            min-height: 240px;
+            padding: 30px; 
             display: flex; 
-            flex-direction: row; /* Cambio a horizontal */
+            flex-direction: row; /* Alineación Horizontal */
             align-items: center;
-            gap: 25px;
+            gap: 35px; /* Espacio entre portada y controles */
             transition: transform 0.3s ease; 
 
-            /* Estilo Apple Glass */
-            background: rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(40px) saturate(1.8);
-            -webkit-backdrop-filter: blur(40px) saturate(1.8);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: 40px;
-            box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+            background: rgba(10, 10, 10, 0.35);
+            backdrop-filter: blur(50px) saturate(2);
+            -webkit-backdrop-filter: blur(50px) saturate(2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 45px;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.6);
         }
 
-        /* AJUSTE DEL LADO DERECHO (INFO Y CONTROLES) */
+        /* LADO DERECHO: INFO, PROGRESO Y BOTONES */
         .player-app > div:last-child {
             flex: 1;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            min-width: 0;
+            justify-content: space-between;
+            height: 100%;
+            min-width: 0; /* Evita que el texto rompa el layout */
         }
 
-        /* HEADER DENTRO DEL REPRODUCTOR */
+        /* HEADER (LOGO Y EQ) - AHORA FLOTA EN LA PARTE SUPERIOR */
         .header { 
             position: absolute;
             top: -45px;
+            left: 20px;
             right: 20px;
             display: flex; 
-            justify-content: flex-end; 
+            justify-content: space-between; 
             align-items: center; 
-            gap: 12px; 
-            font-size: 10px; 
-            font-weight: 900; 
-            letter-spacing: 3px; 
+            font-size: 11px; 
+            font-weight: 800; 
+            letter-spacing: 4px; 
             color: var(--accent-color); 
             text-transform: uppercase; 
-            text-shadow: 0 0 10px var(--accent-glow); 
+            text-shadow: 0 0 15px var(--accent-glow); 
         }
 
-        .site-logo { width: 24px; height: 24px; background-color: var(--accent-color); -webkit-mask: url('covers/LOGO.png') no-repeat center / contain; mask: url('covers/LOGO.png') no-repeat center / contain; transform: scale(var(--beat-scale)); }
+        .site-logo { width: 30px; height: 30px; background-color: var(--accent-color); -webkit-mask: url('covers/LOGO.png') no-repeat center / contain; mask: url('covers/LOGO.png') no-repeat center / contain; transform: scale(var(--beat-scale)); }
         body:not(.player-paused) .site-logo { animation: rotateLogo 10s infinite linear; }
         @keyframes rotateLogo { from { transform: scale(var(--beat-scale)) rotate(0deg); } to { transform: scale(var(--beat-scale)) rotate(360deg); } }
 
-        .mini-eq { display: flex; align-items: flex-end; gap: 2px; height: 12px; }
-        .eq-bar { width: 2px; background: var(--accent-color); border-radius: 1px; height: 3px; box-shadow: 0 0 5px var(--accent-glow); }
+        .mini-eq { display: flex; align-items: flex-end; gap: 3px; height: 14px; }
+        .eq-bar { flex: 1; background: var(--accent-color); border-radius: 1px; width: 3px; height: 3px; box-shadow: 0 0 8px var(--accent-glow); }
 
-        /* PORTADA MÁS PEQUEÑA */
+        /* PORTADA REDISEÑADA */
         #artwork-wrapper { 
             position: relative; 
-            width: 140px; 
-            height: 140px; 
+            width: 180px; 
+            height: 180px; 
             flex-shrink: 0;
-            margin-bottom: 0; 
             transform: scale(var(--beat-scale)); 
+            transition: transform 0.2s var(--spring-easing);
         }
         
-        .artwork-container { width: 100%; height: 100%; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        body.player-paused .artwork-container { transform: scale(0.9); opacity: 0.8; }
+        .artwork-container { 
+            width: 100%; 
+            height: 100%; 
+            border-radius: 28px; 
+            overflow: hidden; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 30px var(--accent-glow);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .artwork-container img { width: 100%; height: 100%; object-fit: cover; }
+        body.player-paused .artwork-container { transform: scale(0.88); opacity: 0.7; }
 
-        /* LETRAS ADAPTADAS AL FORMATO PEQUEÑO */
+        /* LETRAS EN FORMATO ISLA */
         .lyrics-overlay { 
             position: absolute; 
             inset: 0; 
             z-index: 100; 
-            background: rgba(0, 0, 0, 0.85); 
-            backdrop-filter: blur(20px); 
-            border-radius: 20px;
+            background: rgba(0, 0, 0, 0.9); 
+            backdrop-filter: blur(40px); 
+            border-radius: 45px; /* Sigue la forma del reproductor */
             opacity: 0; 
             pointer-events: none; 
-            transition: 0.4s ease;
+            transition: 0.5s var(--spring-easing);
         }
         .lyrics-overlay.show { opacity: 1; pointer-events: auto; }
-        .lyrics-content { padding: 40px 15px; mask-image: linear-gradient(to bottom, transparent, black 20%, black 80%, transparent); }
-        .lyric-line { font-size: 14px; margin: 15px 0; line-height: 1.3; }
+        .lyrics-content { padding: 80px 40px; }
+        .lyric-line { font-size: 20px; line-height: 1.4; margin: 20px 0; }
 
         /* INFO DE TRACK */
-        .track-info { margin-bottom: 15px; }
-        .track-title { font-size: 18px; font-weight: 800; }
-        .track-artist { font-size: 13px; opacity: 0.8; color: var(--accent-color); }
+        .track-info { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; }
+        .track-title { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
+        .track-artist { font-size: 15px; font-weight: 500; color: var(--text-sub); margin-top: 2px; }
 
-        /* BARRA DE PROGRESO */
-        .progress-area { margin-bottom: 15px; padding: 5px 0; }
-        .progress-bar { height: 4px; }
-        .progress-bar::-webkit-slider-thumb { width: 12px; height: 12px; }
-        .time-info { font-size: 9px; margin-top: 5px; font-weight: 700; }
+        /* PROGRESO PULIDO */
+        .progress-area { margin-bottom: 20px; }
+        .progress-bar { height: 6px; }
+        .progress-bar::-webkit-slider-thumb { opacity: 1; width: 14px; height: 14px; background: #fff; border: 2px solid var(--accent-color); }
+        .time-info { font-size: 10px; font-weight: 700; margin-top: 8px; opacity: 0.6; }
 
-        /* CONTROLES COMPACTOS */
-        .controls { gap: 10px; }
-        .btn svg { width: 22px; height: 22px; }
-        .btn-play { width: 50px; height: 50px; }
-        .btn-play svg { width: 24px; height: 24px; }
-        
+        /* CONTROLES ESPACIADOS */
+        .controls { display: flex; gap: 10px; justify-content: space-between; align-items: center; }
+        .btn svg { width: 28px; height: 28px; transition: 0.3s; }
+        .btn-play { 
+            width: 65px; 
+            height: 65px; 
+            background: var(--accent-color); 
+            color: #000; 
+            box-shadow: 0 10px 25px var(--accent-glow); 
+        }
+        .btn-play svg { width: 30px; height: 30px; }
+
+        /* BADGE DE MEZCLA */
         .mixing-badge { 
             position: absolute; 
-            top: -15px; 
-            left: 25px; 
+            top: -12px; 
+            left: 35px; 
             background: var(--accent-color); 
-            font-size: 8px; 
-            padding: 3px 10px; 
-            border-radius: 10px; 
-            box-shadow: 0 5px 15px var(--accent-glow);
+            color: #000; 
+            padding: 4px 14px; 
+            border-radius: 12px; 
+            font-size: 9px; 
+            font-weight: 900; 
+            box-shadow: 0 5px 15px var(--accent-glow); 
         }
     </style>
 </head>
@@ -167,8 +181,8 @@
     <video id="vid2" class="video-background" crossorigin="anonymous" muted playsinline></video>
     <div class="overlay"></div>
 
+    <!-- EL HTML SE MANTIENE 100% ORIGINAL -->
     <div class="player-app">
-        <!-- HEADER se movió visualmente mediante CSS -->
         <div class="header">
             <div class="mixing-badge" id="mixing-badge">MIXING...</div>
             <div class="site-logo"></div> V I V E T
@@ -219,8 +233,8 @@
         </div>
     </div>
 
+    <!-- EL SCRIPT SE MANTIENE 100% ORIGINAL SIN CAMBIOS -->
     <script>
-        // EL SCRIPT SIGUE SIENDO EXACTAMENTE EL MISMO QUE ENVIASTE
         const playlist =[
             { title: "WOH OH OH", artist: "OMAR COURTZ, ROA", cover: "covers/WOH OH OH.jpg", file: "songs/WOH OH OH.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1773772525/WOH_OH_OH_dgjixz.mp4" },
             { title: "444", artist: "YAN BLOCK", cover: "covers/444.jpg", file: "songs/444.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1773772039/444_r0lopi.mp4" },
