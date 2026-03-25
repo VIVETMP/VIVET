@@ -14,127 +14,139 @@
             --accent-glow: rgba(255, 255, 255, 0.4);
             --bg-dark: #000000;
             --text-main: #ffffff;
-            --text-sub: rgba(255, 255, 255, 0.7);
-            --lyric-inactive: rgba(255, 255, 255, 0.2);
-            --spring-easing: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            --text-sub: rgba(255, 255, 255, 0.6);
+            --spring-easing: cubic-bezier(0.32, 0.72, 0, 1);
             --beat-scale: 1;
             transition: --accent-color 0.8s ease;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
 
         body { 
             height: 100vh; width: 100vw; 
             background-color: var(--bg-dark); 
             display: flex; justify-content: flex-end; align-items: flex-end; 
-            overflow: hidden; position: relative; padding: 25px;
+            overflow: hidden; position: relative; padding: 40px;
         }
 
-        /* FONDO */
-        .video-background, .image-fallback { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; opacity: 0; transition: opacity 1.5s; }
-        .video-background.active, .image-fallback.active { opacity: 0.5; z-index: 2; }
-        .image-fallback { filter: blur(60px) brightness(0.4); }
-        .overlay { position: absolute; inset: 0; background: radial-gradient(circle at 50% 50%, transparent, rgba(0,0,0,0.8)); z-index: 3; }
+        /* FONDO DINÁMICO */
+        .video-background, .image-fallback { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; opacity: 0; transition: opacity 2s ease; }
+        .video-background.active, .image-fallback.active { opacity: 0.55; z-index: 2; }
+        .image-fallback { filter: blur(80px) brightness(0.5); transform: scale(1.1); }
+        .overlay { position: absolute; inset: 0; background: radial-gradient(circle at 50% 100%, transparent, rgba(0,0,0,0.9)); z-index: 3; }
 
-        /* REPRODUCTOR - COMPACTO */
+        /* REPRODUCTOR - APPLE STYLE ISLAND */
         .player-app { 
             position: relative; z-index: 10; 
-            width: 410px; /* Reducido para ser más "isla" */
-            background: rgba(18, 18, 18, 0.6);
-            backdrop-filter: blur(35px) saturate(1.8);
-            -webkit-backdrop-filter: blur(35px) saturate(1.8);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: 28px;
-            padding: 12px 16px;
-            display: flex; flex-direction: row; align-items: center; gap: 14px;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.6);
+            width: 390px; /* Tamaño más compacto y balanceado */
+            background: rgba(25, 25, 25, 0.5);
+            backdrop-filter: blur(45px) saturate(2);
+            -webkit-backdrop-filter: blur(45px) saturate(2);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-top: 1px solid rgba(255, 255, 255, 0.3); /* Brillo superior */
+            border-radius: 32px;
+            padding: 14px;
+            display: flex; flex-direction: row; align-items: center; gap: 16px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.8);
         }
 
-        /* PESTAÑA DE LYRICS */
+        /* LYRICS APPLE STYLE */
         .lyrics-overlay { 
             position: absolute; 
-            bottom: calc(100% + 12px); 
+            bottom: calc(100% + 15px); 
             left: 0; right: 0; 
-            height: 190px; 
+            height: 200px; 
             z-index: 100; 
-            background: rgba(10, 10, 10, 0.6);
+            background: rgba(15, 15, 15, 0.5);
             backdrop-filter: blur(40px);
             -webkit-backdrop-filter: blur(40px);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 24px;
+            border-radius: 30px;
             opacity: 0; pointer-events: none; 
-            transform: translateY(10px);
-            transition: all 0.5s var(--spring-easing);
+            transform: translateY(20px) scale(0.95);
+            transition: all 0.6s var(--spring-easing);
+            /* Máscara de desvanecimiento para las letras */
+            -webkit-mask-image: linear-gradient(to bottom, transparent, black 25%, black 75%, transparent);
+            mask-image: linear-gradient(to bottom, transparent, black 25%, black 75%, transparent);
         }
-        .lyrics-overlay.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
-        .lyrics-content { width: 100%; height: 100%; overflow-y: auto; padding: 40px 15px; scrollbar-width: none; }
-        .lyric-line { font-size: 14px; margin: 10px 0; text-align: center; color: rgba(255,255,255,0.4); transition: 0.3s; }
-        .lyric-line.active { color: #fff; transform: scale(1.05); font-weight: 600; }
+        .lyrics-overlay.show { opacity: 1; pointer-events: auto; transform: translateY(0) scale(1); }
+        .lyrics-content { width: 100%; height: 100%; overflow-y: auto; padding: 50px 25px; scrollbar-width: none; }
+        .lyric-line { 
+            font-size: 16px; font-weight: 800; margin: 15px 0; 
+            text-align: left; color: rgba(255,255,255,0.2); 
+            transition: all 0.4s ease; filter: blur(1px); 
+        }
+        .lyric-line.active { color: #ffffff; filter: blur(0); transform: scale(1.05); }
 
-        /* PORTADA MINI MÁS AJUSTADA */
+        /* ARTWORK */
         #artwork-wrapper { 
-            width: 78px; height: 78px; flex-shrink: 0;
-            transform: scale(var(--beat-scale)); transition: 0.2s;
+            width: 80px; height: 80px; flex-shrink: 0;
+            transform: scale(var(--beat-scale)); transition: 0.3s var(--spring-easing);
         }
-        .artwork-container { width: 100%; height: 100%; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
+        .artwork-container { width: 100%; height: 100%; border-radius: 18px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
         .artwork-container img { width: 100%; height: 100%; object-fit: cover; }
-        body.player-paused .artwork-container { transform: scale(0.92); opacity: 0.8; }
+        body.player-paused .artwork-container { transform: scale(0.9); opacity: 0.7; }
 
-        /* INFO Y CONTROLES */
+        /* INFO CONTROLES */
         .controls-wrapper { flex: 1; display: flex; flex-direction: column; min-width: 0; }
         
         .header { 
             display: flex; align-items: center; justify-content: space-between; 
-            font-size: 8px; font-weight: 900; letter-spacing: 1.5px; 
-            color: var(--accent-color); margin-bottom: 4px;
+            font-size: 9px; font-weight: 900; letter-spacing: 2px; 
+            color: var(--accent-color); margin-bottom: 5px; opacity: 0.8;
         }
-        .site-logo { width: 14px; height: 14px; background-color: var(--accent-color); -webkit-mask: url('covers/LOGO.png') no-repeat center/contain; mask: url('covers/LOGO.png') no-repeat center/contain; }
-        .mini-eq { display: flex; align-items: flex-end; gap: 2px; height: 8px; }
-        .eq-bar { width: 2px; background: var(--accent-color); height: 2px; transition: height 0.1s; }
+        .site-logo { width: 16px; height: 16px; background-color: var(--accent-color); -webkit-mask: url('covers/LOGO.png') no-repeat center/contain; mask: url('covers/LOGO.png') no-repeat center/contain; }
+        .mini-eq { display: flex; align-items: flex-end; gap: 2px; height: 10px; }
+        .eq-bar { width: 2px; background: var(--accent-color); height: 3px; border-radius: 1px; }
 
-        .track-info { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
-        .track-title { font-size: 14px; font-weight: 700; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.2; }
-        .track-artist { font-size: 10.5px; color: rgba(255, 255, 255, 0.6); margin-top: 1px; }
+        .track-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; gap: 8px; }
+        .track-title { font-size: 16px; font-weight: 900; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: -0.3px; }
+        .track-artist { font-size: 11px; font-weight: 600; color: var(--text-sub); margin-top: -1px; }
 
-        /* BARRA DE PROGRESO */
-        .progress-area { margin-bottom: 8px; position: relative; }
+        /* BARRA PROGRESO */
+        .progress-area { margin-bottom: 12px; }
         .progress-bar { 
-            -webkit-appearance: none; width: 100%; height: 3px; border-radius: 10px;
-            background: rgba(255,255,255,0.1); outline: none; cursor: pointer;
+            -webkit-appearance: none; width: 100%; height: 4px; border-radius: 6px;
+            background: rgba(255,255,255,0.1); outline: none;
             background-image: linear-gradient(var(--accent-color), var(--accent-color));
             background-size: var(--progress, 0%) 100%; background-repeat: no-repeat;
         }
         .progress-bar::-webkit-slider-thumb { -webkit-appearance: none; width: 0; height: 0; }
-        .time-info { display: flex; justify-content: space-between; margin-top: 4px; font-size: 8px; font-weight: 700; color: rgba(255,255,255,0.4); }
+        .time-info { display: flex; justify-content: space-between; margin-top: 5px; font-size: 8px; font-weight: 800; color: var(--text-sub); }
 
-        /* BOTONES MÁS CERCANOS */
-        .controls { display: flex; align-items: center; justify-content: space-between; padding: 0 4px; }
-        .btn { background: none!important; border: none!important; cursor: pointer; color: #fff; transition: 0.2s; display: flex; align-items: center; opacity: 0.8; }
-        .btn:hover { opacity: 1; transform: scale(1.1); }
-        .btn svg { width: 16px; height: 16px; fill: currentColor; }
+        /* BOTONES */
+        .controls { display: flex; align-items: center; justify-content: space-between; padding: 0 5px; }
+        .btn { background: none!important; border: none!important; cursor: pointer; color: #fff; transition: 0.2s; display: flex; align-items: center; }
+        .btn:active { transform: scale(0.9); }
+        .btn svg { width: 18px; height: 18px; fill: currentColor; }
         
         .btn-play { 
-            width: 38px; height: 38px; border-radius: 50%; 
+            width: 42px; height: 42px; border-radius: 50%; 
             background: #ffffff!important; color: #000!important; 
-            justify-content: center; box-shadow: 0 4px 12px rgba(255,255,255,0.3);
-            opacity: 1!important;
+            justify-content: center; box-shadow: 0 8px 20px rgba(255,255,255,0.2);
         }
-        .btn-play svg { width: 18px; height: 18px; fill: #000!important; }
-        .btn-secondary { opacity: 0.25; }
+        .btn-play svg { width: 22px; height: 22px; fill: #000!important; }
+        .btn-secondary { opacity: 0.3; }
         .btn-secondary.active { opacity: 1; color: var(--accent-color); }
 
-        #btn-lyrics svg { width: 14px; height: 14px; }
-
-        /* MIXING BADGE */
+        /* BADGE */
         .mixing-badge { 
-            position: absolute; top: -7px; left: 15px; 
+            position: absolute; top: -10px; left: 25px; 
             background: var(--accent-color); color: #000; 
-            padding: 1px 6px; border-radius: 6px; 
-            font-size: 7px; font-weight: 900; 
-            opacity: 0; visibility: hidden; transition: 0.3s;
-            box-shadow: 0 2px 8px var(--accent-glow);
+            padding: 2px 10px; border-radius: 20px; 
+            font-size: 8px; font-weight: 900; 
+            box-shadow: 0 4px 15px var(--accent-glow);
+            opacity: 0; visibility: hidden; transition: 0.4s var(--spring-easing);
         }
-        .mixing-badge.active { opacity: 1; visibility: visible; }
+        .mixing-badge.active { opacity: 1; visibility: visible; transform: translateY(-5px); }
+
+        /* ANIMACIONES */
+        @keyframes bop {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+            100% { transform: translateY(0); }
+        }
+        .track-info-animated.bop-animation { animation: bop 0.4s var(--spring-easing); }
     </style>
 </head>
 <body class="player-paused">
@@ -149,7 +161,7 @@
             <div id="lyrics-content" class="lyrics-content"></div>
         </div>
 
-        <div class="mixing-badge" id="mixing-badge">MIXING...</div>
+        <div class="mixing-badge" id="mixing-badge">MIXING</div>
         
         <!-- Artwork -->
         <div id="artwork-wrapper">
@@ -161,7 +173,7 @@
         <!-- Controles -->
         <div class="controls-wrapper">
             <div class="header">
-                <div style="display: flex; align-items: center; gap: 5px;">
+                <div style="display: flex; align-items: center; gap: 6px;">
                     <div class="site-logo"></div> V I V E T
                 </div>
                 <div class="mini-eq" id="eq-container">
@@ -172,10 +184,10 @@
 
             <div class="track-info">
                 <div class="track-info-animated" id="track-animator" style="min-width: 0; flex: 1;">
-                    <div class="track-title" id="title">Cargando...</div>
-                    <div class="track-artist" id="artist">VIVET Music</div>
+                    <div class="track-title" id="title">Loading...</div>
+                    <div class="track-artist" id="artist">VIVET Premium</div>
                 </div>
-                <button class="btn btn-secondary" id="btn-lyrics" style="margin-left: 10px;">
+                <button class="btn btn-secondary" id="btn-lyrics">
                     <svg viewBox="0 0 24 24"><path d="M21 3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-1 16H4c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h16c.55 0 1 .45 1 1v12c0 .55.45-1-1 1zM7 8h10v2H7zm0 4h10v2H7z"/></svg>
                 </button>
             </div>
@@ -202,7 +214,7 @@
     </div>
 
     <script>
-        // Lógica original intacta
+        // TU LÓGICA INTACTA
         const playlist =[
             { title: "WOH OH OH", artist: "OMAR COURTZ, ROA", cover: "covers/WOH OH OH.jpg", file: "songs/WOH OH OH.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1773772525/WOH_OH_OH_dgjixz.mp4" },
             { title: "444", artist: "YAN BLOCK", cover: "covers/444.jpg", file: "songs/444.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1773772039/444_r0lopi.mp4" },
@@ -225,7 +237,7 @@
 
         const initAudioContext = () => { if (audioCtx) return; audioCtx = new (window.AudioContext || window.webkitAudioContext)(); analyser = audioCtx.createAnalyser(); analyser.fftSize = 64; dataArray = new Uint8Array(analyser.frequencyBinCount); source1 = audioCtx.createMediaElementSource(a1); source2 = audioCtx.createMediaElementSource(a2); source1.connect(analyser); source2.connect(analyser); analyser.connect(audioCtx.destination); drawEQ(); };
 
-        const drawEQ = () => { analyser.getByteFrequencyData(dataArray); document.querySelectorAll('.eq-bar').forEach((bar, i) => bar.style.height = Math.max(2, (dataArray[i * 2] / 255) * 8) + 'px'); document.documentElement.style.setProperty('--beat-scale', 1 + (dataArray[1] / 255 * 0.03)); requestAnimationFrame(drawEQ); };
+        const drawEQ = () => { analyser.getByteFrequencyData(dataArray); document.querySelectorAll('.eq-bar').forEach((bar, i) => bar.style.height = Math.max(3, (dataArray[i * 2] / 255) * 12) + 'px'); document.documentElement.style.setProperty('--beat-scale', 1 + (dataArray[1] / 255 * 0.05)); requestAnimationFrame(drawEQ); };
 
         const parseLRC = lrc => lrc.split('\n').map(l => { const m = l.match(/^\[(\d{2}):(\d{2}(?:\.\d{1,3})?)\](.*)/); return m ? { time: parseInt(m[1]) * 60 + parseFloat(m[2]), text: m[3].trim() || "•••" } : null; }).filter(Boolean).sort((a,b) => a.time - b.time);
 
@@ -240,7 +252,7 @@
 
         const loadLyrics = async (track, dur) => {
             lyricsRequestCount++; let reqId = lyricsRequestCount; currentLyrics = []; activeLyricIndex = -1;
-            const content = document.getElementById('lyrics-content'); content.innerHTML = '<div class="lyric-line" style="opacity:0.5; text-align:center;">Sincronizando...</div>';
+            const content = document.getElementById('lyrics-content'); content.innerHTML = '<div class="lyric-line" style="opacity:0.5; text-align:left;">Sincronizando...</div>';
             let artist = track.artist.split(/,|y|&/)[0].trim(), match = null;
             try {
                 const res = await fetch(`https://lrclib.net/api/get?artist_name=${encodeURIComponent(artist)}&track_name=${encodeURIComponent(track.title)}&duration=${Math.round(dur)}`);
@@ -249,8 +261,8 @@
             } catch(e){}
             if (reqId !== lyricsRequestCount) return;
             if(match?.syncedLyrics) { currentLyrics = parseLRC(match.syncedLyrics); renderLyrics(); } 
-            else if(match?.plainLyrics) { content.innerHTML = ''; match.plainLyrics.split('\n').forEach(l => { const d = document.createElement('div'); d.className = 'lyric-line active'; d.style.color = '#fff'; d.textContent = l || "•••"; content.appendChild(d); }); }
-            else content.innerHTML = '<div class="lyric-line" style="opacity:0.5; text-align:center;">Letra no disponible</div>';
+            else if(match?.plainLyrics) { content.innerHTML = ''; match.plainLyrics.split('\n').forEach(l => { const d = document.createElement('div'); d.className = 'lyric-line active'; d.style.color = '#fff'; d.filter = 'none'; d.textContent = l || "•••"; content.appendChild(d); }); }
+            else content.innerHTML = '<div class="lyric-line" style="opacity:0.5; text-align:left;">Letra no disponible</div>';
         };
 
         const handleAudioTick = (e) => {
