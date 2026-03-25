@@ -36,18 +36,22 @@
         .image-fallback { filter: blur(100px) brightness(0.5); transform: scale(1.1); }
         .overlay { position: absolute; inset: 0; background: radial-gradient(circle at 50% 50%, transparent, rgba(0,0,0,0.8)); z-index: 3; }
 
-        /* ISLA REPRODUCTOR - ALTURA Y ESPACIO OPTIMIZADOS */
+        /* ISLA REPRODUCTOR - GLASSMORPHISM CLARO Y PREMIUM */
         .player-app { 
             position: relative; z-index: 10; 
             width: 490px; 
-            height: 235px; /* Altura generosa para evitar desbordes */
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(60px) saturate(2.2);
-            -webkit-backdrop-filter: blur(60px) saturate(2.2);
+            height: 235px; 
+            background: rgba(255, 255, 255, 0.15); /* Cristal más claro */
+            backdrop-filter: blur(45px) saturate(2.5); /* Más saturación para vibra Apple */
+            -webkit-backdrop-filter: blur(45px) saturate(2.5);
             border-radius: 55px;
-            padding: 35px; /* Padding uniforme */
+            padding: 35px;
             display: flex; flex-direction: row; align-items: center; gap: 30px;
-            box-shadow: 0 50px 120px rgba(0,0,0,0.9);
+            /* Borde físico y brillo interno para definir el cristal */
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            box-shadow: 
+                0 50px 120px rgba(0,0,0,0.8), 
+                inset 0 0 20px rgba(255, 255, 255, 0.1); 
             transform: translateZ(0);
         }
 
@@ -68,14 +72,15 @@
 
         @keyframes rotateBorder { to { --border-angle: 360deg; } }
 
-        /* LYRICS */
+        /* LYRICS - GLASS PREMIUM */
         .lyrics-overlay { 
             position: absolute; 
             bottom: calc(100% + 30px); left: 0; right: 0; 
             height: 260px; z-index: 100; 
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(40px);
-            -webkit-backdrop-filter: blur(40px);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(40px) saturate(2);
+            -webkit-backdrop-filter: blur(40px) saturate(2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 35px;
             opacity: 0; pointer-events: none; 
             transform: translateY(15px);
@@ -85,7 +90,7 @@
         }
         .lyrics-overlay.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
         .lyrics-content { width: 100%; height: 100%; overflow-y: auto; padding: 75px 35px; scrollbar-width: none; }
-        .lyric-line { font-size: 21px; font-weight: 900; margin: 24px 0; text-align: left; color: rgba(255,255,255,0.1); transition: 0.4s; letter-spacing: -0.8px; }
+        .lyric-line { font-size: 21px; font-weight: 900; margin: 24px 0; text-align: left; color: rgba(255,255,255,0.15); transition: 0.4s; letter-spacing: -0.8px; }
         .lyric-line.active { color: #ffffff; transform: scale(1.05); }
 
         /* PORTADA */
@@ -113,7 +118,7 @@
         /* TRACK INFO */
         .track-info { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
         .track-title { font-size: 22px; font-weight: 900; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: -0.8px; line-height: 1.1; }
-        .track-artist { font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.5); margin-top: 4px; }
+        .track-artist { font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.6); margin-top: 4px; }
 
         /* PROGRESO */
         .progress-bar { 
@@ -123,9 +128,9 @@
             background-size: var(--progress, 0%) 100%; background-repeat: no-repeat;
         }
         .progress-bar::-webkit-slider-thumb { -webkit-appearance: none; width: 0; height: 0; }
-        .time-info { display: flex; justify-content: space-between; margin-top: 8px; font-size: 10px; font-weight: 900; color: rgba(255,255,255,0.3); }
+        .time-info { display: flex; justify-content: space-between; margin-top: 8px; font-size: 10px; font-weight: 900; color: rgba(255,255,255,0.4); }
 
-        /* BOTONES - TODOS CON COLOR DE PORTADA */
+        /* BOTONES */
         .controls { display: flex; align-items: center; justify-content: space-between; width: 100%; padding-bottom: 5px; }
         .btn { background: none!important; border: none!important; cursor: pointer; color: var(--accent-1); transition: 0.3s; display: flex; align-items: center; filter: drop-shadow(0 0 8px rgba(0,0,0,0.3)); }
         .btn:hover { transform: scale(1.2); filter: drop-shadow(0 0 12px var(--accent-glow)); }
@@ -215,7 +220,7 @@
     </div>
 
     <script>
-        // PLAYLIST
+        // LA LÓGICA PERMANECE 100% IGUAL
         const playlist =[
             { title: "WOH OH OH", artist: "OMAR COURTZ, ROA", cover: "covers/WOH OH OH.jpg", file: "songs/WOH OH OH.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1773772525/WOH_OH_OH_dgjixz.mp4" },
             { title: "444", artist: "YAN BLOCK", cover: "covers/444.jpg", file: "songs/444.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1773772039/444_r0lopi.mp4" },
