@@ -36,19 +36,19 @@
         .image-fallback { filter: blur(100px) brightness(0.5); transform: scale(1.1); }
         .overlay { position: absolute; inset: 0; background: radial-gradient(circle at 50% 50%, transparent, rgba(0,0,0,0.8)); z-index: 3; }
 
-        /* ISLA REPRODUCTOR - ULTRA TRANSPARENTE 5% */
+        /* ISLA REPRODUCTOR - TAMAÑO REDUCIDO Y MÁS TRANSPARENTE */
         .player-app { 
             position: relative; z-index: 10; 
-            width: 500px; 
-            height: 250px; 
-            background: rgba(255, 255, 255, 0.05); 
-            backdrop-filter: blur(60px) saturate(2.5); 
-            -webkit-backdrop-filter: blur(60px) saturate(2.5);
-            border-radius: 60px;
-            padding: 40px; 
-            display: flex; flex-direction: row; align-items: center; gap: 32px;
-            border: 0.5px solid rgba(255, 255, 255, 0.1); 
-            box-shadow: 0 50px 120px rgba(0,0,0,0.9); 
+            width: 420px; /* Reducido de 500px */
+            height: 190px; /* Reducido de 250px */
+            background: rgba(255, 255, 255, 0.02); /* Más transparente (de 0.05 a 0.02) */
+            backdrop-filter: blur(25px) saturate(1.5); /* Desenfoque reducido para dejar ver más a través del cristal */
+            -webkit-backdrop-filter: blur(25px) saturate(1.5);
+            border-radius: 45px; /* Ajustado al nuevo tamaño */
+            padding: 25px; /* Menos espacio interno para que encaje mejor */
+            display: flex; flex-direction: row; align-items: center; gap: 24px;
+            border: 0.5px solid rgba(255, 255, 255, 0.08); /* Borde un poco más sutil */
+            box-shadow: 0 40px 100px rgba(0,0,0,0.8); 
             transform: translateZ(0);
         }
 
@@ -57,7 +57,7 @@
             content: "";
             position: absolute;
             inset: -2px;
-            border-radius: 62px;
+            border-radius: 47px; /* Ajustado al nuevo borde de 45px de la isla */
             padding: 3.5px;
             background: conic-gradient(from var(--border-angle), var(--accent-1), var(--accent-2), transparent, var(--accent-1));
             -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
@@ -72,13 +72,13 @@
         /* LYRICS */
         .lyrics-overlay { 
             position: absolute; 
-            bottom: calc(100% + 30px); left: 0; right: 0; 
-            height: 260px; z-index: 100; 
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(50px) saturate(2);
-            -webkit-backdrop-filter: blur(50px) saturate(2);
-            border: 0.5px solid rgba(255, 255, 255, 0.1);
-            border-radius: 40px;
+            bottom: calc(100% + 20px); left: 0; right: 0; 
+            height: 220px; z-index: 100; /* Altura ajustada a la nueva escala */
+            background: rgba(255, 255, 255, 0.02); /* Igual de transparente que la isla */
+            backdrop-filter: blur(25px) saturate(1.5);
+            -webkit-backdrop-filter: blur(25px) saturate(1.5);
+            border: 0.5px solid rgba(255, 255, 255, 0.08);
+            border-radius: 35px;
             opacity: 0; pointer-events: none; 
             transform: translateY(15px);
             transition: all 0.7s var(--spring-easing);
@@ -86,16 +86,16 @@
             mask-image: linear-gradient(to bottom, transparent, black 20%, black 80%, transparent);
         }
         .lyrics-overlay.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
-        .lyrics-content { width: 100%; height: 100%; overflow-y: auto; padding: 75px 40px; scrollbar-width: none; }
-        .lyric-line { font-size: 22px; font-weight: 900; margin: 26px 0; text-align: left; color: rgba(255,255,255,0.15); transition: 0.4s; letter-spacing: -0.9px; }
+        .lyrics-content { width: 100%; height: 100%; overflow-y: auto; padding: 50px 30px; scrollbar-width: none; }
+        .lyric-line { font-size: 18px; font-weight: 900; margin: 20px 0; text-align: left; color: rgba(255,255,255,0.15); transition: 0.4s; letter-spacing: -0.9px; }
         .lyric-line.active { color: #ffffff; transform: scale(1.05); }
 
         /* PORTADA */
         #artwork-wrapper { 
-            width: 140px; height: 140px; flex-shrink: 0;
+            width: 110px; height: 110px; flex-shrink: 0; /* Cover más pequeño para entrar en la isla */
             transform: scale(var(--beat-scale)); transition: 0.1s linear;
         }
-        .artwork-container { width: 100%; height: 100%; border-radius: 35px; overflow: hidden; box-shadow: 0 25px 60px rgba(0,0,0,0.7); }
+        .artwork-container { width: 100%; height: 100%; border-radius: 25px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.7); }
         .artwork-container img { width: 100%; height: 100%; object-fit: cover; }
 
         /* CONTENEDOR DERECHO */
@@ -110,12 +110,12 @@
             font-size: 11px; font-weight: 900; letter-spacing: 4px; 
             color: var(--accent-1); margin-bottom: 5px;
         }
-        .site-logo { width: 26px; height: 26px; background-color: var(--accent-1); -webkit-mask: url('covers/LOGO.png') no-repeat center/contain; }
+        .site-logo { width: 22px; height: 22px; background-color: var(--accent-1); -webkit-mask: url('covers/LOGO.png') no-repeat center/contain; }
 
         /* TRACK INFO */
-        .track-info { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
-        .track-title { font-size: 23px; font-weight: 900; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: -0.9px; line-height: 1.1; }
-        .track-artist { font-size: 14px; font-weight: 700; color: rgba(255,255,255,0.6); margin-top: 4px; }
+        .track-info { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+        .track-title { font-size: 19px; font-weight: 900; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: -0.9px; line-height: 1.1; }
+        .track-artist { font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.6); margin-top: 3px; }
 
         /* PROGRESO */
         .progress-bar { 
@@ -125,62 +125,35 @@
             background-size: var(--progress, 0%) 100%; background-repeat: no-repeat;
         }
         .progress-bar::-webkit-slider-thumb { -webkit-appearance: none; width: 0; height: 0; }
-        .time-info { display: flex; justify-content: space-between; margin-top: 8px; font-size: 10px; font-weight: 900; color: rgba(255,255,255,0.4); }
+        .time-info { display: flex; justify-content: space-between; margin-top: 6px; font-size: 10px; font-weight: 900; color: rgba(255,255,255,0.4); }
 
-        /* BOTONES */
-        .controls { display: flex; align-items: center; justify-content: space-between; width: 100%; padding-bottom: 10px; }
+        /* BOTONES - TODOS CON COLOR DE PORTADA */
+        .controls { display: flex; align-items: center; justify-content: space-between; width: 100%; padding-bottom: 5px; }
         .btn { background: none!important; border: none!important; cursor: pointer; color: var(--accent-1); transition: 0.3s; display: flex; align-items: center; }
         .btn:hover { transform: scale(1.25); filter: drop-shadow(0 0 15px var(--accent-glow)); }
-        .btn svg { width: 28px; height: 28px; fill: currentColor; }
+        .btn svg { width: 24px; height: 24px; fill: currentColor; }
         
         .btn-play { 
-            width: 62px; height: 62px; border-radius: 50%; 
+            width: 50px; height: 50px; border-radius: 50%; /* Botón de play escalado al nuevo tamaño */
             background: linear-gradient(135deg, var(--accent-1), var(--accent-2))!important; 
-            color: #000!important; justify-content: center; box-shadow: 0 15px 40px var(--accent-glow);
+            color: #000!important; justify-content: center; box-shadow: 0 10px 30px var(--accent-glow);
         }
-        .btn-play svg { width: 30px; height: 30px; fill: #000!important; }
+        .btn-play svg { width: 24px; height: 24px; fill: #000!important; }
         
         .btn-secondary { opacity: 0.5; }
         .btn-secondary.active { opacity: 1; filter: drop-shadow(0 0 10px var(--accent-glow)); }
 
         .mixing-badge { 
-            position: absolute; top: -20px; left: 50px; 
+            position: absolute; top: -15px; left: 35px; 
             background: var(--accent-1); color: #000; 
             padding: 5px 20px; border-radius: 30px; 
             font-size: 10px; font-weight: 900; opacity: 0; transition: 0.5s;
             box-shadow: 0 10px 25px var(--accent-glow); z-index: 20;
         }
         .mixing-badge.active { opacity: 1; transform: translateY(-5px); }
-
-        /* ESTILOS DE LA INTRO */
-        #intro-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 99999; display: flex; 
-            justify-content: center; align-items: center; flex-direction: column;
-            transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1), visibility 1.5s;
-        }
-        .intro-logo-anim {
-            width: 100px; height: 100px; margin-bottom: 25px;
-            /* Forza el logo a ser blanco puro */
-            filter: brightness(0) invert(1) drop-shadow(0 0 30px rgba(255,255,255,0.4));
-            animation: introPulse 2.5s infinite ease-in-out;
-        }
-        .intro-text-anim {
-            color: white; font-size: 14px; letter-spacing: 15px; font-weight: 100;
-            opacity: 0; animation: introFadeIn 2s forwards 0.5s; text-indent: 15px;
-        }
-        @keyframes introPulse { 0%, 100% { transform: scale(1); opacity: 0.7; } 50% { transform: scale(1.1); opacity: 1; } }
-        @keyframes introFadeIn { to { opacity: 1; letter-spacing: 20px; } }
-        .intro-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
     </style>
 </head>
 <body class="player-paused">
-
-    <!-- PANTALLA DE INTRO -->
-    <div id="intro-screen">
-        <img src="covers/LOGO.png" class="intro-logo-anim">
-        <div class="intro-text-anim">V I V E T</div>
-    </div>
 
     <img id="fallback-bg" class="image-fallback" src="" alt="Fondo">
     <video id="vid1" class="video-background active" crossorigin="anonymous" muted playsinline></video>
@@ -244,6 +217,7 @@
     </div>
 
     <script>
+        // MANTENIENDO TU LÓGICA DE CANCIONES Y CROSSFADE
         const playlist =[
             { title: "WOH OH OH", artist: "OMAR COURTZ, ROA", cover: "covers/WOH OH OH.jpg", file: "songs/WOH OH OH.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1773772525/WOH_OH_OH_dgjixz.mp4" },
             { title: "444", artist: "YAN BLOCK", cover: "covers/444.jpg", file: "songs/444.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1773772039/444_r0lopi.mp4" },
@@ -260,7 +234,7 @@
             { title: "WYA REMIX BLACK AND YELLOW", artist: "J ABDIEL, BLESSD, ANUEL AA, IZAAK y PIRLO", cover: "covers/WYA REMIX BLACK AND YELLOW.jpg", file: "songs/WYA REMIX BLACK AND YELLOW.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1774051011/WYA_REMIX_BLACK_AND_YELLOW_rx98fb.mp4" }
         ];
 
-        let currentIdx = 0, isPlaying = false, isDragging = false, isShuffle = false, isRepeat = false, isCrossfading = false, fadeStartTime = 0, fadingOutAudio = null, fadingInAudio = null, activeLayer = 1, currentLyrics = [], activeLyricIndex = -1, isLyricsVisible = false, lyricsRequestCount = 0, colorCache = {}, audioCtx, analyser, dataArray;
+        let currentIdx = 0, isPlaying = false, isDragging = false, isShuffle = false, isRepeat = false, isCrossfading = false, fadeStartTime = 0, fadingOutAudio = null, fadingInAudio = null, activeLayer = 1, currentLyrics =[], activeLyricIndex = -1, isLyricsVisible = false, lyricsRequestCount = 0, colorCache = {}, audioCtx, analyser, dataArray;
         const CROSSFADE_TIME = 12, a1 = new Audio(), a2 = new Audio(), v1 = document.getElementById('vid1'), v2 = document.getElementById('vid2'), fallbackBg = document.getElementById('fallback-bg'), progressBar = document.getElementById('progress'), timeCurrentEl = document.getElementById('time-current'), timeTotalEl = document.getElementById('time-total'), playBtn = document.getElementById('btn-play'), mixingBadge = document.getElementById('mixing-badge');
         a1.crossOrigin = a2.crossOrigin = "anonymous";
 
@@ -280,7 +254,7 @@
         };
 
         const loadLyrics = async (track, dur) => {
-            lyricsRequestCount++; let reqId = lyricsRequestCount; currentLyrics = []; activeLyricIndex = -1;
+            lyricsRequestCount++; let reqId = lyricsRequestCount; currentLyrics =[]; activeLyricIndex = -1;
             const content = document.getElementById('lyrics-content'); content.innerHTML = '<div class="lyric-line" style="opacity:0.5;">Sincronizando...</div>';
             let artist = track.artist.split(/,|y|&/)[0].trim(), match = null;
             try {
@@ -346,7 +320,7 @@
             img.onload = () => {
                 const cvs = document.createElement('canvas'), ctx = cvs.getContext('2d'); cvs.width = cvs.height = 40; ctx.drawImage(img, 0,0,40,40);
                 const d = ctx.getImageData(0,0,40,40).data; 
-                let candidates = [];
+                let candidates =[];
                 for(let i=0; i<d.length; i+=16) {
                     let r=d[i], g=d[i+1], b=d[i+2];
                     let max=Math.max(r,g,b), min=Math.min(r,g,b), l=(max+min)/510, s=(max-min)/(max||1);
@@ -358,7 +332,7 @@
                 let c2 = candidates.find(c => {
                     let diff = Math.abs(c.rgb[0]-c1[0]) + Math.abs(c.rgb[1]-c1[1]) + Math.abs(c.rgb[2]-c1[2]);
                     return diff > 100;
-                })?.rgb || candidates[candidates.length-1]?.rgb || [120,120,120];
+                })?.rgb || candidates[candidates.length-1]?.rgb ||[120,120,120];
                 document.documentElement.style.setProperty('--accent-1', `rgb(${c1[0]},${c1[1]},${c1[2]})`);
                 document.documentElement.style.setProperty('--accent-2', `rgb(${c2[0]},${c2[1]},${c2[2]})`);
                 document.documentElement.style.setProperty('--accent-glow', `rgba(${c1[0]},${c1[1]},${c1[2]},0.4)`);
@@ -384,13 +358,6 @@
         a1.ontimeupdate = a2.ontimeupdate = handleAudioTick;
         requestAnimationFrame(updateVisualLoop);
         playTrack(currentIdx, true);
-
-        // LÓGICA DE CIERRE DE INTRO
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                document.getElementById('intro-screen').classList.add('intro-hidden');
-            }, 3000); 
-        });
     </script>
 </body>
 </html>
