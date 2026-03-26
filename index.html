@@ -151,9 +151,35 @@
             box-shadow: 0 10px 25px var(--accent-glow); z-index: 20;
         }
         .mixing-badge.active { opacity: 1; transform: translateY(-5px); }
+
+        /* NUEVOS ESTILOS PARA LA ANIMACION DE INTRO (SIN MODIFICAR LO ANTERIOR) */
+        #intro-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 99999; display: flex; 
+            justify-content: center; align-items: center; flex-direction: column;
+            transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1), visibility 1.5s;
+        }
+        .intro-logo-anim {
+            width: 100px; height: 100px; margin-bottom: 25px;
+            filter: drop-shadow(0 0 30px rgba(255,255,255,0.2));
+            animation: introPulse 2.5s infinite ease-in-out;
+        }
+        .intro-text-anim {
+            color: white; font-size: 14px; letter-spacing: 15px; font-weight: 100;
+            opacity: 0; animation: introFadeIn 2s forwards 0.5s; text-indent: 15px;
+        }
+        @keyframes introPulse { 0%, 100% { transform: scale(1); opacity: 0.6; } 50% { transform: scale(1.1); opacity: 1; } }
+        @keyframes introFadeIn { to { opacity: 1; letter-spacing: 20px; } }
+        .intro-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
     </style>
 </head>
 <body class="player-paused">
+
+    <!-- NUEVO: PANTALLA DE INTRO (SIN MODIFICAR EL RESTO DEL HTML) -->
+    <div id="intro-screen">
+        <img src="covers/LOGO.png" class="intro-logo-anim">
+        <div class="intro-text-anim">V I V E T</div>
+    </div>
 
     <img id="fallback-bg" class="image-fallback" src="" alt="Fondo">
     <video id="vid1" class="video-background active" crossorigin="anonymous" muted playsinline></video>
@@ -217,7 +243,7 @@
     </div>
 
     <script>
-        // MANTENIENDO TU LÓGICA DE CANCIONES Y CROSSFADE
+        // MANTENIENDO TU LÓGICA DE CANCIONES Y CROSSFADE (SIN TOCAR NADA)
         const playlist =[
             { title: "WOH OH OH", artist: "OMAR COURTZ, ROA", cover: "covers/WOH OH OH.jpg", file: "songs/WOH OH OH.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1773772525/WOH_OH_OH_dgjixz.mp4" },
             { title: "444", artist: "YAN BLOCK", cover: "covers/444.jpg", file: "songs/444.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1773772039/444_r0lopi.mp4" },
@@ -358,6 +384,13 @@
         a1.ontimeupdate = a2.ontimeupdate = handleAudioTick;
         requestAnimationFrame(updateVisualLoop);
         playTrack(currentIdx, true);
+
+        // NUEVO: DISPARADOR DE LA INTRO (AL FINAL PARA NO INTERFERIR)
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('intro-screen').classList.add('intro-hidden');
+            }, 3000); // 3 segundos de elegancia
+        });
     </script>
 </body>
 </html>
