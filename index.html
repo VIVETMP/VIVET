@@ -40,14 +40,14 @@
         .player-app { 
             position: relative; z-index: 10; 
             width: 500px; 
-            height: 250px; /* Altura aumentada para máximo aire abajo */
-            background: rgba(255, 255, 255, 0.05); /* 5% Opacidad */
-            backdrop-filter: blur(60px) saturate(2.5); /* Desenfoque extremo para lujo */
+            height: 250px; 
+            background: rgba(255, 255, 255, 0.05); 
+            backdrop-filter: blur(60px) saturate(2.5); 
             -webkit-backdrop-filter: blur(60px) saturate(2.5);
             border-radius: 60px;
-            padding: 40px; /* Más espacio interno */
+            padding: 40px; 
             display: flex; flex-direction: row; align-items: center; gap: 32px;
-            border: 0.5px solid rgba(255, 255, 255, 0.1); /* Borde de luz muy fino */
+            border: 0.5px solid rgba(255, 255, 255, 0.1); 
             box-shadow: 0 50px 120px rgba(0,0,0,0.9); 
             transform: translateZ(0);
         }
@@ -127,7 +127,7 @@
         .progress-bar::-webkit-slider-thumb { -webkit-appearance: none; width: 0; height: 0; }
         .time-info { display: flex; justify-content: space-between; margin-top: 8px; font-size: 10px; font-weight: 900; color: rgba(255,255,255,0.4); }
 
-        /* BOTONES - TODOS CON COLOR DE PORTADA */
+        /* BOTONES */
         .controls { display: flex; align-items: center; justify-content: space-between; width: 100%; padding-bottom: 10px; }
         .btn { background: none!important; border: none!important; cursor: pointer; color: var(--accent-1); transition: 0.3s; display: flex; align-items: center; }
         .btn:hover { transform: scale(1.25); filter: drop-shadow(0 0 15px var(--accent-glow)); }
@@ -152,7 +152,7 @@
         }
         .mixing-badge.active { opacity: 1; transform: translateY(-5px); }
 
-        /* NUEVOS ESTILOS PARA LA ANIMACION DE INTRO (SIN MODIFICAR LO ANTERIOR) */
+        /* ESTILOS DE LA INTRO */
         #intro-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; z-index: 99999; display: flex; 
@@ -161,21 +161,22 @@
         }
         .intro-logo-anim {
             width: 100px; height: 100px; margin-bottom: 25px;
-            filter: drop-shadow(0 0 30px rgba(255,255,255,0.2));
+            /* Forza el logo a ser blanco puro */
+            filter: brightness(0) invert(1) drop-shadow(0 0 30px rgba(255,255,255,0.4));
             animation: introPulse 2.5s infinite ease-in-out;
         }
         .intro-text-anim {
             color: white; font-size: 14px; letter-spacing: 15px; font-weight: 100;
             opacity: 0; animation: introFadeIn 2s forwards 0.5s; text-indent: 15px;
         }
-        @keyframes introPulse { 0%, 100% { transform: scale(1); opacity: 0.6; } 50% { transform: scale(1.1); opacity: 1; } }
+        @keyframes introPulse { 0%, 100% { transform: scale(1); opacity: 0.7; } 50% { transform: scale(1.1); opacity: 1; } }
         @keyframes introFadeIn { to { opacity: 1; letter-spacing: 20px; } }
         .intro-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
     </style>
 </head>
 <body class="player-paused">
 
-    <!-- NUEVO: PANTALLA DE INTRO (SIN MODIFICAR EL RESTO DEL HTML) -->
+    <!-- PANTALLA DE INTRO -->
     <div id="intro-screen">
         <img src="covers/LOGO.png" class="intro-logo-anim">
         <div class="intro-text-anim">V I V E T</div>
@@ -243,7 +244,6 @@
     </div>
 
     <script>
-        // MANTENIENDO TU LÓGICA DE CANCIONES Y CROSSFADE (SIN TOCAR NADA)
         const playlist =[
             { title: "WOH OH OH", artist: "OMAR COURTZ, ROA", cover: "covers/WOH OH OH.jpg", file: "songs/WOH OH OH.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1773772525/WOH_OH_OH_dgjixz.mp4" },
             { title: "444", artist: "YAN BLOCK", cover: "covers/444.jpg", file: "songs/444.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1773772039/444_r0lopi.mp4" },
@@ -385,11 +385,11 @@
         requestAnimationFrame(updateVisualLoop);
         playTrack(currentIdx, true);
 
-        // NUEVO: DISPARADOR DE LA INTRO (AL FINAL PARA NO INTERFERIR)
+        // LÓGICA DE CIERRE DE INTRO
         window.addEventListener('load', () => {
             setTimeout(() => {
                 document.getElementById('intro-screen').classList.add('intro-hidden');
-            }, 3000); // 3 segundos de elegancia
+            }, 3000); 
         });
     </script>
 </body>
