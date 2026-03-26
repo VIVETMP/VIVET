@@ -21,7 +21,15 @@
             transition: --accent-1 1.2s ease, --accent-2 1.2s ease;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, sans-serif; -webkit-tap-highlight-color: transparent; }
+        /* OPTIMIZACIÓN: Suavizado de fuentes y legibilidad para aspecto nativo premium */
+        * { 
+            margin: 0; padding: 0; box-sizing: border-box; 
+            font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, sans-serif; 
+            -webkit-tap-highlight-color: transparent; 
+            -webkit-font-smoothing: antialiased; 
+            -moz-osx-font-smoothing: grayscale; 
+            text-rendering: optimizeLegibility;
+        }
 
         body { 
             height: 100vh; width: 100vw; 
@@ -30,27 +38,34 @@
             overflow: hidden; position: relative; padding: 40px;
         }
 
-        /* FONDO */
-        .video-background, .image-fallback { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; opacity: 0; transition: opacity 2s ease; }
+        /* FONDO - OPTIMIZADO PARA ACELERACIÓN POR HARDWARE */
+        .video-background, .image-fallback { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            object-fit: cover; z-index: 1; opacity: 0; transition: opacity 2s ease; 
+            will-change: opacity; /* Optimización de GPU */
+        }
         .video-background.active, .image-fallback.active { opacity: 0.55; z-index: 2; }
         .image-fallback { filter: blur(100px) brightness(0.5); transform: scale(1.1); }
-        .overlay { position: absolute; inset: 0; background: radial-gradient(circle at 50% 50%, transparent, rgba(0,0,0,0.8)); z-index: 3; }
+        .overlay { position: absolute; inset: 0; background: radial-gradient(circle at 50% 50%, transparent, rgba(0,0,0,0.8)); z-index: 3; pointer-events: none; }
 
         /* ISLA REPRODUCTOR - ANCHA, BAJITA Y RESTRINGIDA */
         .player-app { 
             position: relative; z-index: 10; 
-            width: 500px; /* Estirado a lo ancho */
-            height: 120px; /* Aumentado 4px para dar espacio de respiro */
-            background: rgba(255, 255, 255, 0.005); /* Cristal puro (0.5% opacidad) */
-            backdrop-filter: blur(10px) saturate(1.1); /* Desenfoque sutil para mayor claridad */
+            width: 500px; 
+            height: 124px; /* Ajustado para dar espacio perfecto al progress bar */
+            background: rgba(255, 255, 255, 0.005); 
+            backdrop-filter: blur(10px) saturate(1.1); 
             -webkit-backdrop-filter: blur(10px) saturate(1.1);
             border-radius: 34px;
-            padding: 16px 20px; /* Margen estricto de seguridad para que nada toque el borde */
+            padding: 16px 20px; 
             display: flex; flex-direction: row; 
             align-items: center; gap: 16px; 
             border: 0.5px solid rgba(255, 255, 255, 0.05);
             box-shadow: 0 15px 35px rgba(0,0,0,0.5); 
             transform: translateZ(0);
+            
+            /* Animación de entrada de la isla */
+            animation: slideUpPlayer 2.8s cubic-bezier(0.23, 1, 0.32, 1) forwards;
         }
 
         /* LÍNEA RADIANTE CONTINUA */
@@ -85,29 +100,31 @@
             transition: all 0.7s var(--spring-easing);
             -webkit-mask-image: linear-gradient(to bottom, transparent, black 20%, black 80%, transparent);
             mask-image: linear-gradient(to bottom, transparent, black 20%, black 80%, transparent);
+            will-change: opacity, transform; 
         }
         .lyrics-overlay.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
-        .lyrics-content { width: 100%; height: 100%; overflow-y: auto; padding: 18px 25px; scrollbar-width: none; }
+        .lyrics-content { width: 100%; height: 100%; overflow-y: auto; padding: 18px 25px; scrollbar-width: none; overscroll-behavior: contain; }
         .lyric-line { font-size: 13px; font-weight: 900; margin: 12px 0; text-align: left; color: rgba(255,255,255,0.15); transition: 0.4s; letter-spacing: -0.5px; line-height: 1.2; }
         .lyric-line.active { color: #ffffff; transform: scale(1.05); }
 
-        /* PORTADA - (120px alto - 32px padding vertical = 88px exactos) */
+        /* PORTADA */
         #artwork-wrapper { 
-            width: 88px; height: 88px; flex-shrink: 0; 
+            width: 92px; height: 92px; flex-shrink: 0; 
             margin: 0;
             transform: scale(var(--beat-scale)); transition: 0.1s linear;
+            will-change: transform; 
         }
         .artwork-container { width: 100%; height: 100%; border-radius: 16px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
         .artwork-container img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* CONTENEDOR DE CONTROLES - Altura de 88px bloqueada para impedir desbordamiento */
+        /* CONTENEDOR DE CONTROLES */
         .controls-wrapper { 
             flex: 1; display: flex; flex-direction: column; 
-            justify-content: space-between; height: 88px; min-width: 0;
-            overflow: hidden; /* Cierre de seguridad */
+            justify-content: space-between; height: 92px; min-width: 0;
+            /* overflow hidden eliminado para que no corte la barra de progreso */
         }
         
-        /* HEADER VIVET (Altura fijada) */
+        /* HEADER VIVET */
         .header { 
             display: flex; align-items: center; justify-content: space-between; 
             font-size: 8px; font-weight: 900; letter-spacing: 2px; 
@@ -115,35 +132,44 @@
         }
         .site-logo { width: 10px; height: 10px; background-color: var(--accent-1); -webkit-mask: url('covers/LOGO.png') no-repeat center/contain; }
 
-        /* TRACK INFO (Altura ajustada a 28px para que no aplaste el nombre del artista) */
+        /* TRACK INFO */
         .track-info { display: flex; justify-content: space-between; align-items: flex-start; gap: 6px; width: 100%; height: 28px; margin-bottom: 2px; }
         .track-title { font-size: 15px; font-weight: 900; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: -0.5px; line-height: 1; }
         .track-artist { font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.6); margin-top: 4px; line-height: 1; }
 
-        /* PROGRESO (Separado de la info del artista con márgenes) */
-        .progress-area { width: 100%; height: 12px; display: flex; flex-direction: column; justify-content: center; margin-top: 2px; margin-bottom: 4px; }
+        /* PROGRESO - Solucionado y siempre visible */
+        .progress-area { width: 100%; height: auto; display: flex; flex-direction: column; justify-content: center; margin-top: 2px; margin-bottom: 4px; }
         .progress-bar { 
-            -webkit-appearance: none; width: 100%; height: 3px; border-radius: 10px;
-            background: rgba(255,255,255,0.15); outline: none; margin: 0;
+            -webkit-appearance: none; appearance: none; /* Crucial para mostrar la barra en todos los navegadores */
+            width: 100%; height: 4.5px; border-radius: 10px;
+            background-color: rgba(255,255,255,0.2); outline: none; margin: 0;
             background-image: linear-gradient(90deg, var(--accent-1), var(--accent-2));
             background-size: var(--progress, 0%) 100%; background-repeat: no-repeat;
+            cursor: pointer;
         }
-        .progress-bar::-webkit-slider-thumb { -webkit-appearance: none; width: 0; height: 0; }
+        .progress-bar::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 0; height: 0; }
+        .progress-bar::-moz-range-thumb { width: 0; height: 0; border: none; background: transparent; }
+
         .time-info { display: flex; justify-content: space-between; margin-top: 4px; font-size: 8px; font-weight: 900; color: rgba(255,255,255,0.4); line-height: 1; }
 
-        /* BOTONES - Altura fijada en 28px para que encaje a la perfección matemáticamente */
+        /* BOTONES */
         .controls { 
             display: flex; align-items: center; 
-            justify-content: center; /* Centrados juntos */
-            gap: 14px; /* Separación uniforme y controlada */
+            justify-content: center; 
+            gap: 14px; 
             width: 100%; height: 28px; 
         }
-        .btn { background: none!important; border: none!important; cursor: pointer; color: var(--accent-1); transition: 0.3s; display: flex; align-items: center; justify-content: center; padding: 0; }
+        .btn { 
+            background: none!important; border: none!important; cursor: pointer; 
+            color: var(--accent-1); transition: 0.3s; display: flex; 
+            align-items: center; justify-content: center; padding: 0; 
+            touch-action: manipulation; 
+        }
         .btn:hover { transform: scale(1.15); filter: drop-shadow(0 0 10px var(--accent-glow)); } 
         .btn svg { width: 15px; height: 15px; fill: currentColor; }
         
         .btn-play { 
-            width: 28px; height: 28px; border-radius: 50%; /* Play exactamente de 28px, imposible salirse */
+            width: 28px; height: 28px; border-radius: 50%; 
             background: linear-gradient(135deg, var(--accent-1), var(--accent-2))!important; 
             color: #000!important; box-shadow: 0 4px 12px var(--accent-glow); 
         }
@@ -160,11 +186,60 @@
             box-shadow: 0 5px 10px var(--accent-glow); z-index: 20;
         }
         .mixing-badge.active { opacity: 1; transform: translate(-50%, -3px); }
+
+        /* ==========================================================
+           ANIMACIÓN SPLASH SCREEN 
+           ========================================================== */
+        
+        .splash-screen {
+            position: fixed;
+            inset: 0;
+            background-color: #000000;
+            z-index: 999999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: fadeOutSplash 2.5s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+            pointer-events: none; 
+        }
+
+        .splash-logo {
+            width: 100px;
+            height: 100px;
+            background-color: #ffffff; 
+            -webkit-mask: url('covers/LOGO.png') no-repeat center/contain;
+            mask: url('covers/LOGO.png') no-repeat center/contain;
+            animation: logoIntro 2s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+        }
+
+        @keyframes logoIntro {
+            0% { transform: scale(0.6); opacity: 0; filter: drop-shadow(0 0 0px rgba(255,255,255,0)); }
+            40% { transform: scale(1.05); opacity: 1; filter: drop-shadow(0 0 25px rgba(255,255,255,0.6)); }
+            70% { transform: scale(1); opacity: 1; filter: drop-shadow(0 0 15px rgba(255,255,255,0.3)); }
+            100% { transform: scale(1.8); opacity: 0; filter: drop-shadow(0 0 0px rgba(255,255,255,0)); }
+        }
+
+        @keyframes fadeOutSplash {
+            0% { opacity: 1; visibility: visible; }
+            75% { opacity: 1; visibility: visible; }
+            100% { opacity: 0; visibility: hidden; }
+        }
+
+        @keyframes slideUpPlayer {
+            0% { transform: translateY(60px) translateZ(0); opacity: 0; }
+            60% { transform: translateY(60px) translateZ(0); opacity: 0; }
+            100% { transform: translateY(0) translateZ(0); opacity: 1; }
+        }
     </style>
 </head>
 <body class="player-paused">
 
-    <img id="fallback-bg" class="image-fallback" src="" alt="Fondo">
+    <!-- PANTALLA DE CARGA INICIAL -->
+    <div class="splash-screen">
+        <div class="splash-logo"></div>
+    </div>
+
+    <img id="fallback-bg" class="image-fallback" src="" alt="Fondo" decoding="async">
     <video id="vid1" class="video-background active" crossorigin="anonymous" muted playsinline></video>
     <video id="vid2" class="video-background" crossorigin="anonymous" muted playsinline></video>
     <div class="overlay"></div>
@@ -178,7 +253,7 @@
         
         <div id="artwork-wrapper">
             <div class="artwork-container">
-                <img id="cover" src="" crossorigin="anonymous">
+                <img id="cover" src="" crossorigin="anonymous" decoding="async">
             </div>
         </div>
 
@@ -226,6 +301,7 @@
     </div>
 
     <script>
+        // CÓDIGO JS OPTIMIZADO (Legible, Limpio y sin modificar funcionamiento)
         const playlist =[
             { title: "WOH OH OH", artist: "OMAR COURTZ, ROA", cover: "covers/WOH OH OH.jpg", file: "songs/WOH OH OH.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1773772525/WOH_OH_OH_dgjixz.mp4" },
             { title: "444", artist: "YAN BLOCK", cover: "covers/444.jpg", file: "songs/444.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1773772039/444_r0lopi.mp4" },
@@ -243,105 +319,278 @@
             { title: "GANAS", artist: "KRIS R", cover: "covers/GANAS.jpg", file: "songs/GANAS.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1774550862/GANAS_h8pqaj.mp4" }
         ];
 
-        let currentIdx = 0, isPlaying = false, isDragging = false, isShuffle = false, isRepeat = false, isCrossfading = false, fadeStartTime = 0, fadingOutAudio = null, fadingInAudio = null, activeLayer = 1, currentLyrics =[], activeLyricIndex = -1, isLyricsVisible = false, lyricsRequestCount = 0, colorCache = {}, audioCtx, analyser, dataArray;
-        const CROSSFADE_TIME = 12, a1 = new Audio(), a2 = new Audio(), v1 = document.getElementById('vid1'), v2 = document.getElementById('vid2'), fallbackBg = document.getElementById('fallback-bg'), progressBar = document.getElementById('progress'), timeCurrentEl = document.getElementById('time-current'), timeTotalEl = document.getElementById('time-total'), playBtn = document.getElementById('btn-play'), mixingBadge = document.getElementById('mixing-badge');
-        a1.crossOrigin = a2.crossOrigin = "anonymous";
+        let currentIdx = 0, isPlaying = false, isDragging = false, isShuffle = false, isRepeat = false, isCrossfading = false;
+        let fadeStartTime = 0, fadingOutAudio = null, fadingInAudio = null, activeLayer = 1;
+        let currentLyrics =[], activeLyricIndex = -1, isLyricsVisible = false, lyricsRequestCount = 0;
+        let colorCache = {}, audioCtx, analyser, dataArray;
+        
+        const CROSSFADE_TIME = 12;
+        const a1 = new Audio();
+        const a2 = new Audio();
+        const v1 = document.getElementById('vid1');
+        const v2 = document.getElementById('vid2');
+        const fallbackBg = document.getElementById('fallback-bg');
+        const progressBar = document.getElementById('progress');
+        const timeCurrentEl = document.getElementById('time-current');
+        const timeTotalEl = document.getElementById('time-total');
+        const playBtn = document.getElementById('btn-play');
+        const mixingBadge = document.getElementById('mixing-badge');
+        
+        a1.crossOrigin = "anonymous";
+        a2.crossOrigin = "anonymous";
 
-        const initAudioContext = () => { if (audioCtx) return; audioCtx = new (window.AudioContext || window.webkitAudioContext)(); analyser = audioCtx.createAnalyser(); analyser.fftSize = 64; dataArray = new Uint8Array(analyser.frequencyBinCount); const s1 = audioCtx.createMediaElementSource(a1); const s2 = audioCtx.createMediaElementSource(a2); s1.connect(analyser); s2.connect(analyser); analyser.connect(audioCtx.destination); drawEQ(); };
+        const initAudioContext = () => { 
+            if (audioCtx) return; 
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)(); 
+            analyser = audioCtx.createAnalyser(); 
+            analyser.fftSize = 64; 
+            dataArray = new Uint8Array(analyser.frequencyBinCount); 
+            
+            const s1 = audioCtx.createMediaElementSource(a1); 
+            const s2 = audioCtx.createMediaElementSource(a2); 
+            
+            s1.connect(analyser); 
+            s2.connect(analyser); 
+            analyser.connect(audioCtx.destination); 
+            
+            drawEQ(); 
+        };
 
-        const drawEQ = () => { analyser.getByteFrequencyData(dataArray); document.documentElement.style.setProperty('--beat-scale', 1 + (dataArray[1] / 255 * 0.08)); requestAnimationFrame(drawEQ); };
+        const drawEQ = () => { 
+            analyser.getByteFrequencyData(dataArray); 
+            document.documentElement.style.setProperty('--beat-scale', 1 + (dataArray[1] / 255 * 0.08)); 
+            requestAnimationFrame(drawEQ); 
+        };
 
-        const parseLRC = lrc => lrc.split('\n').map(l => { const m = l.match(/^\[(\d{2}):(\d{2}(?:\.\d{1,3})?)\](.*)/); return m ? { time: parseInt(m[1]) * 60 + parseFloat(m[2]), text: m[3].trim() || "•••" } : null; }).filter(Boolean).sort((a,b) => a.time - b.time);
+        const parseLRC = lrc => {
+            return lrc.split('\n').map(l => { 
+                const m = l.match(/^\[(\d{2}):(\d{2}(?:\.\d{1,3})?)\](.*)/); 
+                return m ? { time: parseInt(m[1]) * 60 + parseFloat(m[2]), text: m[3].trim() || "•••" } : null; 
+            }).filter(Boolean).sort((a,b) => a.time - b.time);
+        };
 
-        const renderLyrics = () => { const c = document.getElementById('lyrics-content'); c.innerHTML = ''; currentLyrics.forEach((l, i) => { const d = document.createElement('div'); d.className = 'lyric-line'; d.textContent = l.text; d.id = `lyric-${i}`; d.onclick = () => { let a = activeLayer === 1 ? a1 : a2; if(a.duration) a.currentTime = l.time; }; c.appendChild(d); }); };
+        const renderLyrics = () => { 
+            const c = document.getElementById('lyrics-content'); 
+            c.innerHTML = ''; 
+            
+            currentLyrics.forEach((l, i) => { 
+                const d = document.createElement('div'); 
+                d.className = 'lyric-line'; 
+                d.textContent = l.text; 
+                d.id = `lyric-${i}`; 
+                d.onclick = () => { 
+                    let a = activeLayer === 1 ? a1 : a2; 
+                    if(a.duration) a.currentTime = l.time; 
+                }; 
+                c.appendChild(d); 
+            }); 
+        };
 
         const updateLyricsScroll = () => {
-            const container = document.getElementById('lyrics-content'), activeEl = document.getElementById(`lyric-${activeLyricIndex}`);
+            const container = document.getElementById('lyrics-content');
+            const activeEl = document.getElementById(`lyric-${activeLyricIndex}`);
+            
             if (activeLyricIndex < 0 || !isLyricsVisible || !activeEl) return;
-            document.querySelectorAll('.lyric-line').forEach((el, i) => el.classList.toggle('active', i === activeLyricIndex));
-            container.scrollTo({ top: activeEl.offsetTop - (container.clientHeight * 0.45), behavior: 'smooth' });
+            
+            document.querySelectorAll('.lyric-line').forEach((el, i) => {
+                el.classList.toggle('active', i === activeLyricIndex);
+            });
+            
+            container.scrollTo({ 
+                top: activeEl.offsetTop - (container.clientHeight * 0.45), 
+                behavior: 'smooth' 
+            });
         };
 
         const loadLyrics = async (track, dur) => {
-            lyricsRequestCount++; let reqId = lyricsRequestCount; currentLyrics =[]; activeLyricIndex = -1;
-            const content = document.getElementById('lyrics-content'); content.innerHTML = '<div class="lyric-line" style="opacity:0.5;">Sincronizando...</div>';
-            let artist = track.artist.split(/,|y|&/)[0].trim(), match = null;
+            lyricsRequestCount++; 
+            let reqId = lyricsRequestCount; 
+            currentLyrics =[]; 
+            activeLyricIndex = -1;
+            
+            const content = document.getElementById('lyrics-content'); 
+            content.innerHTML = '<div class="lyric-line" style="opacity:0.5;">Sincronizando...</div>';
+            
+            let artist = track.artist.split(/,|y|&/)[0].trim();
+            let match = null;
+            
             try {
                 const res = await fetch(`https://lrclib.net/api/get?artist_name=${encodeURIComponent(artist)}&track_name=${encodeURIComponent(track.title)}&duration=${Math.round(dur)}`);
                 if(res.ok) match = await res.json();
-            } catch(e){}
+            } catch(e) {}
+            
             if (reqId !== lyricsRequestCount) return;
-            if(match?.syncedLyrics) { currentLyrics = parseLRC(match.syncedLyrics); renderLyrics(); } 
-            else content.innerHTML = '<div class="lyric-line" style="opacity:0.5;">Letra no disponible</div>';
+            
+            if(match?.syncedLyrics) { 
+                currentLyrics = parseLRC(match.syncedLyrics); 
+                renderLyrics(); 
+            } else {
+                content.innerHTML = '<div class="lyric-line" style="opacity:0.5;">Letra no disponible</div>';
+            }
         };
 
         const handleAudioTick = (e) => {
-            let a = activeLayer === 1 ? a1 : a2, v = activeLayer === 1 ? v1 : v2;
-            if (e.target === a && !isDragging && v.src && Math.abs(a.currentTime - v.currentTime) > 0.3) v.currentTime = a.currentTime;
-            if (e.target === a && !isCrossfading && a.duration && (a.duration - a.currentTime <= CROSSFADE_TIME)) startAutomaticCrossfade();
+            let a = activeLayer === 1 ? a1 : a2;
+            let v = activeLayer === 1 ? v1 : v2;
+            
+            if (e.target === a && !isDragging && v.src && Math.abs(a.currentTime - v.currentTime) > 0.3) {
+                v.currentTime = a.currentTime;
+            }
+            
+            if (e.target === a && !isCrossfading && a.duration && (a.duration - a.currentTime <= CROSSFADE_TIME)) {
+                startAutomaticCrossfade();
+            }
+            
             if (isCrossfading && fadingOutAudio && fadingInAudio) {
                 let p = Math.min((Date.now() - fadeStartTime) / 1000 / CROSSFADE_TIME, 1);
-                fadingOutAudio.volume = Math.cos(p * 0.5 * Math.PI); fadingInAudio.volume = Math.sin(p * 0.5 * Math.PI);
-                if (p >= 1) { fadingOutAudio.pause(); fadingOutAudio.volume = 0; isCrossfading = false; mixingBadge.classList.remove('active'); fadingOutAudio = fadingInAudio = null; }
+                fadingOutAudio.volume = Math.cos(p * 0.5 * Math.PI); 
+                fadingInAudio.volume = Math.sin(p * 0.5 * Math.PI);
+                
+                if (p >= 1) { 
+                    fadingOutAudio.pause(); 
+                    fadingOutAudio.volume = 0; 
+                    isCrossfading = false; 
+                    mixingBadge.classList.remove('active'); 
+                    fadingOutAudio = fadingInAudio = null; 
+                }
             }
         };
 
         const updateVisualLoop = () => {
             let a = activeLayer === 1 ? a1 : a2;
+            
             if (a.duration && !isDragging) {
                 let pct = (a.currentTime / a.duration) * 100;
-                progressBar.value = pct; progressBar.style.setProperty('--progress', `${pct}%`);
-                timeCurrentEl.textContent = formatTime(a.currentTime); timeTotalEl.textContent = formatTime(a.duration);
+                progressBar.value = pct; 
+                progressBar.style.setProperty('--progress', `${pct}%`);
+                
+                timeCurrentEl.textContent = formatTime(a.currentTime); 
+                timeTotalEl.textContent = formatTime(a.duration);
+                
                 let idx = currentLyrics.findIndex((l, i) => a.currentTime >= l.time - 0.1 && (!currentLyrics[i+1] || a.currentTime < currentLyrics[i+1].time));
-                if (idx !== -1 && idx !== activeLyricIndex) { activeLyricIndex = idx; updateLyricsScroll(); }
+                
+                if (idx !== -1 && idx !== activeLyricIndex) { 
+                    activeLyricIndex = idx; 
+                    updateLyricsScroll(); 
+                }
             }
             requestAnimationFrame(updateVisualLoop);
         };
 
         const playTrack = (idx, manual = true) => {
-            isCrossfading = false; mixingBadge.classList.remove('active'); if(fadingOutAudio) fadingOutAudio.pause();
-            let nL = activeLayer === 1 ? 2 : 1, cA = activeLayer === 1 ? a1 : a2, nA = nL === 1 ? a1 : a2, nV = nL === 1 ? v1 : v2, t = playlist[idx];
-            currentIdx = idx; nA.src = t.file; nV.src = t.video || ""; nA.currentTime = 0;
+            isCrossfading = false; 
+            mixingBadge.classList.remove('active'); 
+            
+            if(fadingOutAudio) fadingOutAudio.pause();
+            
+            let nL = activeLayer === 1 ? 2 : 1;
+            let cA = activeLayer === 1 ? a1 : a2;
+            let nA = nL === 1 ? a1 : a2;
+            let nV = nL === 1 ? v1 : v2;
+            let t = playlist[idx];
+            
+            currentIdx = idx; 
+            nA.src = t.file; 
+            nV.src = t.video || ""; 
+            nA.currentTime = 0;
+            
             updateUI(t, nL);
-            if(manual) { cA.pause(); cA.volume = 0; nA.volume = 1; if(isPlaying) { nA.play(); if(t.video) nV.play(); } activeLayer = nL; }
+            
+            if(manual) { 
+                cA.pause(); 
+                cA.volume = 0; 
+                nA.volume = 1; 
+                if(isPlaying) { 
+                    nA.play(); 
+                    if(t.video) nV.play(); 
+                } 
+                activeLayer = nL; 
+            }
         };
 
         const startAutomaticCrossfade = () => {
-            isCrossfading = true; mixingBadge.classList.add('active'); fadeStartTime = Date.now();
+            isCrossfading = true; 
+            mixingBadge.classList.add('active'); 
+            fadeStartTime = Date.now();
+            
             let nIdx = isShuffle ? Math.floor(Math.random() * playlist.length) : (currentIdx + 1) % playlist.length;
-            let nL = activeLayer === 1 ? 2 : 1, t = playlist[nIdx];
-            fadingOutAudio = activeLayer === 1 ? a1 : a2; fadingInAudio = nL === 1 ? a1 : a2;
-            let nV = nL === 1 ? v1 : v2; fadingInAudio.src = t.file; fadingInAudio.volume = 0; 
-            if(t.video) { nV.src = t.video; nV.load(); nV.play(); }
-            fadingInAudio.play(); currentIdx = nIdx; activeLayer = nL; updateUI(t, nL);
+            let nL = activeLayer === 1 ? 2 : 1;
+            let t = playlist[nIdx];
+            
+            fadingOutAudio = activeLayer === 1 ? a1 : a2; 
+            fadingInAudio = nL === 1 ? a1 : a2;
+            let nV = nL === 1 ? v1 : v2; 
+            
+            fadingInAudio.src = t.file; 
+            fadingInAudio.volume = 0; 
+            
+            if(t.video) { 
+                nV.src = t.video; 
+                nV.load(); 
+                nV.play(); 
+            }
+            
+            fadingInAudio.play(); 
+            currentIdx = nIdx; 
+            activeLayer = nL; 
+            updateUI(t, nL);
         };
 
         const updateUI = (t, L) => {
-            document.getElementById('title').textContent = t.title; document.getElementById('artist').textContent = t.artist; document.getElementById('cover').src = t.cover;
-            let a = L === 1 ? a1 : a2, ck = setInterval(() => { if(a.duration) { clearInterval(ck); loadLyrics(t, a.duration); } }, 100);
-            if(t.video) { fallbackBg.classList.remove('active'); (L === 1 ? v1 : v2).classList.add('active'); (L === 1 ? v2 : v1).classList.remove('active'); }
-            else { v1.classList.remove('active'); v2.classList.remove('active'); fallbackBg.src = t.cover; fallbackBg.classList.add('active'); }
+            document.getElementById('title').textContent = t.title; 
+            document.getElementById('artist').textContent = t.artist; 
+            document.getElementById('cover').src = t.cover;
+            
+            let a = L === 1 ? a1 : a2;
+            let ck = setInterval(() => { 
+                if(a.duration) { 
+                    clearInterval(ck); 
+                    loadLyrics(t, a.duration); 
+                } 
+            }, 100);
+            
+            if(t.video) { 
+                fallbackBg.classList.remove('active'); 
+                (L === 1 ? v1 : v2).classList.add('active'); 
+                (L === 1 ? v2 : v1).classList.remove('active'); 
+            } else { 
+                v1.classList.remove('active'); 
+                v2.classList.remove('active'); 
+                fallbackBg.src = t.cover; 
+                fallbackBg.classList.add('active'); 
+            }
             extractColors(t.cover);
         };
 
         const extractColors = (src) => {
-            const img = new Image(); img.crossOrigin = "Anonymous"; img.src = src;
+            const img = new Image(); 
+            img.crossOrigin = "Anonymous"; 
+            img.src = src;
+            
             img.onload = () => {
-                const cvs = document.createElement('canvas'), ctx = cvs.getContext('2d'); cvs.width = cvs.height = 40; ctx.drawImage(img, 0,0,40,40);
-                const d = ctx.getImageData(0,0,40,40).data; 
+                const cvs = document.createElement('canvas');
+                const ctx = cvs.getContext('2d'); 
+                cvs.width = cvs.height = 40; 
+                ctx.drawImage(img, 0, 0, 40, 40);
+                
+                const d = ctx.getImageData(0, 0, 40, 40).data; 
                 let candidates =[];
+                
                 for(let i=0; i<d.length; i+=16) {
-                    let r=d[i], g=d[i+1], b=d[i+2];
-                    let max=Math.max(r,g,b), min=Math.min(r,g,b), l=(max+min)/510, s=(max-min)/(max||1);
+                    let r = d[i], g = d[i+1], b = d[i+2];
+                    let max = Math.max(r,g,b), min = Math.min(r,g,b);
+                    let l = (max+min)/510, s = (max-min)/(max||1);
                     let score = s * (1 - Math.abs(0.5 - l));
                     if(l > 0.15 && l < 0.85) candidates.push({rgb:[r,g,b], score, s});
                 }
+                
                 candidates.sort((a,b) => b.score - a.score);
-                let c1 = candidates[0]?.rgb ||[255,255,255];
+                let c1 = candidates[0]?.rgb ||[255, 255, 255];
                 let c2 = candidates.find(c => {
                     let diff = Math.abs(c.rgb[0]-c1[0]) + Math.abs(c.rgb[1]-c1[1]) + Math.abs(c.rgb[2]-c1[2]);
                     return diff > 100;
-                })?.rgb || candidates[candidates.length-1]?.rgb ||[120,120,120];
+                })?.rgb || candidates[candidates.length-1]?.rgb ||[120, 120, 120];
+                
                 document.documentElement.style.setProperty('--accent-1', `rgb(${c1[0]},${c1[1]},${c1[2]})`);
                 document.documentElement.style.setProperty('--accent-2', `rgb(${c2[0]},${c2[1]},${c2[2]})`);
                 document.documentElement.style.setProperty('--accent-glow', `rgba(${c1[0]},${c1[1]},${c1[2]},0.4)`);
@@ -351,19 +600,57 @@
         const formatTime = s => isNaN(s) ? "0:00" : `${Math.floor(s/60)}:${Math.floor(s%60).toString().padStart(2,'0')}`;
 
         playBtn.onclick = () => {
-            initAudioContext(); if (audioCtx.state === 'suspended') audioCtx.resume();
-            if(isPlaying) { a1.pause(); a2.pause(); v1.pause(); v2.pause(); document.body.classList.add('player-paused'); }
-            else { if(a1.volume > 0) a1.play(); if(a2.volume > 0) a2.play(); if(playlist[currentIdx].video) (activeLayer===1?v1:v2).play(); document.body.classList.remove('player-paused'); }
-            isPlaying = !isPlaying; document.getElementById('icon-play').style.display = isPlaying ? 'none' : 'block'; document.getElementById('icon-pause').style.display = isPlaying ? 'block' : 'none';
+            initAudioContext(); 
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            
+            if(isPlaying) { 
+                a1.pause(); 
+                a2.pause(); 
+                v1.pause(); 
+                v2.pause(); 
+                document.body.classList.add('player-paused'); 
+            } else { 
+                if(a1.volume > 0) a1.play(); 
+                if(a2.volume > 0) a2.play(); 
+                if(playlist[currentIdx].video) (activeLayer === 1 ? v1 : v2).play(); 
+                document.body.classList.remove('player-paused'); 
+            }
+            
+            isPlaying = !isPlaying; 
+            document.getElementById('icon-play').style.display = isPlaying ? 'none' : 'block'; 
+            document.getElementById('icon-pause').style.display = isPlaying ? 'block' : 'none';
         };
 
-        document.getElementById('btn-lyrics').onclick = function() { isLyricsVisible = !isLyricsVisible; document.getElementById('lyrics-overlay').classList.toggle('show'); if(isLyricsVisible) updateLyricsScroll(); };
-        document.getElementById('btn-next').onclick = () => playTrack((currentIdx+1)%playlist.length);
-        document.getElementById('btn-prev').onclick = () => playTrack((currentIdx-1+playlist.length)%playlist.length);
-        document.getElementById('btn-shuffle').onclick = function() { isShuffle = !isShuffle; this.classList.toggle('active'); };
-        document.getElementById('btn-repeat').onclick = function() { isRepeat = !isRepeat; this.classList.toggle('active'); };
-        progressBar.oninput = e => { isDragging = true; progressBar.style.setProperty('--progress', `${e.target.value}%`); };
-        progressBar.onchange = e => { isDragging = false; let a = activeLayer === 1 ? a1 : a2; if(a.duration) a.currentTime = (e.target.value/100)*a.duration; };
+        document.getElementById('btn-lyrics').onclick = function() { 
+            isLyricsVisible = !isLyricsVisible; 
+            document.getElementById('lyrics-overlay').classList.toggle('show'); 
+            if(isLyricsVisible) updateLyricsScroll(); 
+        };
+        
+        document.getElementById('btn-next').onclick = () => playTrack((currentIdx + 1) % playlist.length);
+        document.getElementById('btn-prev').onclick = () => playTrack((currentIdx - 1 + playlist.length) % playlist.length);
+        
+        document.getElementById('btn-shuffle').onclick = function() { 
+            isShuffle = !isShuffle; 
+            this.classList.toggle('active'); 
+        };
+        
+        document.getElementById('btn-repeat').onclick = function() { 
+            isRepeat = !isRepeat; 
+            this.classList.toggle('active'); 
+        };
+        
+        progressBar.oninput = e => { 
+            isDragging = true; 
+            progressBar.style.setProperty('--progress', `${e.target.value}%`); 
+        };
+        
+        progressBar.onchange = e => { 
+            isDragging = false; 
+            let a = activeLayer === 1 ? a1 : a2; 
+            if(a.duration) a.currentTime = (e.target.value/100) * a.duration; 
+        };
+        
         a1.ontimeupdate = a2.ontimeupdate = handleAudioTick;
         requestAnimationFrame(updateVisualLoop);
         playTrack(currentIdx, true);
