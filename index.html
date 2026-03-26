@@ -40,7 +40,7 @@
         .player-app { 
             position: relative; z-index: 10; 
             width: 500px; /* Estirado a lo ancho */
-            height: 116px; /* Bajito / Finito */
+            height: 120px; /* Aumentado 4px para dar espacio de respiro */
             background: rgba(255, 255, 255, 0.005); /* Cristal puro (0.5% opacidad) */
             backdrop-filter: blur(10px) saturate(1.1); /* Desenfoque sutil para mayor claridad */
             -webkit-backdrop-filter: blur(10px) saturate(1.1);
@@ -91,19 +91,19 @@
         .lyric-line { font-size: 13px; font-weight: 900; margin: 12px 0; text-align: left; color: rgba(255,255,255,0.15); transition: 0.4s; letter-spacing: -0.5px; line-height: 1.2; }
         .lyric-line.active { color: #ffffff; transform: scale(1.05); }
 
-        /* PORTADA - (116px alto - 32px padding vertical = 84px exactos) */
+        /* PORTADA - (120px alto - 32px padding vertical = 88px exactos) */
         #artwork-wrapper { 
-            width: 84px; height: 84px; flex-shrink: 0; 
+            width: 88px; height: 88px; flex-shrink: 0; 
             margin: 0;
             transform: scale(var(--beat-scale)); transition: 0.1s linear;
         }
         .artwork-container { width: 100%; height: 100%; border-radius: 16px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
         .artwork-container img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* CONTENEDOR DE CONTROLES - Altura de 84px bloqueada para impedir desbordamiento */
+        /* CONTENEDOR DE CONTROLES - Altura de 88px bloqueada para impedir desbordamiento */
         .controls-wrapper { 
             flex: 1; display: flex; flex-direction: column; 
-            justify-content: space-between; height: 84px; min-width: 0;
+            justify-content: space-between; height: 88px; min-width: 0;
             overflow: hidden; /* Cierre de seguridad */
         }
         
@@ -115,13 +115,13 @@
         }
         .site-logo { width: 10px; height: 10px; background-color: var(--accent-1); -webkit-mask: url('covers/LOGO.png') no-repeat center/contain; }
 
-        /* TRACK INFO (Altura fijada) */
-        .track-info { display: flex; justify-content: space-between; align-items: flex-start; gap: 6px; width: 100%; height: 20px; }
+        /* TRACK INFO (Altura ajustada a 28px para que no aplaste el nombre del artista) */
+        .track-info { display: flex; justify-content: space-between; align-items: flex-start; gap: 6px; width: 100%; height: 28px; margin-bottom: 2px; }
         .track-title { font-size: 15px; font-weight: 900; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: -0.5px; line-height: 1; }
-        .track-artist { font-size: 9px; font-weight: 700; color: rgba(255,255,255,0.6); margin-top: 2px; line-height: 1; }
+        .track-artist { font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.6); margin-top: 4px; line-height: 1; }
 
-        /* PROGRESO (Altura fijada) */
-        .progress-area { width: 100%; height: 12px; display: flex; flex-direction: column; justify-content: center; }
+        /* PROGRESO (Separado de la info del artista con márgenes) */
+        .progress-area { width: 100%; height: 12px; display: flex; flex-direction: column; justify-content: center; margin-top: 2px; margin-bottom: 4px; }
         .progress-bar { 
             -webkit-appearance: none; width: 100%; height: 3px; border-radius: 10px;
             background: rgba(255,255,255,0.15); outline: none; margin: 0;
@@ -129,7 +129,7 @@
             background-size: var(--progress, 0%) 100%; background-repeat: no-repeat;
         }
         .progress-bar::-webkit-slider-thumb { -webkit-appearance: none; width: 0; height: 0; }
-        .time-info { display: flex; justify-content: space-between; margin-top: 3px; font-size: 8px; font-weight: 900; color: rgba(255,255,255,0.4); line-height: 1; }
+        .time-info { display: flex; justify-content: space-between; margin-top: 4px; font-size: 8px; font-weight: 900; color: rgba(255,255,255,0.4); line-height: 1; }
 
         /* BOTONES - Altura fijada en 28px para que encaje a la perfección matemáticamente */
         .controls { 
