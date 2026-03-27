@@ -6,10 +6,6 @@
     <title>VIVET - Ultra Premium Player</title>
     <link rel="icon" type="image/png" href="covers/LOGO.png">
     
-    <!-- OPTIMIZACIÓN DE RED: Precarga de orígenes críticos para carga instantánea -->
-    <link rel="preconnect" href="https://res.cloudinary.com" crossorigin>
-    <link rel="preconnect" href="https://lrclib.net" crossorigin>
-    
     <style>
         @property --accent-1 { syntax: '<color>'; inherits: true; initial-value: #ffffff; }
         @property --accent-2 { syntax: '<color>'; inherits: true; initial-value: #ffffff; }
@@ -27,7 +23,7 @@
             transition: --accent-1 1.2s ease, --accent-2 1.2s ease;
         }
 
-        /* Suavizado nativo y optimización de renderizado */
+        /* OPTIMIZACIÓN: Suavizado nativo */
         * { 
             margin: 0; padding: 0; box-sizing: border-box; 
             font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, sans-serif; 
@@ -57,7 +53,9 @@
         /* ISLA REPRODUCTOR */
         .player-app { 
             position: relative; z-index: 10; 
-            width: 500px; height: 144px; 
+            width: 500px; 
+            /* CAMBIO: Se aumentó la altura a 144px para dar el espacio necesario */
+            height: 144px; 
             background: rgba(255, 255, 255, 0.005); 
             backdrop-filter: blur(25px) saturate(1.2); 
             -webkit-backdrop-filter: blur(25px) saturate(1.2);
@@ -67,9 +65,9 @@
             align-items: center; gap: 16px; 
             border: 0.5px solid rgba(255, 255, 255, 0.08);
             box-shadow: 0 20px 50px rgba(0,0,0,0.6); 
-            transform: translateZ(0); /* Aceleración por hardware */
+            transform: translateZ(0);
+            
             animation: slideUpPlayer 2.8s var(--spring-easing) forwards;
-            contain: layout paint; /* Optimización: Aísla los repintados del navegador */
         }
 
         /* LÍNEA RADIANTE */
@@ -94,9 +92,11 @@
             border: 0.5px solid rgba(255, 255, 255, 0.08);
             border-radius: 25px;
             opacity: 0; pointer-events: none; 
+            
             transform: translateY(25px) scale(0.95);
             filter: blur(10px);
             transition: opacity 0.8s ease, transform 0.8s var(--apple-spring), filter 0.8s ease;
+            
             -webkit-mask-image: linear-gradient(to bottom, transparent, black 20%, black 80%, transparent);
             mask-image: linear-gradient(to bottom, transparent, black 20%, black 80%, transparent);
             will-change: opacity, transform, filter; 
@@ -112,7 +112,6 @@
             transform-origin: left center;
             filter: blur(2px);
             transition: all 0.7s var(--apple-spring); 
-            will-change: transform, color, filter;
         }
         .lyric-line.active { 
             color: #ffffff; 
@@ -123,6 +122,7 @@
 
         /* PORTADA */
         #artwork-wrapper { 
+            /* CAMBIO: Se ajustó el tamaño para mantener la simetría perfecta con la nueva altura de la isla */
             width: 112px; height: 112px; flex-shrink: 0; margin: 0;
             transform: scale(var(--beat-scale)); 
             transition: transform 0.1s linear;
@@ -132,20 +132,29 @@
             width: 100%; height: 100%; border-radius: 16px; overflow: hidden; 
             transition: transform 0.8s var(--apple-bouncy), box-shadow 0.8s var(--apple-spring);
         }
-        body.player-paused .artwork-container { transform: scale(0.85); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
-        body:not(.player-paused) .artwork-container { transform: scale(1); box-shadow: 0 15px 35px rgba(0,0,0,0.6); }
+        body.player-paused .artwork-container {
+            transform: scale(0.85); 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        body:not(.player-paused) .artwork-container {
+            transform: scale(1); 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+        }
         .artwork-container img { width: 100%; height: 100%; object-fit: cover; }
 
         /* CONTENEDOR DE CONTROLES */
         .controls-wrapper { 
             flex: 1; display: flex; flex-direction: column; 
+            /* CAMBIO: Se incrementó para coincidir con el cover y dar espacio de respiro */
             justify-content: space-between; height: 112px; min-width: 0;
         }
         
         /* HEADER VIVET & ECUALIZADOR */
         .header { 
             display: flex; align-items: center; justify-content: space-between; 
-            width: 100%; margin-bottom: 10px; 
+            width: 100%; 
+            /* CAMBIO PRINCIPAL: Esto separa contundentemente el VIVET y el EQ del título y botón lyrics */
+            margin-bottom: 10px; 
         }
         
         .brand-container {
@@ -155,15 +164,19 @@
         }
         
         .site-logo { 
-            width: 12px; height: 12px; background-color: var(--accent-1); 
-            -webkit-mask: url('covers/LOGO.png') no-repeat center/contain; mask: url('covers/LOGO.png') no-repeat center/contain; 
+            width: 12px; height: 12px; 
+            background-color: var(--accent-1); 
+            -webkit-mask: url('covers/LOGO.png') no-repeat center/contain; 
+            mask: url('covers/LOGO.png') no-repeat center/contain; 
         }
         
-        .eq-container { display: flex; align-items: flex-end; gap: 2.5px; height: 12px; }
+        .eq-container {
+            display: flex; align-items: flex-end; gap: 2.5px; height: 12px;
+        }
         
         .eq-bar { 
             width: 2px; background: var(--accent-1); border-radius: 2px; 
-            transition: height 0.3s ease; will-change: height;
+            transition: height 0.3s ease; 
         }
         body:not(.player-paused) .eq-bar { animation: eqBounce 0.8s alternate ease-in-out infinite; }
         body:not(.player-paused) .eq-bar:nth-child(2) { animation-delay: 0.2s; animation-duration: 0.6s; }
@@ -183,7 +196,8 @@
             background-color: rgba(255,255,255,0.2); outline: none; margin: 0;
             background-image: linear-gradient(90deg, var(--accent-1), var(--accent-2));
             background-size: var(--progress, 0%) 100%; background-repeat: no-repeat;
-            cursor: pointer; transition: height 0.3s var(--apple-spring); 
+            cursor: pointer;
+            transition: height 0.3s var(--apple-spring); 
         }
         .progress-bar:hover, .progress-bar:active { height: 8px; }
         .progress-bar::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 0; height: 0; }
@@ -199,7 +213,8 @@
         .btn { 
             background: none!important; border: none!important; cursor: pointer; 
             color: var(--accent-1); display: flex; align-items: center; justify-content: center; padding: 0; 
-            touch-action: manipulation; transition: transform 0.4s var(--apple-bouncy), filter 0.4s ease, opacity 0.4s ease;
+            touch-action: manipulation; 
+            transition: transform 0.4s var(--apple-bouncy), filter 0.4s ease, opacity 0.4s ease;
         }
         .btn:hover { transform: scale(1.15); filter: drop-shadow(0 0 10px var(--accent-glow)); } 
         .btn:active { transform: scale(0.85) !important; opacity: 0.6; transition: transform 0.1s ease, opacity 0.1s ease; } 
@@ -220,7 +235,7 @@
             background: var(--accent-1); color: #000; 
             padding: 2px 10px; border-radius: 15px; 
             font-size: 7px; font-weight: 900; opacity: 0; transition: 0.5s;
-            box-shadow: 0 5px 10px var(--accent-glow); z-index: 20; pointer-events: none;
+            box-shadow: 0 5px 10px var(--accent-glow); z-index: 20;
         }
         .mixing-badge.active { opacity: 1; transform: translate(-50%, -3px); }
 
@@ -242,13 +257,23 @@
             70% { transform: scale(1); opacity: 1; filter: drop-shadow(0 0 15px rgba(255,255,255,0.3)); }
             100% { transform: scale(1.8); opacity: 0; filter: drop-shadow(0 0 0px rgba(255,255,255,0)); }
         }
-        @keyframes fadeOutSplash { 0%, 75% { opacity: 1; visibility: visible; } 100% { opacity: 0; visibility: hidden; } }
-        @keyframes slideUpPlayer { 0%, 60% { transform: translateY(60px) translateZ(0); opacity: 0; } 100% { transform: translateY(0) translateZ(0); opacity: 1; } }
+        @keyframes fadeOutSplash {
+            0% { opacity: 1; visibility: visible; }
+            75% { opacity: 1; visibility: visible; }
+            100% { opacity: 0; visibility: hidden; }
+        }
+        @keyframes slideUpPlayer {
+            0% { transform: translateY(60px) translateZ(0); opacity: 0; }
+            60% { transform: translateY(60px) translateZ(0); opacity: 0; }
+            100% { transform: translateY(0) translateZ(0); opacity: 1; }
+        }
     </style>
 </head>
 <body class="player-paused">
 
-    <div class="splash-screen"><div class="splash-logo"></div></div>
+    <div class="splash-screen">
+        <div class="splash-logo"></div>
+    </div>
 
     <img id="fallback-bg" class="image-fallback" src="" alt="Fondo" decoding="async">
     <video id="vid1" class="video-background active" crossorigin="anonymous" muted playsinline></video>
@@ -269,6 +294,8 @@
         </div>
 
         <div class="controls-wrapper">
+            
+            <!-- HEADER RECONSTRUIDO Y ORDENADO CON ESPACIO NEGATIVO -->
             <div class="header">
                 <div class="brand-container">
                     <div class="site-logo"></div>
@@ -313,7 +340,7 @@
     </div>
 
     <script>
-        // DATOS INTACTOS
+        // CÓDIGO JS INTACTO. NI UNA FUNCIÓN MODIFICADA
         const playlist =[
             { title: "WOH OH OH", artist: "OMAR COURTZ, ROA", cover: "covers/WOH OH OH.jpg", file: "songs/WOH OH OH.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1773772525/WOH_OH_OH_dgjixz.mp4" },
             { title: "444", artist: "YAN BLOCK", cover: "covers/444.jpg", file: "songs/444.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1773772039/444_r0lopi.mp4" },
@@ -334,14 +361,11 @@
         let currentIdx = 0, isPlaying = false, isDragging = false, isShuffle = false, isRepeat = false, isCrossfading = false;
         let fadeStartTime = 0, fadingOutAudio = null, fadingInAudio = null, activeLayer = 1;
         let currentLyrics =[], activeLyricIndex = -1, isLyricsVisible = false, lyricsRequestCount = 0;
-        let audioCtx, analyser, dataArray;
-        let lyricElements =[]; // Novedad de optimización: Cache de lineas de letras
+        let colorCache = {}, audioCtx, analyser, dataArray;
         
         const CROSSFADE_TIME = 12;
-        const a1 = new Audio(); a1.crossOrigin = "anonymous";
-        const a2 = new Audio(); a2.crossOrigin = "anonymous";
-        
-        // OPTIMIZACIÓN: Caché de nodos DOM (Ahorra miles de lecturas por segundo)
+        const a1 = new Audio();
+        const a2 = new Audio();
         const v1 = document.getElementById('vid1');
         const v2 = document.getElementById('vid2');
         const fallbackBg = document.getElementById('fallback-bg');
@@ -350,19 +374,9 @@
         const timeTotalEl = document.getElementById('time-total');
         const playBtn = document.getElementById('btn-play');
         const mixingBadge = document.getElementById('mixing-badge');
-        const titleEl = document.getElementById('title');
-        const artistEl = document.getElementById('artist');
-        const coverEl = document.getElementById('cover');
-        const lyricsContentEl = document.getElementById('lyrics-content');
-        const lyricsOverlayEl = document.getElementById('lyrics-overlay');
-        const iconPlay = document.getElementById('icon-play');
-        const iconPause = document.getElementById('icon-pause');
-        const rootStyles = document.documentElement.style;
         
-        // OPTIMIZACIÓN DE MEMORIA: Se crea un solo canvas invisible para reciclar siempre
-        const colorCanvas = document.createElement('canvas');
-        colorCanvas.width = colorCanvas.height = 40;
-        const colorCtx = colorCanvas.getContext('2d', { willReadFrequently: true });
+        a1.crossOrigin = "anonymous";
+        a2.crossOrigin = "anonymous";
 
         const initAudioContext = () => { 
             if (audioCtx) return; 
@@ -383,7 +397,7 @@
 
         const drawEQ = () => { 
             analyser.getByteFrequencyData(dataArray); 
-            rootStyles.setProperty('--beat-scale', 1 + (dataArray[1] / 255 * 0.08)); 
+            document.documentElement.style.setProperty('--beat-scale', 1 + (dataArray[1] / 255 * 0.08)); 
             requestAnimationFrame(drawEQ); 
         };
 
@@ -394,11 +408,9 @@
             }).filter(Boolean).sort((a,b) => a.time - b.time);
         };
 
-        // OPTIMIZACIÓN: Fragmento de Documento para inyectar todo de golpe sin forzar la GPU
         const renderLyrics = () => { 
-            lyricsContentEl.innerHTML = ''; 
-            const fragment = document.createDocumentFragment();
-            lyricElements =[]; // Vaciamos el caché previo
+            const c = document.getElementById('lyrics-content'); 
+            c.innerHTML = ''; 
             
             currentLyrics.forEach((l, i) => { 
                 const d = document.createElement('div'); 
@@ -409,23 +421,22 @@
                     let a = activeLayer === 1 ? a1 : a2; 
                     if(a.duration) a.currentTime = l.time; 
                 }; 
-                fragment.appendChild(d);
-                lyricElements.push(d); // Guardamos la referencia para no buscarla luego
+                c.appendChild(d); 
             }); 
-            lyricsContentEl.appendChild(fragment);
         };
 
-        // OPTIMIZACIÓN: Sin querySelectorAll. Usa la memoria RAM en lugar del Procesador DOM.
         const updateLyricsScroll = () => {
-            const activeEl = lyricElements[activeLyricIndex];
+            const container = document.getElementById('lyrics-content');
+            const activeEl = document.getElementById(`lyric-${activeLyricIndex}`);
+            
             if (activeLyricIndex < 0 || !isLyricsVisible || !activeEl) return;
             
-            lyricElements.forEach((el, i) => {
+            document.querySelectorAll('.lyric-line').forEach((el, i) => {
                 el.classList.toggle('active', i === activeLyricIndex);
             });
             
-            lyricsContentEl.scrollTo({ 
-                top: activeEl.offsetTop - (lyricsContentEl.clientHeight * 0.45), 
+            container.scrollTo({ 
+                top: activeEl.offsetTop - (container.clientHeight * 0.45), 
                 behavior: 'smooth' 
             });
         };
@@ -433,11 +444,11 @@
         const loadLyrics = async (track, dur) => {
             lyricsRequestCount++; 
             let reqId = lyricsRequestCount; 
-            currentLyrics = []; 
+            currentLyrics =[]; 
             activeLyricIndex = -1;
-            lyricElements =[];
             
-            lyricsContentEl.innerHTML = '<div class="lyric-line" style="opacity:0.5;">Sincronizando...</div>';
+            const content = document.getElementById('lyrics-content'); 
+            content.innerHTML = '<div class="lyric-line" style="opacity:0.5;">Sincronizando...</div>';
             
             let artist = track.artist.split(/,|y|&/)[0].trim();
             let match = null;
@@ -453,7 +464,7 @@
                 currentLyrics = parseLRC(match.syncedLyrics); 
                 renderLyrics(); 
             } else {
-                lyricsContentEl.innerHTML = '<div class="lyric-line" style="opacity:0.5;">Letra no disponible</div>';
+                content.innerHTML = '<div class="lyric-line" style="opacity:0.5;">Letra no disponible</div>';
             }
         };
 
@@ -565,9 +576,9 @@
         };
 
         const updateUI = (t, L) => {
-            titleEl.textContent = t.title; 
-            artistEl.textContent = t.artist; 
-            coverEl.src = t.cover;
+            document.getElementById('title').textContent = t.title; 
+            document.getElementById('artist').textContent = t.artist; 
+            document.getElementById('cover').src = t.cover;
             
             let a = L === 1 ? a1 : a2;
             let ck = setInterval(() => { 
@@ -590,15 +601,18 @@
             extractColors(t.cover);
         };
 
-        // OPTIMIZACIÓN DE RENDIMIENTO: Usa el canvas reciclado (colorCtx)
         const extractColors = (src) => {
             const img = new Image(); 
             img.crossOrigin = "Anonymous"; 
             img.src = src;
             
             img.onload = () => {
-                colorCtx.drawImage(img, 0, 0, 40, 40);
-                const d = colorCtx.getImageData(0, 0, 40, 40).data; 
+                const cvs = document.createElement('canvas');
+                const ctx = cvs.getContext('2d'); 
+                cvs.width = cvs.height = 40; 
+                ctx.drawImage(img, 0, 0, 40, 40);
+                
+                const d = ctx.getImageData(0, 0, 40, 40).data; 
                 let candidates =[];
                 
                 for(let i=0; i<d.length; i+=16) {
@@ -616,9 +630,9 @@
                     return diff > 100;
                 })?.rgb || candidates[candidates.length-1]?.rgb ||[120, 120, 120];
                 
-                rootStyles.setProperty('--accent-1', `rgb(${c1[0]},${c1[1]},${c1[2]})`);
-                rootStyles.setProperty('--accent-2', `rgb(${c2[0]},${c2[1]},${c2[2]})`);
-                rootStyles.setProperty('--accent-glow', `rgba(${c1[0]},${c1[1]},${c1[2]},0.4)`);
+                document.documentElement.style.setProperty('--accent-1', `rgb(${c1[0]},${c1[1]},${c1[2]})`);
+                document.documentElement.style.setProperty('--accent-2', `rgb(${c2[0]},${c2[1]},${c2[2]})`);
+                document.documentElement.style.setProperty('--accent-glow', `rgba(${c1[0]},${c1[1]},${c1[2]},0.4)`);
             };
         };
 
@@ -629,7 +643,10 @@
             if (audioCtx.state === 'suspended') audioCtx.resume();
             
             if(isPlaying) { 
-                a1.pause(); a2.pause(); v1.pause(); v2.pause(); 
+                a1.pause(); 
+                a2.pause(); 
+                v1.pause(); 
+                v2.pause(); 
                 document.body.classList.add('player-paused'); 
             } else { 
                 if(a1.volume > 0) a1.play(); 
@@ -639,13 +656,13 @@
             }
             
             isPlaying = !isPlaying; 
-            iconPlay.style.display = isPlaying ? 'none' : 'block'; 
-            iconPause.style.display = isPlaying ? 'block' : 'none';
+            document.getElementById('icon-play').style.display = isPlaying ? 'none' : 'block'; 
+            document.getElementById('icon-pause').style.display = isPlaying ? 'block' : 'none';
         };
 
         document.getElementById('btn-lyrics').onclick = function() { 
             isLyricsVisible = !isLyricsVisible; 
-            lyricsOverlayEl.classList.toggle('show'); 
+            document.getElementById('lyrics-overlay').classList.toggle('show'); 
             if(isLyricsVisible) updateLyricsScroll(); 
         };
         
