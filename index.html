@@ -16,12 +16,14 @@
             --accent-2: #ffffff;
             --accent-glow: rgba(255, 255, 255, 0.2);
             --bg-dark: #000000;
+            --apple-spring: cubic-bezier(0.25, 1, 0.4, 1);
+            --apple-bouncy: cubic-bezier(0.34, 1.56, 0.64, 1);
             --spring-easing: cubic-bezier(0.23, 1, 0.32, 1);
             --beat-scale: 1;
             transition: --accent-1 1.2s ease, --accent-2 1.2s ease;
         }
 
-        /* OPTIMIZACIÓN: Suavizado de fuentes y legibilidad para aspecto nativo premium */
+        /* OPTIMIZACIÓN: Suavizado nativo */
         * { 
             margin: 0; padding: 0; box-sizing: border-box; 
             font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, sans-serif; 
@@ -34,74 +36,66 @@
         body { 
             height: 100vh; width: 100vw; 
             background-color: var(--bg-dark); 
-            /* CORRECCIÓN: Centrado horizontalmente, pero alineado en la parte inferior (abajo) */
             display: flex; justify-content: center; align-items: flex-end; 
             overflow: hidden; position: relative; padding: 40px;
         }
 
-        /* FONDO - OPTIMIZADO PARA ACELERACIÓN POR HARDWARE */
+        /* FONDO */
         .video-background, .image-fallback { 
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
             object-fit: cover; z-index: 1; opacity: 0; transition: opacity 2s ease; 
-            will-change: opacity; /* Optimización de GPU */
+            will-change: opacity; 
         }
         .video-background.active, .image-fallback.active { opacity: 0.55; z-index: 2; }
         .image-fallback { filter: blur(100px) brightness(0.5); transform: scale(1.1); }
         .overlay { position: absolute; inset: 0; background: radial-gradient(circle at 50% 50%, transparent, rgba(0,0,0,0.8)); z-index: 3; pointer-events: none; }
 
-        /* ISLA REPRODUCTOR - ANCHA, BAJITA Y RESTRINGIDA */
+        /* ISLA REPRODUCTOR */
         .player-app { 
             position: relative; z-index: 10; 
             width: 500px; 
-            height: 132px; 
+            /* CAMBIO: Se aumentó la altura a 144px para dar el espacio necesario */
+            height: 144px; 
             background: rgba(255, 255, 255, 0.005); 
-            backdrop-filter: blur(10px) saturate(1.1); 
-            -webkit-backdrop-filter: blur(10px) saturate(1.1);
+            backdrop-filter: blur(25px) saturate(1.2); 
+            -webkit-backdrop-filter: blur(25px) saturate(1.2);
             border-radius: 34px;
             padding: 16px 20px; 
             display: flex; flex-direction: row; 
             align-items: center; gap: 16px; 
-            border: 0.5px solid rgba(255, 255, 255, 0.05);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.5); 
+            border: 0.5px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6); 
             transform: translateZ(0);
             
-            /* Animación de entrada de la isla */
-            animation: slideUpPlayer 2.8s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+            animation: slideUpPlayer 2.8s var(--spring-easing) forwards;
         }
 
-        /* LÍNEA RADIANTE CONTINUA */
+        /* LÍNEA RADIANTE */
         .player-app::before, .player-app::after {
-            content: "";
-            position: absolute;
-            inset: -2px;
-            border-radius: 36px;
-            padding: 2px;
+            content: ""; position: absolute; inset: -2px; border-radius: 36px; padding: 2px;
             background: conic-gradient(from var(--border-angle), var(--accent-1), var(--accent-2), transparent, var(--accent-1));
             -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            mask-composite: exclude;
-            pointer-events: none;
-            animation: rotateBorder 4s linear infinite;
+            mask-composite: exclude; pointer-events: none; animation: rotateBorder 4s linear infinite;
         }
         .player-app::before { filter: blur(12px); opacity: 0.5; inset: -4px; }
 
         @keyframes rotateBorder { to { --border-angle: 360deg; } }
 
-        /* LYRICS */
+        /* LYRICS - ESTILO APPLE MUSIC */
         .lyrics-overlay { 
             position: absolute; 
             bottom: calc(100% + 15px); left: 0; right: 0; 
             height: 150px; z-index: 100; 
             background: rgba(255, 255, 255, 0.005);
-            backdrop-filter: blur(10px) saturate(1.1);
-            -webkit-backdrop-filter: blur(10px) saturate(1.1);
-            border: 0.5px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(25px) saturate(1.2);
+            -webkit-backdrop-filter: blur(25px) saturate(1.2);
+            border: 0.5px solid rgba(255, 255, 255, 0.08);
             border-radius: 25px;
             opacity: 0; pointer-events: none; 
             
-            /* Animación mejorada */
             transform: translateY(25px) scale(0.95);
             filter: blur(10px);
-            transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), filter 0.8s ease;
+            transition: opacity 0.8s ease, transform 0.8s var(--apple-spring), filter 0.8s ease;
             
             -webkit-mask-image: linear-gradient(to bottom, transparent, black 20%, black 80%, transparent);
             mask-image: linear-gradient(to bottom, transparent, black 20%, black 80%, transparent);
@@ -110,35 +104,87 @@
         
         .lyrics-overlay.show { opacity: 1; pointer-events: auto; transform: translateY(0) scale(1); filter: blur(0px); }
         .lyrics-content { width: 100%; height: 100%; overflow-y: auto; padding: 18px 25px; scrollbar-width: none; overscroll-behavior: contain; }
-        .lyric-line { font-size: 13px; font-weight: 900; margin: 12px 0; text-align: left; color: rgba(255,255,255,0.15); transition: 0.4s; letter-spacing: -0.5px; line-height: 1.2; }
-        .lyric-line.active { color: #ffffff; transform: scale(1.05); }
+        
+        .lyric-line { 
+            font-size: 13px; font-weight: 900; margin: 12px 0; text-align: left; 
+            color: rgba(255,255,255,0.4); 
+            letter-spacing: -0.5px; line-height: 1.2; 
+            transform-origin: left center;
+            filter: blur(2px);
+            transition: all 0.7s var(--apple-spring); 
+        }
+        .lyric-line.active { 
+            color: #ffffff; 
+            transform: scale(1.08) translateX(2px); 
+            filter: blur(0px);
+            text-shadow: 0 0 15px rgba(255,255,255,0.2);
+        }
 
         /* PORTADA */
         #artwork-wrapper { 
-            width: 100px; height: 100px; flex-shrink: 0; 
-            margin: 0;
-            transform: scale(var(--beat-scale)); transition: 0.1s linear;
+            /* CAMBIO: Se ajustó el tamaño para mantener la simetría perfecta con la nueva altura de la isla */
+            width: 112px; height: 112px; flex-shrink: 0; margin: 0;
+            transform: scale(var(--beat-scale)); 
+            transition: transform 0.1s linear;
             will-change: transform; 
         }
-        .artwork-container { width: 100%; height: 100%; border-radius: 16px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+        .artwork-container { 
+            width: 100%; height: 100%; border-radius: 16px; overflow: hidden; 
+            transition: transform 0.8s var(--apple-bouncy), box-shadow 0.8s var(--apple-spring);
+        }
+        body.player-paused .artwork-container {
+            transform: scale(0.85); 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        body:not(.player-paused) .artwork-container {
+            transform: scale(1); 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+        }
         .artwork-container img { width: 100%; height: 100%; object-fit: cover; }
 
         /* CONTENEDOR DE CONTROLES */
         .controls-wrapper { 
             flex: 1; display: flex; flex-direction: column; 
-            justify-content: space-between; height: 100px; min-width: 0;
+            /* CAMBIO: Se incrementó para coincidir con el cover y dar espacio de respiro */
+            justify-content: space-between; height: 112px; min-width: 0;
         }
         
-        /* HEADER VIVET */
+        /* HEADER VIVET & ECUALIZADOR */
         .header { 
             display: flex; align-items: center; justify-content: space-between; 
-            font-size: 8px; font-weight: 900; letter-spacing: 2px; 
-            color: var(--accent-1); height: 10px; line-height: 1;
+            width: 100%; 
+            /* CAMBIO PRINCIPAL: Esto separa contundentemente el VIVET y el EQ del título y botón lyrics */
+            margin-bottom: 10px; 
         }
-        .site-logo { width: 10px; height: 10px; background-color: var(--accent-1); -webkit-mask: url('covers/LOGO.png') no-repeat center/contain; }
+        
+        .brand-container {
+            display: flex; align-items: center; gap: 5px;
+            font-size: 9px; font-weight: 800; letter-spacing: 3px; 
+            color: var(--accent-1); opacity: 0.9;
+        }
+        
+        .site-logo { 
+            width: 12px; height: 12px; 
+            background-color: var(--accent-1); 
+            -webkit-mask: url('covers/LOGO.png') no-repeat center/contain; 
+            mask: url('covers/LOGO.png') no-repeat center/contain; 
+        }
+        
+        .eq-container {
+            display: flex; align-items: flex-end; gap: 2.5px; height: 12px;
+        }
+        
+        .eq-bar { 
+            width: 2px; background: var(--accent-1); border-radius: 2px; 
+            transition: height 0.3s ease; 
+        }
+        body:not(.player-paused) .eq-bar { animation: eqBounce 0.8s alternate ease-in-out infinite; }
+        body:not(.player-paused) .eq-bar:nth-child(2) { animation-delay: 0.2s; animation-duration: 0.6s; }
+        body:not(.player-paused) .eq-bar:nth-child(3) { animation-delay: 0.4s; animation-duration: 0.7s; }
+        @keyframes eqBounce { 0% { height: 3px; } 100% { height: 11px; } }
 
         /* TRACK INFO */
-        .track-info { display: flex; justify-content: space-between; align-items: flex-start; gap: 6px; width: 100%; height: 28px; margin-bottom: 2px; }
+        .track-info { display: flex; justify-content: space-between; align-items: flex-start; gap: 6px; width: 100%; height: 28px; margin-bottom: 4px; }
         .track-title { font-size: 15px; font-weight: 900; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: -0.5px; line-height: 1; }
         .track-artist { font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.6); margin-top: 4px; line-height: 1; }
 
@@ -151,7 +197,9 @@
             background-image: linear-gradient(90deg, var(--accent-1), var(--accent-2));
             background-size: var(--progress, 0%) 100%; background-repeat: no-repeat;
             cursor: pointer;
+            transition: height 0.3s var(--apple-spring); 
         }
+        .progress-bar:hover, .progress-bar:active { height: 8px; }
         .progress-bar::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 0; height: 0; }
         .progress-bar::-moz-range-thumb { width: 0; height: 0; border: none; background: transparent; }
 
@@ -159,18 +207,17 @@
 
         /* BOTONES */
         .controls { 
-            display: flex; align-items: center; 
-            justify-content: center; 
-            gap: 18px; 
-            width: 100%; height: 36px; 
+            display: flex; align-items: center; justify-content: center; 
+            gap: 18px; width: 100%; height: 36px; 
         }
         .btn { 
             background: none!important; border: none!important; cursor: pointer; 
-            color: var(--accent-1); transition: 0.3s; display: flex; 
-            align-items: center; justify-content: center; padding: 0; 
+            color: var(--accent-1); display: flex; align-items: center; justify-content: center; padding: 0; 
             touch-action: manipulation; 
+            transition: transform 0.4s var(--apple-bouncy), filter 0.4s ease, opacity 0.4s ease;
         }
         .btn:hover { transform: scale(1.15); filter: drop-shadow(0 0 10px var(--accent-glow)); } 
+        .btn:active { transform: scale(0.85) !important; opacity: 0.6; transition: transform 0.1s ease, opacity 0.1s ease; } 
         .btn svg { width: 18px; height: 18px; fill: currentColor; }
         
         .btn-play { 
@@ -192,28 +239,15 @@
         }
         .mixing-badge.active { opacity: 1; transform: translate(-50%, -3px); }
 
-        /* ==========================================================
-           ANIMACIÓN SPLASH SCREEN 
-           ========================================================== */
-        
+        /* SPLASH SCREEN */
         .splash-screen {
-            position: fixed;
-            inset: 0;
-            background-color: #000000;
-            z-index: 999999;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            animation: fadeOutSplash 2.5s cubic-bezier(0.23, 1, 0.32, 1) forwards;
-            pointer-events: none; 
+            position: fixed; inset: 0; background-color: #000000; z-index: 999999;
+            display: flex; justify-content: center; align-items: center;
+            animation: fadeOutSplash 2.5s cubic-bezier(0.23, 1, 0.32, 1) forwards; pointer-events: none; 
         }
-
         .splash-logo {
-            width: 100px;
-            height: 100px;
-            background-color: #ffffff; 
-            -webkit-mask: url('covers/LOGO.png') no-repeat center/contain;
-            mask: url('covers/LOGO.png') no-repeat center/contain;
+            width: 100px; height: 100px; background-color: #ffffff; 
+            -webkit-mask: url('covers/LOGO.png') no-repeat center/contain; mask: url('covers/LOGO.png') no-repeat center/contain;
             animation: logoIntro 2s cubic-bezier(0.23, 1, 0.32, 1) forwards;
         }
 
@@ -223,13 +257,11 @@
             70% { transform: scale(1); opacity: 1; filter: drop-shadow(0 0 15px rgba(255,255,255,0.3)); }
             100% { transform: scale(1.8); opacity: 0; filter: drop-shadow(0 0 0px rgba(255,255,255,0)); }
         }
-
         @keyframes fadeOutSplash {
             0% { opacity: 1; visibility: visible; }
             75% { opacity: 1; visibility: visible; }
             100% { opacity: 0; visibility: hidden; }
         }
-
         @keyframes slideUpPlayer {
             0% { transform: translateY(60px) translateZ(0); opacity: 0; }
             60% { transform: translateY(60px) translateZ(0); opacity: 0; }
@@ -239,7 +271,6 @@
 </head>
 <body class="player-paused">
 
-    <!-- PANTALLA DE CARGA INICIAL -->
     <div class="splash-screen">
         <div class="splash-logo"></div>
     </div>
@@ -263,14 +294,17 @@
         </div>
 
         <div class="controls-wrapper">
+            
+            <!-- HEADER RECONSTRUIDO Y ORDENADO CON ESPACIO NEGATIVO -->
             <div class="header">
-                <div style="display: flex; align-items: center; gap: 4px;">
-                    <div class="site-logo"></div> V I V E T
+                <div class="brand-container">
+                    <div class="site-logo"></div>
+                    <span style="transform: translateY(1px);">V I V E T</span>
                 </div>
-                <div style="display:flex; gap:2px; align-items:flex-end; height:8px;">
-                    <div class="eq-bar" style="width:1.5px; background:var(--accent-1); height:3px; border-radius:1px;"></div>
-                    <div class="eq-bar" style="width:1.5px; background:var(--accent-1); height:7px; border-radius:1px;"></div>
-                    <div class="eq-bar" style="width:1.5px; background:var(--accent-1); height:4px; border-radius:1px;"></div>
+                <div class="eq-container">
+                    <div class="eq-bar" style="height:4px;"></div>
+                    <div class="eq-bar" style="height:11px;"></div>
+                    <div class="eq-bar" style="height:6px;"></div>
                 </div>
             </div>
 
@@ -306,7 +340,7 @@
     </div>
 
     <script>
-        // CÓDIGO JS ORIGINAL - NO SE MODIFICÓ EN LO ABSOLUTO
+        // CÓDIGO JS INTACTO. NI UNA FUNCIÓN MODIFICADA
         const playlist =[
             { title: "WOH OH OH", artist: "OMAR COURTZ, ROA", cover: "covers/WOH OH OH.jpg", file: "songs/WOH OH OH.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1773772525/WOH_OH_OH_dgjixz.mp4" },
             { title: "444", artist: "YAN BLOCK", cover: "covers/444.jpg", file: "songs/444.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1773772039/444_r0lopi.mp4" },
