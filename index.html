@@ -34,7 +34,8 @@
         body { 
             height: 100vh; width: 100vw; 
             background-color: var(--bg-dark); 
-            display: flex; justify-content: flex-end; align-items: flex-end; 
+            /* CORRECCIÓN: Centrado horizontalmente, pero alineado en la parte inferior (abajo) */
+            display: flex; justify-content: center; align-items: flex-end; 
             overflow: hidden; position: relative; padding: 40px;
         }
 
@@ -52,7 +53,7 @@
         .player-app { 
             position: relative; z-index: 10; 
             width: 500px; 
-            height: 124px; /* Ajustado para dar espacio perfecto al progress bar */
+            height: 132px; 
             background: rgba(255, 255, 255, 0.005); 
             backdrop-filter: blur(10px) saturate(1.1); 
             -webkit-backdrop-filter: blur(10px) saturate(1.1);
@@ -96,20 +97,25 @@
             border: 0.5px solid rgba(255, 255, 255, 0.05);
             border-radius: 25px;
             opacity: 0; pointer-events: none; 
-            transform: translateY(10px);
-            transition: all 0.7s var(--spring-easing);
+            
+            /* Animación mejorada */
+            transform: translateY(25px) scale(0.95);
+            filter: blur(10px);
+            transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), filter 0.8s ease;
+            
             -webkit-mask-image: linear-gradient(to bottom, transparent, black 20%, black 80%, transparent);
             mask-image: linear-gradient(to bottom, transparent, black 20%, black 80%, transparent);
-            will-change: opacity, transform; 
+            will-change: opacity, transform, filter; 
         }
-        .lyrics-overlay.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
+        
+        .lyrics-overlay.show { opacity: 1; pointer-events: auto; transform: translateY(0) scale(1); filter: blur(0px); }
         .lyrics-content { width: 100%; height: 100%; overflow-y: auto; padding: 18px 25px; scrollbar-width: none; overscroll-behavior: contain; }
         .lyric-line { font-size: 13px; font-weight: 900; margin: 12px 0; text-align: left; color: rgba(255,255,255,0.15); transition: 0.4s; letter-spacing: -0.5px; line-height: 1.2; }
         .lyric-line.active { color: #ffffff; transform: scale(1.05); }
 
         /* PORTADA */
         #artwork-wrapper { 
-            width: 92px; height: 92px; flex-shrink: 0; 
+            width: 100px; height: 100px; flex-shrink: 0; 
             margin: 0;
             transform: scale(var(--beat-scale)); transition: 0.1s linear;
             will-change: transform; 
@@ -120,8 +126,7 @@
         /* CONTENEDOR DE CONTROLES */
         .controls-wrapper { 
             flex: 1; display: flex; flex-direction: column; 
-            justify-content: space-between; height: 92px; min-width: 0;
-            /* overflow hidden eliminado para que no corte la barra de progreso */
+            justify-content: space-between; height: 100px; min-width: 0;
         }
         
         /* HEADER VIVET */
@@ -137,10 +142,10 @@
         .track-title { font-size: 15px; font-weight: 900; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: -0.5px; line-height: 1; }
         .track-artist { font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.6); margin-top: 4px; line-height: 1; }
 
-        /* PROGRESO - Solucionado y siempre visible */
+        /* PROGRESO */
         .progress-area { width: 100%; height: auto; display: flex; flex-direction: column; justify-content: center; margin-top: 2px; margin-bottom: 4px; }
         .progress-bar { 
-            -webkit-appearance: none; appearance: none; /* Crucial para mostrar la barra en todos los navegadores */
+            -webkit-appearance: none; appearance: none; 
             width: 100%; height: 4.5px; border-radius: 10px;
             background-color: rgba(255,255,255,0.2); outline: none; margin: 0;
             background-image: linear-gradient(90deg, var(--accent-1), var(--accent-2));
@@ -156,8 +161,8 @@
         .controls { 
             display: flex; align-items: center; 
             justify-content: center; 
-            gap: 14px; 
-            width: 100%; height: 28px; 
+            gap: 18px; 
+            width: 100%; height: 36px; 
         }
         .btn { 
             background: none!important; border: none!important; cursor: pointer; 
@@ -166,14 +171,14 @@
             touch-action: manipulation; 
         }
         .btn:hover { transform: scale(1.15); filter: drop-shadow(0 0 10px var(--accent-glow)); } 
-        .btn svg { width: 15px; height: 15px; fill: currentColor; }
+        .btn svg { width: 18px; height: 18px; fill: currentColor; }
         
         .btn-play { 
-            width: 28px; height: 28px; border-radius: 50%; 
+            width: 36px; height: 36px; border-radius: 50%; 
             background: linear-gradient(135deg, var(--accent-1), var(--accent-2))!important; 
             color: #000!important; box-shadow: 0 4px 12px var(--accent-glow); 
         }
-        .btn-play svg { width: 15px; height: 15px; fill: #000!important; }
+        .btn-play svg { width: 18px; height: 18px; fill: #000!important; }
         
         .btn-secondary { opacity: 0.5; }
         .btn-secondary.active { opacity: 1; filter: drop-shadow(0 0 10px var(--accent-glow)); }
@@ -301,7 +306,7 @@
     </div>
 
     <script>
-        // CÓDIGO JS OPTIMIZADO (Legible, Limpio y sin modificar funcionamiento)
+        // CÓDIGO JS ORIGINAL - NO SE MODIFICÓ EN LO ABSOLUTO
         const playlist =[
             { title: "WOH OH OH", artist: "OMAR COURTZ, ROA", cover: "covers/WOH OH OH.jpg", file: "songs/WOH OH OH.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1773772525/WOH_OH_OH_dgjixz.mp4" },
             { title: "444", artist: "YAN BLOCK", cover: "covers/444.jpg", file: "songs/444.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1773772039/444_r0lopi.mp4" },
