@@ -275,28 +275,46 @@
         .btn-lyrics-right.active svg { fill: #000000 !important; }
         .btn-lyrics-right svg { width: 16px; height: 16px; }
 
-        /* LETRAS FLOTANTES INMERSIVAS */
+        /* LETRAS FLOTANTES INMERSIVAS (COLUMNA EXACTA A LA IZQUIERDA) */
         .lyrics-overlay { 
-            position: absolute; top: 100px; bottom: 240px; left: 270px; right: 60px; z-index: 15; 
+            position: absolute; 
+            top: 90px;      /* Exactamente debajo del logo de VIVET */
+            bottom: 250px;  /* Exactamente arriba de la portada */
+            left: 50px;     /* Alineado con el margen izquierdo de la web */
+            width: 200px;   /* Ancho restringido como una "columna" que no tapa el reproductor principal */
+            z-index: 15; 
             opacity: 0; pointer-events: none; transform: translateY(30px);
             transition: opacity 0.8s ease, transform 0.8s var(--apple-spring);
             -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
             mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
         }
         .lyrics-overlay.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
-        .lyrics-content { width: 100%; height: 100%; overflow-y: auto; scrollbar-width: none; padding: 20px 0; }
-        .lyric-line { 
-            font-size: 22px; font-weight: 800; margin: 16px 0; text-align: left; 
-            color: rgba(255,255,255,0.2); letter-spacing: -1px; line-height: 1.2; 
-            transform-origin: left center; cursor: pointer; filter: blur(2px);
-            transition: all 0.7s var(--apple-spring); 
+        
+        .lyrics-content { 
+            width: 100%; height: 100%; overflow-y: auto; scrollbar-width: none; 
+            padding: 40% 0; /* Asegura un scroll perfecto para la sincronización central en la columna */
+            display: flex; flex-direction: column; align-items: flex-start; /* Todo hacia la izquierda */
+            position: relative;
         }
+        .lyrics-content::-webkit-scrollbar { display: none; }
+        
+        .lyric-line { 
+            font-size: 16px; /* Tamaño adaptado a la columna izquierda */
+            font-weight: 800; margin: 10px 0; 
+            text-align: left; 
+            color: rgba(255,255,255,0.25); letter-spacing: -0.5px; line-height: 1.2; 
+            transform-origin: left center; cursor: pointer; filter: blur(1.5px);
+            transition: all 0.7s var(--apple-spring); 
+            width: 100%; 
+        }
+        .lyric-line:hover { color: rgba(255,255,255,0.6); filter: blur(0px); }
+        
         .lyric-line.active { 
-            /* Letras activas con gradiente */
+            /* Letras sincronizadas iluminadas con los colores de la web */
             background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
             -webkit-background-clip: text; -webkit-text-fill-color: transparent; color: transparent;
-            font-size: 30px; font-weight: 900; filter: blur(0);
-            transform: translateX(10px); text-shadow: 0 10px 40px var(--accent-glow);
+            font-size: 22px; font-weight: 900; filter: blur(0) drop-shadow(0 5px 15px var(--accent-glow));
+            transform: translateX(8px); /* Salto de énfasis a la derecha (sincronizado) */
         }
 
         /* SPLASH SCREEN */
