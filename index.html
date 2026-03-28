@@ -14,19 +14,22 @@
             --accent-1: #ffffff;
             --accent-2: #ffffff;
             --accent-glow: rgba(255, 255, 255, 0.2);
-            --bg-dark: #000000;
+            --bg-dark: #050507;
             --apple-spring: cubic-bezier(0.25, 1, 0.4, 1);
             --apple-bouncy: cubic-bezier(0.34, 1.56, 0.64, 1);
+            --spring-easing: cubic-bezier(0.23, 1, 0.32, 1);
+            --beat-scale: 1;
             transition: --accent-1 1s ease, --accent-2 1s ease, --accent-glow 1s ease;
         }
 
-        /* RESETEO Y TIPOGRAFÍA EDITORIAL */
+        /* TIPOGRAFÍA BOLD APPLE Y RESETEO NATIVO */
         * { 
             margin: 0; padding: 0; box-sizing: border-box; 
-            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; 
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif; 
             -webkit-tap-highlight-color: transparent; 
             -webkit-font-smoothing: antialiased; 
             -moz-osx-font-smoothing: grayscale; 
+            text-rendering: optimizeLegibility;
         }
 
         body { 
@@ -35,168 +38,251 @@
             overflow: hidden; position: relative;
         }
 
-        /* FONDO CINEMÁTICO */
+        /* ====================================================
+           1. PANTALLA DE INICIO (CARRUSEL GIRATORIO)
+           ==================================================== */
+        #mood-selector {
+            position: fixed; inset: 0; background: var(--bg-dark); z-index: 1000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: opacity 1.2s ease, transform 1.2s var(--apple-spring);
+        }
+        #mood-selector.hidden {
+            opacity: 0; pointer-events: none; transform: scale(1.15);
+        }
+
+        .mood-nav {
+            position: absolute; top: 40px; left: 50px; right: 50px;
+            display: flex; justify-content: space-between; align-items: center; z-index: 20;
+        }
+        .mood-brand {
+            display: flex; align-items: center; gap: 12px;
+            font-size: 16px; font-weight: 900; letter-spacing: 2px; color: #ffffff;
+        }
+        .mood-logo {
+            width: 24px; height: 24px; background-color: #ffffff;
+            -webkit-mask: url('covers/LOGO.png') no-repeat center/contain;
+            mask: url('covers/LOGO.png') no-repeat center/contain;
+        }
+
+        .mood-center { text-align: center; z-index: 10; margin-top: -2vh; pointer-events: none; }
+        .mood-title {
+            font-size: clamp(32px, 4vw, 54px); font-weight: 900; color: #ffffff;
+            letter-spacing: -1.5px; margin-bottom: 12px;
+        }
+        .mood-subtitle {
+            font-size: 15px; font-weight: 500; color: rgba(255,255,255,0.5);
+            max-width: 450px; margin: 0 auto 30px; line-height: 1.5;
+        }
+        .btn-mood-action {
+            background: #ffffff; color: #000000; font-size: 15px; font-weight: 800;
+            padding: 16px 36px; border-radius: 40px; border: none; cursor: pointer;
+            transition: transform 0.4s var(--apple-bouncy), box-shadow 0.4s ease;
+            pointer-events: auto; 
+        }
+        .btn-mood-action:hover { transform: scale(1.05); box-shadow: 0 10px 30px rgba(255,255,255,0.3); }
+
+        #arch-container {
+            position: absolute; left: 50%; top: 50%; width: 0; height: 0; z-index: 5;
+            will-change: transform;
+        }
+        .arch-anchor { position: absolute; left: 0; top: 0; width: 0; height: 0; }
+        .arch-radius {
+            position: absolute; left: 0; top: 0; width: 0; height: 0;
+            transform: translateY(calc(-1 * clamp(280px, 40vmin, 550px))); 
+        }
+        .arch-item-counter {
+            position: absolute; left: -50px; top: -50px; width: 100px; height: 100px;
+            will-change: transform;
+        }
+        
+        .arch-item {
+            width: 100%; height: 100%; border-radius: 26px; 
+            overflow: hidden; position: relative; cursor: pointer;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+            transition: transform 0.4s var(--apple-bouncy), box-shadow 0.4s ease;
+            animation: popInArch 1.5s var(--apple-spring) both;
+        }
+        .arch-item img { width: 100%; height: 100%; object-fit: cover; }
+        .arch-item:hover { transform: scale(1.15); z-index: 30; box-shadow: 0 20px 40px rgba(255,255,255,0.2); }
+
+        .arch-item-info {
+            position: absolute; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-align: center; opacity: 0; transition: opacity 0.3s ease; padding: 10px;
+        }
+        .arch-item:hover .arch-item-info { opacity: 1; }
+        .arch-item-title { font-size: 13px; font-weight: 900; color: #ffffff; line-height: 1.1; margin-bottom: 4px; text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
+        .arch-item-artist { font-size: 9px; font-weight: 700; color: #cccccc; text-transform: uppercase; letter-spacing: 1px; }
+
+        @keyframes popInArch {
+            0% { opacity: 0; transform: translateY(100px) scale(0.8); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* ====================================================
+           2. REPRODUCTOR PRINCIPAL (TAMAÑO COMPACTO Y REFINADO)
+           ==================================================== */
+        #main-player-wrapper {
+            position: absolute; inset: 0; opacity: 0; pointer-events: none; transition: opacity 1.5s ease; z-index: 10;
+        }
+        #main-player-wrapper.visible { opacity: 1; pointer-events: auto; }
+
         .video-background, .image-fallback { 
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
             object-fit: cover; z-index: 1; opacity: 0; transition: opacity 2s ease; 
         }
         .video-background.active, .image-fallback.active { opacity: 0.9; z-index: 2; }
-        .image-fallback { filter: blur(60px) brightness(0.5); transform: scale(1.1); }
+        .image-fallback { filter: blur(70px) brightness(0.6); transform: scale(1.1); }
         
-        /* OVERLAY: Oscurece dramáticamente la izquierda y abajo para que los textos destaquen */
         .overlay { 
             position: absolute; inset: 0; 
             background: linear-gradient(90deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 40%, transparent 100%),
-                        linear-gradient(0deg, rgba(0,0,0,0.8) 0%, transparent 40%, rgba(0,0,0,0.4) 100%);
+                        linear-gradient(0deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.2) 40%, transparent 100%);
             z-index: 3; pointer-events: none; 
         }
 
-        /* UI DECONSTRUIDA - El contendor es invisible y abarca toda la pantalla */
         .player-app { 
             position: absolute; inset: 0; z-index: 10;
-            animation: fadeInUI 2.5s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+            transform: translateY(40px); transition: transform 1.5s var(--apple-spring);
         }
+        #main-player-wrapper.visible .player-app { transform: translateY(0); }
 
-        /* HEADER BRANDING (Arriba Izquierda) */
+        /* CABECERA (Arriba Izquierda) */
         .brand-area {
             position: absolute; top: 40px; left: 50px;
-            display: flex; align-items: center; gap: 12px;
-            z-index: 20;
+            display: flex; align-items: center; gap: 12px; z-index: 20;
         }
         .brand-container {
             display: flex; align-items: center; gap: 8px;
-            font-size: 10px; font-weight: 800; letter-spacing: 8px; 
+            font-size: 11px; font-weight: 900; letter-spacing: 6px; 
             color: #ffffff; text-transform: uppercase;
         }
         .site-logo { 
             width: 14px; height: 14px; background-color: #ffffff; 
-            -webkit-mask: url('covers/LOGO.png') no-repeat center/contain; 
-            mask: url('covers/LOGO.png') no-repeat center/contain; 
+            -webkit-mask: url('covers/LOGO.png') no-repeat center/contain; mask: url('covers/LOGO.png') no-repeat center/contain; 
         }
         .eq-container { display: flex; align-items: flex-end; gap: 4px; height: 14px; margin-left: 10px; }
-        .eq-bar { width: 3px; background: var(--accent-1); transition: height 0.3s ease; }
+        .eq-bar { width: 3px; background: var(--accent-1); border-radius: 3px; transition: height 0.3s ease; }
         body:not(.player-paused) .eq-bar { animation: eqBounce 0.8s alternate ease-in-out infinite; }
         body:not(.player-paused) .eq-bar:nth-child(2) { animation-delay: 0.2s; animation-duration: 0.6s; }
         body:not(.player-paused) .eq-bar:nth-child(3) { animation-delay: 0.4s; animation-duration: 0.7s; }
-        @keyframes eqBounce { 0% { height: 4px; } 100% { height: 14px; } }
 
-        /* BADGE FLOTANTE (Arriba Derecha) */
         .mixing-badge { 
             position: absolute; top: 40px; right: 50px;
-            border: 1px solid var(--accent-1); color: var(--accent-1);
-            padding: 6px 16px; font-size: 9px; font-weight: 700; letter-spacing: 3px;
-            text-transform: uppercase; opacity: 0; transition: all 0.5s ease;
+            background: var(--accent-1); color: #000;
+            padding: 6px 16px; font-size: 10px; font-weight: 900; letter-spacing: 2px;
+            text-transform: uppercase; border-radius: 20px; opacity: 0; transition: all 0.5s ease;
             box-shadow: 0 0 20px var(--accent-glow); z-index: 20;
         }
         .mixing-badge.active { opacity: 1; }
 
-        /* PORTADA GIGANTE (Abajo Izquierda) */
+        /* PORTADA (Reducida a 170px para ser elegante) */
         #artwork-wrapper { 
-            position: absolute; bottom: 50px; left: 50px; 
-            width: 280px; height: 280px; z-index: 20;
+            position: absolute; bottom: 60px; left: 60px; 
+            width: 170px; height: 170px; z-index: 20;
             transform: scale(var(--beat-scale)); transition: transform 0.1s linear;
         }
         .artwork-container { 
             width: 100%; height: 100%; overflow: hidden; 
-            /* Diseño Sharp/Minimalista, sin bordes redondos */
-            box-shadow: 20px 20px 60px rgba(0,0,0,0.8);
+            border-radius: 20px; 
+            box-shadow: 0 25px 50px rgba(0,0,0,0.8);
             transition: transform 0.8s var(--apple-spring), box-shadow 0.8s ease;
         }
-        body.player-paused .artwork-container { transform: scale(0.92) rotate(-2deg); box-shadow: 10px 10px 30px rgba(0,0,0,0.5); }
+        body.player-paused .artwork-container { transform: scale(0.9) rotate(-1deg); box-shadow: 0 15px 30px rgba(0,0,0,0.5); }
         .artwork-container img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* INFO DE LA CANCIÓN (Editorial Gigante) */
+        /* TEXTOS BOLD APPLE (Ajustados al nuevo tamaño compacto) */
         .track-info { 
-            position: absolute; bottom: 190px; left: 380px; right: 50px; z-index: 20;
+            position: absolute; bottom: 165px; left: 270px; right: 60px; z-index: 20;
             display: flex; flex-direction: column; align-items: flex-start;
         }
         .track-title { 
-            font-size: 5vw; font-weight: 200; color: #ffffff; letter-spacing: -2px; 
-            line-height: 1; text-transform: uppercase;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%;
-            text-shadow: 0 10px 40px rgba(0,0,0,0.5);
-            transition: color 1s ease;
+            font-size: clamp(24px, 3vw, 38px); font-weight: 900; color: #ffffff; letter-spacing: -1.5px; 
+            line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%;
+            text-shadow: 0 8px 25px rgba(0,0,0,0.6); transition: color 1s ease;
         }
         .track-artist { 
-            font-size: 14px; font-weight: 700; color: var(--accent-1); 
-            letter-spacing: 5px; text-transform: uppercase; margin-top: 10px;
-            text-shadow: 0 5px 20px var(--accent-glow);
+            font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.6); 
+            letter-spacing: 1px; text-transform: uppercase; margin-top: 5px;
         }
 
-        /* LÍNEA DE PROGRESO (Ultra delgada) */
+        /* LÍNEA LÁSER PROGRESO */
         .progress-area { 
-            position: absolute; bottom: 130px; left: 380px; right: 50px; z-index: 20;
-            display: flex; align-items: center; gap: 20px;
+            position: absolute; bottom: 115px; left: 270px; right: 60px; z-index: 20;
+            display: flex; align-items: center; gap: 16px;
         }
-        .time-info span { font-size: 11px; font-weight: 500; letter-spacing: 2px; color: rgba(255,255,255,0.4); font-variant-numeric: tabular-nums; }
+        .time-info span { font-size: 11px; font-weight: 700; letter-spacing: 1px; color: rgba(255,255,255,0.5); font-variant-numeric: tabular-nums; }
         .progress-bar { 
             flex: 1; -webkit-appearance: none; appearance: none; 
-            height: 2px; background-color: rgba(255,255,255,0.1); outline: none; margin: 0;
-            background-image: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+            height: 3px; border-radius: 3px; background-color: rgba(255,255,255,0.15); outline: none; margin: 0;
+            background-image: linear-gradient(90deg, #ffffff, #ffffff);
             background-size: var(--progress, 0%) 100%; background-repeat: no-repeat;
-            cursor: pointer; transition: height 0.3s ease, filter 0.3s;
-            box-shadow: 0 0 10px var(--accent-glow);
+            cursor: pointer; transition: height 0.3s ease;
         }
-        .progress-bar:hover, .progress-bar:active { height: 6px; filter: brightness(1.5); }
+        .progress-bar:hover, .progress-bar:active { height: 6px; }
         .progress-bar::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 0; height: 0; }
-        .progress-bar::-moz-range-thumb { width: 0; height: 0; border: none; background: transparent; }
 
-        /* CONTROLES (Abajo a la derecha de la portada) */
+        /* CONTROLES APPLE ICONS (Centrados debajo de la barra) */
         .controls-wrapper { 
-            position: absolute; bottom: 50px; left: 380px; right: 50px; z-index: 20;
-            display: flex; justify-content: space-between; align-items: center;
+            position: absolute; bottom: 60px; left: 270px; right: 60px; z-index: 20;
+            display: flex; justify-content: center; align-items: center;
         }
-        .controls { display: flex; align-items: center; gap: 35px; }
+        /* Distanciados a lo largo del centro pero con límite */
+        .controls { 
+            display: flex; align-items: center; 
+            gap: clamp(25px, 4vw, 45px); 
+        }
         .btn { 
             background: none!important; border: none!important; cursor: pointer; 
             color: #ffffff; display: flex; align-items: center; justify-content: center; padding: 0; 
             transition: transform 0.4s var(--apple-bouncy), color 0.3s ease, opacity 0.3s ease;
         }
-        .btn:hover { transform: scale(1.15); color: var(--accent-1); filter: drop-shadow(0 0 15px var(--accent-glow)); } 
+        .btn:hover { transform: scale(1.15); opacity: 0.8; } 
         .btn:active { transform: scale(0.85); opacity: 0.5; } 
-        .btn svg { width: 22px; height: 22px; fill: currentColor; }
+        .btn svg { width: 18px; height: 18px; fill: currentColor; }
         
-        /* Play Botón Minimalista Circular (Sin fondo) */
+        /* Botón Play Apple Blanco */
         .btn-play { 
-            width: 65px; height: 65px; border-radius: 50%; 
-            border: 1px solid rgba(255,255,255,0.3) !important;
-            transition: all 0.5s var(--apple-bouncy);
+            width: 48px; height: 48px; border-radius: 50%; 
+            background: #ffffff !important; color: #000000 !important;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.5);
         }
-        .btn-play:hover { border-color: var(--accent-1) !important; background: rgba(255,255,255,0.05) !important; }
-        .btn-play svg { width: 22px; height: 22px; }
+        .btn-play:hover { transform: scale(1.08); box-shadow: 0 12px 25px rgba(255,255,255,0.2); opacity: 1; }
+        .btn-play svg { width: 20px; height: 20px; fill: #000000 !important; }
         
-        .btn-secondary { color: rgba(255,255,255,0.3); }
-        .btn-secondary.active { color: var(--accent-1); filter: drop-shadow(0 0 10px var(--accent-glow)); }
+        .btn-secondary { color: rgba(255,255,255,0.4); }
+        .btn-secondary.active { color: var(--accent-1); }
 
+        /* Botón Apple Lyrics (Anclado al extremo derecho) */
         .btn-lyrics-right {
-            border: 1px solid rgba(255,255,255,0.2) !important;
-            padding: 12px 24px; border-radius: 30px;
-            font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+            position: absolute; right: 0;
+            background: rgba(255,255,255,0.1) !important;
+            padding: 10px; border-radius: 50%;
+            transition: all 0.4s var(--apple-bouncy); color: rgba(255,255,255,0.8);
         }
-        .btn-lyrics-right.active { border-color: var(--accent-1) !important; color: var(--accent-1); }
+        .btn-lyrics-right:hover { background: rgba(255,255,255,0.2) !important; }
+        .btn-lyrics-right.active { background: var(--accent-1) !important; color: #000 !important; }
+        .btn-lyrics-right svg { width: 16px; height: 16px; }
 
-        /* LETRAS: Flotando libremente en la pared derecha */
+        /* LETRAS FLOTANTES INMERSIVAS */
         .lyrics-overlay { 
-            position: absolute; top: 100px; bottom: 300px; left: 380px; right: 50px; z-index: 15; 
-            opacity: 0; pointer-events: none; 
-            transform: translateY(30px);
+            position: absolute; top: 100px; bottom: 230px; left: 270px; right: 60px; z-index: 15; 
+            opacity: 0; pointer-events: none; transform: translateY(30px);
             transition: opacity 0.8s ease, transform 0.8s var(--apple-spring);
             -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
             mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
         }
-        
         .lyrics-overlay.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
         .lyrics-content { width: 100%; height: 100%; overflow-y: auto; scrollbar-width: none; padding: 20px 0; }
-        
         .lyric-line { 
-            font-size: 32px; font-weight: 300; margin: 20px 0; text-align: left; 
-            color: rgba(255,255,255,0.2); letter-spacing: -0.5px; line-height: 1.2; 
-            transform-origin: left center; cursor: pointer;
-            transition: all 0.7s cubic-bezier(0.25, 1, 0.4, 1); 
+            font-size: 22px; font-weight: 800; margin: 16px 0; text-align: left; 
+            color: rgba(255,255,255,0.2); letter-spacing: -1px; line-height: 1.2; 
+            transform-origin: left center; cursor: pointer; filter: blur(2px);
+            transition: all 0.7s var(--apple-spring); 
         }
         .lyric-line.active { 
-            color: var(--accent-1); font-size: 48px; font-weight: 700;
-            transform: translateX(15px); text-shadow: 0 10px 30px var(--accent-glow);
+            color: #ffffff; font-size: 30px; font-weight: 900; filter: blur(0);
+            transform: translateX(10px); text-shadow: 0 10px 40px rgba(255,255,255,0.3);
         }
 
         /* SPLASH SCREEN */
@@ -206,95 +292,110 @@
             animation: fadeOutSplash 2.5s cubic-bezier(0.23, 1, 0.32, 1) forwards; pointer-events: none; 
         }
         .splash-logo {
-            width: 100px; height: 100px; background-color: #ffffff; 
+            width: 120px; height: 120px; background-color: #ffffff; 
             -webkit-mask: url('covers/LOGO.png') no-repeat center/contain; mask: url('covers/LOGO.png') no-repeat center/contain;
             animation: logoIntro 2s cubic-bezier(0.23, 1, 0.32, 1) forwards;
         }
 
         @keyframes logoIntro {
-            0% { transform: scale(0.6); opacity: 0; filter: drop-shadow(0 0 0px rgba(255,255,255,0)); }
-            40% { transform: scale(1.05); opacity: 1; filter: drop-shadow(0 0 30px rgba(255,255,255,0.6)); }
-            70% { transform: scale(1); opacity: 1; filter: drop-shadow(0 0 15px rgba(255,255,255,0.3)); }
-            100% { transform: scale(1.8); opacity: 0; filter: drop-shadow(0 0 0px rgba(255,255,255,0)); }
+            0% { transform: scale(0.6); opacity: 0; }
+            40% { transform: scale(1.05); opacity: 1; filter: drop-shadow(0 0 30px rgba(255,255,255,0.8)); }
+            70% { transform: scale(1); opacity: 1; filter: drop-shadow(0 0 15px rgba(255,255,255,0.4)); }
+            100% { transform: scale(1.5); opacity: 0; }
         }
         @keyframes fadeOutSplash { 0%, 75% { opacity: 1; visibility: visible; } 100% { opacity: 0; visibility: hidden; } }
-        @keyframes fadeInUI { 0% { opacity: 0; transform: translateY(40px); } 100% { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body class="player-paused">
 
+    <!-- Pantalla de Carga -->
     <div class="splash-screen">
         <div class="splash-logo"></div>
     </div>
 
-    <!-- FONDOS CINEMÁTICOS -->
-    <img id="fallback-bg" class="image-fallback" src="" alt="Fondo" decoding="async">
-    <video id="vid1" class="video-background active" crossorigin="anonymous" muted playsinline></video>
-    <video id="vid2" class="video-background" crossorigin="anonymous" muted playsinline></video>
-    <div class="overlay"></div>
-
-    <!-- UI DECONSTRUIDA -->
-    <div class="player-app">
+    <!-- PANTALLA INICIAL: MOOD SELECTOR (Arco) -->
+    <div id="mood-selector">
+        <div class="mood-nav">
+            <div class="mood-brand"><div class="mood-logo"></div>V I V E T</div>
+        </div>
         
-        <!-- ELEMENTOS SUPERIORES -->
-        <div class="brand-area">
-            <div class="brand-container">
-                <div class="site-logo"></div>
-                <span>VIVET</span>
+        <div class="mood-center">
+            <h1 class="mood-title">Listo para escoger tu mood?</h1>
+            <p class="mood-subtitle">Selecciona una pista del anillo inmersivo para comenzar tu experiencia en VIVET Ultra Premium.</p>
+            <button class="btn-mood-action" id="btn-start-random">Sorpréndeme</button>
+        </div>
+
+        <div id="arch-container"></div>
+    </div>
+
+    <!-- REPRODUCTOR PRINCIPAL ESCALADO Y REFINADO -->
+    <div id="main-player-wrapper">
+        <img id="fallback-bg" class="image-fallback" src="" alt="Fondo" decoding="async">
+        <video id="vid1" class="video-background active" crossorigin="anonymous" muted playsinline></video>
+        <video id="vid2" class="video-background" crossorigin="anonymous" muted playsinline></video>
+        <div class="overlay"></div>
+
+        <div class="player-app">
+            <!-- HEADER -->
+            <div class="brand-area">
+                <div class="brand-container">
+                    <div class="site-logo"></div>
+                    <span>V I V E T</span>
+                </div>
+                <div class="eq-container">
+                    <div class="eq-bar" style="height:4px;"></div>
+                    <div class="eq-bar" style="height:11px;"></div>
+                    <div class="eq-bar" style="height:6px;"></div>
+                </div>
             </div>
-            <div class="eq-container">
-                <div class="eq-bar" style="height:4px;"></div>
-                <div class="eq-bar" style="height:11px;"></div>
-                <div class="eq-bar" style="height:6px;"></div>
-            </div>
-        </div>
 
-        <div class="mixing-badge" id="mixing-badge">CROSSFADING</div>
-        
-        <!-- LETRAS (Flotan en el espacio superior derecho) -->
-        <div id="lyrics-overlay" class="lyrics-overlay">
-            <div id="lyrics-content" class="lyrics-content"></div>
-        </div>
-
-        <!-- PORTADA GIGANTE ANCLADA -->
-        <div id="artwork-wrapper">
-            <div class="artwork-container">
-                <img id="cover" src="" crossorigin="anonymous" decoding="async">
-            </div>
-        </div>
-
-        <!-- TIPOGRAFÍA MASIVA -->
-        <div class="track-info">
-            <div class="track-title" id="title">Loading...</div>
-            <div class="track-artist" id="artist">VIVET Premium</div>
-        </div>
-
-        <!-- LÍNEA LÁSER DE PROGRESO -->
-        <div class="progress-area">
-            <div class="time-info"><span id="time-current">0:00</span></div>
-            <input type="range" class="progress-bar" id="progress" min="0" max="100" step="0.1" value="0">
-            <div class="time-info"><span id="time-total">0:00</span></div>
-        </div>
-
-        <!-- CONTROLES -->
-        <div class="controls-wrapper">
-            <div class="controls">
-                <button class="btn btn-secondary" id="btn-shuffle"><svg viewBox="0 0 24 24"><path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/></svg></button>
-                <button class="btn" id="btn-prev"><svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg></button>
-                <button class="btn btn-play" id="btn-play">
-                    <svg id="icon-play" viewBox="0 0 24 24"><path d="M8 5.14v14.72a1 1 0 001.5.86l11-7.36a1 1 0 000-1.72l-11-7.36a1 1 0 00-1.5.86z"/></svg>
-                    <svg id="icon-pause" viewBox="0 0 24 24" style="display: none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
-                </button>
-                <button class="btn" id="btn-next"><svg viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg></button>
-                <button class="btn btn-secondary" id="btn-repeat"><svg viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/></svg></button>
-            </div>
+            <div class="mixing-badge" id="mixing-badge">CROSSFADING</div>
             
-            <!-- Botón Tipográfico de Lyrics -->
-            <button class="btn btn-secondary btn-lyrics-right" id="btn-lyrics">Lyrics</button>
+            <!-- LETRAS -->
+            <div id="lyrics-overlay" class="lyrics-overlay">
+                <div id="lyrics-content" class="lyrics-content"></div>
+            </div>
+
+            <!-- PORTADA PROPORCIONADA -->
+            <div id="artwork-wrapper">
+                <div class="artwork-container">
+                    <img id="cover" src="" crossorigin="anonymous" decoding="async">
+                </div>
+            </div>
+
+            <!-- TEXTO BOLD APPLE -->
+            <div class="track-info">
+                <div class="track-title" id="title">Loading...</div>
+                <div class="track-artist" id="artist">VIVET Premium</div>
+            </div>
+
+            <!-- PROGRESO -->
+            <div class="progress-area">
+                <div class="time-info"><span id="time-current">0:00</span></div>
+                <input type="range" class="progress-bar" id="progress" min="0" max="100" step="0.1" value="0">
+                <div class="time-info"><span id="time-total">0:00</span></div>
+            </div>
+
+            <!-- CONTROLES APPLE ICONS SEPARADOS Y CENTRADOS -->
+            <div class="controls-wrapper">
+                <div class="controls">
+                    <button class="btn btn-secondary" id="btn-shuffle"><svg viewBox="0 0 24 24"><path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/></svg></button>
+                    <button class="btn" id="btn-prev"><svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg></button>
+                    <button class="btn btn-play" id="btn-play">
+                        <svg id="icon-play" viewBox="0 0 24 24"><path d="M8 5.14v14.72a1 1 0 001.5.86l11-7.36a1 1 0 000-1.72l-11-7.36a1 1 0 00-1.5.86z"/></svg>
+                        <svg id="icon-pause" viewBox="0 0 24 24" style="display: none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                    </button>
+                    <button class="btn" id="btn-next"><svg viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg></button>
+                    <button class="btn btn-secondary" id="btn-repeat"><svg viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/></svg></button>
+                </div>
+                
+                <button class="btn btn-lyrics-right" id="btn-lyrics">
+                    <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-4H6V10h12v2zm0-4H6V6h12v2z"/></svg>
+                </button>
+            </div>
         </div>
     </div>
 
-    <!-- JS TOTALMENTE INTACTO -->
     <script>
         const playlist =[
             { title: "WOH OH OH", artist: "OMAR COURTZ, ROA", cover: "covers/WOH OH OH.jpg", file: "songs/WOH OH OH.mp3", video: "https://res.cloudinary.com/dwfqrnnnm/video/upload/v1773772525/WOH_OH_OH_dgjixz.mp4" },
@@ -320,10 +421,8 @@
         let colorCache = {}, audioCtx, analyser, dataArray;
         
         const CROSSFADE_TIME = 12;
-        const a1 = new Audio();
-        const a2 = new Audio();
-        const v1 = document.getElementById('vid1');
-        const v2 = document.getElementById('vid2');
+        const a1 = new Audio(); const a2 = new Audio();
+        const v1 = document.getElementById('vid1'); const v2 = document.getElementById('vid2');
         const fallbackBg = document.getElementById('fallback-bg');
         const progressBar = document.getElementById('progress');
         const timeCurrentEl = document.getElementById('time-current');
@@ -331,23 +430,117 @@
         const playBtn = document.getElementById('btn-play');
         const mixingBadge = document.getElementById('mixing-badge');
         
-        a1.crossOrigin = "anonymous";
-        a2.crossOrigin = "anonymous";
+        a1.crossOrigin = "anonymous"; a2.crossOrigin = "anonymous";
 
+        // ==========================================
+        // LÓGICA DE ROTACIÓN DEL ARCO (MOOD SELECTOR)
+        // ==========================================
+        let wheelAngle = 0;
+        let wheelSpeed = 0.05; // Velocidad de giro por defecto
+        let targetSpeed = 0.05; 
+        let isWheelActive = true;
+
+        const initMoodSelector = () => {
+            const container = document.getElementById('arch-container');
+            const total = playlist.length;
+
+            playlist.forEach((track, i) => {
+                const angle = (i / total) * 360; // Distribución en 360 grados
+                
+                const anchor = document.createElement('div');
+                anchor.className = 'arch-anchor';
+                anchor.style.transform = `rotate(${angle}deg)`;
+                
+                const radius = document.createElement('div');
+                radius.className = 'arch-radius';
+                
+                const counter = document.createElement('div');
+                counter.className = 'arch-item-counter';
+                counter.dataset.angle = angle; // Guardamos el ángulo inicial
+                counter.style.transform = `rotate(${-angle}deg)`;
+                
+                const item = document.createElement('div');
+                item.className = 'arch-item';
+                item.style.animationDelay = `${i * 0.05}s`;
+                
+                item.innerHTML = `
+                    <img src="${track.cover}" alt="${track.title}">
+                    <div class="arch-item-info">
+                        <div class="arch-item-title">${track.title}</div>
+                        <div class="arch-item-artist">${track.artist}</div>
+                    </div>
+                `;
+                
+                // Efecto de pausa suave al pasar el mouse por encima
+                item.onmouseenter = () => targetSpeed = 0;
+                item.onmouseleave = () => targetSpeed = 0.05;
+                item.onclick = () => startApp(i);
+                
+                counter.appendChild(item);
+                radius.appendChild(counter);
+                anchor.appendChild(radius);
+                container.appendChild(anchor);
+            });
+
+            requestAnimationFrame(rotateWheel);
+        };
+
+        const rotateWheel = () => {
+            if(!isWheelActive) return;
+            
+            // Interpolar velocidad para pausar/reanudar suavemente
+            wheelSpeed += (targetSpeed - wheelSpeed) * 0.05;
+            wheelAngle += wheelSpeed;
+            
+            // Girar contenedor principal
+            const container = document.getElementById('arch-container');
+            if(container) container.style.transform = `rotate(${wheelAngle}deg)`;
+            
+            // Contra-rotar los ítems para que texto y portada siempre estén derechos
+            const counters = document.querySelectorAll('.arch-item-counter');
+            counters.forEach(el => {
+                const baseAngle = parseFloat(el.dataset.angle);
+                el.style.transform = `rotate(${-(baseAngle + wheelAngle)}deg)`;
+            });
+            
+            requestAnimationFrame(rotateWheel);
+        };
+
+        const startApp = (index) => {
+            isWheelActive = false; // Detener animación de la rueda para rendimiento
+            initAudioContext();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+
+            document.getElementById('mood-selector').classList.add('hidden');
+            
+            setTimeout(() => {
+                document.getElementById('main-player-wrapper').classList.add('visible');
+            }, 300);
+
+            playTrack(index, true);
+            isPlaying = true;
+            document.body.classList.remove('player-paused');
+            document.getElementById('icon-play').style.display = 'none';
+            document.getElementById('icon-pause').style.display = 'block';
+        };
+
+        document.getElementById('btn-start-random').onclick = () => {
+            const randomIdx = Math.floor(Math.random() * playlist.length);
+            startApp(randomIdx);
+        };
+
+        initMoodSelector();
+
+        // ==========================================
+        // FUNCIONES ORIGINALES (INTACTAS)
+        // ==========================================
         const initAudioContext = () => { 
             if (audioCtx) return; 
             audioCtx = new (window.AudioContext || window.webkitAudioContext)(); 
-            analyser = audioCtx.createAnalyser(); 
-            analyser.fftSize = 64; 
+            analyser = audioCtx.createAnalyser(); analyser.fftSize = 64; 
             dataArray = new Uint8Array(analyser.frequencyBinCount); 
-            
-            const s1 = audioCtx.createMediaElementSource(a1); 
-            const s2 = audioCtx.createMediaElementSource(a2); 
-            
-            s1.connect(analyser); 
-            s2.connect(analyser); 
-            analyser.connect(audioCtx.destination); 
-            
+            const s1 = audioCtx.createMediaElementSource(a1); const s2 = audioCtx.createMediaElementSource(a2); 
+            s1.connect(analyser); s2.connect(analyser); analyser.connect(audioCtx.destination); 
             drawEQ(); 
         };
 
@@ -365,18 +558,10 @@
         };
 
         const renderLyrics = () => { 
-            const c = document.getElementById('lyrics-content'); 
-            c.innerHTML = ''; 
-            
+            const c = document.getElementById('lyrics-content'); c.innerHTML = ''; 
             currentLyrics.forEach((l, i) => { 
-                const d = document.createElement('div'); 
-                d.className = 'lyric-line'; 
-                d.textContent = l.text; 
-                d.id = `lyric-${i}`; 
-                d.onclick = () => { 
-                    let a = activeLayer === 1 ? a1 : a2; 
-                    if(a.duration) a.currentTime = l.time; 
-                }; 
+                const d = document.createElement('div'); d.className = 'lyric-line'; d.textContent = l.text; d.id = `lyric-${i}`; 
+                d.onclick = () => { let a = activeLayer === 1 ? a1 : a2; if(a.duration) a.currentTime = l.time; }; 
                 c.appendChild(d); 
             }); 
         };
@@ -384,272 +569,128 @@
         const updateLyricsScroll = () => {
             const container = document.getElementById('lyrics-content');
             const activeEl = document.getElementById(`lyric-${activeLyricIndex}`);
-            
             if (activeLyricIndex < 0 || !isLyricsVisible || !activeEl) return;
-            
-            document.querySelectorAll('.lyric-line').forEach((el, i) => {
-                el.classList.toggle('active', i === activeLyricIndex);
-            });
-            
-            container.scrollTo({ 
-                top: activeEl.offsetTop - (container.clientHeight * 0.45), 
-                behavior: 'smooth' 
-            });
+            document.querySelectorAll('.lyric-line').forEach((el, i) => { el.classList.toggle('active', i === activeLyricIndex); });
+            container.scrollTo({ top: activeEl.offsetTop - (container.clientHeight * 0.45), behavior: 'smooth' });
         };
 
         const loadLyrics = async (track, dur) => {
-            lyricsRequestCount++; 
-            let reqId = lyricsRequestCount; 
-            currentLyrics =[]; 
-            activeLyricIndex = -1;
-            
+            lyricsRequestCount++; let reqId = lyricsRequestCount; 
+            currentLyrics =[]; activeLyricIndex = -1;
             const content = document.getElementById('lyrics-content'); 
             content.innerHTML = '<div class="lyric-line" style="opacity:0.5;">Sincronizando...</div>';
-            
-            let artist = track.artist.split(/,|y|&/)[0].trim();
-            let match = null;
-            
+            let artist = track.artist.split(/,|y|&/)[0].trim(); let match = null;
             try {
                 const res = await fetch(`https://lrclib.net/api/get?artist_name=${encodeURIComponent(artist)}&track_name=${encodeURIComponent(track.title)}&duration=${Math.round(dur)}`);
                 if(res.ok) match = await res.json();
             } catch(e) {}
-            
             if (reqId !== lyricsRequestCount) return;
-            
-            if(match?.syncedLyrics) { 
-                currentLyrics = parseLRC(match.syncedLyrics); 
-                renderLyrics(); 
-            } else {
-                content.innerHTML = '<div class="lyric-line" style="opacity:0.5;">Letra no disponible</div>';
-            }
+            if(match?.syncedLyrics) { currentLyrics = parseLRC(match.syncedLyrics); renderLyrics(); } 
+            else { content.innerHTML = '<div class="lyric-line" style="opacity:0.5;">Letra no disponible</div>'; }
         };
 
         const handleAudioTick = (e) => {
-            let a = activeLayer === 1 ? a1 : a2;
-            let v = activeLayer === 1 ? v1 : v2;
-            
-            if (e.target === a && !isDragging && v.src && Math.abs(a.currentTime - v.currentTime) > 0.3) {
-                v.currentTime = a.currentTime;
-            }
-            
-            if (e.target === a && !isCrossfading && a.duration && (a.duration - a.currentTime <= CROSSFADE_TIME)) {
-                startAutomaticCrossfade();
-            }
-            
+            let a = activeLayer === 1 ? a1 : a2; let v = activeLayer === 1 ? v1 : v2;
+            if (e.target === a && !isDragging && v.src && Math.abs(a.currentTime - v.currentTime) > 0.3) { v.currentTime = a.currentTime; }
+            if (e.target === a && !isCrossfading && a.duration && (a.duration - a.currentTime <= CROSSFADE_TIME)) { startAutomaticCrossfade(); }
             if (isCrossfading && fadingOutAudio && fadingInAudio) {
                 let p = Math.min((Date.now() - fadeStartTime) / 1000 / CROSSFADE_TIME, 1);
-                fadingOutAudio.volume = Math.cos(p * 0.5 * Math.PI); 
-                fadingInAudio.volume = Math.sin(p * 0.5 * Math.PI);
-                
-                if (p >= 1) { 
-                    fadingOutAudio.pause(); 
-                    fadingOutAudio.volume = 0; 
-                    isCrossfading = false; 
-                    mixingBadge.classList.remove('active'); 
-                    fadingOutAudio = fadingInAudio = null; 
-                }
+                fadingOutAudio.volume = Math.cos(p * 0.5 * Math.PI); fadingInAudio.volume = Math.sin(p * 0.5 * Math.PI);
+                if (p >= 1) { fadingOutAudio.pause(); fadingOutAudio.volume = 0; isCrossfading = false; mixingBadge.classList.remove('active'); fadingOutAudio = fadingInAudio = null; }
             }
         };
 
         const updateVisualLoop = () => {
             let a = activeLayer === 1 ? a1 : a2;
-            
             if (a.duration && !isDragging) {
                 let pct = (a.currentTime / a.duration) * 100;
-                progressBar.value = pct; 
-                progressBar.style.setProperty('--progress', `${pct}%`);
-                
-                timeCurrentEl.textContent = formatTime(a.currentTime); 
-                timeTotalEl.textContent = formatTime(a.duration);
-                
+                progressBar.value = pct; progressBar.style.setProperty('--progress', `${pct}%`);
+                timeCurrentEl.textContent = formatTime(a.currentTime); timeTotalEl.textContent = formatTime(a.duration);
                 let idx = currentLyrics.findIndex((l, i) => a.currentTime >= l.time - 0.1 && (!currentLyrics[i+1] || a.currentTime < currentLyrics[i+1].time));
-                
-                if (idx !== -1 && idx !== activeLyricIndex) { 
-                    activeLyricIndex = idx; 
-                    updateLyricsScroll(); 
-                }
+                if (idx !== -1 && idx !== activeLyricIndex) { activeLyricIndex = idx; updateLyricsScroll(); }
             }
             requestAnimationFrame(updateVisualLoop);
         };
 
         const playTrack = (idx, manual = true) => {
-            isCrossfading = false; 
-            mixingBadge.classList.remove('active'); 
-            
+            isCrossfading = false; mixingBadge.classList.remove('active'); 
             if(fadingOutAudio) fadingOutAudio.pause();
-            
-            let nL = activeLayer === 1 ? 2 : 1;
-            let cA = activeLayer === 1 ? a1 : a2;
-            let nA = nL === 1 ? a1 : a2;
-            let nV = nL === 1 ? v1 : v2;
-            let t = playlist[idx];
-            
-            currentIdx = idx; 
-            nA.src = t.file; 
-            nV.src = t.video || ""; 
-            nA.currentTime = 0;
-            
+            let nL = activeLayer === 1 ? 2 : 1; let cA = activeLayer === 1 ? a1 : a2;
+            let nA = nL === 1 ? a1 : a2; let nV = nL === 1 ? v1 : v2; let t = playlist[idx];
+            currentIdx = idx; nA.src = t.file; nV.src = t.video || ""; nA.currentTime = 0;
             updateUI(t, nL);
-            
             if(manual) { 
-                cA.pause(); 
-                cA.volume = 0; 
-                nA.volume = 1; 
-                if(isPlaying) { 
-                    nA.play(); 
-                    if(t.video) nV.play(); 
-                } 
+                cA.pause(); cA.volume = 0; nA.volume = 1; 
+                if(isPlaying) { nA.play(); if(t.video) nV.play(); } 
                 activeLayer = nL; 
             }
         };
 
         const startAutomaticCrossfade = () => {
-            isCrossfading = true; 
-            mixingBadge.classList.add('active'); 
-            fadeStartTime = Date.now();
-            
+            isCrossfading = true; mixingBadge.classList.add('active'); fadeStartTime = Date.now();
             let nIdx = isShuffle ? Math.floor(Math.random() * playlist.length) : (currentIdx + 1) % playlist.length;
-            let nL = activeLayer === 1 ? 2 : 1;
-            let t = playlist[nIdx];
-            
-            fadingOutAudio = activeLayer === 1 ? a1 : a2; 
-            fadingInAudio = nL === 1 ? a1 : a2;
+            let nL = activeLayer === 1 ? 2 : 1; let t = playlist[nIdx];
+            fadingOutAudio = activeLayer === 1 ? a1 : a2; fadingInAudio = nL === 1 ? a1 : a2;
             let nV = nL === 1 ? v1 : v2; 
-            
-            fadingInAudio.src = t.file; 
-            fadingInAudio.volume = 0; 
-            
-            if(t.video) { 
-                nV.src = t.video; 
-                nV.load(); 
-                nV.play(); 
-            }
-            
-            fadingInAudio.play(); 
-            currentIdx = nIdx; 
-            activeLayer = nL; 
-            updateUI(t, nL);
+            fadingInAudio.src = t.file; fadingInAudio.volume = 0; 
+            if(t.video) { nV.src = t.video; nV.load(); nV.play(); }
+            fadingInAudio.play(); currentIdx = nIdx; activeLayer = nL; updateUI(t, nL);
         };
 
         const updateUI = (t, L) => {
             document.getElementById('title').textContent = t.title; 
             document.getElementById('artist').textContent = t.artist; 
             document.getElementById('cover').src = t.cover;
-            
             let a = L === 1 ? a1 : a2;
-            let ck = setInterval(() => { 
-                if(a.duration) { 
-                    clearInterval(ck); 
-                    loadLyrics(t, a.duration); 
-                } 
-            }, 100);
-            
+            let ck = setInterval(() => { if(a.duration) { clearInterval(ck); loadLyrics(t, a.duration); } }, 100);
             if(t.video) { 
-                fallbackBg.classList.remove('active'); 
-                (L === 1 ? v1 : v2).classList.add('active'); 
-                (L === 1 ? v2 : v1).classList.remove('active'); 
+                fallbackBg.classList.remove('active'); (L === 1 ? v1 : v2).classList.add('active'); (L === 1 ? v2 : v1).classList.remove('active'); 
             } else { 
-                v1.classList.remove('active'); 
-                v2.classList.remove('active'); 
-                fallbackBg.src = t.cover; 
-                fallbackBg.classList.add('active'); 
+                v1.classList.remove('active'); v2.classList.remove('active'); fallbackBg.src = t.cover; fallbackBg.classList.add('active'); 
             }
             extractColors(t.cover);
         };
 
         const extractColors = (src) => {
-            const img = new Image(); 
-            img.crossOrigin = "Anonymous"; 
-            img.src = src;
-            
+            const img = new Image(); img.crossOrigin = "Anonymous"; img.src = src;
             img.onload = () => {
-                const cvs = document.createElement('canvas');
-                const ctx = cvs.getContext('2d'); 
-                cvs.width = cvs.height = 40; 
-                ctx.drawImage(img, 0, 0, 40, 40);
-                
-                const d = ctx.getImageData(0, 0, 40, 40).data; 
-                let candidates =[];
-                
+                const cvs = document.createElement('canvas'); const ctx = cvs.getContext('2d'); 
+                cvs.width = cvs.height = 40; ctx.drawImage(img, 0, 0, 40, 40);
+                const d = ctx.getImageData(0, 0, 40, 40).data; let candidates =[];
                 for(let i=0; i<d.length; i+=16) {
                     let r = d[i], g = d[i+1], b = d[i+2];
-                    let max = Math.max(r,g,b), min = Math.min(r,g,b);
-                    let l = (max+min)/510, s = (max-min)/(max||1);
-                    let score = s * (1 - Math.abs(0.5 - l));
-                    if(l > 0.15 && l < 0.85) candidates.push({rgb:[r,g,b], score, s});
+                    let max = Math.max(r,g,b), min = Math.min(r,g,b); let l = (max+min)/510, s = (max-min)/(max||1);
+                    let score = s * (1 - Math.abs(0.5 - l)); if(l > 0.15 && l < 0.85) candidates.push({rgb:[r,g,b], score, s});
                 }
-                
-                candidates.sort((a,b) => b.score - a.score);
-                let c1 = candidates[0]?.rgb ||[255, 255, 255];
-                let c2 = candidates.find(c => {
-                    let diff = Math.abs(c.rgb[0]-c1[0]) + Math.abs(c.rgb[1]-c1[1]) + Math.abs(c.rgb[2]-c1[2]);
-                    return diff > 100;
-                })?.rgb || candidates[candidates.length-1]?.rgb ||[120, 120, 120];
-                
-                document.documentElement.style.setProperty('--accent-1', `rgb(${c1[0]},${c1[1]},${c1[2]})`);
-                document.documentElement.style.setProperty('--accent-2', `rgb(${c2[0]},${c2[1]},${c2[2]})`);
-                document.documentElement.style.setProperty('--accent-glow', `rgba(${c1[0]},${c1[1]},${c1[2]},0.5)`);
+                candidates.sort((a,b) => b.score - a.score); let c1 = candidates[0]?.rgb ||[255, 255, 255];
+                let c2 = candidates.find(c => { let diff = Math.abs(c.rgb[0]-c1[0]) + Math.abs(c.rgb[1]-c1[1]) + Math.abs(c.rgb[2]-c1[2]); return diff > 100; })?.rgb || candidates[candidates.length-1]?.rgb ||[120, 120, 120];
+                document.documentElement.style.setProperty('--accent-1', `rgb(${c1[0]},${c1[1]},${c1[2]})`); document.documentElement.style.setProperty('--accent-2', `rgb(${c2[0]},${c2[1]},${c2[2]})`); document.documentElement.style.setProperty('--accent-glow', `rgba(${c1[0]},${c1[1]},${c1[2]},0.5)`);
             };
         };
 
         const formatTime = s => isNaN(s) ? "0:00" : `${Math.floor(s/60)}:${Math.floor(s%60).toString().padStart(2,'0')}`;
 
         playBtn.onclick = () => {
-            initAudioContext(); 
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-            
-            if(isPlaying) { 
-                a1.pause(); 
-                a2.pause(); 
-                v1.pause(); 
-                v2.pause(); 
-                document.body.classList.add('player-paused'); 
-            } else { 
-                if(a1.volume > 0) a1.play(); 
-                if(a2.volume > 0) a2.play(); 
-                if(playlist[currentIdx].video) (activeLayer === 1 ? v1 : v2).play(); 
-                document.body.classList.remove('player-paused'); 
-            }
-            
+            if(isPlaying) { a1.pause(); a2.pause(); v1.pause(); v2.pause(); document.body.classList.add('player-paused'); } 
+            else { if(a1.volume > 0) a1.play(); if(a2.volume > 0) a2.play(); if(playlist[currentIdx].video) (activeLayer === 1 ? v1 : v2).play(); document.body.classList.remove('player-paused'); }
             isPlaying = !isPlaying; 
             document.getElementById('icon-play').style.display = isPlaying ? 'none' : 'block'; 
             document.getElementById('icon-pause').style.display = isPlaying ? 'block' : 'none';
         };
 
-        document.getElementById('btn-lyrics').onclick = function() { 
-            isLyricsVisible = !isLyricsVisible; 
-            document.getElementById('lyrics-overlay').classList.toggle('show'); 
-            this.classList.toggle('active');
-            if(isLyricsVisible) updateLyricsScroll(); 
-        };
-        
+        document.getElementById('btn-lyrics').onclick = function() { isLyricsVisible = !isLyricsVisible; document.getElementById('lyrics-overlay').classList.toggle('show'); this.classList.toggle('active'); if(isLyricsVisible) updateLyricsScroll(); };
         document.getElementById('btn-next').onclick = () => playTrack((currentIdx + 1) % playlist.length);
         document.getElementById('btn-prev').onclick = () => playTrack((currentIdx - 1 + playlist.length) % playlist.length);
+        document.getElementById('btn-shuffle').onclick = function() { isShuffle = !isShuffle; this.classList.toggle('active'); };
+        document.getElementById('btn-repeat').onclick = function() { isRepeat = !isRepeat; this.classList.toggle('active'); };
         
-        document.getElementById('btn-shuffle').onclick = function() { 
-            isShuffle = !isShuffle; 
-            this.classList.toggle('active'); 
-        };
-        
-        document.getElementById('btn-repeat').onclick = function() { 
-            isRepeat = !isRepeat; 
-            this.classList.toggle('active'); 
-        };
-        
-        progressBar.oninput = e => { 
-            isDragging = true; 
-            progressBar.style.setProperty('--progress', `${e.target.value}%`); 
-        };
-        
-        progressBar.onchange = e => { 
-            isDragging = false; 
-            let a = activeLayer === 1 ? a1 : a2; 
-            if(a.duration) a.currentTime = (e.target.value/100) * a.duration; 
-        };
+        progressBar.oninput = e => { isDragging = true; progressBar.style.setProperty('--progress', `${e.target.value}%`); };
+        progressBar.onchange = e => { isDragging = false; let a = activeLayer === 1 ? a1 : a2; if(a.duration) a.currentTime = (e.target.value/100) * a.duration; };
         
         a1.ontimeupdate = a2.ontimeupdate = handleAudioTick;
         requestAnimationFrame(updateVisualLoop);
-        playTrack(currentIdx, true);
+        
+        playTrack(0, false);
     </script>
 </body>
 </html>
