@@ -3,378 +3,364 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yan Block - Custom Flow UI</title>
+    <title>Yan Block - Bold Glass Flow</title>
     
-    <!-- Tipografía moderna y geométrica -->
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&display=swap" rel="stylesheet">
-    <!-- Íconos minimalistas -->
+    <!-- Tipografías: Outfit (Ultra Bold para títulos) e Inter (Para UI) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@700;800;900&display=swap" rel="stylesheet">
+    <!-- Phosphor Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <!-- Librería para extraer portadas -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsmediatags/3.9.5/jsmediatags.min.js"></script>
     
     <style>
         /* ========================
-           VARIABLES & TEMA PROPIO (NEON DARK)
+           TEMA DARK GLASS / BOLD
            ======================== */
         :root {
-            --bg-base: #050508;
-            --bg-surface: #111116;
+            --bg-base: #050505;
             --text-main: #ffffff;
-            --text-muted: #8a8a93;
-            --accent-gradient: linear-gradient(135deg, #7928CA 0%, #FF007A 100%);
-            --accent-solid: #FF007A;
-            --glass-panel: rgba(255, 255, 255, 0.03);
-            --glass-border: rgba(255, 255, 255, 0.05);
-            --font-custom: 'Outfit', sans-serif;
+            --text-muted: #888888;
+            --glass-bg: rgba(25, 25, 25, 0.4);
+            --glass-hover: rgba(45, 45, 45, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --font-bold: 'Outfit', sans-serif;
+            --font-ui: 'Inter', sans-serif;
+            --crossfade-time: 12;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: var(--font-custom); -webkit-font-smoothing: antialiased; }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
 
         body { 
-            background-color: var(--bg-base); 
-            color: var(--text-main); 
-            height: 100vh; 
-            overflow: hidden; 
-            display: flex; 
-            flex-direction: column;
-            background-image: radial-gradient(circle at 15% 50%, rgba(121, 40, 202, 0.08), transparent 40%),
-                              radial-gradient(circle at 85% 30%, rgba(255, 0, 122, 0.05), transparent 40%);
+            background-color: var(--bg-base); color: var(--text-main); 
+            font-family: var(--font-ui); height: 100vh; overflow: hidden; display: flex; 
+            position: relative;
         }
 
-        /* ========================
-           UI PRINCIPAL (DISEÑO PROPIO)
-           ======================== */
-        
-        /* Navegación Superior */
-        .top-nav {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 20px 50px; background: rgba(5, 5, 8, 0.6);
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--glass-border); z-index: 20; position: relative;
+        /* Luces de fondo para resaltar el Glassmorphism */
+        body::before {
+            content: ''; position: absolute; top: -20%; left: -10%; width: 50vw; height: 50vw;
+            background: radial-gradient(circle, rgba(255,255,255,0.03), transparent 60%);
+            filter: blur(80px); z-index: 0; pointer-events: none;
         }
-        
-        .brand { display: flex; align-items: center; gap: 10px; font-size: 24px; font-weight: 900; letter-spacing: 1px; }
-        .brand span { background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        
-        .nav-links { display: flex; gap: 40px; }
-        .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 15px; font-weight: 600; transition: 0.3s; cursor: pointer;}
-        .nav-links a:hover, .nav-links a.active { color: var(--text-main); }
-        
-        .user-profile { width: 40px; height: 40px; border-radius: 12px; background: var(--glass-panel); display: flex; align-items: center; justify-content: center; cursor: pointer; border: 1px solid var(--glass-border); transition: 0.3s;}
-        .user-profile:hover { border-color: var(--accent-solid); }
 
-        /* Contenedor desplazable */
-        .main-scroll {
-            flex: 1; overflow-y: auto; padding-bottom: 140px; scroll-behavior: smooth;
+        /* --- SIDEBAR GLASSMORPHISM --- */
+        .sidebar {
+            width: 260px; background: var(--glass-bg); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
+            border-right: 1px solid var(--glass-border); padding: 40px 25px;
+            display: flex; flex-direction: column; gap: 40px; z-index: 10;
         }
-        .main-scroll::-webkit-scrollbar { width: 8px; }
-        .main-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
-
-        /* Cabecera del Artista (Hero Banner) */
-        .hero-banner {
-            position: relative; height: 45vh; min-height: 350px;
-            margin: 30px 50px; border-radius: 30px; overflow: hidden;
-            display: flex; align-items: flex-end; padding: 50px;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
-            border: 1px solid var(--glass-border);
+        .brand { font-family: var(--font-bold); font-size: 28px; font-weight: 900; letter-spacing: 1px; display: flex; align-items: center; gap: 10px; }
+        .nav-menu { display: flex; flex-direction: column; gap: 10px; }
+        .nav-item {
+            display: flex; align-items: center; gap: 15px; padding: 12px 15px; border-radius: 12px;
+            font-size: 15px; font-weight: 500; color: var(--text-muted); cursor: pointer; transition: 0.3s;
         }
-        .hero-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; filter: brightness(0.6); transition: 0.5s; }
-        .hero-banner:hover .hero-bg { transform: scale(1.05); filter: brightness(0.5); }
-        
-        /* Gradiente superpuesto para texto legible */
-        .hero-overlay { position: absolute; inset: 0; background: linear-gradient(to top, var(--bg-base) 0%, rgba(5,5,8,0) 80%); }
+        .nav-item:hover, .nav-item.active { background: rgba(255,255,255,0.05); color: var(--text-main); }
+        .nav-item i { font-size: 22px; }
 
-        .hero-content { position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: flex-end; width: 100%; }
-        .hero-text h2 { font-size: 16px; color: var(--text-muted); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 5px; font-weight: 600;}
-        .hero-text h1 { font-size: 85px; font-weight: 900; line-height: 1; letter-spacing: -3px; margin-bottom: 20px; text-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+        /* --- ÁREA PRINCIPAL --- */
+        .main-content { flex: 1; overflow-y: auto; padding: 40px 60px; padding-bottom: 150px; z-index: 1; scroll-behavior: smooth;}
+        .main-content::-webkit-scrollbar { display: none; }
+
+        /* Hero Banner Ultra Bold */
+        .hero {
+            position: relative; display: flex; align-items: flex-end; gap: 40px;
+            padding: 40px; background: var(--glass-bg); border: 1px solid var(--glass-border);
+            border-radius: 30px; backdrop-filter: blur(20px); margin-bottom: 50px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+        .hero-img { width: 280px; height: 280px; border-radius: 20px; object-fit: cover; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
         
-        .hero-actions { display: flex; gap: 20px; }
+        .hero-info { flex: 1; }
+        .hero-info h2 { font-family: var(--font-bold); font-size: 16px; color: var(--text-muted); letter-spacing: 5px; text-transform: uppercase; margin-bottom: 5px; font-weight: 700;}
+        .hero-info h1 { font-family: var(--font-bold); font-size: 95px; font-weight: 900; letter-spacing: -3px; line-height: 1; margin-bottom: 30px; text-shadow: 0 10px 20px rgba(0,0,0,0.5);}
+        
         .btn-play-hero {
-            background: var(--accent-gradient); color: #fff; border: none;
-            padding: 18px 45px; border-radius: 100px; font-size: 18px; font-weight: 800;
-            display: flex; align-items: center; gap: 10px; cursor: pointer;
-            box-shadow: 0 15px 30px rgba(255, 0, 122, 0.3); transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+            background: var(--text-main); color: var(--bg-base); border: none; padding: 18px 45px; border-radius: 100px;
+            font-family: var(--font-bold); font-size: 18px; font-weight: 800; display: inline-flex; align-items: center; gap: 10px;
+            cursor: pointer; transition: 0.3s; box-shadow: 0 10px 30px rgba(255,255,255,0.2);
         }
-        .btn-play-hero:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(121, 40, 202, 0.5); }
-        
-        /* Sección de Canciones (Paneles Neumórficos/Glass) */
-        .tracklist-section { padding: 0 50px; margin-top: 40px; }
-        .section-header { font-size: 24px; font-weight: 800; margin-bottom: 25px; display: flex; align-items: center; gap: 10px; }
-        .section-header i { color: var(--accent-solid); }
+        .btn-play-hero:hover { transform: scale(1.05); background: #e0e0e0; }
 
-        .custom-track-list { display: flex; flex-direction: column; gap: 12px; }
+        /* Lista de Canciones Glassmorphism */
+        .section-title { font-family: var(--font-bold); font-size: 32px; font-weight: 800; margin-bottom: 25px; }
+        .track-list { display: flex; flex-direction: column; gap: 12px; }
         
-        .track-card {
-            display: flex; align-items: center; padding: 15px 25px;
-            background: var(--glass-panel); border: 1px solid var(--glass-border);
-            border-radius: 20px; cursor: pointer; transition: all 0.3s ease;
-            position: relative; overflow: hidden;
+        .track-row {
+            display: flex; align-items: center; padding: 15px 20px; border-radius: 16px;
+            background: var(--glass-bg); border: 1px solid transparent;
+            cursor: pointer; transition: 0.3s; backdrop-filter: blur(10px);
         }
+        .track-row:hover { background: var(--glass-hover); border-color: var(--glass-border); transform: translateX(5px); }
+        .track-row.active { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
         
-        /* Efecto de luz al pasar el cursor */
-        .track-card::before {
-            content: ''; position: absolute; left: 0; top: 0; width: 4px; height: 100%;
-            background: var(--accent-gradient); opacity: 0; transition: 0.3s;
-        }
-        .track-card:hover { 
-            background: rgba(255, 255, 255, 0.06); 
-            transform: translateX(10px); 
-            border-color: rgba(255, 255, 255, 0.1); 
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-        }
-        .track-card:hover::before { opacity: 1; }
+        .t-num { width: 40px; font-family: var(--font-bold); font-size: 18px; color: var(--text-muted); font-weight: 700; }
+        .track-row.active .t-num { color: #fff; }
+        .t-art { width: 55px; height: 55px; border-radius: 10px; object-fit: cover; margin-right: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.4); }
+        
+        .t-info { flex: 1; display: flex; flex-direction: column; justify-content: center;}
+        .t-title { font-family: var(--font-bold); font-size: 18px; font-weight: 700; color: var(--text-main); margin-bottom: 4px; }
+        .t-artist { font-size: 14px; color: var(--text-muted); }
+        .t-time { font-family: var(--font-bold); font-size: 15px; color: var(--text-muted); }
 
-        .track-card.active {
-            background: rgba(121, 40, 202, 0.1); border-color: rgba(255, 0, 122, 0.3);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
-        }
-        .track-card.active::before { opacity: 1; width: 6px; }
-
-        .t-num { width: 40px; font-size: 16px; font-weight: 800; color: var(--text-muted); }
-        .track-card.active .t-num { background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        
-        .t-art { width: 55px; height: 55px; border-radius: 12px; object-fit: cover; margin-right: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
-        
-        .t-info { flex: 1; }
-        .t-title { font-size: 17px; font-weight: 700; margin-bottom: 5px; color: var(--text-main); }
-        .t-artist { font-size: 14px; color: var(--text-muted); font-weight: 500; }
-        
-        .t-duration { font-size: 14px; font-weight: 600; color: var(--text-muted); display: flex; align-items: center; gap: 15px;}
-        .t-action { opacity: 0; transition: 0.3s; font-size: 22px; color: var(--text-main); }
-        .track-card:hover .t-action { opacity: 1; }
-
-        /* ========================
-           REPRODUCTOR FLOTANTE Y LETRAS (MANTENIDO INTACTO LÓGICAMENTE, ADAPTADO VISUALMENTE)
-           ======================== */
-        
-        /* Píldora Reproductor (Flotante) */
+        /* --- PÍLDORA REPRODUCTOR FLOTANTE --- */
         .player-pill {
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
-            width: calc(100% - 100px); max-width: 1000px; height: 90px; border-radius: 45px;
-            background: rgba(17, 17, 22, 0.7);
-            backdrop-filter: blur(40px) saturate(200%); -webkit-backdrop-filter: blur(40px) saturate(200%);
-            border: 1px solid rgba(255, 255, 255, 0.1); border-top: 1px solid rgba(255, 255, 255, 0.2);
+            width: calc(100% - 80px); max-width: 1000px; height: 90px; border-radius: 45px;
+            background: rgba(20, 20, 20, 0.7); backdrop-filter: blur(50px) saturate(150%);
+            border: 1px solid var(--glass-border); border-top: 1px solid rgba(255,255,255,0.15);
             box-shadow: 0 30px 60px rgba(0,0,0,0.8);
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 0 25px; z-index: 100;
+            display: flex; align-items: center; justify-content: space-between; padding: 0 20px; z-index: 50;
+        }
+        .pill-info { display: flex; align-items: center; gap: 15px; width: 30%; cursor: pointer;}
+        .pill-cover { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; transition: 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.5);}
+        .pill-cover:hover { transform: scale(1.1); }
+        .pill-text h4 { font-family: var(--font-bold); font-size: 16px; font-weight: 700; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+        .pill-text p { font-size: 13px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+
+        .pill-controls { display: flex; flex-direction: column; align-items: center; width: 40%; gap: 8px; }
+        .pill-btns { display: flex; align-items: center; gap: 30px; font-size: 22px; color: var(--text-main); }
+        .pill-btns i { cursor: pointer; transition: 0.2s; color: var(--text-muted); }
+        .pill-btns i:hover { color: #fff; transform: scale(1.1);}
+        
+        .play-btn-circle { width: 45px; height: 45px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.3s; box-shadow: 0 5px 15px rgba(255,255,255,0.2);}
+        .play-btn-circle i { color: #000 !important; font-size: 24px; }
+        .play-btn-circle:hover { transform: scale(1.1); background: #e0e0e0; }
+
+        .progress-bar { display: flex; align-items: center; gap: 12px; width: 100%; font-size: 11px; color: var(--text-muted); font-weight: 600; }
+        .track-line { flex: 1; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; cursor: pointer; }
+        .fill-line { width: 0%; height: 100%; background: #fff; border-radius: 2px; }
+
+        .pill-tools { width: 30%; display: flex; justify-content: flex-end; gap: 25px; font-size: 24px; color: var(--text-muted); }
+        .pill-tools i { cursor: pointer; transition: 0.2s; }
+        .pill-tools i:hover, .pill-tools i.active { color: #fff; }
+
+        /* ========================
+           NOW PLAYING (FONDO COLORIDO Y ALINEACIÓN)
+           ======================== */
+        .now-playing-screen {
+            position: fixed; inset: 0; background: var(--bg-base); z-index: 100;
+            display: flex; transform: translateY(100%); opacity: 0; visibility: hidden;
+            transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.6s;
+        }
+        .now-playing-screen.active { transform: translateY(0); opacity: 1; visibility: visible; }
+        
+        /* AQUI LA MAGIA DEL FONDO: Desenfoque vibrante a todo color */
+        .np-bg { 
+            position: absolute; inset: -10%; width: 120%; height: 120%; 
+            object-fit: cover; filter: blur(90px) saturate(200%); 
+            opacity: 0.7; z-index: 0; transition: 0.5s; 
+        }
+        
+        /* Capa oscura superpuesta para que el texto siempre se lea bien */
+        .np-overlay {
+            position: absolute; inset: 0; background: rgba(0, 0, 0, 0.55); z-index: 1;
         }
 
-        .player-info { display: flex; align-items: center; gap: 15px; width: 30%; }
-        .player-cover { width: 55px; height: 55px; border-radius: 50%; object-fit: cover; cursor: pointer; transition: 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.4); border: 2px solid transparent;}
-        .player-cover:hover { transform: scale(1.1); border-color: var(--accent-solid); }
-        .player-text h4 { font-size: 15px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
-        .player-text p { font-size: 13px; color: var(--text-muted); }
-
-        .player-core { display: flex; flex-direction: column; align-items: center; width: 40%; gap: 8px; }
-        .player-controls { display: flex; align-items: center; gap: 30px; color: var(--text-main); }
-        .player-controls i { font-size: 24px; cursor: pointer; color: var(--text-muted); transition: 0.2s; }
-        .player-controls i:hover { color: #fff; transform: scale(1.1);}
-        
-        .play-btn {
-            width: 48px; height: 48px; border-radius: 50%;
-            background: var(--text-main); color: var(--bg-base);
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; transition: 0.3s; box-shadow: 0 5px 15px rgba(255,255,255,0.2);
+        .btn-close-np { 
+            position: absolute; top: 40px; left: 50px; width: 50px; height: 50px; border-radius: 50%; 
+            background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border: 1px solid var(--glass-border); 
+            display: flex; align-items: center; justify-content: center; font-size: 24px; color: #fff; cursor: pointer; 
+            z-index: 10; transition: 0.3s; 
         }
-        .play-btn i { font-size: 24px; color: var(--bg-base) !important; }
-        .play-btn:hover { transform: scale(1.1); background: var(--accent-gradient); color: #fff; }
-        .play-btn:hover i { color: #fff !important; }
+        .btn-close-np:hover { background: rgba(255,255,255,0.2); transform: scale(1.1); }
 
-        /* Barra de progreso Custom */
-        .progress-wrapper { display: flex; align-items: center; gap: 12px; width: 100%; font-size: 11px; color: var(--text-muted); font-weight: 700; }
-        .progress-track { flex: 1; height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px; cursor: pointer; position: relative; overflow: hidden;}
-        .progress-fill { width: 0%; height: 100%; background: var(--accent-gradient); border-radius: 3px; position: relative; transition: width 0.1s linear;}
-
-        .player-tools { width: 30%; display: flex; justify-content: flex-end; align-items: center; gap: 20px; color: var(--text-muted); }
-        .tool-btn { font-size: 22px; cursor: pointer; transition: 0.2s; }
-        .tool-btn:hover { color: #fff; }
-        .tool-btn.active { color: var(--accent-solid); text-shadow: 0 0 10px var(--accent-solid); }
-
-        /* Pantalla de Letras Inmersiva (Karaoke Progresivo) */
-        .lyrics-screen {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: #000; z-index: 90; display: flex;
-            transform: translateY(100%); opacity: 0; visibility: hidden;
-            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.6s;
+        /* Layout alineado central */
+        .np-layout { 
+            position: relative; z-index: 2; width: 100%; height: 100vh;
+            display: flex; align-items: center; justify-content: center; 
+            padding: 0 10vw; gap: 6vw;
         }
-        .lyrics-screen.active { transform: translateY(0); opacity: 1; visibility: visible; }
-        
-        .lyrics-bg { position: absolute; top: -10%; left: -10%; width: 120%; height: 120%; object-fit: cover; filter: blur(100px) saturate(200%); opacity: 0.4; z-index: 0; }
-        
-        .lyrics-layout { position: relative; z-index: 1; width: 100%; display: flex; align-items: center; padding: 0 8vw; gap: 6vw; padding-bottom: 90px;}
-        
-        .lyrics-art-wrapper { flex: 0.8; display: flex; justify-content: flex-end; }
-        .lyrics-art { width: 450px; height: 450px; border-radius: 30px; object-fit: cover; box-shadow: 0 40px 80px rgba(0,0,0,0.8); transition: 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); transform: scale(0.8); opacity: 0; border: 1px solid rgba(255,255,255,0.1);}
-        .lyrics-screen.active .lyrics-art { transform: scale(1); opacity: 1; }
 
-        .lyrics-text-wrapper {
-            flex: 1.2; height: 100vh; overflow-y: auto; scroll-behavior: smooth;
-            padding: 45vh 0;
-            mask-image: linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%);
+        /* Bloque Izquierdo */
+        .np-left { 
+            display: flex; flex-direction: column; 
+            width: 450px; flex-shrink: 0;
+        }
+        .np-cover { width: 100%; height: 450px; border-radius: 20px; object-fit: cover; box-shadow: 0 30px 60px rgba(0,0,0,0.8); margin-bottom: 40px; border: 1px solid rgba(255,255,255,0.1); }
+        
+        .np-info { width: 100%; text-align: left; margin-bottom: 25px; }
+        .np-info h2 { font-family: var(--font-bold); font-size: 32px; font-weight: 900; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 0 2px 10px rgba(0,0,0,0.5);}
+        .np-info p { font-size: 18px; color: rgba(255,255,255,0.7); text-shadow: 0 2px 5px rgba(0,0,0,0.5);}
+
+        .np-progress-large { width: 100%; margin-bottom: 30px; }
+        .np-progress-large .progress-bar { font-size: 13px; color: rgba(255,255,255,0.8);}
+        
+        .np-controls-large { display: flex; align-items: center; justify-content: space-between; width: 100%; font-size: 30px; color: rgba(255,255,255,0.8); }
+        .np-controls-large i { cursor: pointer; transition: 0.2s; }
+        .np-controls-large i:hover { color: #fff; }
+        .np-play-btn-large { width: 80px; height: 80px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 36px; cursor: pointer; transition: 0.3s; box-shadow: 0 10px 20px rgba(0,0,0,0.3);}
+        .np-play-btn-large:hover { transform: scale(1.05); background: #e0e0e0; }
+        .np-play-btn-large i { color: #000 !important; }
+
+        /* Bloque Derecho: Letras */
+        .np-right { 
+            flex: 1; 
+            height: 60vh; /* Obliga a alinear verticalmente con la portada */
+            overflow-y: auto; scroll-behavior: smooth;
+            mask-image: linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%); 
             -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%);
+            padding-top: 25vh; padding-bottom: 25vh;
         }
-        .lyrics-text-wrapper::-webkit-scrollbar { display: none; }
+        .np-right::-webkit-scrollbar { display: none; }
 
-        /* Fill progresivo de las letras */
         .lyric-line {
-            font-size: 50px; font-weight: 900; line-height: 1.2; letter-spacing: -1px;
+            font-family: var(--font-bold); font-size: 46px; font-weight: 900; line-height: 1.2; letter-spacing: -1.5px;
             margin-bottom: 30px; cursor: pointer; transform-origin: left center;
-            filter: blur(3px); transition: transform 0.4s ease-out, filter 0.4s ease-out;
-            
+            filter: blur(2px); transition: transform 0.4s ease-out, filter 0.4s ease-out;
             --fill-pct: 0%;
-            background: linear-gradient(to right, #ffffff var(--fill-pct), rgba(255, 255, 255, 0.2) var(--fill-pct));
+            background: linear-gradient(to right, #ffffff var(--fill-pct), rgba(255, 255, 255, 0.25) var(--fill-pct));
             -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
         }
-        .lyric-line.active { transform: scale(1.05); filter: blur(0px); text-shadow: 0 0 40px rgba(255,255,255,0.2); }
-        .lyric-line.passed {
-            background: linear-gradient(to right, #ffffff 100%, #ffffff 100%);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            opacity: 0.3; 
-        }
-        .lyric-line:hover { opacity: 1; transform: scale(1.02); }
-
-        .close-lyrics {
-            position: absolute; top: 40px; right: 50px;
-            width: 50px; height: 50px; border-radius: 50%;
-            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px);
-            display: flex; align-items: center; justify-content: center;
-            color: #fff; cursor: pointer; font-size: 24px; z-index: 10; transition: 0.3s;
-        }
-        .close-lyrics:hover { background: rgba(255,255,255,0.2); transform: translateY(-5px); }
+        .lyric-line.active { transform: scale(1.05); filter: blur(0px); text-shadow: 0 0 40px rgba(255,255,255,0.3); }
+        .lyric-line.passed { background: linear-gradient(to right, #ffffff 100%, #ffffff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; opacity: 0.4; }
+        .lyric-line:hover { opacity: 1; transform: scale(1.02);}
     </style>
 </head>
 <body>
 
-    <!-- TOP NAVIGATION PROPIA -->
-    <nav class="top-nav">
-        <div class="brand">
-            <i class="ph-fill ph-waveform"></i>
-            <span>FLOW</span>
+    <!-- NAVEGACIÓN LATERAL GLASS -->
+    <aside class="sidebar">
+        <div class="brand"><i class="ph-fill ph-speaker-hifi"></i> STUDIO</div>
+        <div class="nav-menu">
+            <div class="nav-item active"><i class="ph-fill ph-house"></i> Home</div>
+            <div class="nav-item"><i class="ph ph-compass"></i> Discover</div>
+            <div class="nav-item"><i class="ph ph-headphones"></i> Radio</div>
+            <div class="nav-item" style="margin-top: 30px;"><i class="ph ph-heart"></i> Liked Songs</div>
+            <div class="nav-item"><i class="ph ph-playlist"></i> Playlists</div>
         </div>
-        <div class="nav-links">
-            <a class="active">Discover</a>
-            <a>Trending</a>
-            <a>Playlists</a>
-            <a>Radio</a>
-        </div>
-        <div class="user-profile">
-            <i class="ph ph-user"></i>
-        </div>
-    </nav>
+    </aside>
 
-    <!-- AREA DE CONTENIDO -->
-    <main class="main-scroll">
-        
-        <!-- HERO BANNER PROPIO -->
-        <header class="hero-banner">
-            <img src="https://res.cloudinary.com/ddcbl694n/image/upload/v1776007400/Yan_Block_u0inwd.jpg" alt="Yan Block" class="hero-bg">
-            <div class="hero-overlay"></div>
-            
-            <div class="hero-content">
-                <div class="hero-text">
-                    <h2>Verified Artist</h2>
-                    <h1>YAN BLOCK</h1>
-                </div>
-                <div class="hero-actions">
-                    <button class="btn-play-hero" onclick="playSong(0)">
-                        <i class="ph-fill ph-play-circle"></i> PLAY ALL
-                    </button>
-                </div>
+    <!-- ÁREA PRINCIPAL -->
+    <main class="main-content">
+        <!-- Banner Ultra Bold -->
+        <header class="hero">
+            <!-- Portada color original -->
+            <img src="https://res.cloudinary.com/ddcbl694n/image/upload/v1776007400/Yan_Block_u0inwd.jpg" alt="Yan Block" class="hero-img">
+            <div class="hero-info">
+                <h2>Verified Artist</h2>
+                <h1>YAN BLOCK</h1>
+                <button class="btn-play-hero" onclick="playSong(0)">
+                    <i class="ph-fill ph-play-circle"></i> SHUFFLE PLAY
+                </button>
             </div>
         </header>
 
-        <!-- LISTA DE CANCIONES ESTILO PANELES -->
-        <section class="tracklist-section">
-            <h3 class="section-header"><i class="ph-fill ph-fire"></i> Popular Tracks</h3>
-            <div class="custom-track-list" id="track-list">
-                <!-- Javascript Inyecta Aquí -->
+        <!-- Canciones Glass -->
+        <section>
+            <h3 class="section-title">Popular Tracks</h3>
+            <div class="track-list" id="track-list">
+                <!-- Tracks inyectados JS -->
             </div>
         </section>
     </main>
 
-    <!-- PANTALLA DE LETRAS (ESTRUCTURA MANTENIDA) -->
-    <div class="lyrics-screen" id="lyrics-screen">
-        <img src="" class="lyrics-bg" id="lyrics-bg">
-        <button class="close-lyrics" onclick="toggleLyrics()"><i class="ph ph-x"></i></button>
-        
-        <div class="lyrics-layout">
-            <div class="lyrics-art-wrapper">
-                <img src="" class="lyrics-art" id="lyrics-art">
+    <!-- PÍLDORA REPRODUCTOR -->
+    <div class="player-pill">
+        <div class="pill-info" onclick="toggleNP()">
+            <img src="https://res.cloudinary.com/ddcbl694n/image/upload/v1776007400/Yan_Block_u0inwd.jpg" class="pill-cover" id="pill-cover">
+            <div class="pill-text">
+                <h4 id="pill-title">Not Playing</h4>
+                <p id="pill-artist">Yan Block</p>
             </div>
-            <div class="lyrics-text-wrapper" id="lyrics-scroll">
+        </div>
+
+        <div class="pill-controls">
+            <div class="pill-btns">
+                <i class="ph ph-shuffle"></i>
+                <i class="ph-fill ph-skip-back" onclick="prevSong()"></i>
+                <div class="play-btn-circle" onclick="togglePlay()"><i class="ph-fill ph-play" id="pill-play-icon"></i></div>
+                <i class="ph-fill ph-skip-forward" onclick="nextSong()"></i>
+                <i class="ph ph-repeat"></i>
+            </div>
+            <div class="progress-bar">
+                <span id="pill-time-curr">0:00</span>
+                <div class="track-line" onclick="seek(event, this)"><div class="fill-line" id="pill-fill"></div></div>
+                <span id="pill-time-tot">0:00</span>
+            </div>
+        </div>
+
+        <div class="pill-tools">
+            <i class="ph ph-microphone-stage" onclick="toggleNP()" title="Lyrics"></i>
+            <i class="ph ph-speaker-high"></i>
+        </div>
+    </div>
+
+    <!-- PANTALLA REPRODUCCIÓN (FONDO VIBRANTE) -->
+    <div class="now-playing-screen" id="np-screen">
+        <!-- Fondo de la portada a todo color -->
+        <img src="" class="np-bg" id="np-bg">
+        <!-- Capa oscura para legibilidad -->
+        <div class="np-overlay"></div>
+        
+        <button class="btn-close-np" onclick="toggleNP()"><i class="ph-bold ph-caret-down"></i></button>
+
+        <div class="np-layout">
+            <!-- Bloque Izquierdo -->
+            <div class="np-left">
+                <img src="https://res.cloudinary.com/ddcbl694n/image/upload/v1776007400/Yan_Block_u0inwd.jpg" class="np-cover" id="np-cover-large">
+                
+                <div class="np-info">
+                    <h2 id="np-title">Not Playing</h2>
+                    <p id="np-artist">Yan Block</p>
+                </div>
+
+                <div class="np-progress-large">
+                    <div class="progress-bar">
+                        <span id="np-time-curr">0:00</span>
+                        <div class="track-line" onclick="seek(event, this)"><div class="fill-line" id="np-fill"></div></div>
+                        <span id="np-time-tot">0:00</span>
+                    </div>
+                </div>
+
+                <div class="np-controls-large">
+                    <i class="ph ph-shuffle"></i>
+                    <i class="ph-fill ph-skip-back" onclick="prevSong()"></i>
+                    <div class="np-play-btn-large" onclick="togglePlay()"><i class="ph-fill ph-play" id="np-play-icon"></i></div>
+                    <i class="ph-fill ph-skip-forward" onclick="nextSong()"></i>
+                    <i class="ph ph-repeat"></i>
+                </div>
+            </div>
+
+            <!-- Bloque Derecho (Letras alineadas) -->
+            <div class="np-right" id="lyrics-scroll">
                 <div id="lyrics-content"></div>
             </div>
         </div>
     </div>
 
-    <!-- PÍLDORA REPRODUCTOR (ESTRUCTURA MANTENIDA) -->
-    <div class="player-pill">
-        <div class="player-info">
-            <img src="https://res.cloudinary.com/ddcbl694n/image/upload/v1776007400/Yan_Block_u0inwd.jpg" class="player-cover" id="player-cover" onclick="toggleLyrics()" title="View Lyrics">
-            <div class="player-text">
-                <h4 id="player-title">Not Playing</h4>
-                <p id="player-artist">Yan Block</p>
-            </div>
-        </div>
-
-        <div class="player-core">
-            <div class="player-controls">
-                <i class="ph ph-shuffle"></i>
-                <i class="ph-fill ph-skip-back" onclick="prevSong()"></i>
-                <div class="play-btn" onclick="togglePlay()">
-                    <i class="ph-fill ph-play" id="play-icon"></i>
-                </div>
-                <i class="ph-fill ph-skip-forward" onclick="nextSong()"></i>
-                <i class="ph ph-repeat"></i>
-            </div>
-            
-            <div class="progress-wrapper">
-                <span id="time-current">0:00</span>
-                <div class="progress-track" id="progress-track">
-                    <div class="progress-fill" id="progress-fill"></div>
-                </div>
-                <span id="time-total">--:--</span>
-            </div>
-        </div>
-
-        <div class="player-tools">
-            <i class="ph ph-microphone-stage tool-btn" id="btn-lyrics" onclick="toggleLyrics()" title="Lyrics"></i>
-            <i class="ph ph-speaker-high tool-btn"></i>
-            <i class="ph ph-playlist tool-btn"></i>
-        </div>
-    </div>
-
-    <audio id="audio-player"></audio>
-
     <script>
-        // Data proporcionada
         const imageArtistUrl = "https://res.cloudinary.com/ddcbl694n/image/upload/v1776007400/Yan_Block_u0inwd.jpg";
         const cancionesData =[
-            { title: "YOGURCITO REMIX", artist: "Blessd, Anuel AA, Yan Block, Luar La L...", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007457/YOGURCITO_REMIX_Blessd_Anuel_AA_Yan_Block_Luar_La_L_Kris_R._ROA_ocxlgl.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009576/YOGURCITO_REMIX_wwua9w.lrc" },
+            { title: "YOGURCITO REMIX", artist: "Blessd, Anuel AA, Yan Block...", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007457/YOGURCITO_REMIX_Blessd_Anuel_AA_Yan_Block_Luar_La_L_Kris_R._ROA_ocxlgl.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009576/YOGURCITO_REMIX_wwua9w.lrc" },
             { title: "TALENTO", artist: "Yan Block, Panda Black", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007391/TALENTO_Yan_Block_Panda_Black_r4ugu2.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009576/TALENTO_s4qtf2.lrc" },
             { title: "444", artist: "Yan Block, Panda Black", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007376/444_Yan_Block_Panda_Black_upxnup.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009575/444_ie7e6d.lrc" },
             { title: "YO SE", artist: "Yan Block, TORRRES", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007440/YO_SE_Yan_Block_TORRRES_i8ianx.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009576/YO_SE_hiutok.lrc" },
-            { title: "444 - REMIX", artist: "Yan Block, De La Rose, Hades66, Ñengo Flow", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007452/444_-_REMIX_Yan_Block_De_La_Rose_Hades66_%C3%91engo_Flow_lshzau.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009575/444_-_REMIX_t2qoid.lrc" },
+            { title: "444 - REMIX", artist: "Yan Block, De La Rose, Hades66...", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007452/444_-_REMIX_Yan_Block_De_La_Rose_Hades66_%C3%91engo_Flow_lshzau.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009575/444_-_REMIX_t2qoid.lrc" },
             { title: "111", artist: "Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007415/111_Yan_Block_h3poua.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009575/111_adlg6f.lrc" },
-            { title: "WYA REMIX RED", artist: "J Abdiel, De La Rose, Yan Block, iZaak, Jay Wheeler", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007447/WYA_REMIX_RED_J_Abdiel_De_La_Rose_Yan_Block_iZaak_Jay_Wheeler_mvfmrz.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009576/WYA_REMIX_RED_ic1sdd.lrc" },
+            { title: "WYA REMIX RED", artist: "J Abdiel, De La Rose, Yan Block...", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007447/WYA_REMIX_RED_J_Abdiel_De_La_Rose_Yan_Block_iZaak_Jay_Wheeler_mvfmrz.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009576/WYA_REMIX_RED_ic1sdd.lrc" },
             { title: "SECUESTRO", artist: "Slayter, Yan Block, NTG", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007396/SECUESTRO_Slayter_Yan_Block_NTG_bqszzh.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009576/SECUESTRO_m4absd.lrc" },
             { title: "VACILE", artist: "Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007402/VACILE_Yan_Block_ytkcf9.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009576/VACILE_qxdqxq.lrc" },
-            { title: "EXPRESSO MARTINI", artist: "Rauw Alejandro, Marconi Impara, Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007397/EXPRESSO_MARTINI_Rauw_Alejandro_Marconi_Impara_Yan_Block_ac5x3j.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009575/EXPRESSO_MARTINI_nl8yas.lrc" }
+            { title: "EXPRESSO MARTINI", artist: "Rauw Alejandro, Marconi Impara...", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007397/EXPRESSO_MARTINI_Rauw_Alejandro_Marconi_Impara_Yan_Block_ac5x3j.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009575/EXPRESSO_MARTINI_nl8yas.lrc" }
         ];
 
-        const audioPlayer = document.getElementById('audio-player');
+        let audio1 = new Audio();
+        let audio2 = new Audio();
+        let activeAudio = audio1;
+        let fadingAudio = null;
+        let isCrossfading = false;
+        const CROSSFADE_DURATION = 12;
+
         let currentPlayingIndex = -1;
-        let isLyricsOpen = false;
+        let isNPOpen = false;
         let parsedLyrics =[]; 
         let activeLyricIndex = -1;
 
-        // 1. DIBUJAR PANELES DE CANCIONES
         function init() {
             const listEl = document.getElementById('track-list');
             cancionesData.forEach((song, i) => {
                 song.cover = imageArtistUrl;
                 const div = document.createElement('div');
-                div.className = 'track-card';
+                div.className = 'track-row';
                 div.id = `track-${i}`;
                 div.innerHTML = `
                     <div class="t-num">${(i + 1).toString().padStart(2, '0')}</div>
@@ -383,21 +369,17 @@
                         <div class="t-title">${song.title}</div>
                         <div class="t-artist">${song.artist}</div>
                     </div>
-                    <div class="t-duration">
-                        <span id="dur-${i}">--:--</span>
-                        <i class="ph-fill ph-play-circle t-action"></i>
-                    </div>
+                    <div class="t-time" id="dur-${i}">--:--</div>
                 `;
                 div.onclick = () => playSong(i);
                 listEl.appendChild(div);
 
-                // Portadas reales
                 jsmediatags.read(song.url, {
                     onSuccess: function(tag) {
                         if (tag.tags.picture) {
-                            let base64String = "";
-                            for (let j = 0; j < tag.tags.picture.data.length; j++) base64String += String.fromCharCode(tag.tags.picture.data[j]);
-                            const imgUrl = `data:${tag.tags.picture.format};base64,${window.btoa(base64String)}`;
+                            let b64 = "";
+                            for (let j = 0; j < tag.tags.picture.data.length; j++) b64 += String.fromCharCode(tag.tags.picture.data[j]);
+                            const imgUrl = `data:${tag.tags.picture.format};base64,${window.btoa(b64)}`;
                             song.cover = imgUrl;
                             document.getElementById(`art-${i}`).src = imgUrl;
                             if(currentPlayingIndex === i) updateCovers(imgUrl);
@@ -410,13 +392,25 @@
         }
 
         function updateCovers(img) {
-            document.getElementById('player-cover').src = img;
-            document.getElementById('lyrics-art').src = img;
-            document.getElementById('lyrics-bg').src = img;
+            document.getElementById('pill-cover').src = img;
+            document.getElementById('np-cover-large').src = img;
+            document.getElementById('np-bg').src = img;
         }
 
-        // 2. LOGICA REPRODUCTOR
         async function playSong(idx) {
+            isCrossfading = false;
+            if(fadingAudio) { fadingAudio.pause(); fadingAudio.src = ""; fadingAudio = null; }
+            activeAudio.pause();
+            activeAudio.volume = 1;
+            
+            triggerUIForSong(idx);
+            
+            activeAudio.src = cancionesData[idx].url;
+            activeAudio.play().catch(e=>console.log(e));
+            setPlayIcon(true);
+        }
+
+        function triggerUIForSong(idx) {
             if(currentPlayingIndex !== -1) document.getElementById(`track-${currentPlayingIndex}`).classList.remove('active');
             document.getElementById(`track-${idx}`).classList.add('active');
             
@@ -425,20 +419,72 @@
             const song = cancionesData[idx];
 
             updateCovers(song.cover);
-            document.getElementById('player-title').innerText = song.title;
-            document.getElementById('player-artist').innerText = song.artist;
+            document.getElementById('pill-title').innerText = song.title;
+            document.getElementById('pill-artist').innerText = song.artist;
+            document.getElementById('np-title').innerText = song.title;
+            document.getElementById('np-artist').innerText = song.artist;
 
-            audioPlayer.src = song.url;
-            audioPlayer.play();
-            setPlayIcon(true);
-
-            await fetchLyrics(song.lrc);
+            fetchLyrics(song.lrc);
         }
 
-        // 3. LETRAS (LOGICA INTACTA)
+        function startCrossfade() {
+            isCrossfading = true;
+            fadingAudio = activeAudio;
+            activeAudio = (activeAudio === audio1) ? audio2 : audio1;
+            
+            let nextIdx = (currentPlayingIndex + 1) % cancionesData.length;
+            triggerUIForSong(nextIdx);
+            
+            activeAudio.src = cancionesData[nextIdx].url;
+            activeAudio.volume = 0;
+            activeAudio.play().catch(e=>console.log(e));
+        }
+
+        function engineLoop() {
+            if(activeAudio.duration && !isNaN(activeAudio.duration)) {
+                const curr = activeAudio.currentTime;
+                const dur = activeAudio.duration;
+                const remaining = dur - curr;
+                
+                if (remaining <= CROSSFADE_DURATION && !isCrossfading && remaining > 0.5) {
+                    startCrossfade();
+                }
+
+                if (isCrossfading && fadingAudio && fadingAudio.duration) {
+                    const fadeRemaining = fadingAudio.duration - fadingAudio.currentTime;
+                    let ratio = fadeRemaining / CROSSFADE_DURATION;
+                    if(ratio < 0) ratio = 0; if(ratio > 1) ratio = 1;
+                    
+                    fadingAudio.volume = ratio;         
+                    activeAudio.volume = 1 - ratio;     
+
+                    if (ratio <= 0 || fadingAudio.ended) {
+                        fadingAudio.pause(); fadingAudio.src = "";
+                        isCrossfading = false; activeAudio.volume = 1;
+                    }
+                }
+                
+                const pct = (curr / dur) * 100;
+                document.getElementById('pill-fill').style.width = `${pct}%`;
+                document.getElementById('np-fill').style.width = `${pct}%`;
+                
+                let cStr = fmt(curr); let dStr = fmt(dur);
+                document.getElementById('pill-time-curr').innerText = cStr;
+                document.getElementById('pill-time-tot').innerText = dStr;
+                document.getElementById('np-time-curr').innerText = cStr;
+                document.getElementById('np-time-tot').innerText = dStr;
+                if(document.getElementById(`dur-${currentPlayingIndex}`)) {
+                    document.getElementById(`dur-${currentPlayingIndex}`).innerText = dStr;
+                }
+                
+                if(isNPOpen) updateKaraoke(curr);
+            }
+            requestAnimationFrame(engineLoop);
+        }
+
         async function fetchLyrics(url) {
             const container = document.getElementById('lyrics-content');
-            container.innerHTML = "<p style='color:#8a8a93; font-size:24px'>Extrayendo letras...</p>";
+            container.innerHTML = "<p style='color:#888; font-size:24px; font-family: Outfit;'>Cargando letras...</p>";
             parsedLyrics =[];
 
             try {
@@ -465,29 +511,13 @@
                     const div = document.createElement('div');
                     div.className = 'lyric-line';
                     div.innerText = lyric.text || "♪";
-                    div.onclick = () => { audioPlayer.currentTime = lyric.time; audioPlayer.play(); setPlayIcon(true); };
+                    div.onclick = () => { activeAudio.currentTime = lyric.time; activeAudio.play(); setPlayIcon(true); };
                     lyric.element = div;
                     container.appendChild(div);
                 });
             } catch (e) {
-                container.innerHTML = "<p style='color:#8a8a93; font-size:24px'>Letras no disponibles.</p>";
+                container.innerHTML = "<p style='color:#888; font-size:24px; font-family: Outfit;'>Letras no disponibles.</p>";
             }
-        }
-
-        // 4. MOTOR FLUIDO 60FPS (LOGICA INTACTA)
-        function engineLoop() {
-            if(audioPlayer.duration) {
-                const curr = audioPlayer.currentTime;
-                const dur = audioPlayer.duration;
-                
-                document.getElementById('progress-fill').style.width = `${(curr / dur) * 100}%`;
-                document.getElementById('time-current').innerText = fmt(curr);
-                document.getElementById('time-total').innerText = fmt(dur);
-                document.getElementById(`dur-${currentPlayingIndex}`).innerText = fmt(dur);
-                
-                if(isLyricsOpen) updateKaraoke(curr);
-            }
-            requestAnimationFrame(engineLoop);
         }
 
         function updateKaraoke(currTime) {
@@ -510,7 +540,7 @@
                     } else {
                         lyric.element.className = 'lyric-line active';
                         const scrollEl = document.getElementById('lyrics-scroll');
-                        scrollEl.scrollTo({ top: lyric.element.offsetTop - (scrollEl.clientHeight/2) + 20, behavior: 'smooth' });
+                        scrollEl.scrollTo({ top: lyric.element.offsetTop - (scrollEl.clientHeight/2) + (lyric.element.clientHeight/2), behavior: 'smooth' });
                     }
                 });
                 activeLyricIndex = newIdx;
@@ -523,33 +553,30 @@
             }
         }
 
-        // 5. EVENTOS GLOBALES
-        audioPlayer.onended = nextSong;
-
-        document.getElementById('progress-track').onclick = (e) => {
-            if(!audioPlayer.duration) return;
-            const rect = e.target.getBoundingClientRect();
-            audioPlayer.currentTime = ((e.clientX - rect.left) / rect.width) * audioPlayer.duration;
-        };
-
         function togglePlay() {
-            if(!audioPlayer.src) return playSong(0);
-            if(audioPlayer.paused) { audioPlayer.play(); setPlayIcon(true); } 
-            else { audioPlayer.pause(); setPlayIcon(false); }
+            if(!activeAudio.src) return playSong(0);
+            if(activeAudio.paused) { activeAudio.play(); setPlayIcon(true); } 
+            else { activeAudio.pause(); setPlayIcon(false); }
         }
 
         function nextSong() { playSong((currentPlayingIndex + 1) % cancionesData.length); }
         function prevSong() { playSong((currentPlayingIndex - 1 + cancionesData.length) % cancionesData.length); }
 
         function setPlayIcon(playing) {
-            document.getElementById('play-icon').className = playing ? "ph-fill ph-pause" : "ph-fill ph-play";
+            document.getElementById('pill-play-icon').className = playing ? "ph-fill ph-pause" : "ph-fill ph-play";
+            document.getElementById('np-play-icon').className = playing ? "ph-fill ph-pause" : "ph-fill ph-play";
         }
 
-        function toggleLyrics() {
-            isLyricsOpen = !isLyricsOpen;
-            document.getElementById('lyrics-screen').classList.toggle('active');
-            document.getElementById('btn-lyrics').classList.toggle('active');
-            if(isLyricsOpen && audioPlayer.currentTime > 0) setTimeout(() => updateKaraoke(audioPlayer.currentTime), 100);
+        function seek(e, el) {
+            if(!activeAudio.duration) return;
+            const rect = el.getBoundingClientRect();
+            activeAudio.currentTime = ((e.clientX - rect.left) / rect.width) * activeAudio.duration;
+        }
+
+        function toggleNP() {
+            isNPOpen = !isNPOpen;
+            document.getElementById('np-screen').classList.toggle('active');
+            if(isNPOpen && activeAudio.currentTime > 0) setTimeout(() => updateKaraoke(activeAudio.currentTime), 100);
         }
 
         function fmt(s) { return `${Math.floor(s/60)}:${Math.floor(s%60).toString().padStart(2,'0')}`; }
