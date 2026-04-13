@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yan Block - Immersive Glass UI</title>
+    <title>Yan Block - Apple Music Style UI</title>
     
     <!-- Tipografía Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -64,32 +64,45 @@
         .nav-item:hover { color: var(--text-main); }
         .nav-item.active { background: rgba(255,255,255,0.15); color: var(--text-main); box-shadow: 0 4px 15px rgba(0,0,0,0.2);}
 
-        /* --- CONTENIDO PRINCIPAL (INICIO) --- */
+        /* --- CONTENIDO PRINCIPAL --- */
         .main-container {
             width: 100%; height: 100%; overflow-y: auto; scroll-behavior: smooth;
             padding: 140px 5vw 150px 5vw; display: flex; flex-direction: column; align-items: center;
         }
         .main-container::-webkit-scrollbar { display: none; }
+
+        .view-section { display: none; width: 100%; max-width: 1400px; flex-direction: column; animation: fadeIn 0.4s ease; }
+        .view-section.active { display: flex; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
-        .page-header { width: 100%; max-width: 1400px; margin-bottom: 40px; text-align: left; }
+        .page-header { width: 100%; margin-bottom: 40px; text-align: left; }
         .page-header h1 { font-size: 48px; font-weight: 800; letter-spacing: -1.5px; }
         .page-header p { font-size: 16px; color: var(--text-muted); margin-top: 5px; }
 
+        /* HEADER DE ARTISTA */
+        .btn-back { display: inline-flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 500; color: var(--text-muted); cursor: pointer; margin-bottom: 20px; transition: 0.3s; width: fit-content; }
+        .btn-back:hover { color: #fff; transform: translateX(-5px); }
+        
+        .artist-header-profile { display: flex; align-items: center; gap: 30px; margin-bottom: 40px; }
+        .artist-header-img { width: 180px; height: 180px; border-radius: 50%; object-fit: cover; box-shadow: 0 20px 40px rgba(0,0,0,0.4); border: 2px solid rgba(255,255,255,0.1); }
+        
         /* GRID DE CARTAS (CARDS) */
         .card-grid {
-            width: 100%; max-width: 1400px;
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 30px;
+            width: 100%; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 30px;
         }
         
         .glass-card {
             background: var(--glass-bg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
             border: 1px solid var(--glass-border); border-radius: 24px; padding: 16px;
-            cursor: pointer; transition: all 0.4s var(--spring); position: relative; group;
+            cursor: pointer; transition: all 0.4s var(--spring); position: relative;
         }
         .glass-card:hover { transform: translateY(-8px) scale(1.02); background: var(--glass-hover); border-color: rgba(255,255,255,0.3); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
         .glass-card.active { border-color: #fff; background: rgba(255,255,255,0.1); }
         
         .card-img-wrapper { position: relative; width: 100%; aspect-ratio: 1; margin-bottom: 16px; overflow: hidden; border-radius: 16px; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .card-img-wrapper.is-artist { border-radius: 50%; } /* Tarjeta redonda para artistas */
+        
         .card-img { width: 100%; height: 100%; object-fit: cover; transition: 0.4s var(--spring); }
         .glass-card:hover .card-img { transform: scale(1.05); }
         
@@ -103,17 +116,18 @@
         .card-play-btn:hover { background: #fff; color: #000; transform: scale(1.1) !important; }
         
         .card-info { display: flex; flex-direction: column; gap: 4px; padding: 0 4px; }
+        .is-artist-info { text-align: center; } /* Centrar texto en tarjetas de artistas */
         .card-title { font-size: 16px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .card-artist { font-size: 14px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* --- PÍLDORA REPRODUCTORA INFERIOR (INICIO) --- */
+        /* --- PÍLDORA REPRODUCTORA INFERIOR --- */
         .player-pill-wrapper {
             position: fixed; bottom: 40px; left: 0; width: 100%; display: flex; justify-content: center; z-index: 50;
             pointer-events: none; 
         }
         .player-pill {
             pointer-events: auto; width: 90%; max-width: 800px; height: 80px;
-            background: rgba(20, 20, 20, 0.6); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+            background: rgba(20, 20, 20, 0.7); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
             border: 1px solid var(--glass-border); border-radius: 100px;
             display: flex; align-items: center; justify-content: space-between; padding: 10px 20px 10px 10px;
             box-shadow: 0 30px 60px rgba(0,0,0,0.6); transition: transform 0.3s var(--spring);
@@ -139,15 +153,15 @@
 
         .pill-right { display: flex; align-items: center; gap: 20px; width: 30%; justify-content: flex-end; }
         .pill-progress { display: flex; align-items: center; gap: 10px; width: 100%; max-width: 150px;}
-        .track-line { flex: 1; height: 4px; background: rgba(255,255,255,0.15); border-radius: 2px; cursor: pointer; position: relative; }
-        .fill-line { width: 0%; height: 100%; background: #fff; border-radius: 2px; transition: width 0.1s linear;}
+        .track-line { flex: 1; height: 6px; background: rgba(255,255,255,0.15); border-radius: 3px; cursor: pointer; position: relative; }
+        .fill-line { width: 0%; height: 100%; background: #fff; border-radius: 3px; transition: width 0.1s linear;}
         
         .btn-expand { width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s;}
         .btn-expand:hover { background: rgba(255,255,255,0.2); transform: scale(1.1); }
 
 
         /* ========================
-           NOW PLAYING (IMMERSIVE BACKGROUND COVER)
+           APPLE MUSIC NOW PLAYING UI
            ======================== */
         .now-playing-fs {
             position: fixed; inset: 0; z-index: 100;
@@ -157,16 +171,14 @@
         }
         .now-playing-fs.active { transform: translateY(0); opacity: 1; visibility: visible; }
 
-        /* La Portada Ampliada como Fondo */
         .np-bg {
             position: absolute; inset: -10%; width: 120%; height: 120%;
-            object-fit: cover; filter: blur(25px) brightness(0.35) saturate(150%);
+            object-fit: cover; filter: blur(40px) brightness(0.3) saturate(180%);
             z-index: 0; transition: filter 0.5s ease;
         }
-        /* Gradiente para asegurar contraste en la parte inferior de los controles */
         .np-overlay {
             position: absolute; inset: 0; 
-            background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.8) 100%); 
+            background: linear-gradient(135deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.6) 100%); 
             z-index: 1;
         }
 
@@ -178,23 +190,55 @@
         }
         .btn-close-np:hover { background: rgba(255,255,255,0.2); transform: scale(1.05); }
 
-        /* Contenido Flotante sobre la Portada */
+        /* Split Layout para Cover + Controles a la izq y Letras a la der */
         .np-content {
-            position: relative; z-index: 2; display: flex; flex-direction: column; height: 100%; width: 100%;
+            position: relative; z-index: 2; display: flex; flex-direction: row; align-items: center; 
+            height: 100%; width: 100%; padding: 80px 8vw; gap: 6vw;
         }
 
-        /* Letras en el centro ocupando el espacio visual principal */
+        /* --- Lado Izquierdo (Portada y Controles) --- */
+        .np-left {
+            flex: 1; max-width: 500px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        
+        .np-large-cover {
+            width: 100%; aspect-ratio: 1; border-radius: 20px; box-shadow: 0 30px 60px rgba(0,0,0,0.6); 
+            border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px; object-fit: cover;
+        }
+
+        .np-text-area { width: 100%; text-align: left; margin-bottom: 30px; }
+        .np-text-area h2 { font-size: 28px; font-weight: 700; text-shadow: 0 2px 10px rgba(0,0,0,0.5); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .np-text-area p { font-size: 18px; color: rgba(255,255,255,0.7); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+
+        .np-progress-area { width: 100%; display: flex; flex-direction: column; gap: 10px; margin-bottom: 30px; }
+        .np-progress-bar { display: flex; align-items: center; width: 100%; }
+        .np-times { display: flex; justify-content: space-between; font-size: 13px; color: rgba(255,255,255,0.6); font-variant-numeric: tabular-nums; font-weight: 500; }
+
+        .np-controls { display: flex; align-items: center; justify-content: space-between; width: 100%; font-size: 28px; color: rgba(255,255,255,0.8); margin-bottom: 40px;}
+        .np-controls i { cursor: pointer; transition: 0.2s; }
+        .np-controls i:hover { color: #fff; transform: scale(1.1); }
+        .np-play { width: 72px; height: 72px; background: #fff; color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; transition: 0.2s; box-shadow: 0 10px 20px rgba(0,0,0,0.3);}
+        .np-play i { margin-left: 4px; }
+        .np-play:hover { transform: scale(1.05); }
+
+        .np-volume-area { display: flex; align-items: center; gap: 15px; width: 100%; color: rgba(255,255,255,0.6); font-size: 20px;}
+
+        /* --- Lado Derecho (Letras) --- */
+        .np-right {
+            flex: 1.2; height: 85vh; display: flex; flex-direction: column; justify-content: center; position: relative;
+        }
+
         .np-lyrics {
-            flex: 1; overflow-y: auto; padding: 20vh 15vw;
+            height: 100%; overflow-y: auto; padding: 35vh 0;
             mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
             -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
-            text-align: center; scroll-behavior: smooth;
+            text-align: left; scroll-behavior: smooth;
         }
         .np-lyrics::-webkit-scrollbar { display: none; }
 
         .lyric-line {
-            font-size: 52px; font-weight: 800; line-height: 1.3; letter-spacing: -1.5px;
-            margin-bottom: 24px; cursor: pointer; transform-origin: center;
+            font-size: 46px; font-weight: 800; line-height: 1.3; letter-spacing: -1.5px;
+            margin-bottom: 30px; cursor: pointer; transform-origin: left center;
             transition: transform 0.5s var(--spring), filter 0.5s var(--spring), opacity 0.5s;
             opacity: 0.3; filter: blur(3px); transform: scale(0.95);
             
@@ -203,40 +247,14 @@
             -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
         }
         .lyric-line.active { opacity: 1; filter: blur(0); transform: scale(1); }
-        .lyric-line.passed { opacity: 0.15; filter: blur(2px); --fill-pct: 100%; transform: scale(0.9); }
+        .lyric-line.passed { opacity: 0.15; filter: blur(1px); --fill-pct: 100%; transform: scale(0.95); }
         .lyric-line:hover { opacity: 0.8; filter: blur(0); }
 
-        /* Controles Inferiores integrados en la portada */
-        .np-bottom {
-            height: 140px; display: flex; align-items: center; justify-content: space-between;
-            padding: 0 5vw; padding-bottom: 40px; width: 100%;
-        }
-
-        .np-info { display: flex; align-items: center; gap: 20px; width: 30%; }
-        /* Mini portada cristalina para referencia */
-        .np-mini-cover { width: 72px; height: 72px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.15);}
-        .np-text h2 { font-size: 22px; font-weight: 700; margin-bottom: 4px; text-shadow: 0 2px 10px rgba(0,0,0,0.5);}
-        .np-text p { font-size: 15px; color: rgba(255,255,255,0.7); text-shadow: 0 2px 5px rgba(0,0,0,0.5);}
-
-        .np-controls-wrapper { display: flex; flex-direction: column; align-items: center; gap: 15px; flex: 1; }
-        .np-controls { display: flex; align-items: center; gap: 40px; font-size: 32px; color: rgba(255,255,255,0.8);}
-        .np-controls i { cursor: pointer; transition: 0.2s; }
-        .np-controls i:hover { color: #fff; transform: scale(1.1); }
-        .np-play { width: 64px; height: 64px; background: #fff; color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; transition: 0.2s; box-shadow: 0 10px 20px rgba(0,0,0,0.3);}
-        .np-play:hover { transform: scale(1.05); }
-
-        .np-progress-bar { display: flex; align-items: center; gap: 15px; width: 100%; max-width: 500px; font-size: 13px; color: rgba(255,255,255,0.7); font-variant-numeric: tabular-nums;}
-        .np-progress-bar .track-line { flex: 1; height: 6px; background: rgba(255,255,255,0.2); border-radius: 3px; position: relative; cursor: pointer; }
-        .np-progress-bar .fill-line { height: 100%; background: #fff; border-radius: 3px; }
-
-        .np-tools { width: 30%; display: flex; justify-content: flex-end; gap: 20px; font-size: 24px; color: rgba(255,255,255,0.7);}
-        .np-tools i { cursor: pointer; transition: 0.2s; }
-        .np-tools i:hover { color: #fff; }
     </style>
 </head>
 <body>
 
-    <!-- Fondo de Esferas (Inicio) -->
+    <!-- Fondo de Esferas -->
     <div class="ambient-bg">
         <div class="orb orb-1"></div>
         <div class="orb orb-2"></div>
@@ -245,25 +263,48 @@
 
     <!-- Navegación Glass Superior -->
     <nav class="top-nav">
-        <div class="nav-item active">Listen Now</div>
-        <div class="nav-item">Browse</div>
-        <div class="nav-item">Radio</div>
-        <div class="nav-item">Library</div>
+        <div class="nav-item active" id="nav-songs" onclick="switchTab('songs')">Songs</div>
+        <div class="nav-item" id="nav-artists" onclick="switchTab('artists')">Artists</div>
+        <div class="nav-item" id="nav-search">Search</div>
     </nav>
 
-    <!-- Área Principal de Tarjetas -->
+    <!-- Área Principal -->
     <main class="main-container">
-        <div class="page-header">
-            <h1>Discover</h1>
-            <p>Picks for you, updated daily.</p>
+        
+        <!-- VISTA: CANCIONES -->
+        <div id="view-songs" class="view-section active">
+            <div class="page-header">
+                <h1>Songs</h1>
+                <p>All your favorite tracks in one place.</p>
+            </div>
+            <div class="card-grid" id="songs-grid"></div>
         </div>
 
-        <div class="card-grid" id="card-grid">
-            <!-- Cartas inyectadas JS -->
+        <!-- VISTA: ARTISTAS -->
+        <div id="view-artists" class="view-section">
+            <div class="page-header">
+                <h1>Artists</h1>
+                <p>Browse the catalog by top artists.</p>
+            </div>
+            <div class="card-grid" id="artists-grid"></div>
         </div>
+
+        <!-- VISTA: DETALLE DE ARTISTA -->
+        <div id="view-artist-detail" class="view-section">
+            <div class="btn-back" onclick="switchTab('artists')"><i class="ph-bold ph-arrow-left"></i> Back</div>
+            <div class="artist-header-profile">
+                <img src="" id="detail-artist-img" class="artist-header-img">
+                <div>
+                    <h1 id="detail-artist-name" style="font-size: 52px; font-weight: 800; letter-spacing: -1.5px; margin-bottom: 5px;">Artist Name</h1>
+                    <p style="font-size: 18px; color: var(--text-muted);">Top Songs</p>
+                </div>
+            </div>
+            <div class="card-grid" id="artist-songs-grid"></div>
+        </div>
+
     </main>
 
-    <!-- Píldora Reproductora Inferior (Inicio) -->
+    <!-- Píldora Reproductora Inferior -->
     <div class="player-pill-wrapper">
         <div class="player-pill">
             <div class="pill-info" onclick="toggleNP()">
@@ -289,79 +330,94 @@
         </div>
     </div>
 
-    <!-- REPRODUCCIÓN (PORTADA COMO FONDO COMPLETO) -->
+    <!-- APPLE MUSIC NOW PLAYING UI (FULLSCREEN) -->
     <div class="now-playing-fs" id="np-screen">
-        <!-- La Portada Original como Fondo -->
+        <!-- Portada como Fondo inmenso y difuminado -->
         <img src="" class="np-bg" id="fs-bg">
-        <!-- Oscurecimiento Inferior para asegurar legibilidad -->
         <div class="np-overlay"></div>
         
+        <!-- Botón para cerrar ocultar panel -->
+        <div class="btn-close-np" onclick="toggleNP()"><i class="ph-bold ph-caret-down"></i></div>
+
         <div class="np-content">
-            <div class="btn-close-np" onclick="toggleNP()"><i class="ph-bold ph-caret-down"></i></div>
-
-            <!-- Letras Karaoke Progresivas al Centro -->
-            <div class="np-lyrics" id="lyrics-scroll">
-                <div id="lyrics-content"></div>
-            </div>
-
-            <!-- Controles sobre la portada (Bottom Bar) -->
-            <div class="np-bottom">
+            
+            <!-- Izquierda: Portada y Controles -->
+            <div class="np-left">
+                <img src="https://res.cloudinary.com/ddcbl694n/image/upload/v1776007400/Yan_Block_u0inwd.jpg" class="np-large-cover" id="fs-large-cover">
                 
-                <!-- Mini Cover & Texto (Izquierda) -->
-                <div class="np-info">
-                    <img src="https://res.cloudinary.com/ddcbl694n/image/upload/v1776007400/Yan_Block_u0inwd.jpg" class="np-mini-cover" id="fs-mini-cover">
-                    <div class="np-text">
-                        <h2 id="fs-title">Not Playing</h2>
-                        <p id="fs-artist">Yan Block</p>
-                    </div>
+                <div class="np-text-area">
+                    <h2 id="fs-title">Not Playing</h2>
+                    <p id="fs-artist">Yan Block</p>
                 </div>
 
-                <!-- Play/Pause y Barra (Centro) -->
-                <div class="np-controls-wrapper">
-                    <div class="np-controls">
-                        <i class="ph-light ph-shuffle"></i>
-                        <i class="ph-fill ph-skip-back" onclick="prevSong()"></i>
-                        <div class="np-play" onclick="togglePlay()"><i class="ph-fill ph-play" id="fs-play-icon"></i></div>
-                        <i class="ph-fill ph-skip-forward" onclick="nextSong()"></i>
-                        <i class="ph-light ph-repeat"></i>
+                <div class="np-progress-area">
+                    <div class="np-progress-bar track-line" onclick="seek(event, this)">
+                        <div class="fill-line" id="fs-fill"></div>
                     </div>
-                    <div class="np-progress-bar">
+                    <div class="np-times">
                         <span id="fs-time-curr">0:00</span>
-                        <div class="track-line" onclick="seek(event, this)"><div class="fill-line" id="fs-fill"></div></div>
                         <span id="fs-time-tot">0:00</span>
                     </div>
                 </div>
 
-                <!-- Herramientas (Derecha) -->
-                <div class="np-tools">
-                    <i class="ph-light ph-microphone-stage" style="color: #fff;"></i>
-                    <i class="ph-light ph-speaker-high"></i>
+                <div class="np-controls">
+                    <i class="ph-fill ph-shuffle" style="font-size: 24px;"></i>
+                    <i class="ph-fill ph-skip-back" onclick="prevSong()"></i>
+                    <div class="np-play" onclick="togglePlay()"><i class="ph-fill ph-play" id="fs-play-icon"></i></div>
+                    <i class="ph-fill ph-skip-forward" onclick="nextSong()"></i>
+                    <i class="ph-bold ph-repeat" style="font-size: 24px;"></i>
+                </div>
+
+                <div class="np-volume-area">
+                    <i class="ph-fill ph-speaker-low"></i>
+                    <div class="track-line"><div class="fill-line" style="width: 75%;"></div></div>
+                    <i class="ph-fill ph-speaker-high"></i>
                 </div>
             </div>
+
+            <!-- Derecha: Letras Sincronizadas -->
+            <div class="np-right">
+                <div class="np-lyrics" id="lyrics-scroll">
+                    <div id="lyrics-content"></div>
+                </div>
+            </div>
+
         </div>
     </div>
 
     <script>
         const imageArtistUrl = "https://res.cloudinary.com/ddcbl694n/image/upload/v1776007400/Yan_Block_u0inwd.jpg";
+        
+        // Base de Datos de Canciones
         const cancionesData =[
-            { title: "YOGURCITO REMIX", artist: "Blessd, Anuel AA, Yan Block...", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007457/YOGURCITO_REMIX_Blessd_Anuel_AA_Yan_Block_Luar_La_L_Kris_R._ROA_ocxlgl.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009576/YOGURCITO_REMIX_wwua9w.lrc" },
+            { title: "YOGURCITO REMIX", artist: "Blessd, Anuel AA, Yan Block, Luar La L", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007457/YOGURCITO_REMIX_Blessd_Anuel_AA_Yan_Block_Luar_La_L_Kris_R._ROA_ocxlgl.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009576/YOGURCITO_REMIX_wwua9w.lrc" },
             { title: "TALENTO", artist: "Yan Block, Panda Black", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007391/TALENTO_Yan_Block_Panda_Black_r4ugu2.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009576/TALENTO_s4qtf2.lrc" },
             { title: "444", artist: "Yan Block, Panda Black", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007376/444_Yan_Block_Panda_Black_upxnup.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009575/444_ie7e6d.lrc" },
             { title: "YO SE", artist: "Yan Block, TORRRES", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007440/YO_SE_Yan_Block_TORRRES_i8ianx.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009576/YO_SE_hiutok.lrc" },
-            { title: "444 - REMIX", artist: "Yan Block, De La Rose, Hades66...", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007452/444_-_REMIX_Yan_Block_De_La_Rose_Hades66_%C3%91engo_Flow_lshzau.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009575/444_-_REMIX_t2qoid.lrc" },
+            { title: "444 - REMIX", artist: "Yan Block, De La Rose, Hades66", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007452/444_-_REMIX_Yan_Block_De_La_Rose_Hades66_%C3%91engo_Flow_lshzau.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009575/444_-_REMIX_t2qoid.lrc" },
             { title: "111", artist: "Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007415/111_Yan_Block_h3poua.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009575/111_adlg6f.lrc" },
-            { title: "WYA REMIX RED", artist: "J Abdiel, De La Rose, Yan Block...", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007447/WYA_REMIX_RED_J_Abdiel_De_La_Rose_Yan_Block_iZaak_Jay_Wheeler_mvfmrz.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009576/WYA_REMIX_RED_ic1sdd.lrc" },
+            { title: "WYA REMIX RED", artist: "J Abdiel, De La Rose, Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007447/WYA_REMIX_RED_J_Abdiel_De_La_Rose_Yan_Block_iZaak_Jay_Wheeler_mvfmrz.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009576/WYA_REMIX_RED_ic1sdd.lrc" },
             { title: "SECUESTRO", artist: "Slayter, Yan Block, NTG", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007396/SECUESTRO_Slayter_Yan_Block_NTG_bqszzh.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009576/SECUESTRO_m4absd.lrc" },
             { title: "VACILE", artist: "Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007402/VACILE_Yan_Block_ytkcf9.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009576/VACILE_qxdqxq.lrc" },
-            { title: "EXPRESSO MARTINI", artist: "Rauw Alejandro, Marconi Impara...", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007397/EXPRESSO_MARTINI_Rauw_Alejandro_Marconi_Impara_Yan_Block_ac5x3j.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009575/EXPRESSO_MARTINI_nl8yas.lrc" }
+            { title: "EXPRESSO MARTINI", artist: "Rauw Alejandro, Marconi Impara, Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007397/EXPRESSO_MARTINI_Rauw_Alejandro_Marconi_Impara_Yan_Block_ac5x3j.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009575/EXPRESSO_MARTINI_nl8yas.lrc" }
         ];
 
+        // Base de Datos de Artistas
+        const artistsData =[
+            { name: "Yan Block", img: imageArtistUrl },
+            { name: "Panda Black", img: "https://images.unsplash.com/photo-1518609878373-06d740f60d8b?w=400&q=80" },
+            { name: "Blessd", img: "https://images.unsplash.com/photo-1493225457284-0bf53ce8151e?w=400&q=80" },
+            { name: "De La Rose", img: "https://images.unsplash.com/photo-1516280440502-a7204f14e427?w=400&q=80" },
+            { name: "Rauw Alejandro", img: "https://images.unsplash.com/photo-1605971439739-4cb4187f4c54?w=400&q=80" }
+        ];
+
+        // Sistema de Sonido y Crossfade
         let audio1 = new Audio();
         let audio2 = new Audio();
         let activeAudio = audio1;
         let fadingAudio = null;
         let isCrossfading = false;
-        const CROSSFADE_DURATION = 12;
+        const CROSSFADE_DURATION = 12; // 12 Segundos solicitados
 
         let currentPlayingIndex = -1;
         let isNPOpen = false;
@@ -369,18 +425,56 @@
         let activeLyricIndex = -1;
 
         function init() {
-            const gridEl = document.getElementById('card-grid');
-            cancionesData.forEach((song, i) => {
-                song.cover = imageArtistUrl;
-                
+            renderSongs(cancionesData, 'songs-grid');
+            renderArtists();
+            requestAnimationFrame(engineLoop);
+        }
+
+        // --- SISTEMA DE PESTAÑAS (TABS) ---
+        function switchTab(tabId) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            
+            if(tabId === 'songs') {
+                document.getElementById('view-songs').classList.add('active');
+                document.getElementById('nav-songs').classList.add('active');
+            } else if(tabId === 'artists') {
+                document.getElementById('view-artists').classList.add('active');
+                document.getElementById('nav-artists').classList.add('active');
+            }
+        }
+
+        function openArtistDetail(artistName, imgUrl) {
+            document.getElementById('detail-artist-name').innerText = artistName;
+            document.getElementById('detail-artist-img').src = imgUrl;
+            
+            // Filtrar top 10 canciones donde el artista participe
+            const artistSongs = cancionesData.filter(s => s.artist.includes(artistName)).slice(0, 10);
+            renderSongs(artistSongs, 'artist-songs-grid', true);
+
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.getElementById('view-artist-detail').classList.add('active');
+        }
+
+        // --- RENDERIZADO UI ---
+        function renderSongs(songsArray, containerId, isFiltered = false) {
+            const gridEl = document.getElementById(containerId);
+            gridEl.innerHTML = '';
+            
+            songsArray.forEach((song) => {
+                // Encontrar su index real en el array original para reproducir la correcta
+                const realIndex = cancionesData.findIndex(s => s.title === song.title);
+                if(!song.cover) song.cover = imageArtistUrl; // fallback
+
                 const card = document.createElement('div');
                 card.className = 'glass-card';
-                card.id = `card-${i}`;
-                card.onclick = () => playSong(i);
+                // Si estamos en la vista de canciones principal, asignamos ID para sincronizar estado activo
+                if(!isFiltered) card.id = `card-${realIndex}`; 
+                card.onclick = () => playSong(realIndex);
                 
                 card.innerHTML = `
                     <div class="card-img-wrapper">
-                        <img src="${imageArtistUrl}" id="art-${i}" class="card-img">
+                        <img src="${song.cover}" id="art-${containerId}-${realIndex}" class="card-img">
                         <div class="card-play-btn"><i class="ph-fill ph-play"></i></div>
                     </div>
                     <div class="card-info">
@@ -390,27 +484,55 @@
                 `;
                 gridEl.appendChild(card);
 
-                jsmediatags.read(song.url, {
-                    onSuccess: function(tag) {
-                        if (tag.tags.picture) {
-                            let b64 = "";
-                            for (let j = 0; j < tag.tags.picture.data.length; j++) b64 += String.fromCharCode(tag.tags.picture.data[j]);
-                            const imgUrl = `data:${tag.tags.picture.format};base64,${window.btoa(b64)}`;
-                            song.cover = imgUrl;
-                            document.getElementById(`art-${i}`).src = imgUrl;
-                            if(currentPlayingIndex === i) updateCovers(imgUrl);
+                // Leer cover mp3 si no lo hemos leído
+                if(!song.coverLoaded) {
+                    jsmediatags.read(song.url, {
+                        onSuccess: function(tag) {
+                            if (tag.tags.picture) {
+                                let b64 = "";
+                                for (let j = 0; j < tag.tags.picture.data.length; j++) b64 += String.fromCharCode(tag.tags.picture.data[j]);
+                                const imgUrl = `data:${tag.tags.picture.format};base64,${window.btoa(b64)}`;
+                                song.cover = imgUrl;
+                                song.coverLoaded = true;
+                                const imgEl = document.getElementById(`art-${containerId}-${realIndex}`);
+                                if(imgEl) imgEl.src = imgUrl;
+                                if(currentPlayingIndex === realIndex) updateCovers(imgUrl);
+                            }
                         }
-                    }
-                });
+                    });
+                } else {
+                    document.getElementById(`art-${containerId}-${realIndex}`).src = song.cover;
+                }
             });
-
-            requestAnimationFrame(engineLoop);
         }
 
+        function renderArtists() {
+            const gridEl = document.getElementById('artists-grid');
+            gridEl.innerHTML = '';
+
+            artistsData.forEach(artist => {
+                const card = document.createElement('div');
+                card.className = 'glass-card';
+                card.onclick = () => openArtistDetail(artist.name, artist.img);
+                
+                card.innerHTML = `
+                    <div class="card-img-wrapper is-artist">
+                        <img src="${artist.img}" class="card-img">
+                    </div>
+                    <div class="card-info is-artist-info">
+                        <div class="card-title" style="font-size: 18px;">${artist.name}</div>
+                        <div class="card-artist">Artist</div>
+                    </div>
+                `;
+                gridEl.appendChild(card);
+            });
+        }
+
+        // --- SISTEMA DE REPRODUCCIÓN ---
         function updateCovers(img) {
             document.getElementById('pill-cover').src = img;
-            document.getElementById('fs-mini-cover').src = img; // Mini portada inferior
-            document.getElementById('fs-bg').src = img;         // Fondo gigante
+            document.getElementById('fs-large-cover').src = img; // Portada inmensa en UI
+            document.getElementById('fs-bg').src = img;         // Fondo borroso gigante
         }
 
         async function playSong(idx) {
@@ -427,14 +549,19 @@
         }
 
         function triggerUIForSong(idx) {
-            if(currentPlayingIndex !== -1) document.getElementById(`card-${currentPlayingIndex}`).classList.remove('active');
-            document.getElementById(`card-${idx}`).classList.add('active');
+            if(currentPlayingIndex !== -1) {
+                const oldCard = document.getElementById(`card-${currentPlayingIndex}`);
+                if(oldCard) oldCard.classList.remove('active');
+            }
+            
+            const newCard = document.getElementById(`card-${idx}`);
+            if(newCard) newCard.classList.add('active');
             
             currentPlayingIndex = idx;
             activeLyricIndex = -1;
             const song = cancionesData[idx];
 
-            updateCovers(song.cover);
+            updateCovers(song.cover || imageArtistUrl);
             document.getElementById('pill-title').innerText = song.title;
             document.getElementById('pill-artist').innerText = song.artist;
             document.getElementById('fs-title').innerText = song.title;
@@ -443,6 +570,7 @@
             fetchLyrics(song.lrc);
         }
 
+        // CROSSFADE de 12 SEGUNDOS
         function startCrossfade() {
             isCrossfading = true;
             fadingAudio = activeAudio;
@@ -452,7 +580,7 @@
             triggerUIForSong(nextIdx);
             
             activeAudio.src = cancionesData[nextIdx].url;
-            activeAudio.volume = 0;
+            activeAudio.volume = 0; // Empieza en 0 y sube progresivamente
             activeAudio.play().catch(e=>console.log(e));
         }
 
@@ -462,17 +590,19 @@
                 const dur = activeAudio.duration;
                 const remaining = dur - curr;
                 
+                // Activar crossfade faltando 12 segundos exactos
                 if (remaining <= CROSSFADE_DURATION && !isCrossfading && remaining > 0.5) {
                     startCrossfade();
                 }
 
+                // Controlar volúmenes durante la transición
                 if (isCrossfading && fadingAudio && fadingAudio.duration) {
                     const fadeRemaining = fadingAudio.duration - fadingAudio.currentTime;
                     let ratio = fadeRemaining / CROSSFADE_DURATION;
                     if(ratio < 0) ratio = 0; if(ratio > 1) ratio = 1;
                     
-                    fadingAudio.volume = ratio;         
-                    activeAudio.volume = 1 - ratio;     
+                    fadingAudio.volume = ratio;         // Audio viejo baja de 1 a 0
+                    activeAudio.volume = 1 - ratio;     // Audio nuevo sube de 0 a 1
 
                     if (ratio <= 0 || fadingAudio.ended) {
                         fadingAudio.pause(); fadingAudio.src = "";
@@ -484,15 +614,15 @@
                 document.getElementById('pill-fill').style.width = `${pct}%`;
                 document.getElementById('fs-fill').style.width = `${pct}%`;
                 
-                let cStr = fmt(curr); let dStr = fmt(dur);
-                document.getElementById('fs-time-curr').innerText = cStr;
-                document.getElementById('fs-time-tot').innerText = dStr;
+                document.getElementById('fs-time-curr').innerText = fmt(curr);
+                document.getElementById('fs-time-tot').innerText = "-" + fmt(dur - curr);
                 
                 if(isNPOpen) updateKaraoke(curr);
             }
             requestAnimationFrame(engineLoop);
         }
 
+        // --- SISTEMA DE LETRAS ---
         async function fetchLyrics(url) {
             const container = document.getElementById('lyrics-content');
             container.innerHTML = "<p style='color:rgba(255,255,255,0.4); font-size:24px; font-weight:600;'>Cargando letras...</p>";
@@ -568,6 +698,7 @@
             }
         }
 
+        // --- CONTROLES AUXILIARES ---
         function togglePlay() {
             if(!activeAudio.src) return playSong(0);
             if(activeAudio.paused) { activeAudio.play(); setPlayIcon(true); } 
