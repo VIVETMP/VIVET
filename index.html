@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yan Block & Omar Courtz - Apple Music Style UI</title>
+    <title>VIVETMP</title>
     
     <!-- Tipografía Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -40,7 +40,7 @@
             position: relative;
         }
 
-        /* --- FONDO AMBIENTAL (INICIO) --- */
+        /* --- FONDO AMBIENTAL --- */
         .ambient-bg { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; background: #050505;}
         .orb { position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.5; animation: float 20s infinite alternate ease-in-out; }
         .orb-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: #2f00ff; }
@@ -87,7 +87,7 @@
         .artist-header-profile { display: flex; align-items: center; gap: 30px; margin-bottom: 40px; }
         .artist-header-img { width: 180px; height: 180px; border-radius: 50%; object-fit: cover; box-shadow: 0 20px 40px rgba(0,0,0,0.4); border: 2px solid rgba(255,255,255,0.1); }
         
-        /* GRID DE CARTAS (CARDS) */
+        /* GRID DE CARTAS */
         .card-grid {
             width: 100%; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 30px;
         }
@@ -101,7 +101,7 @@
         .glass-card.active { border-color: #fff; background: rgba(255,255,255,0.1); }
         
         .card-img-wrapper { position: relative; width: 100%; aspect-ratio: 1; margin-bottom: 16px; overflow: hidden; border-radius: 16px; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
-        .card-img-wrapper.is-artist { border-radius: 50%; } /* Tarjeta redonda para artistas */
+        .card-img-wrapper.is-artist { border-radius: 50%; } 
         
         .card-img { width: 100%; height: 100%; object-fit: cover; transition: 0.4s var(--spring); }
         .glass-card:hover .card-img { transform: scale(1.05); }
@@ -116,7 +116,7 @@
         .card-play-btn:hover { background: #fff; color: #000; transform: scale(1.1) !important; }
         
         .card-info { display: flex; flex-direction: column; gap: 4px; padding: 0 4px; }
-        .is-artist-info { text-align: center; } /* Centrar texto en tarjetas de artistas */
+        .is-artist-info { text-align: center; } 
         .card-title { font-size: 16px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .card-artist { font-size: 14px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
@@ -190,13 +190,12 @@
         }
         .btn-close-np:hover { background: rgba(255,255,255,0.2); transform: scale(1.05); }
 
-        /* Split Layout para Cover + Controles a la izq y Letras a la der */
         .np-content {
             position: relative; z-index: 2; display: flex; flex-direction: row; align-items: center; 
             height: 100%; width: 100%; padding: 80px 8vw; gap: 6vw;
         }
 
-        /* --- Lado Izquierdo (Portada y Controles) --- */
+        /* --- Lado Izquierdo --- */
         .np-left {
             flex: 1; max-width: 500px; display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
@@ -217,11 +216,14 @@
         .np-controls { display: flex; align-items: center; justify-content: space-between; width: 100%; font-size: 28px; color: rgba(255,255,255,0.8); margin-bottom: 40px;}
         .np-controls i { cursor: pointer; transition: 0.2s; }
         .np-controls i:hover { color: #fff; transform: scale(1.1); }
-        .np-play { width: 72px; height: 72px; background: #fff; color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; transition: 0.2s; box-shadow: 0 10px 20px rgba(0,0,0,0.3);}
+        .np-play { width: 72px; height: 72px; background: #fff; color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; transition: 0.2s; box-shadow: 0 10px 20px rgba(0,0,0,0.3); cursor: pointer;}
         .np-play i { margin-left: 4px; }
         .np-play:hover { transform: scale(1.05); }
 
+        /* Controles de Volumen Actualizados */
         .np-volume-area { display: flex; align-items: center; gap: 15px; width: 100%; color: rgba(255,255,255,0.6); font-size: 20px;}
+        .np-volume-area i { cursor: pointer; transition: 0.2s; }
+        .np-volume-area i:hover { color: #fff; transform: scale(1.1); }
 
         /* --- Lado Derecho (Letras) --- */
         .np-right {
@@ -270,7 +272,6 @@
 
     <!-- Área Principal -->
     <main class="main-container">
-        
         <!-- VISTA: CANCIONES -->
         <div id="view-songs" class="view-section active">
             <div class="page-header">
@@ -301,7 +302,6 @@
             </div>
             <div class="card-grid" id="artist-songs-grid"></div>
         </div>
-
     </main>
 
     <!-- Píldora Reproductora Inferior -->
@@ -332,15 +332,11 @@
 
     <!-- APPLE MUSIC NOW PLAYING UI (FULLSCREEN) -->
     <div class="now-playing-fs" id="np-screen">
-        <!-- Portada como Fondo inmenso y difuminado -->
         <img src="" class="np-bg" id="fs-bg">
         <div class="np-overlay"></div>
-        
-        <!-- Botón para cerrar ocultar panel -->
         <div class="btn-close-np" onclick="toggleNP()"><i class="ph-bold ph-caret-down"></i></div>
 
         <div class="np-content">
-            
             <!-- Izquierda: Portada y Controles -->
             <div class="np-left">
                 <img src="https://res.cloudinary.com/ddcbl694n/image/upload/v1776007400/Yan_Block_u0inwd.jpg" class="np-large-cover" id="fs-large-cover">
@@ -368,10 +364,13 @@
                     <i class="ph-bold ph-repeat" style="font-size: 24px;"></i>
                 </div>
 
+                <!-- BARRA DE VOLUMEN (Corregida) -->
                 <div class="np-volume-area">
-                    <i class="ph-fill ph-speaker-low"></i>
-                    <div class="track-line"><div class="fill-line" style="width: 75%;"></div></div>
-                    <i class="ph-fill ph-speaker-high"></i>
+                    <i class="ph-fill ph-speaker-low" onclick="setVolumeLevel(0)"></i>
+                    <div class="track-line" onclick="changeVolume(event, this)">
+                        <div class="fill-line" id="volume-fill" style="width: 75%;"></div>
+                    </div>
+                    <i class="ph-fill ph-speaker-high" onclick="setVolumeLevel(1)"></i>
                 </div>
             </div>
 
@@ -381,7 +380,6 @@
                     <div id="lyrics-content"></div>
                 </div>
             </div>
-
         </div>
     </div>
 
@@ -389,7 +387,7 @@
         const imageArtistUrl = "https://res.cloudinary.com/ddcbl694n/image/upload/v1776007400/Yan_Block_u0inwd.jpg";
         const omarCourtzImg = "https://res.cloudinary.com/ddcbl694n/image/upload/v1776097822/Omar_Courtz_k4ozll.jpg";
 
-        // Base de Datos de Canciones Ampliada
+        // Base de Datos de Canciones
         const cancionesData =[
             // Yan Block & Otros
             { title: "YOGURCITO REMIX", artist: "Blessd, Anuel AA, Yan Block, Luar La L", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007457/YOGURCITO_REMIX_Blessd_Anuel_AA_Yan_Block_Luar_La_L_Kris_R._ROA_ocxlgl.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009576/YOGURCITO_REMIX_wwua9w.lrc" },
@@ -416,7 +414,7 @@
             { title: "VAMO a COCHI", artist: "Omar Courtz", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776097606/VAMOaCOCHI_Omar_Courtz_vz2ppa.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776098212/VAMOaCOCHI_-_Omar_Courtz_i4jvc9.lrc" }
         ];
 
-        // Base de Datos de Artistas Ampliada
+        // Base de Datos de Artistas
         const artistsData =[
             { name: "Yan Block", img: imageArtistUrl },
             { name: "Omar Courtz", img: omarCourtzImg },
@@ -432,6 +430,8 @@
         let activeAudio = audio1;
         let fadingAudio = null;
         let isCrossfading = false;
+        
+        let globalVolume = 0.75; // Estado global del volumen (75% inicial)
         const CROSSFADE_DURATION = 12;
 
         let currentPlayingIndex = -1;
@@ -442,7 +442,32 @@
         function init() {
             renderSongs(cancionesData, 'songs-grid');
             renderArtists();
+            
+            // Establecer visualmente el volumen inicial
+            document.getElementById('volume-fill').style.width = `${globalVolume * 100}%`;
+            activeAudio.volume = globalVolume;
+
             requestAnimationFrame(engineLoop);
+        }
+
+        // --- SISTEMA DE VOLUMEN (Bug Fix) ---
+        function changeVolume(e, el) {
+            const rect = el.getBoundingClientRect();
+            let vol = (e.clientX - rect.left) / rect.width;
+            setVolumeLevel(vol);
+        }
+
+        function setVolumeLevel(vol) {
+            if(vol < 0) vol = 0;
+            if(vol > 1) vol = 1;
+            
+            globalVolume = vol;
+            document.getElementById('volume-fill').style.width = `${globalVolume * 100}%`;
+            
+            // Si no está en crossfade, actualizar directamente el reproductor activo
+            if(!isCrossfading && activeAudio) {
+                activeAudio.volume = globalVolume;
+            }
         }
 
         // --- SISTEMA DE PESTAÑAS (TABS) ---
@@ -463,7 +488,6 @@
             document.getElementById('detail-artist-name').innerText = artistName;
             document.getElementById('detail-artist-img').src = imgUrl;
             
-            // Filtrar top 10 canciones donde el artista participe
             const artistSongs = cancionesData.filter(s => s.artist.includes(artistName)).slice(0, 10);
             renderSongs(artistSongs, 'artist-songs-grid', true);
 
@@ -477,13 +501,11 @@
             gridEl.innerHTML = '';
             
             songsArray.forEach((song) => {
-                // Encontrar su index real en el array original para reproducir la correcta
                 const realIndex = cancionesData.findIndex(s => s.title === song.title);
-                if(!song.cover) song.cover = imageArtistUrl; // fallback
+                if(!song.cover) song.cover = imageArtistUrl;
 
                 const card = document.createElement('div');
                 card.className = 'glass-card';
-                // Si estamos en la vista de canciones principal, asignamos ID para sincronizar estado activo
                 if(!isFiltered) card.id = `card-${realIndex}`; 
                 card.onclick = () => playSong(realIndex);
                 
@@ -499,7 +521,6 @@
                 `;
                 gridEl.appendChild(card);
 
-                // Leer cover mp3 si no lo hemos leído
                 if(!song.coverLoaded) {
                     jsmediatags.read(song.url, {
                         onSuccess: function(tag) {
@@ -546,15 +567,17 @@
         // --- SISTEMA DE REPRODUCCIÓN ---
         function updateCovers(img) {
             document.getElementById('pill-cover').src = img;
-            document.getElementById('fs-large-cover').src = img; // Portada inmensa en UI
-            document.getElementById('fs-bg').src = img;         // Fondo borroso gigante
+            document.getElementById('fs-large-cover').src = img;
+            document.getElementById('fs-bg').src = img;         
         }
 
         async function playSong(idx) {
             isCrossfading = false;
             if(fadingAudio) { fadingAudio.pause(); fadingAudio.src = ""; fadingAudio = null; }
             activeAudio.pause();
-            activeAudio.volume = 1;
+            
+            // Usar el volumen global en vez del 100% fijo
+            activeAudio.volume = globalVolume;
             
             triggerUIForSong(idx);
             
@@ -595,7 +618,7 @@
             triggerUIForSong(nextIdx);
             
             activeAudio.src = cancionesData[nextIdx].url;
-            activeAudio.volume = 0; // Empieza en 0 y sube progresivamente
+            activeAudio.volume = 0; // Empieza en 0 y sube progresivamente en EngineLoop
             activeAudio.play().catch(e=>console.log(e));
         }
 
@@ -605,23 +628,22 @@
                 const dur = activeAudio.duration;
                 const remaining = dur - curr;
                 
-                // Activar crossfade faltando 12 segundos exactos
                 if (remaining <= CROSSFADE_DURATION && !isCrossfading && remaining > 0.5) {
                     startCrossfade();
                 }
 
-                // Controlar volúmenes durante la transición
+                // Controlar volúmenes durante la transición basándose en globalVolume
                 if (isCrossfading && fadingAudio && fadingAudio.duration) {
                     const fadeRemaining = fadingAudio.duration - fadingAudio.currentTime;
                     let ratio = fadeRemaining / CROSSFADE_DURATION;
                     if(ratio < 0) ratio = 0; if(ratio > 1) ratio = 1;
                     
-                    fadingAudio.volume = ratio;         // Audio viejo baja de 1 a 0
-                    activeAudio.volume = 1 - ratio;     // Audio nuevo sube de 0 a 1
+                    fadingAudio.volume = ratio * globalVolume;         // Audio viejo baja al 0%
+                    activeAudio.volume = (1 - ratio) * globalVolume;   // Audio nuevo sube hasta globalVolume
 
                     if (ratio <= 0 || fadingAudio.ended) {
                         fadingAudio.pause(); fadingAudio.src = "";
-                        isCrossfading = false; activeAudio.volume = 1;
+                        isCrossfading = false; activeAudio.volume = globalVolume;
                     }
                 }
                 
@@ -642,7 +664,6 @@
             const container = document.getElementById('lyrics-content');
             parsedLyrics =[];
 
-            // Si el artista no tiene el enlace a la letra
             if(!url) {
                 container.innerHTML = "<div style='height:100%; display:flex; align-items:center;'><p style='color:rgba(255,255,255,0.4); font-size:24px; font-weight:600;'>Letras no disponibles.</p></div>";
                 return;
