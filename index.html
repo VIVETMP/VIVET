@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VIVETMP</title>
+    <title>Yan Block, Omar Courtz & Dei V - Apple Music Style UI</title>
     
     <!-- Tipografía Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -364,7 +364,7 @@
                     <i class="ph-bold ph-repeat" style="font-size: 24px;"></i>
                 </div>
 
-                <!-- BARRA DE VOLUMEN (Corregida) -->
+                <!-- BARRA DE VOLUMEN -->
                 <div class="np-volume-area">
                     <i class="ph-fill ph-speaker-low" onclick="setVolumeLevel(0)"></i>
                     <div class="track-line" onclick="changeVolume(event, this)">
@@ -386,8 +386,9 @@
     <script>
         const imageArtistUrl = "https://res.cloudinary.com/ddcbl694n/image/upload/v1776007400/Yan_Block_u0inwd.jpg";
         const omarCourtzImg = "https://res.cloudinary.com/ddcbl694n/image/upload/v1776097822/Omar_Courtz_k4ozll.jpg";
+        const deiVImg = "https://res.cloudinary.com/ddcbl694n/image/upload/v1776099774/Dei_V_yv1pop.jpg";
 
-        // Base de Datos de Canciones
+        // Base de Datos de Canciones Ampliada
         const cancionesData =[
             // Yan Block & Otros
             { title: "YOGURCITO REMIX", artist: "Blessd, Anuel AA, Yan Block, Luar La L", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007457/YOGURCITO_REMIX_Blessd_Anuel_AA_Yan_Block_Luar_La_L_Kris_R._ROA_ocxlgl.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009576/YOGURCITO_REMIX_wwua9w.lrc" },
@@ -401,8 +402,10 @@
             { title: "VACILE", artist: "Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007402/VACILE_Yan_Block_ytkcf9.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009576/VACILE_qxdqxq.lrc" },
             { title: "EXPRESSO MARTINI", artist: "Rauw Alejandro, Marconi Impara, Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007397/EXPRESSO_MARTINI_Rauw_Alejandro_Marconi_Impara_Yan_Block_ac5x3j.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009575/EXPRESSO_MARTINI_nl8yas.lrc" },
             
-            // Omar Courtz
+            // Omar Courtz & Dei V (VeLDÁ, compartido)
             { title: "VeLDÁ", artist: "Bad Bunny, Omar Courtz, Dei V", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776097613/VeLD%C3%81_Bad_Bunny_Omar_Courtz_Dei_V_ipgd2p.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776098216/VeLD%C3%81_-_Bad_Bunny_Omar_Courtz_Dei_V_cqae5j.lrc" },
+            
+            // Omar Courtz
             { title: "KOKO", artist: "Omar Courtz", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776097542/KOKO_Omar_Courtz_cgt5ev.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776098211/KOKO_-_Omar_Courtz_ncbgux.lrc" },
             { title: "FOREVER TU GANTEL", artist: "Omar Courtz, Ñengo Flow", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776097535/FOREVER_TU_GANTEL__Omar_Courtz_%C3%91engo_Flow_xpvpsr.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776098211/FOREVER_TU_GANTEL_-_Omar_Courtz_%C3%91engo_Flow_ra06wk.lrc" },
             { title: "POR SI MAÑANA NO ESTOY", artist: "Omar Courtz", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776097537/POR_SI_MA%C3%91ANA_NO_ESTOY_Omar_Courtz_tp2gce.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776098211/POR_SI_MA%C3%91ANA_NO_ESTOY_-_Omar_Courtz_dwmxn4.lrc" },
@@ -411,13 +414,25 @@
             { title: "LUCES DE COLORES", artist: "Omar Courtz", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776097608/_LUCES_DE_COLORES__Omar_Courtz_nnwvcc.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776098217/_LUCES_DE_COLORES_-_Omar_Courtz_nkim41.lrc" },
             { title: "SI ESTÁS CON ALGUIEN", artist: "Omar Courtz", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776097583/SI_EST%C3%81S_CON_ALGUIEN_Omar_Courtz_edgtiv.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776098212/SI_EST%C3%81S_CON_ALGUIEN_-_Omar_Courtz_iam6bi.lrc" },
             { title: "L a k e n o s h i", artist: "Omar Courtz", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776097543/L_a_k_e_n_o_s_h_i_Omar_Courtz_wmb0qn.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776098211/L_a_k_e_n_o_s_h_i_-_Omar_Courtz_q2fcak.lrc" },
-            { title: "VAMO a COCHI", artist: "Omar Courtz", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776097606/VAMOaCOCHI_Omar_Courtz_vz2ppa.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776098212/VAMOaCOCHI_-_Omar_Courtz_i4jvc9.lrc" }
+            { title: "VAMO a COCHI", artist: "Omar Courtz", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776097606/VAMOaCOCHI_Omar_Courtz_vz2ppa.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776098212/VAMOaCOCHI_-_Omar_Courtz_i4jvc9.lrc" },
+
+            // Dei V (Nuevas)
+            { title: "UELTA GATITA UELTA", artist: "Omar Courtz, Dei V, Clarent, Tito El Bambino", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776099825/UELTA_GATITA_UELTA_Omar_Courtz_Dei_V_Clarent_Tito_El_Bambino_iljz1v.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776100281/UELTA_GATITA_UELTA_-_Omar_Courtz_Dei_V_Clarent_Tito__El_Bambino__dusjos.lrc" },
+            { title: "Dame La Verde", artist: "Luar La L, Dei V", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776099816/Dame_La_Verde_Luar_La_L_Dei_V_sfmjtl.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776100281/Dame_La_Verde_-_Luar_La_L_Dei_V_fswqb1.lrc" },
+            { title: "TE CAPIE", artist: "Dei V", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776099843/TE_CAPIE_Dei_V_fbn2oi.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776100287/Te_Capie_-_Dei_V_fmr8l6.lrc" },
+            { title: "TU I", artist: "YOVNGCHIMI, Dei V", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776099834/TU_I_YOVNGCHIMI_Dei_V_jldeg7.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776100288/TU_I_with_Dei_V_-_YOVNGCHIMI_Dei_V_dgihne.lrc" },
+            { title: "Narcotics", artist: "Dei V, Bryant Myers", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776099845/Narcotics_Dei_V_Bryant_Myers_dhsfml.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776100286/Narcotics_with_Bryant_Myers_-_Dei_V_Bryant_Myers_fdfpwr.lrc" },
+            { title: "Toa", artist: "Dei V, De La Rose", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776099845/Toa_Dei_V_De_La_Rose_lsmwni.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776100288/Toa_with_De_La_Rose_-_Dei_V_De_La_Rose_icesv8.lrc" },
+            { title: "Diabólica", artist: "Cris MJ, Dei V", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776099792/Diab%C3%B3lica_Cris_MJ_Dei_V_vcifcn.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776100281/Diab%C3%B3lica_-_Cris_MJ_Dei_V_qwg9la.lrc" },
+            { title: "FLIPA", artist: "JC Reyes, Dei V", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776099817/FLIPA_JC_Reyes_Dei_V_eijnff.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776100285/FLIPA_-_JC_Reyes_Dei_V_rruxjx.lrc" },
+            { title: "Duro Ma", artist: "Bryant Myers, Dei V, SAIKO", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776099837/Duro_Ma_Bryant_Myers_Dei_V_SAIKO_hjpzc6.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776100282/Duro_Ma_-_Bryant_Myers_Dei_V_SAIKO_y0uegy.lrc" }
         ];
 
         // Base de Datos de Artistas
         const artistsData =[
             { name: "Yan Block", img: imageArtistUrl },
             { name: "Omar Courtz", img: omarCourtzImg },
+            { name: "Dei V", img: deiVImg },
             { name: "Panda Black", img: "https://images.unsplash.com/photo-1518609878373-06d740f60d8b?w=400&q=80" },
             { name: "Blessd", img: "https://images.unsplash.com/photo-1493225457284-0bf53ce8151e?w=400&q=80" },
             { name: "De La Rose", img: "https://images.unsplash.com/photo-1516280440502-a7204f14e427?w=400&q=80" },
@@ -431,7 +446,7 @@
         let fadingAudio = null;
         let isCrossfading = false;
         
-        let globalVolume = 0.75; // Estado global del volumen (75% inicial)
+        let globalVolume = 0.75; 
         const CROSSFADE_DURATION = 12;
 
         let currentPlayingIndex = -1;
@@ -443,14 +458,13 @@
             renderSongs(cancionesData, 'songs-grid');
             renderArtists();
             
-            // Establecer visualmente el volumen inicial
             document.getElementById('volume-fill').style.width = `${globalVolume * 100}%`;
             activeAudio.volume = globalVolume;
 
             requestAnimationFrame(engineLoop);
         }
 
-        // --- SISTEMA DE VOLUMEN (Bug Fix) ---
+        // --- SISTEMA DE VOLUMEN ---
         function changeVolume(e, el) {
             const rect = el.getBoundingClientRect();
             let vol = (e.clientX - rect.left) / rect.width;
@@ -464,7 +478,6 @@
             globalVolume = vol;
             document.getElementById('volume-fill').style.width = `${globalVolume * 100}%`;
             
-            // Si no está en crossfade, actualizar directamente el reproductor activo
             if(!isCrossfading && activeAudio) {
                 activeAudio.volume = globalVolume;
             }
@@ -576,7 +589,6 @@
             if(fadingAudio) { fadingAudio.pause(); fadingAudio.src = ""; fadingAudio = null; }
             activeAudio.pause();
             
-            // Usar el volumen global en vez del 100% fijo
             activeAudio.volume = globalVolume;
             
             triggerUIForSong(idx);
@@ -618,7 +630,7 @@
             triggerUIForSong(nextIdx);
             
             activeAudio.src = cancionesData[nextIdx].url;
-            activeAudio.volume = 0; // Empieza en 0 y sube progresivamente en EngineLoop
+            activeAudio.volume = 0; 
             activeAudio.play().catch(e=>console.log(e));
         }
 
@@ -632,14 +644,13 @@
                     startCrossfade();
                 }
 
-                // Controlar volúmenes durante la transición basándose en globalVolume
                 if (isCrossfading && fadingAudio && fadingAudio.duration) {
                     const fadeRemaining = fadingAudio.duration - fadingAudio.currentTime;
                     let ratio = fadeRemaining / CROSSFADE_DURATION;
                     if(ratio < 0) ratio = 0; if(ratio > 1) ratio = 1;
                     
-                    fadingAudio.volume = ratio * globalVolume;         // Audio viejo baja al 0%
-                    activeAudio.volume = (1 - ratio) * globalVolume;   // Audio nuevo sube hasta globalVolume
+                    fadingAudio.volume = ratio * globalVolume;         
+                    activeAudio.volume = (1 - ratio) * globalVolume;   
 
                     if (ratio <= 0 || fadingAudio.ended) {
                         fadingAudio.pause(); fadingAudio.src = "";
