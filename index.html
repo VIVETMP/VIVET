@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yan Block - Apple Music Style UI</title>
+    <title>Yan Block & Omar Courtz - Apple Music Style UI</title>
     
     <!-- Tipografía Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -387,9 +387,11 @@
 
     <script>
         const imageArtistUrl = "https://res.cloudinary.com/ddcbl694n/image/upload/v1776007400/Yan_Block_u0inwd.jpg";
-        
-        // Base de Datos de Canciones
+        const omarCourtzImg = "https://res.cloudinary.com/ddcbl694n/image/upload/v1776097822/Omar_Courtz_k4ozll.jpg";
+
+        // Base de Datos de Canciones Ampliada
         const cancionesData =[
+            // Yan Block & Otros
             { title: "YOGURCITO REMIX", artist: "Blessd, Anuel AA, Yan Block, Luar La L", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007457/YOGURCITO_REMIX_Blessd_Anuel_AA_Yan_Block_Luar_La_L_Kris_R._ROA_ocxlgl.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009576/YOGURCITO_REMIX_wwua9w.lrc" },
             { title: "TALENTO", artist: "Yan Block, Panda Black", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007391/TALENTO_Yan_Block_Panda_Black_r4ugu2.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009576/TALENTO_s4qtf2.lrc" },
             { title: "444", artist: "Yan Block, Panda Black", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007376/444_Yan_Block_Panda_Black_upxnup.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009575/444_ie7e6d.lrc" },
@@ -399,12 +401,25 @@
             { title: "WYA REMIX RED", artist: "J Abdiel, De La Rose, Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007447/WYA_REMIX_RED_J_Abdiel_De_La_Rose_Yan_Block_iZaak_Jay_Wheeler_mvfmrz.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009576/WYA_REMIX_RED_ic1sdd.lrc" },
             { title: "SECUESTRO", artist: "Slayter, Yan Block, NTG", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007396/SECUESTRO_Slayter_Yan_Block_NTG_bqszzh.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009576/SECUESTRO_m4absd.lrc" },
             { title: "VACILE", artist: "Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007402/VACILE_Yan_Block_ytkcf9.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009576/VACILE_qxdqxq.lrc" },
-            { title: "EXPRESSO MARTINI", artist: "Rauw Alejandro, Marconi Impara, Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007397/EXPRESSO_MARTINI_Rauw_Alejandro_Marconi_Impara_Yan_Block_ac5x3j.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009575/EXPRESSO_MARTINI_nl8yas.lrc" }
+            { title: "EXPRESSO MARTINI", artist: "Rauw Alejandro, Marconi Impara, Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007397/EXPRESSO_MARTINI_Rauw_Alejandro_Marconi_Impara_Yan_Block_ac5x3j.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009575/EXPRESSO_MARTINI_nl8yas.lrc" },
+            
+            // Omar Courtz
+            { title: "VeLDÁ", artist: "Bad Bunny, Omar Courtz, Dei V", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776097613/VeLD%C3%81_Bad_Bunny_Omar_Courtz_Dei_V_ipgd2p.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776098216/VeLD%C3%81_-_Bad_Bunny_Omar_Courtz_Dei_V_cqae5j.lrc" },
+            { title: "KOKO", artist: "Omar Courtz", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776097542/KOKO_Omar_Courtz_cgt5ev.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776098211/KOKO_-_Omar_Courtz_ncbgux.lrc" },
+            { title: "FOREVER TU GANTEL", artist: "Omar Courtz, Ñengo Flow", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776097535/FOREVER_TU_GANTEL__Omar_Courtz_%C3%91engo_Flow_xpvpsr.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776098211/FOREVER_TU_GANTEL_-_Omar_Courtz_%C3%91engo_Flow_ra06wk.lrc" },
+            { title: "POR SI MAÑANA NO ESTOY", artist: "Omar Courtz", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776097537/POR_SI_MA%C3%91ANA_NO_ESTOY_Omar_Courtz_tp2gce.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776098211/POR_SI_MA%C3%91ANA_NO_ESTOY_-_Omar_Courtz_dwmxn4.lrc" },
+            { title: "WO OH OH", artist: "Omar Courtz, ROA", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776097616/WO_OH_OH_Omar_Courtz_ROA_jx6uf0.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776098217/WO_OH_OH_-_Omar_Courtz_ROA_nskykx.lrc" },
+            { title: "Q U E V A S H A C E R H O Y", artist: "Omar Courtz, De La Rose", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776097548/Q_U_E_V_A_S_H_A_C_E_R_H_O_Y_Omar_Courtz_De_La_Rose_t2tn0m.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776098211/Q_U_E_V_A_S_H_A_C_E_R_H_O_Y___-_Omar_Courtz_De_La_Rose_d0vggm.lrc" },
+            { title: "LUCES DE COLORES", artist: "Omar Courtz", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776097608/_LUCES_DE_COLORES__Omar_Courtz_nnwvcc.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776098217/_LUCES_DE_COLORES_-_Omar_Courtz_nkim41.lrc" },
+            { title: "SI ESTÁS CON ALGUIEN", artist: "Omar Courtz", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776097583/SI_EST%C3%81S_CON_ALGUIEN_Omar_Courtz_edgtiv.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776098212/SI_EST%C3%81S_CON_ALGUIEN_-_Omar_Courtz_iam6bi.lrc" },
+            { title: "L a k e n o s h i", artist: "Omar Courtz", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776097543/L_a_k_e_n_o_s_h_i_Omar_Courtz_wmb0qn.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776098211/L_a_k_e_n_o_s_h_i_-_Omar_Courtz_q2fcak.lrc" },
+            { title: "VAMO a COCHI", artist: "Omar Courtz", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776097606/VAMOaCOCHI_Omar_Courtz_vz2ppa.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776098212/VAMOaCOCHI_-_Omar_Courtz_i4jvc9.lrc" }
         ];
 
-        // Base de Datos de Artistas
+        // Base de Datos de Artistas Ampliada
         const artistsData =[
             { name: "Yan Block", img: imageArtistUrl },
+            { name: "Omar Courtz", img: omarCourtzImg },
             { name: "Panda Black", img: "https://images.unsplash.com/photo-1518609878373-06d740f60d8b?w=400&q=80" },
             { name: "Blessd", img: "https://images.unsplash.com/photo-1493225457284-0bf53ce8151e?w=400&q=80" },
             { name: "De La Rose", img: "https://images.unsplash.com/photo-1516280440502-a7204f14e427?w=400&q=80" },
@@ -417,7 +432,7 @@
         let activeAudio = audio1;
         let fadingAudio = null;
         let isCrossfading = false;
-        const CROSSFADE_DURATION = 12; // 12 Segundos solicitados
+        const CROSSFADE_DURATION = 12;
 
         let currentPlayingIndex = -1;
         let isNPOpen = false;
@@ -625,8 +640,15 @@
         // --- SISTEMA DE LETRAS ---
         async function fetchLyrics(url) {
             const container = document.getElementById('lyrics-content');
-            container.innerHTML = "<p style='color:rgba(255,255,255,0.4); font-size:24px; font-weight:600;'>Cargando letras...</p>";
             parsedLyrics =[];
+
+            // Si el artista no tiene el enlace a la letra
+            if(!url) {
+                container.innerHTML = "<div style='height:100%; display:flex; align-items:center;'><p style='color:rgba(255,255,255,0.4); font-size:24px; font-weight:600;'>Letras no disponibles.</p></div>";
+                return;
+            }
+
+            container.innerHTML = "<p style='color:rgba(255,255,255,0.4); font-size:24px; font-weight:600;'>Cargando letras...</p>";
 
             try {
                 const res = await fetch(url);
@@ -661,7 +683,7 @@
                     container.appendChild(div);
                 });
             } catch (e) {
-                container.innerHTML = "<p style='color:rgba(255,255,255,0.4); font-size:24px; font-weight:600;'>Instrumental.</p>";
+                container.innerHTML = "<div style='height:100%; display:flex; align-items:center;'><p style='color:rgba(255,255,255,0.4); font-size:24px; font-weight:600;'>Letras no disponibles.</p></div>";
             }
         }
 
