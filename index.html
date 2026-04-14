@@ -388,9 +388,22 @@
         const omarCourtzImg = "https://res.cloudinary.com/ddcbl694n/image/upload/v1776097822/Omar_Courtz_k4ozll.jpg";
         const deiVImg = "https://res.cloudinary.com/ddcbl694n/image/upload/v1776099774/Dei_V_yv1pop.jpg";
         const roaImg = "https://res.cloudinary.com/ddcbl694n/image/upload/v1776106835/ROA_slzaj5.jpg";
+        const rauwImg = "https://res.cloudinary.com/ddcbl694n/image/upload/v1776204344/Rauw_Alejandro_c8vjwi.jpg";
 
         // Base de Datos de Canciones Ampliada
         const cancionesData =[
+            // Rauw Alejandro (Nuevas Top 10 añadidas)
+            { title: "Qué Pasaría...", artist: "Rauw Alejandro, Bad Bunny", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776204387/Qu%C3%A9_Pasar%C3%ADa..._Rauw_Alejandro_Bad_Bunny_tuxday.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776204782/Qu%C3%A9_Pasar%C3%ADa..._-_Rauw_Alejandro_Bad_Bunny_xuixsm.lrc" },
+            { title: "Khé", artist: "Rauw Alejandro, Romeo Santos", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776204333/Kh%C3%A9_Rauw_Alejandro_Romeo_Santos_tkfssk.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776204782/Kh%C3%A9__-_Rauw_Alejandro_Romeo_Santos_dm0jsx.lrc" },
+            { title: "Tiroteo - Remix", artist: "Marc Seguí, Rauw Alejandro, Pol Granch", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776204379/Tiroteo_-_Remix_Marc_Segu%C3%AD_Rauw_Alejandro_Pol_Granch_qpe93o.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776204782/El_Efecto_-_Rauw_Alejandro_Chencho_Corleone_hh5rkc.lrc" },
+            { title: "El Efecto", artist: "Rauw Alejandro, Chencho Corleone", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776204340/El_Efecto_Rauw_Alejandro_Chencho_Corleone_bn5caz.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776204782/El_Efecto_-_Rauw_Alejandro_Chencho_Corleone_hh5rkc.lrc" },
+            { title: "Party", artist: "Bad Bunny, Rauw Alejandro", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776204378/Party_Bad_Bunny_Rauw_Alejandro_ocmojl.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776204782/Party_-_Bad_Bunny_Rauw_Alejandro_fbrtlx.lrc" },
+            { title: "Todo De Ti", artist: "Rauw Alejandro", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776204392/Todo_De_Ti_Rauw_Alejandro_huqpqj.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776204786/Todo_De_Ti_-_Rauw_Alejandro_b9tn2v.lrc" },
+            { title: "Aquel Nap ZzZz", artist: "Rauw Alejandro", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776204373/Aquel_Nap_ZzZz_Rauw_Alejandro_kfevyv.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776204781/Aquel_Nap_ZzZz_-_Rauw_Alejandro_mlg1e0.lrc" },
+            { title: "Santa", artist: "Rvssian, Rauw Alejandro, Ayra Starr", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776204367/Santa_Rvssian_Rauw_Alejandro_Ayra_Starr_x4iral.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776204785/Santa_-_Rvssian_Rauw_Alejandro_Ayra_Starr_gonrgx.lrc" },
+            { title: "BESO", artist: "ROSALÍA, Rauw Alejandro", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776204341/BESO_ROSAL%C3%8DA_Rauw_Alejandro_xwwmtz.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776204781/BESO_-_ROSAL%C3%8DA_Rauw_Alejandro_qhcbiw.lrc" },
+            { title: "Tú Con Él", artist: "Rauw Alejandro", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776204415/T%C3%BA_Con_%C3%89l_Rauw_Alejandro_oswchd.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776204786/T%C3%BA_Con_%C3%89l_-_Rauw_Alejandro_wvzfbu.lrc" },
+
             // Yan Block & Otros
             { title: "YOGURCITO REMIX", artist: "Blessd, Anuel AA, Yan Block, Luar La L, Kris R., ROA", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007457/YOGURCITO_REMIX_Blessd_Anuel_AA_Yan_Block_Luar_La_L_Kris_R._ROA_ocxlgl.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009576/YOGURCITO_REMIX_wwua9w.lrc" },
             { title: "TALENTO", artist: "Yan Block, Panda Black", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007391/TALENTO_Yan_Block_Panda_Black_r4ugu2.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009576/TALENTO_s4qtf2.lrc" },
@@ -428,7 +441,7 @@
             { title: "FLIPA", artist: "JC Reyes, Dei V", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776099817/FLIPA_JC_Reyes_Dei_V_eijnff.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776100285/FLIPA_-_JC_Reyes_Dei_V_rruxjx.lrc" },
             { title: "Duro Ma", artist: "Bryant Myers, Dei V, SAIKO", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776099837/Duro_Ma_Bryant_Myers_Dei_V_SAIKO_hjpzc6.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776100282/Duro_Ma_-_Bryant_Myers_Dei_V_SAIKO_y0uegy.lrc" },
 
-            // ROA (Nuevas)
+            // ROA
             { title: "ME GUSTAS CC", artist: "ROA", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776106828/ME_GUSTAS_CC_ROA_yswplu.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776107157/ME_GUSTAS_CC_-_ROA_qhajjh.lrc" },
             { title: "ETA - RMX", artist: "ROA, De La Rose, Luar La L, Yan Block, Omar Courtz", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776106904/ETA_-_RMX_ROA_De_La_Rose_Luar_La_L_Yan_Block_Omar_Courtz_dxp8eb.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776107156/ETA_-_RMX_-_ROA_De_La_Rose_Luar_La_L_Yan_Block_Omar_Courtz_vauxdo.lrc" },
             { title: "FANTASÍA", artist: "ROA", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776106831/FANTAS%C3%8DA_ROA_nmlho5.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776107156/FANTAS%C3%8DA_-_ROA_pukwaz.lrc" },
@@ -441,14 +454,14 @@
 
         // Base de Datos de Artistas
         const artistsData =[
+            { name: "Rauw Alejandro", img: rauwImg },
             { name: "Yan Block", img: imageArtistUrl },
             { name: "Omar Courtz", img: omarCourtzImg },
             { name: "Dei V", img: deiVImg },
             { name: "ROA", img: roaImg },
             { name: "Panda Black", img: "https://images.unsplash.com/photo-1518609878373-06d740f60d8b?w=400&q=80" },
             { name: "Blessd", img: "https://images.unsplash.com/photo-1493225457284-0bf53ce8151e?w=400&q=80" },
-            { name: "De La Rose", img: "https://images.unsplash.com/photo-1516280440502-a7204f14e427?w=400&q=80" },
-            { name: "Rauw Alejandro", img: "https://images.unsplash.com/photo-1605971439739-4cb4187f4c54?w=400&q=80" }
+            { name: "De La Rose", img: "https://images.unsplash.com/photo-1516280440502-a7204f14e427?w=400&q=80" }
         ];
 
         // Sistema de Sonido y Crossfade
@@ -473,7 +486,10 @@
             document.getElementById('volume-fill').style.width = `${globalVolume * 100}%`;
             activeAudio.volume = globalVolume;
 
-            requestAnimationFrame(engineLoop);
+            // FIX CROSSFADE SEGUNDO PLANO: Usamos setInterval e interceptamos nativamente la reproducción musical.
+            setInterval(engineLoop, 50); 
+            audio1.addEventListener('timeupdate', engineLoop);
+            audio2.addEventListener('timeupdate', engineLoop);
         }
 
         // --- SISTEMA DE VOLUMEN ---
@@ -679,7 +695,6 @@
                 
                 if(isNPOpen) updateKaraoke(curr);
             }
-            requestAnimationFrame(engineLoop);
         }
 
         // --- SISTEMA DE LETRAS ---
