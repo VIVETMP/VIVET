@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VIVETMP</title>
+    <title>VIVETMP - Yan Block Update</title>
     
     <!-- Tipografía Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -79,6 +79,8 @@
         .page-header { width: 100%; margin-bottom: 40px; text-align: left; }
         .page-header h1 { font-size: 48px; font-weight: 800; letter-spacing: -1.5px; }
         .page-header p { font-size: 16px; color: var(--text-muted); margin-top: 5px; }
+        
+        .section-title { font-size: 24px; font-weight: 700; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; width: 100%; text-align: left; }
 
         /* HEADER DE ARTISTA */
         .btn-back { display: inline-flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 500; color: var(--text-muted); cursor: pointer; margin-bottom: 20px; transition: 0.3s; width: fit-content; }
@@ -220,7 +222,6 @@
         .np-play i { margin-left: 4px; }
         .np-play:hover { transform: scale(1.05); }
 
-        /* Controles de Volumen Actualizados */
         .np-volume-area { display: flex; align-items: center; gap: 15px; width: 100%; color: rgba(255,255,255,0.6); font-size: 20px;}
         .np-volume-area i { cursor: pointer; transition: 0.2s; }
         .np-volume-area i:hover { color: #fff; transform: scale(1.1); }
@@ -293,14 +294,23 @@
         <!-- VISTA: DETALLE DE ARTISTA -->
         <div id="view-artist-detail" class="view-section">
             <div class="btn-back" onclick="switchTab('artists')"><i class="ph-bold ph-arrow-left"></i> Back</div>
+            
             <div class="artist-header-profile">
                 <img src="" id="detail-artist-img" class="artist-header-img">
                 <div>
                     <h1 id="detail-artist-name" style="font-size: 52px; font-weight: 800; letter-spacing: -1.5px; margin-bottom: 5px;">Artist Name</h1>
-                    <p style="font-size: 18px; color: var(--text-muted);">Top Songs</p>
                 </div>
             </div>
-            <div class="card-grid" id="artist-songs-grid"></div>
+
+            <!-- SECCIONES DIVIDIDAS -->
+            <h2 class="section-title">Top 10</h2>
+            <div class="card-grid" id="artist-top-songs-grid" style="margin-bottom: 60px;"></div>
+            
+            <h2 class="section-title" id="latest-title">Latest Release</h2>
+            <div class="card-grid" id="artist-latest-release-grid" style="margin-bottom: 60px;"></div>
+
+            <h2 class="section-title">Singles</h2>
+            <div class="card-grid" id="artist-singles-grid"></div>
         </div>
     </main>
 
@@ -337,7 +347,6 @@
         <div class="btn-close-np" onclick="toggleNP()"><i class="ph-bold ph-caret-down"></i></div>
 
         <div class="np-content">
-            <!-- Izquierda: Portada y Controles -->
             <div class="np-left">
                 <img src="https://res.cloudinary.com/ddcbl694n/image/upload/v1776007400/Yan_Block_u0inwd.jpg" class="np-large-cover" id="fs-large-cover">
                 
@@ -364,7 +373,6 @@
                     <i class="ph-bold ph-repeat" style="font-size: 24px;"></i>
                 </div>
 
-                <!-- BARRA DE VOLUMEN -->
                 <div class="np-volume-area">
                     <i class="ph-fill ph-speaker-low" onclick="setVolumeLevel(0)"></i>
                     <div class="track-line" onclick="changeVolume(event, this)">
@@ -374,7 +382,6 @@
                 </div>
             </div>
 
-            <!-- Derecha: Letras Sincronizadas -->
             <div class="np-right">
                 <div class="np-lyrics" id="lyrics-scroll">
                     <div id="lyrics-content"></div>
@@ -390,7 +397,7 @@
         const roaImg = "https://res.cloudinary.com/ddcbl694n/image/upload/v1776106835/ROA_slzaj5.jpg";
         const rauwImg = "https://res.cloudinary.com/ddcbl694n/image/upload/v1776204344/Rauw_Alejandro_c8vjwi.jpg";
 
-        // Base de Datos de Canciones
+        // Base de Datos de Canciones Completamente Actualizada
         const cancionesData =[
             // Rauw Alejandro
             { title: "Qué Pasaría...", artist: "Rauw Alejandro, Bad Bunny", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776204387/Qu%C3%A9_Pasar%C3%ADa..._Rauw_Alejandro_Bad_Bunny_tuxday.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776204782/Qu%C3%A9_Pasar%C3%ADa..._-_Rauw_Alejandro_Bad_Bunny_xuixsm.lrc" },
@@ -404,17 +411,37 @@
             { title: "BESO", artist: "ROSALÍA, Rauw Alejandro", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776204341/BESO_ROSAL%C3%8DA_Rauw_Alejandro_xwwmtz.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776204781/BESO_-_ROSAL%C3%8DA_Rauw_Alejandro_qhcbiw.lrc" },
             { title: "Tú Con Él", artist: "Rauw Alejandro", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776204415/T%C3%BA_Con_%C3%89l_Rauw_Alejandro_oswchd.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776204786/T%C3%BA_Con_%C3%89l_-_Rauw_Alejandro_wvzfbu.lrc" },
 
-            // Yan Block
-            { title: "YOGURCITO REMIX", artist: "Blessd, Anuel AA, Yan Block, Luar La L, Kris R., ROA", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007457/YOGURCITO_REMIX_Blessd_Anuel_AA_Yan_Block_Luar_La_L_Kris_R._ROA_ocxlgl.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009576/YOGURCITO_REMIX_wwua9w.lrc" },
+            // Yan Block (30 Singles List)
+            { title: "PIN", artist: "TORRRES, Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211833/PIN_TORRRES_Yan_Block_khikhb.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212486/PIN_-_TORRRES_Yan_Block_eefmle.lrc" },
+            { title: "Mascara - Remix", artist: "Mvchoo23, K John, Hades66, Yan Block, Juhn", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211880/Mascara_-_Remix_Mvchoo23_K_John_Hades66_Yan_Block_Juhn_zywu63.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212481/Mascara_-_Remix_-_Mvchoo23_K_John_Hades66_Yan_Block_Juhn_clb4f7.lrc" },
+            { title: "VICIO MÍO", artist: "De La Rose, Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211806/VICIO_M%C3%8DO_De_La_Rose_Yan_Block_xp4sgm.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212493/VICIO_M%C3%8DO_-_De_La_Rose_Yan_Block_tt9qsl.lrc" },
+            { title: "444 - REMIX", artist: "Yan Block, De La Rose, Hades66, Ñengo Flow", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007452/444_-_REMIX_Yan_Block_De_La_Rose_Hades66_%C3%91engo_Flow_lshzau.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009575/444_-_REMIX_t2qoid.lrc" },
             { title: "TALENTO", artist: "Yan Block, Panda Black", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007391/TALENTO_Yan_Block_Panda_Black_r4ugu2.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009576/TALENTO_s4qtf2.lrc" },
-            { title: "444", artist: "Yan Block, Panda Black", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007376/444_Yan_Block_Panda_Black_upxnup.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009575/444_ie7e6d.lrc" },
-            { title: "YO SE", artist: "Yan Block, TORRRES", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007440/YO_SE_Yan_Block_TORRRES_i8ianx.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009576/YO_SE_hiutok.lrc" },
-            { title: "444 - REMIX", artist: "Yan Block, De La Rose, Hades66", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007452/444_-_REMIX_Yan_Block_De_La_Rose_Hades66_%C3%91engo_Flow_lshzau.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009575/444_-_REMIX_t2qoid.lrc" },
-            { title: "111", artist: "Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007415/111_Yan_Block_h3poua.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009575/111_adlg6f.lrc" },
-            { title: "WYA REMIX RED", artist: "J Abdiel, De La Rose, Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007447/WYA_REMIX_RED_J_Abdiel_De_La_Rose_Yan_Block_iZaak_Jay_Wheeler_mvfmrz.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009576/WYA_REMIX_RED_ic1sdd.lrc" },
+            { title: "En Tus Sueños", artist: "Arcángel, Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211916/En_Tus_Sue%C3%B1os_Arc%C3%A1ngel_Yan_Block_g0qdo5.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212476/En_Tus_Sue%C3%B1os_-_Arc%C3%A1ngel_Yan_Block_xyfoah.lrc" },
+            { title: "YOGURCITO REMIX", artist: "Blessd, Anuel AA, Yan Block, Luar La L, Kris R., ROA", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007457/YOGURCITO_REMIX_Blessd_Anuel_AA_Yan_Block_Luar_La_L_Kris_R._ROA_ocxlgl.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009576/YOGURCITO_REMIX_wwua9w.lrc" },
+            { title: "SUERTE", artist: "Yan Block, RaiNao, Slow Jamz", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211775/SUERTE_Yan_Block_RaiNao_Slow_Jamz_zxqcge.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212490/SUERTE_-_Yan_Block_RaiNao_Slow_Jamz_uobqwl.lrc" },
+            { title: "Te Colaboro - Remix", artist: "Brray, Feid, De La Rose, Yan Block, NTG", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211918/Te_Colaboro_-_Remix_Brray_Feid_De_La_Rose_Yan_Block_NTG_gemijz.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212491/Te_Colaboro_-_Remix_-_Brray_Feid_De_La_Rose_Yan_Block_NTG_mvifxs.lrc" },
+            { title: "5/3", artist: "Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211912/5_3_Yan_Block_xpbqo6.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212473/5_3_-_Yan_Block_rppnt5.lrc" },
             { title: "SECUESTRO", artist: "Slayter, Yan Block, NTG", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007396/SECUESTRO_Slayter_Yan_Block_NTG_bqszzh.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009576/SECUESTRO_m4absd.lrc" },
-            { title: "VACILE", artist: "Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007402/VACILE_Yan_Block_ytkcf9.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009576/VACILE_qxdqxq.lrc" },
+            { title: "piña", artist: "Slayter, Yan Block, SOMBRA PR", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211874/pi%C3%B1a_Slayter_Yan_Block_SOMBRA_PR_muapp2.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212487/pi%C3%B1a_-_Slayter_Yan_Block_SOMBRA_PR_myh5kb.lrc" },
+            { title: "111", artist: "Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007415/111_Yan_Block_h3poua.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009575/111_adlg6f.lrc" },
+            { title: "Religión", artist: "Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211878/Religi%C3%B3n_Yan_Block_txwxle.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212488/Religi%C3%B3n_-_Yan_Block_l6c3xy.lrc" },
+            { title: "NEVER 2 LATE", artist: "ROA, Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211844/NEVER_2_LATE_ROA_Yan_Block_jwdqma.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212485/NEVER_2_LATE_-_ROA_Yan_Block_u84d8i.lrc" },
             { title: "EXPRESSO MARTINI", artist: "Rauw Alejandro, Marconi Impara, Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007397/EXPRESSO_MARTINI_Rauw_Alejandro_Marconi_Impara_Yan_Block_ac5x3j.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009575/EXPRESSO_MARTINI_nl8yas.lrc" },
+            { title: "Juguete", artist: "Yan Block, NTG, SAIKO, SHB", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211824/Juguete_Yan_Block_NTG_SAIKO_SHB_wysyo0.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212480/Juguete_-_Yan_Block_NTG_SAIKO_SHB_aqm31e.lrc" },
+            { title: "Epica", artist: "Caleb Calloway, iZaak, Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211915/Epica_Caleb_Calloway_iZaak_Yan_Block_b7aepf.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212477/Epica_ilc4zb.lrc" },
+            { title: "Media Hora", artist: "Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211838/Media_Hora_Yan_Block_bcvcu9.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212484/Media_Hora_-_Yan_Block_xmzzka.lrc" },
+            { title: "3 Doritos", artist: "Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211784/3_Doritos_Yan_Block_lprati.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212471/3_Doritos_-_Yan_Block_jlqvb5.lrc" },
+            { title: "YO SE", artist: "Yan Block, TORRRES", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007440/YO_SE_Yan_Block_TORRRES_i8ianx.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009576/YO_SE_hiutok.lrc" },
+            { title: "WYA REMIX RED", artist: "J Abdiel, De La Rose, Yan Block, iZaak, Jay Wheeler", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007447/WYA_REMIX_RED_J_Abdiel_De_La_Rose_Yan_Block_iZaak_Jay_Wheeler_mvfmrz.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009576/WYA_REMIX_RED_ic1sdd.lrc" },
+            { title: "444", artist: "Yan Block, Panda Black", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007376/444_Yan_Block_Panda_Black_upxnup.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009575/444_ie7e6d.lrc" },
+            { title: "18", artist: "Yan Block, Young Martino", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211873/18_Yan_Block_Young_Martino_wp84u6.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212471/18_-_Yan_Block_Young_Martino_ytasjo.lrc" },
+            { title: "GPS", artist: "Yan Block, Young Martino", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211911/GPS_Yan_Block_Young_Martino_cqookv.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212478/GPS_-_Yan_Block_Young_Martino_t793sb.lrc" },
+            { title: "333", artist: "Cris MJ, Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211860/333_Cris_MJ_Yan_Block_tinx2k.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212472/333_-_Cris_MJ_Yan_Block_wao4ei.lrc" },
+            { title: "Mastercard", artist: "Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211838/Mastercard_Yan_Block_qy7pvf.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212482/Mastercard_-_Yan_Block_r1mbs1.lrc" },
+            { title: "VACILE", artist: "Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007402/VACILE_Yan_Block_ytkcf9.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009576/VACILE_qxdqxq.lrc" },
+            { title: "Block Freestyle", artist: "Yan Block, Hydro", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211792/Block_Freestyle_Yan_Block_Hydro_ijzutz.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212475/Block_Freestyle_-_Yan_Block_Hydro_ufftwk.lrc" },
+            { title: "IDGAF", artist: "Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211796/IDGAF_Yan_Block_vpoynl.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212479/IDGAF_-_Yan_Block_qr2mqq.lrc" },
             
             // Omar Courtz & Dei V
             { title: "VeLDÁ", artist: "Bad Bunny, Omar Courtz, Dei V", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776097613/VeLD%C3%81_Bad_Bunny_Omar_Courtz_Dei_V_ipgd2p.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776098216/VeLD%C3%81_-_Bad_Bunny_Omar_Courtz_Dei_V_cqae5j.lrc" },
@@ -484,12 +511,10 @@
             document.getElementById('volume-fill').style.width = `${globalVolume * 100}%`;
             activeAudio.volume = globalVolume;
 
-            // MOTOR DE AUDIO (Corre de fondo para el crossfade)
             setInterval(audioLoop, 50); 
             audio1.addEventListener('timeupdate', audioLoop);
             audio2.addEventListener('timeupdate', audioLoop);
             
-            // MOTOR VISUAL (Corre a 60 FPS para animaciones suaves)
             requestAnimationFrame(renderLoop);
         }
 
@@ -526,34 +551,58 @@
             }
         }
 
+        // --- VISTA DETALLADA DEL ARTISTA ---
         function openArtistDetail(artistName, imgUrl) {
             document.getElementById('detail-artist-name').innerText = artistName;
             document.getElementById('detail-artist-img').src = imgUrl;
             
-            const artistSongs = cancionesData.filter(s => s.artist.includes(artistName)).slice(0, 10);
-            renderSongs(artistSongs, 'artist-songs-grid', true);
+            const artistSongs = cancionesData.filter(s => s.artist.includes(artistName));
+            let top10, latestRelease, singles;
+
+            if (artistName === "Yan Block") {
+                latestRelease =[artistSongs.find(s => s.title === "PIN")];
+                
+                // Top 10 Manual Exclusivo para probar la vista estructurada
+                const top10Titles =["YOGURCITO REMIX", "WYA REMIX RED", "444 - REMIX", "TALENTO", "EXPRESSO MARTINI", "111", "VACILE", "SECUESTRO", "YO SE", "444"];
+                top10 = artistSongs.filter(s => top10Titles.includes(s.title));
+                
+                // El resto son los Singles descartando PIN que va en Latest Release
+                singles = artistSongs.filter(s => s.title !== "PIN");
+            } else {
+                top10 = artistSongs.slice(0, 10);
+                latestRelease = artistSongs.slice(0, 1);
+                singles = artistSongs.slice(1);
+            }
+            
+            renderSongs(top10, 'artist-top-songs-grid');
+            renderSongs(latestRelease, 'artist-latest-release-grid');
+            renderSongs(singles, 'artist-singles-grid');
 
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
             document.getElementById('view-artist-detail').classList.add('active');
         }
 
-        // --- RENDERIZADO UI ---
-        function renderSongs(songsArray, containerId, isFiltered = false) {
+        // --- RENDERIZADO UI DE CANCIONES ---
+        function renderSongs(songsArray, containerId) {
             const gridEl = document.getElementById(containerId);
             gridEl.innerHTML = '';
+            if(!songsArray || songsArray.length === 0) return;
             
             songsArray.forEach((song) => {
+                if(!song) return;
                 const realIndex = cancionesData.findIndex(s => s.title === song.title);
+                if(realIndex === -1) return;
+
                 if(!song.cover) song.cover = imageArtistUrl;
 
                 const card = document.createElement('div');
-                card.className = 'glass-card';
-                if(!isFiltered) card.id = `card-${realIndex}`; 
+                card.className = `glass-card card-song-${realIndex}`; 
+                if (currentPlayingIndex === realIndex) card.classList.add('active');
                 card.onclick = () => playSong(realIndex);
                 
                 card.innerHTML = `
                     <div class="card-img-wrapper">
-                        <img src="${song.cover}" id="art-${containerId}-${realIndex}" class="card-img">
+                        <img src="${song.cover}" class="card-img cover-song-${realIndex}">
                         <div class="card-play-btn"><i class="ph-fill ph-play"></i></div>
                     </div>
                     <div class="card-info">
@@ -563,7 +612,9 @@
                 `;
                 gridEl.appendChild(card);
 
-                if(!song.coverLoaded) {
+                // Evitar múltiples llamadas simultáneas de lectura a la misma canción
+                if(!song.coverLoaded && !song.coverLoading) {
+                    song.coverLoading = true;
                     jsmediatags.read(song.url, {
                         onSuccess: function(tag) {
                             if (tag.tags.picture) {
@@ -572,14 +623,15 @@
                                 const imgUrl = `data:${tag.tags.picture.format};base64,${window.btoa(b64)}`;
                                 song.cover = imgUrl;
                                 song.coverLoaded = true;
-                                const imgEl = document.getElementById(`art-${containerId}-${realIndex}`);
-                                if(imgEl) imgEl.src = imgUrl;
+                                
+                                // Actualiza todas las instancias clonadas de la misma canción usando la clase en vez de IDs
+                                document.querySelectorAll(`.cover-song-${realIndex}`).forEach(img => img.src = imgUrl);
                                 if(currentPlayingIndex === realIndex) updateCovers(imgUrl);
                             }
                         }
                     });
-                } else {
-                    document.getElementById(`art-${containerId}-${realIndex}`).src = song.cover;
+                } else if(song.coverLoaded) {
+                    document.querySelectorAll(`.cover-song-${realIndex}`).forEach(img => img.src = song.cover);
                 }
             });
         }
@@ -628,13 +680,9 @@
         }
 
         function triggerUIForSong(idx) {
-            if(currentPlayingIndex !== -1) {
-                const oldCard = document.getElementById(`card-${currentPlayingIndex}`);
-                if(oldCard) oldCard.classList.remove('active');
-            }
-            
-            const newCard = document.getElementById(`card-${idx}`);
-            if(newCard) newCard.classList.add('active');
+            // Elimina clases a todos y se la añade a las cartas clonadas de la misma canción
+            document.querySelectorAll('.glass-card.active').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll(`.card-song-${idx}`).forEach(el => el.classList.add('active'));
             
             currentPlayingIndex = idx;
             activeLyricIndex = -1;
@@ -663,7 +711,7 @@
         }
 
         // ============================================
-        // MOTOR 1: AUDIO (Fondo, nunca se pausa)
+        // MOTOR 1: AUDIO
         // ============================================
         function audioLoop() {
             if(activeAudio.duration && !isNaN(activeAudio.duration)) {
@@ -692,7 +740,7 @@
         }
 
         // ============================================
-        // MOTOR 2: VISUAL (60 FPS, pausa si cambias de pestaña)
+        // MOTOR 2: VISUAL
         // ============================================
         function renderLoop() {
             if(activeAudio.duration && !isNaN(activeAudio.duration)) {
@@ -710,7 +758,6 @@
             }
             requestAnimationFrame(renderLoop);
         }
-
 
         // --- SISTEMA DE LETRAS ---
         async function fetchLyrics(url) {
