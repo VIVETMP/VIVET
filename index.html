@@ -412,6 +412,7 @@
             { title: "Tú Con Él", artist: "Rauw Alejandro", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776204415/T%C3%BA_Con_%C3%89l_Rauw_Alejandro_oswchd.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776204786/T%C3%BA_Con_%C3%89l_-_Rauw_Alejandro_wvzfbu.lrc" },
 
             // Yan Block (30 Singles List)
+            { title: "666", artist: "Yan Block, Cris MJ, Panda Black", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776377223/666_Yan_Block_Cris_MJ_Panda_Black_yphkaz.mp3", lrc: "" },
             { title: "PIN", artist: "TORRRES, Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211833/PIN_TORRRES_Yan_Block_khikhb.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212486/PIN_-_TORRRES_Yan_Block_eefmle.lrc" },
             { title: "Mascara - Remix", artist: "Mvchoo23, K John, Hades66, Yan Block, Juhn", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211880/Mascara_-_Remix_Mvchoo23_K_John_Hades66_Yan_Block_Juhn_zywu63.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212481/Mascara_-_Remix_-_Mvchoo23_K_John_Hades66_Yan_Block_Juhn_clb4f7.lrc" },
             { title: "VICIO MÍO", artist: "De La Rose, Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211806/VICIO_M%C3%8DO_De_La_Rose_Yan_Block_xp4sgm.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212493/VICIO_M%C3%8DO_-_De_La_Rose_Yan_Block_tt9qsl.lrc" },
@@ -560,14 +561,14 @@
             let top10, latestRelease, singles;
 
             if (artistName === "Yan Block") {
-                latestRelease =[artistSongs.find(s => s.title === "PIN")];
+                latestRelease =[artistSongs.find(s => s.title === "666")];
                 
                 // Top 10 Manual Exclusivo para probar la vista estructurada
                 const top10Titles =["YOGURCITO REMIX", "WYA REMIX RED", "444 - REMIX", "TALENTO", "EXPRESSO MARTINI", "111", "VACILE", "SECUESTRO", "YO SE", "444"];
                 top10 = artistSongs.filter(s => top10Titles.includes(s.title));
                 
-                // El resto son los Singles descartando PIN que va en Latest Release
-                singles = artistSongs.filter(s => s.title !== "PIN");
+                // El resto son los Singles descartando 666 que va en Latest Release
+                singles = artistSongs.filter(s => s.title !== "666");
             } else {
                 top10 = artistSongs.slice(0, 10);
                 latestRelease = artistSongs.slice(0, 1);
