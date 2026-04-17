@@ -136,11 +136,11 @@
         }
         .player-pill:hover { transform: translateY(-5px); }
 
-        .pill-info { display: flex; align-items: center; gap: 16px; width: 35%; cursor: pointer; }
+        .pill-info { display: flex; align-items: center; gap: 16px; width: 30%; cursor: pointer; }
         .pill-cover { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; box-shadow: 0 5px 15px rgba(0,0,0,0.5); transition: 0.3s; }
         .pill-info:hover .pill-cover { transform: scale(1.05); }
-        .pill-text { display: flex; flex-direction: column; justify-content: center; overflow: hidden; width: 100%;}
-        .pill-text h4 { font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center;}
+        .pill-text { display: flex; flex-direction: column; justify-content: center; overflow: hidden; }
+        .pill-text h4 { font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .pill-text p { font-size: 13px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
         .pill-controls { display: flex; align-items: center; gap: 24px; font-size: 24px; color: var(--text-main); }
@@ -161,24 +161,6 @@
         .btn-expand { width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s;}
         .btn-expand:hover { background: rgba(255,255,255,0.2); transform: scale(1.1); }
 
-        /* --- AUTOMIX BADGE (NUEVO UI) --- */
-        .automix-badge {
-            font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;
-            background: linear-gradient(135deg, #FF2E93, #FF8036);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            padding: 2px 6px; border: 1px solid rgba(255, 46, 147, 0.4); border-radius: 6px;
-            opacity: 0; transition: all 0.4s ease; display: inline-block; margin-left: 8px;
-            visibility: hidden; transform: scale(0.9); white-space: nowrap;
-        }
-        .automix-badge.active { 
-            opacity: 1; visibility: visible; transform: scale(1);
-            animation: pulseMix 2s infinite cubic-bezier(0.4, 0, 0.2, 1); 
-        }
-        @keyframes pulseMix { 
-            0% { box-shadow: 0 0 0 0 rgba(255,46,147,0.3); } 
-            70% { box-shadow: 0 0 10px 4px rgba(255,46,147,0); } 
-            100% { box-shadow: 0 0 0 0 rgba(255,46,147,0); } 
-        }
 
         /* ========================
            APPLE MUSIC NOW PLAYING UI
@@ -226,7 +208,7 @@
         }
 
         .np-text-area { width: 100%; text-align: left; margin-bottom: 30px; }
-        .np-text-area h2 { font-size: 28px; font-weight: 700; text-shadow: 0 2px 10px rgba(0,0,0,0.5); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 12px;}
+        .np-text-area h2 { font-size: 28px; font-weight: 700; text-shadow: 0 2px 10px rgba(0,0,0,0.5); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .np-text-area p { font-size: 18px; color: rgba(255,255,255,0.7); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
 
         .np-progress-area { width: 100%; display: flex; flex-direction: column; gap: 10px; margin-bottom: 30px; }
@@ -320,6 +302,7 @@
                 </div>
             </div>
 
+            <!-- SECCIONES DIVIDIDAS -->
             <h2 class="section-title">Top 10</h2>
             <div class="card-grid" id="artist-top-songs-grid" style="margin-bottom: 60px;"></div>
             
@@ -337,10 +320,7 @@
             <div class="pill-info" onclick="toggleNP()">
                 <img src="https://res.cloudinary.com/ddcbl694n/image/upload/v1776007400/Yan_Block_u0inwd.jpg" class="pill-cover" id="pill-cover">
                 <div class="pill-text">
-                    <h4>
-                        <span id="pill-title">Not Playing</span>
-                        <div class="automix-badge" id="badge-pill">AutoMix</div>
-                    </h4>
+                    <h4 id="pill-title">Not Playing</h4>
                     <p id="pill-artist">Yan Block</p>
                 </div>
             </div>
@@ -371,10 +351,7 @@
                 <img src="https://res.cloudinary.com/ddcbl694n/image/upload/v1776007400/Yan_Block_u0inwd.jpg" class="np-large-cover" id="fs-large-cover">
                 
                 <div class="np-text-area">
-                    <h2>
-                        <span id="fs-title">Not Playing</span>
-                        <div class="automix-badge" id="badge-fs" style="font-size: 11px; padding: 4px 8px;">AutoMix</div>
-                    </h2>
+                    <h2 id="fs-title">Not Playing</h2>
                     <p id="fs-artist">Yan Block</p>
                 </div>
 
@@ -420,7 +397,7 @@
         const roaImg = "https://res.cloudinary.com/ddcbl694n/image/upload/v1776106835/ROA_slzaj5.jpg";
         const rauwImg = "https://res.cloudinary.com/ddcbl694n/image/upload/v1776204344/Rauw_Alejandro_c8vjwi.jpg";
 
-        // RESTAURADAS TODAS LAS CANCIONES ORIGINALES
+        // Base de Datos de Canciones Completamente Actualizada
         const cancionesData =[
             // Rauw Alejandro
             { title: "Qué Pasaría...", artist: "Rauw Alejandro, Bad Bunny", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776204387/Qu%C3%A9_Pasar%C3%ADa..._Rauw_Alejandro_Bad_Bunny_tuxday.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776204782/Qu%C3%A9_Pasar%C3%ADa..._-_Rauw_Alejandro_Bad_Bunny_xuixsm.lrc" },
@@ -434,7 +411,7 @@
             { title: "BESO", artist: "ROSALÍA, Rauw Alejandro", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776204341/BESO_ROSAL%C3%8DA_Rauw_Alejandro_xwwmtz.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776204781/BESO_-_ROSAL%C3%8DA_Rauw_Alejandro_qhcbiw.lrc" },
             { title: "Tú Con Él", artist: "Rauw Alejandro", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776204415/T%C3%BA_Con_%C3%89l_Rauw_Alejandro_oswchd.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776204786/T%C3%BA_Con_%C3%89l_-_Rauw_Alejandro_wvzfbu.lrc" },
 
-            // Yan Block
+            // Yan Block (30 Singles List)
             { title: "666", artist: "Yan Block, Cris MJ, Panda Black", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776377223/666_Yan_Block_Cris_MJ_Panda_Black_yphkaz.mp3", lrc: "" },
             { title: "PIN", artist: "TORRRES, Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211833/PIN_TORRRES_Yan_Block_khikhb.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212486/PIN_-_TORRRES_Yan_Block_eefmle.lrc" },
             { title: "Mascara - Remix", artist: "Mvchoo23, K John, Hades66, Yan Block, Juhn", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211880/Mascara_-_Remix_Mvchoo23_K_John_Hades66_Yan_Block_Juhn_zywu63.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212481/Mascara_-_Remix_-_Mvchoo23_K_John_Hades66_Yan_Block_Juhn_clb4f7.lrc" },
@@ -501,409 +478,27 @@
             { title: "Pieza Exhibición", artist: "Luar La L, ROA, Blessd", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776106886/Pieza_Exhibici%C3%B3n_Luar_La_L_ROA_Blessd_ptt1ly.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776107160/Pieza_Exhibici%C3%B3n_-_Luar_La_L_ROA_Blessd_uxe8zm.lrc" }
         ];
 
+        // Base de Datos de Artistas
         const artistsData =[
             { name: "Rauw Alejandro", img: rauwImg },
             { name: "Yan Block", img: imageArtistUrl },
             { name: "Omar Courtz", img: omarCourtzImg },
             { name: "Dei V", img: deiVImg },
-            { name: "ROA", img: roaImg }
+            { name: "ROA", img: roaImg },
+            { name: "Panda Black", img: "https://images.unsplash.com/photo-1518609878373-06d740f60d8b?w=400&q=80" },
+            { name: "Blessd", img: "https://images.unsplash.com/photo-1493225457284-0bf53ce8151e?w=400&q=80" },
+            { name: "De La Rose", img: "https://images.unsplash.com/photo-1516280440502-a7204f14e427?w=400&q=80" }
         ];
 
-        // ============================================
-        // MOTOR DE ANÁLISIS REAL AUTOMIX V2 PRO (WEB AUDIO API)
-        // ============================================
-
-        const trackAnalysis = {};
-        let recentHistory = [];
-        let analysisQueue =[];
-
-        function initBackgroundAnalysis() {
-            analysisQueue =[...cancionesData];
-            runBackgroundAnalysis();
-        }
-
-        async function runBackgroundAnalysis() {
-            if(analysisQueue.length === 0) return;
-            const song = analysisQueue.shift();
-            
-            if(!trackAnalysis[song.url]) {
-                await analyzeTrack(song);
-            }
-            // Pequeña pausa para no bloquear el CPU ni la red del usuario mientras navega
-            setTimeout(runBackgroundAnalysis, 1500); 
-        }
-
-        async function analyzeTrack(song) {
-            if (trackAnalysis[song.url]) return trackAnalysis[song.url];
-            console.log(`[AutoMix] Analyzing audio data for: ${song.title}...`);
-            
-            try {
-                // Instancia local offline (o estándar) solo para decodificar y analizar rápido
-                const AudioContext = window.AudioContext || window.webkitAudioContext;
-                const tempCtx = new AudioContext(); 
-                
-                const response = await fetch(song.url);
-                const arrayBuffer = await response.arrayBuffer();
-                const audioBuffer = await tempCtx.decodeAudioData(arrayBuffer);
-                
-                const channelData = audioBuffer.getChannelData(0);
-                const sampleRate = audioBuffer.sampleRate;
-                const length = channelData.length;
-                
-                let totalEnergy = 0;
-                const rmsChunks =[];
-                const chunkSize = sampleRate; // Tramos de 1 segundo
-                
-                // 1. ANÁLISIS DE ENERGÍA RMS (Strided para extrema velocidad)
-                for (let i = 0; i < length; i += chunkSize) {
-                    let sum = 0;
-                    let count = 0;
-                    for (let j = 0; j < chunkSize && (i + j) < length; j += 100) {
-                        sum += channelData[i + j] * channelData[i + j];
-                        count++;
-                    }
-                    const rms = Math.sqrt(sum / count);
-                    rmsChunks.push(rms);
-                    totalEnergy += rms;
-                }
-                const avgEnergy = totalEnergy / rmsChunks.length;
-                
-                // 2. DETECCIÓN DE OUTRO SILENCIOSA O BAJÓN DE ENERGÍA
-                let outroDuration = 6; 
-                for (let i = rmsChunks.length - 1; i >= Math.max(0, rmsChunks.length - 30); i--) {
-                    if (rmsChunks[i] > avgEnergy * 0.4) {
-                        outroDuration = (rmsChunks.length - 1 - i);
-                        break;
-                    }
-                }
-                if(outroDuration < 4) outroDuration = 4;
-                if(outroDuration > 15) outroDuration = 15;
-
-                // 3. DETECCIÓN DE PEAKS / BPM ESTIMADO
-                let maxVal = 0;
-                for(let i=0; i<length; i+=500) if(Math.abs(channelData[i]) > maxVal) maxVal = Math.abs(channelData[i]);
-                const threshold = maxVal * 0.75;
-                
-                let lastPeak = 0;
-                let intervals = {};
-                for(let i=0; i<length; i+=1000) {
-                    if(Math.abs(channelData[i]) > threshold) {
-                        if(lastPeak > 0) {
-                            let diff = (i - lastPeak) / sampleRate;
-                            if(diff > 0.3 && diff < 1.5) { // Rango 40 a 200 BPM
-                                let bpm = Math.round(60 / diff);
-                                intervals[bpm] = (intervals[bpm] || 0) + 1;
-                            }
-                        }
-                        lastPeak = i;
-                        i += sampleRate * 0.2; // Skip de 200ms para evitar falsos peaks del mismo kick
-                    }
-                }
-                
-                let estimatedBPM = 110;
-                let maxCount = 0;
-                for(let b in intervals) {
-                    if(intervals[b] > maxCount) { maxCount = intervals[b]; estimatedBPM = parseInt(b); }
-                }
-
-                trackAnalysis[song.url] = {
-                    bpm: estimatedBPM,
-                    energy: avgEnergy,
-                    outroDuration: outroDuration
-                };
-                
-                console.log(`[AutoMix] Analyzed [${song.title}] -> BPM: ${estimatedBPM} | Energy: ${avgEnergy.toFixed(3)} | Outro: ${outroDuration}s`);
-                tempCtx.close();
-                return trackAnalysis[song.url];
-
-            } catch(e) {
-                console.error(`[AutoMix] Failed to analyze ${song.title} (CORS or Decode Error). Using fallbacks.`, e);
-                trackAnalysis[song.url] = { bpm: 110, energy: 0.1, outroDuration: 8 };
-                return trackAnalysis[song.url];
-            }
-        }
-
-
-        // ============================================
-        // NUEVO MOTOR WEB AUDIO API (Reproducción & Mezcla)
-        // ============================================
-        
-        let audio1 = new Audio(); audio1.crossOrigin = "anonymous";
-        let audio2 = new Audio(); audio2.crossOrigin = "anonymous";
+        // Sistema de Sonido y Crossfade
+        let audio1 = new Audio();
+        let audio2 = new Audio();
         let activeAudio = audio1;
         let fadingAudio = null;
         let isCrossfading = false;
-        let currentMixDuration = 0;
-        let mixTimingHumanized = 0;
         
-        let audioCtx, masterGain, masterCompressor;
-        let deck1, deck2, activeDeck, fadingDeck;
         let globalVolume = 0.75; 
-
-        function initAudioEngine() {
-            if (audioCtx) return;
-            const AudioContext = window.AudioContext || window.webkitAudioContext;
-            audioCtx = new AudioContext();
-            
-            masterCompressor = audioCtx.createDynamicsCompressor();
-            masterCompressor.threshold.value = -3;
-            masterCompressor.knee.value = 10;
-            masterCompressor.ratio.value = 5;
-            masterCompressor.attack.value = 0.003;
-            masterCompressor.release.value = 0.25;
-
-            masterGain = audioCtx.createGain();
-            masterGain.gain.value = globalVolume;
-            
-            masterCompressor.connect(masterGain);
-            masterGain.connect(audioCtx.destination);
-
-            deck1 = createDeck(audio1);
-            deck2 = createDeck(audio2);
-            activeDeck = deck1;
-        }
-
-        function createDeck(audioEl) {
-            const source = audioCtx.createMediaElementSource(audioEl);
-            const highpass = audioCtx.createBiquadFilter(); highpass.type = 'highpass'; highpass.frequency.value = 0;
-            const lowpass = audioCtx.createBiquadFilter(); lowpass.type = 'lowpass'; lowpass.frequency.value = 22000;
-            const bass = audioCtx.createBiquadFilter(); bass.type = 'lowshelf'; bass.frequency.value = 200; bass.gain.value = 0;
-            
-            const delay = audioCtx.createDelay(5.0); delay.delayTime.value = 0.45; 
-            const feedback = audioCtx.createGain(); feedback.gain.value = 0; 
-            delay.connect(feedback); feedback.connect(delay);
-            const delayOut = audioCtx.createGain(); delayOut.gain.value = 0;
-            delay.connect(delayOut);
-            
-            const deckGain = audioCtx.createGain(); deckGain.gain.value = 1;
-            
-            source.connect(highpass); highpass.connect(lowpass); lowpass.connect(bass);
-            bass.connect(deckGain); bass.connect(delay); 
-            
-            deckGain.connect(masterCompressor);
-            delayOut.connect(masterCompressor);
-
-            return { source, highpass, lowpass, bass, delay, feedback, delayOut, deckGain };
-        }
-
-        function resetDeckFX(deck) {
-            if(!audioCtx) return;
-            const now = audioCtx.currentTime;
-            deck.highpass.frequency.cancelScheduledValues(now); deck.highpass.frequency.setValueAtTime(0, now);
-            deck.lowpass.frequency.cancelScheduledValues(now); deck.lowpass.frequency.setValueAtTime(22000, now);
-            deck.bass.gain.cancelScheduledValues(now); deck.bass.gain.setValueAtTime(0, now);
-            deck.deckGain.gain.cancelScheduledValues(now); deck.deckGain.gain.setValueAtTime(1, now);
-            deck.delayOut.gain.cancelScheduledValues(now); deck.delayOut.gain.setValueAtTime(0, now);
-            deck.feedback.gain.cancelScheduledValues(now); deck.feedback.gain.setValueAtTime(0, now);
-        }
-
-        // ============================================
-        // LÓGICA AUTOMIX (SUSTITUYE CROSSFADE ORIGINAL Y SELECCIÓN INTELIGENTE)
-        // ============================================
-
-        function getBestNextTrack(currIdx) {
-            const currSong = cancionesData[currIdx];
-            const currAnal = trackAnalysis[currSong.url] || {bpm: 110, energy: 0.1, outroDuration: 8};
-            
-            let bestIdx = (currIdx + 1) % cancionesData.length;
-            let bestScore = -9999;
-
-            for (let i = 0; i < cancionesData.length; i++) {
-                if (i === currIdx) continue;
-                if (recentHistory.includes(i)) continue; // Penaliza fuertemente repetidas
-
-                const candidate = cancionesData[i];
-                const candAnal = trackAnalysis[candidate.url] || {bpm: 110, energy: 0.1, outroDuration: 8};
-
-                let score = 0;
-                
-                // Match de BPM (Hasta 50 pts)
-                const bpmDiff = Math.abs(currAnal.bpm - candAnal.bpm);
-                if (bpmDiff < 5) score += 50;
-                else if (bpmDiff < 10) score += 30;
-                else if (bpmDiff > 30) score -= 20;
-
-                // Match de Energía y progresividad (+20 pts)
-                const energyDiff = candAnal.energy - currAnal.energy;
-                if (energyDiff > 0 && energyDiff < 0.05) score += 40; // Energía ligeramente superior (hype build)
-                else if (energyDiff <= 0 && energyDiff > -0.05) score += 20; // Hype mantenido suave
-                else score -= 10; // Cambios bruscos
-
-                // Variedad de artista (evitar pegar al mismo artista muy seguido)
-                if (candidate.artist !== currSong.artist) score += 30;
-                else score -= 40; 
-
-                if (score > bestScore) {
-                    bestScore = score;
-                    bestIdx = i;
-                }
-            }
-            return bestIdx;
-        }
-
-        function startSmartAutoMix() {
-            isCrossfading = true;
-            initAudioEngine();
-            
-            fadingDeck = activeDeck;
-            fadingAudio = activeAudio;
-            activeAudio = (activeAudio === audio1) ? audio2 : audio1;
-            activeDeck = (activeDeck === deck1) ? deck2 : deck1;
-            
-            // Selección musicalmente inteligente
-            let nextIdx = getBestNextTrack(currentPlayingIndex);
-            
-            // Actualizar el historial de DJ
-            recentHistory.push(currentPlayingIndex);
-            if(recentHistory.length > 5) recentHistory.shift();
-
-            const currProf = trackAnalysis[cancionesData[currentPlayingIndex].url] || {bpm: 110, energy: 0.1};
-            const nextProf = trackAnalysis[cancionesData[nextIdx].url] || {bpm: 110, energy: 0.1};
-            
-            // Elegir transición con base a la diferencia
-            let mixType, dur;
-            const bpmDiff = Math.abs(currProf.bpm - nextProf.bpm);
-            
-            if (bpmDiff > 20) {
-                mixType = "echoOut"; dur = 4;
-            } else if (currProf.energy > 0.08 && nextProf.energy > 0.08 && bpmDiff <= 8) {
-                mixType = "bassSwap"; dur = 6;
-            } else if (currProf.energy > 0.1) {
-                mixType = "filterRise"; dur = 8;
-            } else if (currProf.energy < 0.05) {
-                mixType = "smoothBlend"; dur = 10;
-            } else {
-                mixType = Math.random() > 0.5 ? "quickCutDrop" : "smoothBlend"; dur = 5;
-            }
-            
-            // Humanización de mezcla (Timing)
-            dur += (Math.random() - 0.5) * 0.8; 
-            currentMixDuration = dur;
-            
-            console.log(`[AutoMix] Queuing: ${cancionesData[nextIdx].title}`);
-            console.log(`[AutoMix] Mix Type: ${mixType} | BPM Diff: ${bpmDiff} | Mix Length: ${dur.toFixed(1)}s`);
-            
-            showAutoMixBadge(mixType);
-            triggerUIForSong(nextIdx);
-            
-            activeAudio.src = cancionesData[nextIdx].url;
-            activeAudio.play().then(() => {
-                applyTransitionFX(mixType, dur);
-            }).catch(e=>console.log("Audio Play Error:", e));
-
-            // Limpiar deck muerto al finalizar la transición
-            setTimeout(() => {
-                if (isCrossfading && fadingAudio) {
-                    fadingAudio.pause(); fadingAudio.src = "";
-                    isCrossfading = false;
-                    hideAutoMixBadge();
-                }
-            }, dur * 1000);
-        }
-
-        function applyTransitionFX(type, dur) {
-            const now = audioCtx.currentTime;
-            resetDeckFX(activeDeck);
-            
-            activeDeck.deckGain.gain.setValueAtTime(0.001, now); // Arranca inaudible
-            
-            if (type === "echoOut") {
-                fadingDeck.delayOut.gain.setValueAtTime(0, now);
-                fadingDeck.delayOut.gain.linearRampToValueAtTime(0.8, now + 1);
-                fadingDeck.feedback.gain.setValueAtTime(0, now);
-                fadingDeck.feedback.gain.linearRampToValueAtTime(0.6, now + 1);
-                fadingDeck.deckGain.gain.setValueAtTime(1, now);
-                fadingDeck.deckGain.gain.exponentialRampToValueAtTime(0.001, now + (dur * 0.5));
-                
-                activeDeck.deckGain.gain.linearRampToValueAtTime(1, now + 1.5);
-                
-            } else if (type === "filterRise") {
-                fadingDeck.highpass.frequency.setValueAtTime(0, now);
-                fadingDeck.highpass.frequency.exponentialRampToValueAtTime(10000, now + dur);
-                fadingDeck.deckGain.gain.setValueAtTime(1, now);
-                fadingDeck.deckGain.gain.linearRampToValueAtTime(0.001, now + dur);
-                
-                activeDeck.lowpass.frequency.setValueAtTime(400, now);
-                activeDeck.lowpass.frequency.exponentialRampToValueAtTime(22000, now + dur);
-                activeDeck.deckGain.gain.linearRampToValueAtTime(1, now + dur);
-                
-            } else if (type === "bassSwap") {
-                const swapTime = now + (dur * 0.6);
-                
-                fadingDeck.deckGain.gain.setValueAtTime(1, now);
-                fadingDeck.deckGain.gain.linearRampToValueAtTime(0.001, now + dur);
-                fadingDeck.bass.gain.setValueAtTime(0, now);
-                fadingDeck.bass.gain.setValueAtTime(0, swapTime - 0.1);
-                fadingDeck.bass.gain.linearRampToValueAtTime(-24, swapTime);
-                
-                activeDeck.deckGain.gain.linearRampToValueAtTime(1, now + (dur * 0.8));
-                activeDeck.bass.gain.setValueAtTime(-24, now);
-                activeDeck.bass.gain.setValueAtTime(-24, swapTime - 0.1);
-                activeDeck.bass.gain.linearRampToValueAtTime(0, swapTime + 0.1);
-                
-            } else if (type === "quickCutDrop") {
-                fadingDeck.deckGain.gain.setValueAtTime(1, now);
-                fadingDeck.deckGain.gain.linearRampToValueAtTime(0.001, now + 1.5);
-                activeDeck.deckGain.gain.linearRampToValueAtTime(1, now + 1.5);
-                
-            } else { // smoothBlend
-                fadingDeck.deckGain.gain.setValueAtTime(1, now);
-                fadingDeck.deckGain.gain.exponentialRampToValueAtTime(0.001, now + dur);
-                activeDeck.deckGain.gain.linearRampToValueAtTime(1, now + dur);
-            }
-        }
-
-        // ============================================
-        // VISUALES AUTOMIX
-        // ============================================
-        function showAutoMixBadge(text) {
-            // Formateo visual
-            let label = "MIX";
-            if(text === "echoOut") label = "Echo Out";
-            if(text === "bassSwap") label = "Bass Swap";
-            if(text === "filterRise") label = "Filter Sweep";
-            if(text === "quickCutDrop") label = "Quick Drop";
-            if(text === "smoothBlend") label = "Smooth Blend";
-
-            const badges = document.querySelectorAll('.automix-badge');
-            badges.forEach(b => {
-                b.innerText = `AutoMix: ${label}`;
-                b.classList.add('active');
-            });
-        }
-        
-        function hideAutoMixBadge() {
-            document.querySelectorAll('.automix-badge').forEach(b => b.classList.remove('active'));
-        }
-
-        // ============================================
-        // LOOP PRINCIPAL OPTIMIZADO
-        // ============================================
-        
-        function audioLoop() {
-            if(activeAudio.duration && !isNaN(activeAudio.duration)) {
-                const curr = activeAudio.currentTime;
-                const dur = activeAudio.duration;
-                const remaining = dur - curr;
-                
-                // Calcula el dynamic mix window inteligente basado en la Outro
-                const currProf = trackAnalysis[cancionesData[currentPlayingIndex]?.url];
-                let dynamicMixWindow = currProf && currProf.outroDuration ? currProf.outroDuration : 8;
-                
-                // Pequeña humanización de la decisión
-                if(mixTimingHumanized === 0) mixTimingHumanized = (Math.random() - 0.5) * 1.5;
-                let actualTriggerTime = dynamicMixWindow + mixTimingHumanized;
-                
-                if (remaining <= actualTriggerTime && !isCrossfading && remaining > 0.5) {
-                    startSmartAutoMix();
-                    mixTimingHumanized = 0; // Reset para el siguiente track
-                }
-            }
-        }
-
-        // ============================================
-        // RESTO DE FUNCIONES (INTACTAS / ADAPTADAS)
-        // ============================================
+        const CROSSFADE_DURATION = 12;
 
         let currentPlayingIndex = -1;
         let isNPOpen = false;
@@ -915,15 +510,16 @@
             renderArtists();
             
             document.getElementById('volume-fill').style.width = `${globalVolume * 100}%`;
+            activeAudio.volume = globalVolume;
+
+            setInterval(audioLoop, 50); 
+            audio1.addEventListener('timeupdate', audioLoop);
+            audio2.addEventListener('timeupdate', audioLoop);
             
-            // Loop ligero solo de checks de lógica cada 250ms para no penalizar batería/CPU
-            setInterval(audioLoop, 250); 
             requestAnimationFrame(renderLoop);
-            
-            // Inicia la pre-audición inteligente silenciosa de todas las canciones
-            initBackgroundAnalysis();
         }
 
+        // --- SISTEMA DE VOLUMEN ---
         function changeVolume(e, el) {
             const rect = el.getBoundingClientRect();
             let vol = (e.clientX - rect.left) / rect.width;
@@ -931,87 +527,139 @@
         }
 
         function setVolumeLevel(vol) {
-            if(vol < 0) vol = 0; if(vol > 1) vol = 1;
+            if(vol < 0) vol = 0;
+            if(vol > 1) vol = 1;
+            
             globalVolume = vol;
             document.getElementById('volume-fill').style.width = `${globalVolume * 100}%`;
             
-            if(audioCtx && masterGain) {
-                masterGain.gain.linearRampToValueAtTime(globalVolume, audioCtx.currentTime + 0.1);
-            } else {
-                activeAudio.volume = globalVolume; 
+            if(!isCrossfading && activeAudio) {
+                activeAudio.volume = globalVolume;
             }
         }
 
+        // --- SISTEMA DE PESTAÑAS (TABS) ---
         function switchTab(tabId) {
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            if(tabId === 'songs') { document.getElementById('view-songs').classList.add('active'); document.getElementById('nav-songs').classList.add('active'); } 
-            else if(tabId === 'artists') { document.getElementById('view-artists').classList.add('active'); document.getElementById('nav-artists').classList.add('active'); }
+            
+            if(tabId === 'songs') {
+                document.getElementById('view-songs').classList.add('active');
+                document.getElementById('nav-songs').classList.add('active');
+            } else if(tabId === 'artists') {
+                document.getElementById('view-artists').classList.add('active');
+                document.getElementById('nav-artists').classList.add('active');
+            }
         }
 
+        // --- VISTA DETALLADA DEL ARTISTA ---
         function openArtistDetail(artistName, imgUrl) {
             document.getElementById('detail-artist-name').innerText = artistName;
             document.getElementById('detail-artist-img').src = imgUrl;
+            
             const artistSongs = cancionesData.filter(s => s.artist.includes(artistName));
             let top10, latestRelease, singles;
 
             if (artistName === "Yan Block") {
                 latestRelease =[artistSongs.find(s => s.title === "666")];
+                
+                // Top 10 Manual Exclusivo para probar la vista estructurada
                 const top10Titles =["YOGURCITO REMIX", "WYA REMIX RED", "444 - REMIX", "TALENTO", "EXPRESSO MARTINI", "111", "VACILE", "SECUESTRO", "YO SE", "444"];
                 top10 = artistSongs.filter(s => top10Titles.includes(s.title));
+                
+                // El resto son los Singles descartando 666 que va en Latest Release
                 singles = artistSongs.filter(s => s.title !== "666");
             } else {
-                top10 = artistSongs.slice(0, 10); latestRelease = artistSongs.slice(0, 1); singles = artistSongs.slice(1);
+                top10 = artistSongs.slice(0, 10);
+                latestRelease = artistSongs.slice(0, 1);
+                singles = artistSongs.slice(1);
             }
-            renderSongs(top10, 'artist-top-songs-grid'); renderSongs(latestRelease, 'artist-latest-release-grid'); renderSongs(singles, 'artist-singles-grid');
+            
+            renderSongs(top10, 'artist-top-songs-grid');
+            renderSongs(latestRelease, 'artist-latest-release-grid');
+            renderSongs(singles, 'artist-singles-grid');
+
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
             document.getElementById('view-artist-detail').classList.add('active');
         }
 
+        // --- RENDERIZADO UI DE CANCIONES ---
         function renderSongs(songsArray, containerId) {
-            const gridEl = document.getElementById(containerId); gridEl.innerHTML = '';
+            const gridEl = document.getElementById(containerId);
+            gridEl.innerHTML = '';
             if(!songsArray || songsArray.length === 0) return;
+            
             songsArray.forEach((song) => {
                 if(!song) return;
-                const realIndex = cancionesData.findIndex(s => s.title === song.title); if(realIndex === -1) return;
+                const realIndex = cancionesData.findIndex(s => s.title === song.title);
+                if(realIndex === -1) return;
+
                 if(!song.cover) song.cover = imageArtistUrl;
+
                 const card = document.createElement('div');
                 card.className = `glass-card card-song-${realIndex}`; 
                 if (currentPlayingIndex === realIndex) card.classList.add('active');
                 card.onclick = () => playSong(realIndex);
+                
                 card.innerHTML = `
                     <div class="card-img-wrapper">
                         <img src="${song.cover}" class="card-img cover-song-${realIndex}">
                         <div class="card-play-btn"><i class="ph-fill ph-play"></i></div>
                     </div>
                     <div class="card-info">
-                        <div class="card-title">${song.title}</div><div class="card-artist">${song.artist}</div>
-                    </div>`;
+                        <div class="card-title">${song.title}</div>
+                        <div class="card-artist">${song.artist}</div>
+                    </div>
+                `;
                 gridEl.appendChild(card);
 
+                // Evitar múltiples llamadas simultáneas de lectura a la misma canción
                 if(!song.coverLoaded && !song.coverLoading) {
                     song.coverLoading = true;
-                    jsmediatags.read(song.url, { onSuccess: function(tag) { if (tag.tags.picture) {
-                                let b64 = ""; for (let j = 0; j < tag.tags.picture.data.length; j++) b64 += String.fromCharCode(tag.tags.picture.data[j]);
+                    jsmediatags.read(song.url, {
+                        onSuccess: function(tag) {
+                            if (tag.tags.picture) {
+                                let b64 = "";
+                                for (let j = 0; j < tag.tags.picture.data.length; j++) b64 += String.fromCharCode(tag.tags.picture.data[j]);
                                 const imgUrl = `data:${tag.tags.picture.format};base64,${window.btoa(b64)}`;
-                                song.cover = imgUrl; song.coverLoaded = true;
+                                song.cover = imgUrl;
+                                song.coverLoaded = true;
+                                
+                                // Actualiza todas las instancias clonadas de la misma canción usando la clase en vez de IDs
                                 document.querySelectorAll(`.cover-song-${realIndex}`).forEach(img => img.src = imgUrl);
                                 if(currentPlayingIndex === realIndex) updateCovers(imgUrl);
-                    }}});
-                } else if(song.coverLoaded) { document.querySelectorAll(`.cover-song-${realIndex}`).forEach(img => img.src = song.cover); }
+                            }
+                        }
+                    });
+                } else if(song.coverLoaded) {
+                    document.querySelectorAll(`.cover-song-${realIndex}`).forEach(img => img.src = song.cover);
+                }
             });
         }
 
         function renderArtists() {
-            const gridEl = document.getElementById('artists-grid'); gridEl.innerHTML = '';
+            const gridEl = document.getElementById('artists-grid');
+            gridEl.innerHTML = '';
+
             artistsData.forEach(artist => {
-                const card = document.createElement('div'); card.className = 'glass-card'; card.onclick = () => openArtistDetail(artist.name, artist.img);
-                card.innerHTML = `<div class="card-img-wrapper is-artist"><img src="${artist.img}" class="card-img"></div>
-                                  <div class="card-info is-artist-info"><div class="card-title" style="font-size: 18px;">${artist.name}</div><div class="card-artist">Artist</div></div>`;
+                const card = document.createElement('div');
+                card.className = 'glass-card';
+                card.onclick = () => openArtistDetail(artist.name, artist.img);
+                
+                card.innerHTML = `
+                    <div class="card-img-wrapper is-artist">
+                        <img src="${artist.img}" class="card-img">
+                    </div>
+                    <div class="card-info is-artist-info">
+                        <div class="card-title" style="font-size: 18px;">${artist.name}</div>
+                        <div class="card-artist">Artist</div>
+                    </div>
+                `;
                 gridEl.appendChild(card);
             });
         }
 
+        // --- SISTEMA DE REPRODUCCIÓN ---
         function updateCovers(img) {
             document.getElementById('pill-cover').src = img;
             document.getElementById('fs-large-cover').src = img;
@@ -1019,35 +667,26 @@
         }
 
         async function playSong(idx) {
-            initAudioEngine();
-            if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
-            
             isCrossfading = false;
-            hideAutoMixBadge();
-            
             if(fadingAudio) { fadingAudio.pause(); fadingAudio.src = ""; fadingAudio = null; }
             activeAudio.pause();
             
-            // Si el usuario da click, agregamos al historial
-            if(currentPlayingIndex !== -1 && !recentHistory.includes(currentPlayingIndex)){
-                recentHistory.push(currentPlayingIndex);
-                if(recentHistory.length > 5) recentHistory.shift();
-            }
-            
-            resetDeckFX(activeDeck);
+            activeAudio.volume = globalVolume;
             
             triggerUIForSong(idx);
             
             activeAudio.src = cancionesData[idx].url;
-            activeAudio.play().catch(e=>console.log("Play err:", e));
+            activeAudio.play().catch(e=>console.log(e));
             setPlayIcon(true);
         }
 
         function triggerUIForSong(idx) {
+            // Elimina clases a todos y se la añade a las cartas clonadas de la misma canción
             document.querySelectorAll('.glass-card.active').forEach(el => el.classList.remove('active'));
             document.querySelectorAll(`.card-song-${idx}`).forEach(el => el.classList.add('active'));
             
-            currentPlayingIndex = idx; activeLyricIndex = -1;
+            currentPlayingIndex = idx;
+            activeLyricIndex = -1;
             const song = cancionesData[idx];
 
             updateCovers(song.cover || imageArtistUrl);
@@ -1059,63 +698,152 @@
             fetchLyrics(song.lrc);
         }
 
-        // Loop Visual para animar progress bar independientemente
+        function startCrossfade() {
+            isCrossfading = true;
+            fadingAudio = activeAudio;
+            activeAudio = (activeAudio === audio1) ? audio2 : audio1;
+            
+            let nextIdx = (currentPlayingIndex + 1) % cancionesData.length;
+            triggerUIForSong(nextIdx);
+            
+            activeAudio.src = cancionesData[nextIdx].url;
+            activeAudio.volume = 0; 
+            activeAudio.play().catch(e=>console.log(e));
+        }
+
+        // ============================================
+        // MOTOR 1: AUDIO
+        // ============================================
+        function audioLoop() {
+            if(activeAudio.duration && !isNaN(activeAudio.duration)) {
+                const curr = activeAudio.currentTime;
+                const dur = activeAudio.duration;
+                const remaining = dur - curr;
+                
+                if (remaining <= CROSSFADE_DURATION && !isCrossfading && remaining > 0.5) {
+                    startCrossfade();
+                }
+
+                if (isCrossfading && fadingAudio && fadingAudio.duration) {
+                    const fadeRemaining = fadingAudio.duration - fadingAudio.currentTime;
+                    let ratio = fadeRemaining / CROSSFADE_DURATION;
+                    if(ratio < 0) ratio = 0; if(ratio > 1) ratio = 1;
+                    
+                    fadingAudio.volume = ratio * globalVolume;         
+                    activeAudio.volume = (1 - ratio) * globalVolume;   
+
+                    if (ratio <= 0 || fadingAudio.ended) {
+                        fadingAudio.pause(); fadingAudio.src = "";
+                        isCrossfading = false; activeAudio.volume = globalVolume;
+                    }
+                }
+            }
+        }
+
+        // ============================================
+        // MOTOR 2: VISUAL
+        // ============================================
         function renderLoop() {
             if(activeAudio.duration && !isNaN(activeAudio.duration)) {
-                const curr = activeAudio.currentTime; const dur = activeAudio.duration;
+                const curr = activeAudio.currentTime;
+                const dur = activeAudio.duration;
+                
                 const pct = (curr / dur) * 100;
                 document.getElementById('pill-fill').style.width = `${pct}%`;
                 document.getElementById('fs-fill').style.width = `${pct}%`;
+                
                 document.getElementById('fs-time-curr').innerText = fmt(curr);
                 document.getElementById('fs-time-tot').innerText = "-" + fmt(dur - curr);
+                
                 if(isNPOpen) updateKaraoke(curr);
             }
             requestAnimationFrame(renderLoop);
         }
 
+        // --- SISTEMA DE LETRAS ---
         async function fetchLyrics(url) {
-            const container = document.getElementById('lyrics-content'); parsedLyrics =[];
-            if(!url) { container.innerHTML = "<div style='height:100%; display:flex; align-items:center;'><p style='color:rgba(255,255,255,0.4); font-size:24px; font-weight:600;'>Letras no disponibles.</p></div>"; return; }
+            const container = document.getElementById('lyrics-content');
+            parsedLyrics =[];
+
+            if(!url) {
+                container.innerHTML = "<div style='height:100%; display:flex; align-items:center;'><p style='color:rgba(255,255,255,0.4); font-size:24px; font-weight:600;'>Letras no disponibles.</p></div>";
+                return;
+            }
+
             container.innerHTML = "<p style='color:rgba(255,255,255,0.4); font-size:24px; font-weight:600;'>Cargando letras...</p>";
+
             try {
-                const res = await fetch(url); const text = await res.text(); const lines = text.split('\n');
+                const res = await fetch(url);
+                const text = await res.text();
+                const lines = text.split('\n');
+                
                 lines.forEach(line => {
                     const match = line.match(/\[(\d{2,}):(\d{2}(?:\.\d{1,3})?)\](.*)/);
-                    if(match) { parsedLyrics.push({ time: (parseInt(match[1]) * 60) + parseFloat(match[2]), text: match[3].trim(), element: null, duration: 0 }); }
+                    if(match) {
+                        parsedLyrics.push({ 
+                            time: (parseInt(match[1]) * 60) + parseFloat(match[2]), 
+                            text: match[3].trim(), 
+                            element: null,
+                            duration: 0
+                        });
+                    }
                 });
-                for(let i=0; i < parsedLyrics.length; i++) { parsedLyrics[i].duration = (i < parsedLyrics.length - 1) ? Math.min(6, parsedLyrics[i+1].time - parsedLyrics[i].time) : 6; }
-                container.innerHTML = ""; if(parsedLyrics.length === 0) throw new Error();
+
+                for(let i=0; i < parsedLyrics.length; i++) {
+                    parsedLyrics[i].duration = (i < parsedLyrics.length - 1) ? Math.min(6, parsedLyrics[i+1].time - parsedLyrics[i].time) : 6;
+                }
+                
+                container.innerHTML = "";
+                if(parsedLyrics.length === 0) throw new Error();
+
                 parsedLyrics.forEach(lyric => {
-                    const div = document.createElement('div'); div.className = 'lyric-line'; div.innerText = lyric.text || "♪";
+                    const div = document.createElement('div');
+                    div.className = 'lyric-line';
+                    div.innerText = lyric.text || "♪";
                     div.onclick = () => { activeAudio.currentTime = lyric.time; activeAudio.play(); setPlayIcon(true); };
-                    lyric.element = div; container.appendChild(div);
+                    lyric.element = div;
+                    container.appendChild(div);
                 });
-            } catch (e) { container.innerHTML = "<div style='height:100%; display:flex; align-items:center;'><p style='color:rgba(255,255,255,0.4); font-size:24px; font-weight:600;'>Letras no disponibles.</p></div>"; }
+            } catch (e) {
+                container.innerHTML = "<div style='height:100%; display:flex; align-items:center;'><p style='color:rgba(255,255,255,0.4); font-size:24px; font-weight:600;'>Letras no disponibles.</p></div>";
+            }
         }
 
         function updateKaraoke(currTime) {
             if(!parsedLyrics.length) return;
-            let newIdx = -1; for(let i=0; i<parsedLyrics.length; i++) { if(currTime >= parsedLyrics[i].time) newIdx = i; else break; }
+
+            let newIdx = -1;
+            for(let i=0; i<parsedLyrics.length; i++) {
+                if(currTime >= parsedLyrics[i].time) newIdx = i; else break;
+            }
+
             if(newIdx !== activeLyricIndex) {
                 parsedLyrics.forEach((lyric, i) => {
                     if(!lyric.element) return;
-                    if(i < newIdx) { lyric.element.className = 'lyric-line passed'; lyric.element.style.setProperty('--fill-pct', '100%'); } 
-                    else if(i > newIdx) { lyric.element.className = 'lyric-line'; lyric.element.style.setProperty('--fill-pct', '0%'); } 
-                    else { lyric.element.className = 'lyric-line active';
+                    if(i < newIdx) {
+                        lyric.element.className = 'lyric-line passed';
+                        lyric.element.style.setProperty('--fill-pct', '100%');
+                    } else if(i > newIdx) {
+                        lyric.element.className = 'lyric-line';
+                        lyric.element.style.setProperty('--fill-pct', '0%');
+                    } else {
+                        lyric.element.className = 'lyric-line active';
                         const scrollEl = document.getElementById('lyrics-scroll');
                         scrollEl.scrollTo({ top: lyric.element.offsetTop - (scrollEl.clientHeight/2) + (lyric.element.clientHeight/2), behavior: 'smooth' });
                     }
-                }); activeLyricIndex = newIdx;
+                });
+                activeLyricIndex = newIdx;
             }
+
             if(newIdx !== -1 && parsedLyrics[newIdx].duration > 0) {
-                const activeLyric = parsedLyrics[newIdx]; let pct = ((currTime - activeLyric.time) / activeLyric.duration) * 100;
+                const activeLyric = parsedLyrics[newIdx];
+                let pct = ((currTime - activeLyric.time) / activeLyric.duration) * 100;
                 activeLyric.element.style.setProperty('--fill-pct', `${Math.max(0, Math.min(pct, 100))}%`);
             }
         }
 
+        // --- CONTROLES AUXILIARES ---
         function togglePlay() {
-            initAudioEngine();
-            if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
             if(!activeAudio.src) return playSong(0);
             if(activeAudio.paused) { activeAudio.play(); setPlayIcon(true); } 
             else { activeAudio.pause(); setPlayIcon(false); }
