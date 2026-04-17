@@ -136,11 +136,11 @@
         }
         .player-pill:hover { transform: translateY(-5px); }
 
-        .pill-info { display: flex; align-items: center; gap: 16px; width: 30%; cursor: pointer; }
+        .pill-info { display: flex; align-items: center; gap: 16px; width: 35%; cursor: pointer; }
         .pill-cover { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; box-shadow: 0 5px 15px rgba(0,0,0,0.5); transition: 0.3s; }
         .pill-info:hover .pill-cover { transform: scale(1.05); }
-        .pill-text { display: flex; flex-direction: column; justify-content: center; overflow: hidden; }
-        .pill-text h4 { font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .pill-text { display: flex; flex-direction: column; justify-content: center; overflow: hidden; width: 100%;}
+        .pill-text h4 { font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center;}
         .pill-text p { font-size: 13px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
         .pill-controls { display: flex; align-items: center; gap: 24px; font-size: 24px; color: var(--text-main); }
@@ -161,6 +161,24 @@
         .btn-expand { width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s;}
         .btn-expand:hover { background: rgba(255,255,255,0.2); transform: scale(1.1); }
 
+        /* --- AUTOMIX BADGE (NUEVO UI) --- */
+        .automix-badge {
+            font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;
+            background: linear-gradient(135deg, #FF2E93, #FF8036);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            padding: 2px 6px; border: 1px solid rgba(255, 46, 147, 0.4); border-radius: 6px;
+            opacity: 0; transition: all 0.4s ease; display: inline-block; margin-left: 8px;
+            visibility: hidden; transform: scale(0.9); white-space: nowrap;
+        }
+        .automix-badge.active { 
+            opacity: 1; visibility: visible; transform: scale(1);
+            animation: pulseMix 2s infinite cubic-bezier(0.4, 0, 0.2, 1); 
+        }
+        @keyframes pulseMix { 
+            0% { box-shadow: 0 0 0 0 rgba(255,46,147,0.3); } 
+            70% { box-shadow: 0 0 10px 4px rgba(255,46,147,0); } 
+            100% { box-shadow: 0 0 0 0 rgba(255,46,147,0); } 
+        }
 
         /* ========================
            APPLE MUSIC NOW PLAYING UI
@@ -208,7 +226,7 @@
         }
 
         .np-text-area { width: 100%; text-align: left; margin-bottom: 30px; }
-        .np-text-area h2 { font-size: 28px; font-weight: 700; text-shadow: 0 2px 10px rgba(0,0,0,0.5); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .np-text-area h2 { font-size: 28px; font-weight: 700; text-shadow: 0 2px 10px rgba(0,0,0,0.5); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 12px;}
         .np-text-area p { font-size: 18px; color: rgba(255,255,255,0.7); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
 
         .np-progress-area { width: 100%; display: flex; flex-direction: column; gap: 10px; margin-bottom: 30px; }
@@ -302,7 +320,6 @@
                 </div>
             </div>
 
-            <!-- SECCIONES DIVIDIDAS -->
             <h2 class="section-title">Top 10</h2>
             <div class="card-grid" id="artist-top-songs-grid" style="margin-bottom: 60px;"></div>
             
@@ -320,7 +337,10 @@
             <div class="pill-info" onclick="toggleNP()">
                 <img src="https://res.cloudinary.com/ddcbl694n/image/upload/v1776007400/Yan_Block_u0inwd.jpg" class="pill-cover" id="pill-cover">
                 <div class="pill-text">
-                    <h4 id="pill-title">Not Playing</h4>
+                    <h4>
+                        <span id="pill-title">Not Playing</span>
+                        <div class="automix-badge" id="badge-pill">AutoMix</div>
+                    </h4>
                     <p id="pill-artist">Yan Block</p>
                 </div>
             </div>
@@ -351,7 +371,10 @@
                 <img src="https://res.cloudinary.com/ddcbl694n/image/upload/v1776007400/Yan_Block_u0inwd.jpg" class="np-large-cover" id="fs-large-cover">
                 
                 <div class="np-text-area">
-                    <h2 id="fs-title">Not Playing</h2>
+                    <h2>
+                        <span id="fs-title">Not Playing</span>
+                        <div class="automix-badge" id="badge-fs" style="font-size: 11px; padding: 4px 8px;">AutoMix</div>
+                    </h2>
                     <p id="fs-artist">Yan Block</p>
                 </div>
 
@@ -397,108 +420,429 @@
         const roaImg = "https://res.cloudinary.com/ddcbl694n/image/upload/v1776106835/ROA_slzaj5.jpg";
         const rauwImg = "https://res.cloudinary.com/ddcbl694n/image/upload/v1776204344/Rauw_Alejandro_c8vjwi.jpg";
 
-        // Base de Datos de Canciones Completamente Actualizada
+        // Base de Datos
         const cancionesData =[
-            // Rauw Alejandro
             { title: "Qué Pasaría...", artist: "Rauw Alejandro, Bad Bunny", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776204387/Qu%C3%A9_Pasar%C3%ADa..._Rauw_Alejandro_Bad_Bunny_tuxday.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776204782/Qu%C3%A9_Pasar%C3%ADa..._-_Rauw_Alejandro_Bad_Bunny_xuixsm.lrc" },
             { title: "Khé", artist: "Rauw Alejandro, Romeo Santos", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776204333/Kh%C3%A9_Rauw_Alejandro_Romeo_Santos_tkfssk.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776204782/Kh%C3%A9__-_Rauw_Alejandro_Romeo_Santos_dm0jsx.lrc" },
             { title: "Tiroteo - Remix", artist: "Marc Seguí, Rauw Alejandro, Pol Granch", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776204379/Tiroteo_-_Remix_Marc_Segu%C3%AD_Rauw_Alejandro_Pol_Granch_qpe93o.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776204785/Tiroteo_-_Remix_-_Marc_Segu%C3%AD_Rauw_Alejandro_Pol_Granch_prtn3b.lrc" },
             { title: "El Efecto", artist: "Rauw Alejandro, Chencho Corleone", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776204340/El_Efecto_Rauw_Alejandro_Chencho_Corleone_bn5caz.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776204782/El_Efecto_-_Rauw_Alejandro_Chencho_Corleone_hh5rkc.lrc" },
             { title: "Party", artist: "Bad Bunny, Rauw Alejandro", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776204378/Party_Bad_Bunny_Rauw_Alejandro_ocmojl.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776204782/Party_-_Bad_Bunny_Rauw_Alejandro_fbrtlx.lrc" },
-            { title: "Todo De Ti", artist: "Rauw Alejandro", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776204392/Todo_De_Ti_Rauw_Alejandro_huqpqj.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776204786/Todo_De_Ti_-_Rauw_Alejandro_b9tn2v.lrc" },
-            { title: "Aquel Nap ZzZz", artist: "Rauw Alejandro", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776204373/Aquel_Nap_ZzZz_Rauw_Alejandro_kfevyv.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776204781/Aquel_Nap_ZzZz_-_Rauw_Alejandro_mlg1e0.lrc" },
-            { title: "Santa", artist: "Rvssian, Rauw Alejandro, Ayra Starr", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776204367/Santa_Rvssian_Rauw_Alejandro_Ayra_Starr_x4iral.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776204785/Santa_-_Rvssian_Rauw_Alejandro_Ayra_Starr_gonrgx.lrc" },
-            { title: "BESO", artist: "ROSALÍA, Rauw Alejandro", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776204341/BESO_ROSAL%C3%8DA_Rauw_Alejandro_xwwmtz.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776204781/BESO_-_ROSAL%C3%8DA_Rauw_Alejandro_qhcbiw.lrc" },
-            { title: "Tú Con Él", artist: "Rauw Alejandro", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776204415/T%C3%BA_Con_%C3%89l_Rauw_Alejandro_oswchd.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776204786/T%C3%BA_Con_%C3%89l_-_Rauw_Alejandro_wvzfbu.lrc" },
-
-            // Yan Block (30 Singles List)
             { title: "666", artist: "Yan Block, Cris MJ, Panda Black", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776377223/666_Yan_Block_Cris_MJ_Panda_Black_yphkaz.mp3", lrc: "" },
             { title: "PIN", artist: "TORRRES, Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211833/PIN_TORRRES_Yan_Block_khikhb.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212486/PIN_-_TORRRES_Yan_Block_eefmle.lrc" },
             { title: "Mascara - Remix", artist: "Mvchoo23, K John, Hades66, Yan Block, Juhn", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211880/Mascara_-_Remix_Mvchoo23_K_John_Hades66_Yan_Block_Juhn_zywu63.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212481/Mascara_-_Remix_-_Mvchoo23_K_John_Hades66_Yan_Block_Juhn_clb4f7.lrc" },
-            { title: "VICIO MÍO", artist: "De La Rose, Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211806/VICIO_M%C3%8DO_De_La_Rose_Yan_Block_xp4sgm.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212493/VICIO_M%C3%8DO_-_De_La_Rose_Yan_Block_tt9qsl.lrc" },
-            { title: "444 - REMIX", artist: "Yan Block, De La Rose, Hades66, Ñengo Flow", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007452/444_-_REMIX_Yan_Block_De_La_Rose_Hades66_%C3%91engo_Flow_lshzau.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009575/444_-_REMIX_t2qoid.lrc" },
-            { title: "TALENTO", artist: "Yan Block, Panda Black", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007391/TALENTO_Yan_Block_Panda_Black_r4ugu2.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009576/TALENTO_s4qtf2.lrc" },
-            { title: "En Tus Sueños", artist: "Arcángel, Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211916/En_Tus_Sue%C3%B1os_Arc%C3%A1ngel_Yan_Block_g0qdo5.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212476/En_Tus_Sue%C3%B1os_-_Arc%C3%A1ngel_Yan_Block_xyfoah.lrc" },
             { title: "YOGURCITO REMIX", artist: "Blessd, Anuel AA, Yan Block, Luar La L, Kris R., ROA", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007457/YOGURCITO_REMIX_Blessd_Anuel_AA_Yan_Block_Luar_La_L_Kris_R._ROA_ocxlgl.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009576/YOGURCITO_REMIX_wwua9w.lrc" },
             { title: "SUERTE", artist: "Yan Block, RaiNao, Slow Jamz", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211775/SUERTE_Yan_Block_RaiNao_Slow_Jamz_zxqcge.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212490/SUERTE_-_Yan_Block_RaiNao_Slow_Jamz_uobqwl.lrc" },
-            { title: "Te Colaboro - Remix", artist: "Brray, Feid, De La Rose, Yan Block, NTG", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211918/Te_Colaboro_-_Remix_Brray_Feid_De_La_Rose_Yan_Block_NTG_gemijz.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212491/Te_Colaboro_-_Remix_-_Brray_Feid_De_La_Rose_Yan_Block_NTG_mvifxs.lrc" },
-            { title: "5/3", artist: "Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211912/5_3_Yan_Block_xpbqo6.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212473/5_3_-_Yan_Block_rppnt5.lrc" },
-            { title: "SECUESTRO", artist: "Slayter, Yan Block, NTG", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007396/SECUESTRO_Slayter_Yan_Block_NTG_bqszzh.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009576/SECUESTRO_m4absd.lrc" },
-            { title: "piña", artist: "Slayter, Yan Block, SOMBRA PR", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211874/pi%C3%B1a_Slayter_Yan_Block_SOMBRA_PR_muapp2.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212487/pi%C3%B1a_-_Slayter_Yan_Block_SOMBRA_PR_myh5kb.lrc" },
-            { title: "111", artist: "Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007415/111_Yan_Block_h3poua.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009575/111_adlg6f.lrc" },
-            { title: "Religión", artist: "Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211878/Religi%C3%B3n_Yan_Block_txwxle.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212488/Religi%C3%B3n_-_Yan_Block_l6c3xy.lrc" },
-            { title: "NEVER 2 LATE", artist: "ROA, Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211844/NEVER_2_LATE_ROA_Yan_Block_jwdqma.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212485/NEVER_2_LATE_-_ROA_Yan_Block_u84d8i.lrc" },
-            { title: "EXPRESSO MARTINI", artist: "Rauw Alejandro, Marconi Impara, Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007397/EXPRESSO_MARTINI_Rauw_Alejandro_Marconi_Impara_Yan_Block_ac5x3j.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009575/EXPRESSO_MARTINI_nl8yas.lrc" },
-            { title: "Juguete", artist: "Yan Block, NTG, SAIKO, SHB", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211824/Juguete_Yan_Block_NTG_SAIKO_SHB_wysyo0.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212480/Juguete_-_Yan_Block_NTG_SAIKO_SHB_aqm31e.lrc" },
-            { title: "Epica", artist: "Caleb Calloway, iZaak, Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211915/Epica_Caleb_Calloway_iZaak_Yan_Block_b7aepf.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212477/Epica_ilc4zb.lrc" },
-            { title: "Media Hora", artist: "Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211838/Media_Hora_Yan_Block_bcvcu9.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212484/Media_Hora_-_Yan_Block_xmzzka.lrc" },
-            { title: "3 Doritos", artist: "Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211784/3_Doritos_Yan_Block_lprati.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212471/3_Doritos_-_Yan_Block_jlqvb5.lrc" },
-            { title: "YO SE", artist: "Yan Block, TORRRES", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007440/YO_SE_Yan_Block_TORRRES_i8ianx.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009576/YO_SE_hiutok.lrc" },
-            { title: "WYA REMIX RED", artist: "J Abdiel, De La Rose, Yan Block, iZaak, Jay Wheeler", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007447/WYA_REMIX_RED_J_Abdiel_De_La_Rose_Yan_Block_iZaak_Jay_Wheeler_mvfmrz.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009576/WYA_REMIX_RED_ic1sdd.lrc" },
-            { title: "444", artist: "Yan Block, Panda Black", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007376/444_Yan_Block_Panda_Black_upxnup.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009575/444_ie7e6d.lrc" },
-            { title: "18", artist: "Yan Block, Young Martino", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211873/18_Yan_Block_Young_Martino_wp84u6.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212471/18_-_Yan_Block_Young_Martino_ytasjo.lrc" },
-            { title: "GPS", artist: "Yan Block, Young Martino", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211911/GPS_Yan_Block_Young_Martino_cqookv.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212478/GPS_-_Yan_Block_Young_Martino_t793sb.lrc" },
-            { title: "333", artist: "Cris MJ, Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211860/333_Cris_MJ_Yan_Block_tinx2k.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212472/333_-_Cris_MJ_Yan_Block_wao4ei.lrc" },
-            { title: "Mastercard", artist: "Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211838/Mastercard_Yan_Block_qy7pvf.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212482/Mastercard_-_Yan_Block_r1mbs1.lrc" },
-            { title: "VACILE", artist: "Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007402/VACILE_Yan_Block_ytkcf9.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009576/VACILE_qxdqxq.lrc" },
-            { title: "Block Freestyle", artist: "Yan Block, Hydro", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211792/Block_Freestyle_Yan_Block_Hydro_ijzutz.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212475/Block_Freestyle_-_Yan_Block_Hydro_ufftwk.lrc" },
-            { title: "IDGAF", artist: "Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211796/IDGAF_Yan_Block_vpoynl.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212479/IDGAF_-_Yan_Block_qr2mqq.lrc" },
-            
-            // Omar Courtz & Dei V
             { title: "VeLDÁ", artist: "Bad Bunny, Omar Courtz, Dei V", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776097613/VeLD%C3%81_Bad_Bunny_Omar_Courtz_Dei_V_ipgd2p.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776098216/VeLD%C3%81_-_Bad_Bunny_Omar_Courtz_Dei_V_cqae5j.lrc" },
             { title: "KOKO", artist: "Omar Courtz", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776097542/KOKO_Omar_Courtz_cgt5ev.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776098211/KOKO_-_Omar_Courtz_ncbgux.lrc" },
-            { title: "FOREVER TU GANTEL", artist: "Omar Courtz, Ñengo Flow", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776097535/FOREVER_TU_GANTEL__Omar_Courtz_%C3%91engo_Flow_xpvpsr.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776098211/FOREVER_TU_GANTEL_-_Omar_Courtz_%C3%91engo_Flow_ra06wk.lrc" },
-            { title: "POR SI MAÑANA NO ESTOY", artist: "Omar Courtz", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776097537/POR_SI_MA%C3%91ANA_NO_ESTOY_Omar_Courtz_tp2gce.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776098211/POR_SI_MA%C3%91ANA_NO_ESTOY_-_Omar_Courtz_dwmxn4.lrc" },
-            { title: "WO OH OH", artist: "Omar Courtz, ROA", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776097616/WO_OH_OH_Omar_Courtz_ROA_jx6uf0.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776098217/WO_OH_OH_-_Omar_Courtz_ROA_nskykx.lrc" },
-            { title: "Q U E V A S H A C E R H O Y", artist: "Omar Courtz, De La Rose", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776097548/Q_U_E_V_A_S_H_A_C_E_R_H_O_Y_Omar_Courtz_De_La_Rose_t2tn0m.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776098211/Q_U_E_V_A_S_H_A_C_E_R_H_O_Y___-_Omar_Courtz_De_La_Rose_d0vggm.lrc" },
-            { title: "LUCES DE COLORES", artist: "Omar Courtz", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776097608/_LUCES_DE_COLORES__Omar_Courtz_nnwvcc.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776098217/_LUCES_DE_COLORES_-_Omar_Courtz_nkim41.lrc" },
-            { title: "SI ESTÁS CON ALGUIEN", artist: "Omar Courtz", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776097583/SI_EST%C3%81S_CON_ALGUIEN_Omar_Courtz_edgtiv.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776098212/SI_EST%C3%81S_CON_ALGUIEN_-_Omar_Courtz_iam6bi.lrc" },
-            { title: "L a k e n o s h i", artist: "Omar Courtz", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776097543/L_a_k_e_n_o_s_h_i_Omar_Courtz_wmb0qn.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776098211/L_a_k_e_n_o_s_h_i_-_Omar_Courtz_q2fcak.lrc" },
-            { title: "VAMOaCOCHI", artist: "Omar Courtz", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776097606/VAMOaCOCHI_Omar_Courtz_vz2ppa.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776098212/VAMOaCOCHI_-_Omar_Courtz_i4jvc9.lrc" },
-
-            // Dei V 
             { title: "$UELTA GATITA $UELTA", artist: "Omar Courtz, Dei V, Clarent, Tito El Bambino", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776099825/UELTA_GATITA_UELTA_Omar_Courtz_Dei_V_Clarent_Tito_El_Bambino_iljz1v.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776100281/UELTA_GATITA_UELTA_-_Omar_Courtz_Dei_V_Clarent_Tito__El_Bambino__dusjos.lrc" },
             { title: "Dame La Verde", artist: "Luar La L, Dei V", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776099816/Dame_La_Verde_Luar_La_L_Dei_V_sfmjtl.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776100281/Dame_La_Verde_-_Luar_La_L_Dei_V_fswqb1.lrc" },
-            { title: "TE CAPIE", artist: "Dei V", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776099843/TE_CAPIE_Dei_V_fbn2oi.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776100287/Te_Capie_-_Dei_V_fmr8l6.lrc" },
-            { title: "TU$$I", artist: "YOVNGCHIMI, Dei V", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776099834/TU_I_YOVNGCHIMI_Dei_V_jldeg7.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776100288/TU_I_with_Dei_V_-_YOVNGCHIMI_Dei_V_dgihne.lrc" },
-            { title: "Narcotics", artist: "Dei V, Bryant Myers", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776099845/Narcotics_Dei_V_Bryant_Myers_dhsfml.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776100286/Narcotics_with_Bryant_Myers_-_Dei_V_Bryant_Myers_fdfpwr.lrc" },
-            { title: "Toa", artist: "Dei V, De La Rose", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776099845/Toa_Dei_V_De_La_Rose_lsmwni.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776100288/Toa_with_De_La_Rose_-_Dei_V_De_La_Rose_icesv8.lrc" },
-            { title: "Diabólica", artist: "Cris MJ, Dei V", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776099792/Diab%C3%B3lica_Cris_MJ_Dei_V_vcifcn.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776100281/Diab%C3%B3lica_-_Cris_MJ_Dei_V_qwg9la.lrc" },
-            { title: "FLIPA", artist: "JC Reyes, Dei V", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776099817/FLIPA_JC_Reyes_Dei_V_eijnff.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776100285/FLIPA_-_JC_Reyes_Dei_V_rruxjx.lrc" },
-            { title: "Duro Ma", artist: "Bryant Myers, Dei V, SAIKO", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776099837/Duro_Ma_Bryant_Myers_Dei_V_SAIKO_hjpzc6.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776100282/Duro_Ma_-_Bryant_Myers_Dei_V_SAIKO_y0uegy.lrc" },
-
-            // ROA
-            { title: "ME GUSTAS CC", artist: "ROA", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776106828/ME_GUSTAS_CC_ROA_yswplu.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776107157/ME_GUSTAS_CC_-_ROA_qhajjh.lrc" },
             { title: "ETA - RMX", artist: "ROA, De La Rose, Luar La L, Yan Block, Omar Courtz", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776106904/ETA_-_RMX_ROA_De_La_Rose_Luar_La_L_Yan_Block_Omar_Courtz_dxp8eb.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776107156/ETA_-_RMX_-_ROA_De_La_Rose_Luar_La_L_Yan_Block_Omar_Courtz_vauxdo.lrc" },
-            { title: "FANTASÍA", artist: "ROA", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776106831/FANTAS%C3%8DA_ROA_nmlho5.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776107156/FANTAS%C3%8DA_-_ROA_pukwaz.lrc" },
-            { title: "PPC", artist: "ROA, Hades66", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776106883/PPC_ROA_Hades66_nd3bcm.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776107160/PPC_-_ROA_Hades66_xshbru.lrc" },
-            { title: "TATE QUIETA", artist: "ROA, CDobleta", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776106896/TATE_QUIETA_ROA_CDobleta_nnb2ei.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776107161/TATE_QUIETA_-_ROA_CDobleta_xuwxet.lrc" },
-            { title: "Falsas Promesas Remix", artist: "Midnvght, ROA, Mora, Eladio Carrion, Clarent, Finesse", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776106856/Falsas_Promesas_Remix_Midnvght_ROA_Mora_Eladio_Carrion_Clarent_Finesse_nbxewu.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776107156/Falsas_Promesas_Remix_yy5vt1.lrc" },
-            { title: "PASIÓN Y SEXO", artist: "Kris R., ROA", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776106845/PASI%C3%93N_Y_SEXO_Kris_R._ROA_kgtazm.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776107157/PASI%C3%93N_Y_SEXO_-_Kris_R._ROA_z6v1t5.lrc" },
-            { title: "Pieza Exhibición", artist: "Luar La L, ROA, Blessd", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776106886/Pieza_Exhibici%C3%B3n_Luar_La_L_ROA_Blessd_ptt1ly.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776107160/Pieza_Exhibici%C3%B3n_-_Luar_La_L_ROA_Blessd_uxe8zm.lrc" }
+            { title: "ME GUSTAS CC", artist: "ROA", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776106828/ME_GUSTAS_CC_ROA_yswplu.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776107157/ME_GUSTAS_CC_-_ROA_qhajjh.lrc" }
         ];
 
-        // Base de Datos de Artistas
         const artistsData =[
             { name: "Rauw Alejandro", img: rauwImg },
             { name: "Yan Block", img: imageArtistUrl },
             { name: "Omar Courtz", img: omarCourtzImg },
             { name: "Dei V", img: deiVImg },
-            { name: "ROA", img: roaImg },
-            { name: "Panda Black", img: "https://images.unsplash.com/photo-1518609878373-06d740f60d8b?w=400&q=80" },
-            { name: "Blessd", img: "https://images.unsplash.com/photo-1493225457284-0bf53ce8151e?w=400&q=80" },
-            { name: "De La Rose", img: "https://images.unsplash.com/photo-1516280440502-a7204f14e427?w=400&q=80" }
+            { name: "ROA", img: roaImg }
         ];
 
-        // Sistema de Sonido y Crossfade
-        let audio1 = new Audio();
-        let audio2 = new Audio();
+        // ============================================
+        // MOTOR DE ANÁLISIS REAL AUTOMIX V2 PRO (WEB AUDIO API)
+        // ============================================
+
+        const trackAnalysis = {};
+        let recentHistory = [];
+        let analysisQueue =[];
+
+        function initBackgroundAnalysis() {
+            analysisQueue = [...cancionesData];
+            runBackgroundAnalysis();
+        }
+
+        async function runBackgroundAnalysis() {
+            if(analysisQueue.length === 0) return;
+            const song = analysisQueue.shift();
+            
+            if(!trackAnalysis[song.url]) {
+                await analyzeTrack(song);
+            }
+            // Pequeña pausa para no bloquear el CPU ni la red del usuario mientras navega
+            setTimeout(runBackgroundAnalysis, 1500); 
+        }
+
+        async function analyzeTrack(song) {
+            if (trackAnalysis[song.url]) return trackAnalysis[song.url];
+            console.log(`[AutoMix] Analyzing audio data for: ${song.title}...`);
+            
+            try {
+                // Instancia local offline (o estándar) solo para decodificar y analizar rápido
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                const tempCtx = new AudioContext(); 
+                
+                const response = await fetch(song.url);
+                const arrayBuffer = await response.arrayBuffer();
+                const audioBuffer = await tempCtx.decodeAudioData(arrayBuffer);
+                
+                const channelData = audioBuffer.getChannelData(0);
+                const sampleRate = audioBuffer.sampleRate;
+                const length = channelData.length;
+                
+                let totalEnergy = 0;
+                const rmsChunks =[];
+                const chunkSize = sampleRate; // Tramos de 1 segundo
+                
+                // 1. ANÁLISIS DE ENERGÍA RMS (Strided para extrema velocidad)
+                for (let i = 0; i < length; i += chunkSize) {
+                    let sum = 0;
+                    let count = 0;
+                    for (let j = 0; j < chunkSize && (i + j) < length; j += 100) {
+                        sum += channelData[i + j] * channelData[i + j];
+                        count++;
+                    }
+                    const rms = Math.sqrt(sum / count);
+                    rmsChunks.push(rms);
+                    totalEnergy += rms;
+                }
+                const avgEnergy = totalEnergy / rmsChunks.length;
+                
+                // 2. DETECCIÓN DE OUTRO SILENCIOSA O BAJÓN DE ENERGÍA
+                let outroDuration = 6; 
+                for (let i = rmsChunks.length - 1; i >= Math.max(0, rmsChunks.length - 30); i--) {
+                    if (rmsChunks[i] > avgEnergy * 0.4) {
+                        outroDuration = (rmsChunks.length - 1 - i);
+                        break;
+                    }
+                }
+                if(outroDuration < 4) outroDuration = 4;
+                if(outroDuration > 15) outroDuration = 15;
+
+                // 3. DETECCIÓN DE PEAKS / BPM ESTIMADO
+                let maxVal = 0;
+                for(let i=0; i<length; i+=500) if(Math.abs(channelData[i]) > maxVal) maxVal = Math.abs(channelData[i]);
+                const threshold = maxVal * 0.75;
+                
+                let lastPeak = 0;
+                let intervals = {};
+                for(let i=0; i<length; i+=1000) {
+                    if(Math.abs(channelData[i]) > threshold) {
+                        if(lastPeak > 0) {
+                            let diff = (i - lastPeak) / sampleRate;
+                            if(diff > 0.3 && diff < 1.5) { // Rango 40 a 200 BPM
+                                let bpm = Math.round(60 / diff);
+                                intervals[bpm] = (intervals[bpm] || 0) + 1;
+                            }
+                        }
+                        lastPeak = i;
+                        i += sampleRate * 0.2; // Skip de 200ms para evitar falsos peaks del mismo kick
+                    }
+                }
+                
+                let estimatedBPM = 110;
+                let maxCount = 0;
+                for(let b in intervals) {
+                    if(intervals[b] > maxCount) { maxCount = intervals[b]; estimatedBPM = parseInt(b); }
+                }
+
+                trackAnalysis[song.url] = {
+                    bpm: estimatedBPM,
+                    energy: avgEnergy,
+                    outroDuration: outroDuration
+                };
+                
+                console.log(`[AutoMix] Analyzed [${song.title}] -> BPM: ${estimatedBPM} | Energy: ${avgEnergy.toFixed(3)} | Outro: ${outroDuration}s`);
+                tempCtx.close();
+                return trackAnalysis[song.url];
+
+            } catch(e) {
+                console.error(`[AutoMix] Failed to analyze ${song.title} (CORS or Decode Error). Using fallbacks.`, e);
+                trackAnalysis[song.url] = { bpm: 110, energy: 0.1, outroDuration: 8 };
+                return trackAnalysis[song.url];
+            }
+        }
+
+
+        // ============================================
+        // NUEVO MOTOR WEB AUDIO API (Reproducción & Mezcla)
+        // ============================================
+        
+        let audio1 = new Audio(); audio1.crossOrigin = "anonymous";
+        let audio2 = new Audio(); audio2.crossOrigin = "anonymous";
         let activeAudio = audio1;
         let fadingAudio = null;
         let isCrossfading = false;
+        let currentMixDuration = 0;
+        let mixTimingHumanized = 0;
         
+        let audioCtx, masterGain, masterCompressor;
+        let deck1, deck2, activeDeck, fadingDeck;
         let globalVolume = 0.75; 
-        const CROSSFADE_DURATION = 12;
+
+        function initAudioEngine() {
+            if (audioCtx) return;
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            audioCtx = new AudioContext();
+            
+            masterCompressor = audioCtx.createDynamicsCompressor();
+            masterCompressor.threshold.value = -3;
+            masterCompressor.knee.value = 10;
+            masterCompressor.ratio.value = 5;
+            masterCompressor.attack.value = 0.003;
+            masterCompressor.release.value = 0.25;
+
+            masterGain = audioCtx.createGain();
+            masterGain.gain.value = globalVolume;
+            
+            masterCompressor.connect(masterGain);
+            masterGain.connect(audioCtx.destination);
+
+            deck1 = createDeck(audio1);
+            deck2 = createDeck(audio2);
+            activeDeck = deck1;
+        }
+
+        function createDeck(audioEl) {
+            const source = audioCtx.createMediaElementSource(audioEl);
+            const highpass = audioCtx.createBiquadFilter(); highpass.type = 'highpass'; highpass.frequency.value = 0;
+            const lowpass = audioCtx.createBiquadFilter(); lowpass.type = 'lowpass'; lowpass.frequency.value = 22000;
+            const bass = audioCtx.createBiquadFilter(); bass.type = 'lowshelf'; bass.frequency.value = 200; bass.gain.value = 0;
+            
+            const delay = audioCtx.createDelay(5.0); delay.delayTime.value = 0.45; 
+            const feedback = audioCtx.createGain(); feedback.gain.value = 0; 
+            delay.connect(feedback); feedback.connect(delay);
+            const delayOut = audioCtx.createGain(); delayOut.gain.value = 0;
+            delay.connect(delayOut);
+            
+            const deckGain = audioCtx.createGain(); deckGain.gain.value = 1;
+            
+            source.connect(highpass); highpass.connect(lowpass); lowpass.connect(bass);
+            bass.connect(deckGain); bass.connect(delay); 
+            
+            deckGain.connect(masterCompressor);
+            delayOut.connect(masterCompressor);
+
+            return { source, highpass, lowpass, bass, delay, feedback, delayOut, deckGain };
+        }
+
+        function resetDeckFX(deck) {
+            if(!audioCtx) return;
+            const now = audioCtx.currentTime;
+            deck.highpass.frequency.cancelScheduledValues(now); deck.highpass.frequency.setValueAtTime(0, now);
+            deck.lowpass.frequency.cancelScheduledValues(now); deck.lowpass.frequency.setValueAtTime(22000, now);
+            deck.bass.gain.cancelScheduledValues(now); deck.bass.gain.setValueAtTime(0, now);
+            deck.deckGain.gain.cancelScheduledValues(now); deck.deckGain.gain.setValueAtTime(1, now);
+            deck.delayOut.gain.cancelScheduledValues(now); deck.delayOut.gain.setValueAtTime(0, now);
+            deck.feedback.gain.cancelScheduledValues(now); deck.feedback.gain.setValueAtTime(0, now);
+        }
+
+        // ============================================
+        // LÓGICA AUTOMIX (SUSTITUYE CROSSFADE ORIGINAL Y SELECCIÓN INTELIGENTE)
+        // ============================================
+
+        function getBestNextTrack(currIdx) {
+            const currSong = cancionesData[currIdx];
+            const currAnal = trackAnalysis[currSong.url] || {bpm: 110, energy: 0.1, outroDuration: 8};
+            
+            let bestIdx = (currIdx + 1) % cancionesData.length;
+            let bestScore = -9999;
+
+            for (let i = 0; i < cancionesData.length; i++) {
+                if (i === currIdx) continue;
+                if (recentHistory.includes(i)) continue; // Penaliza fuertemente repetidas
+
+                const candidate = cancionesData[i];
+                const candAnal = trackAnalysis[candidate.url] || {bpm: 110, energy: 0.1, outroDuration: 8};
+
+                let score = 0;
+                
+                // Match de BPM (Hasta 50 pts)
+                const bpmDiff = Math.abs(currAnal.bpm - candAnal.bpm);
+                if (bpmDiff < 5) score += 50;
+                else if (bpmDiff < 10) score += 30;
+                else if (bpmDiff > 30) score -= 20;
+
+                // Match de Energía y progresividad (+20 pts)
+                const energyDiff = candAnal.energy - currAnal.energy;
+                if (energyDiff > 0 && energyDiff < 0.05) score += 40; // Energía ligeramente superior (hype build)
+                else if (energyDiff <= 0 && energyDiff > -0.05) score += 20; // Hype mantenido suave
+                else score -= 10; // Cambios bruscos
+
+                // Variedad de artista (evitar pegar al mismo artista muy seguido)
+                if (candidate.artist !== currSong.artist) score += 30;
+                else score -= 40; 
+
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestIdx = i;
+                }
+            }
+            return bestIdx;
+        }
+
+        function startSmartAutoMix() {
+            isCrossfading = true;
+            initAudioEngine();
+            
+            fadingDeck = activeDeck;
+            fadingAudio = activeAudio;
+            activeAudio = (activeAudio === audio1) ? audio2 : audio1;
+            activeDeck = (activeDeck === deck1) ? deck2 : deck1;
+            
+            // Selección musicalmente inteligente
+            let nextIdx = getBestNextTrack(currentPlayingIndex);
+            
+            // Actualizar el historial de DJ
+            recentHistory.push(currentPlayingIndex);
+            if(recentHistory.length > 5) recentHistory.shift();
+
+            const currProf = trackAnalysis[cancionesData[currentPlayingIndex].url] || {bpm: 110, energy: 0.1};
+            const nextProf = trackAnalysis[cancionesData[nextIdx].url] || {bpm: 110, energy: 0.1};
+            
+            // Elegir transición con base a la diferencia
+            let mixType, dur;
+            const bpmDiff = Math.abs(currProf.bpm - nextProf.bpm);
+            
+            if (bpmDiff > 20) {
+                mixType = "echoOut"; dur = 4;
+            } else if (currProf.energy > 0.08 && nextProf.energy > 0.08 && bpmDiff <= 8) {
+                mixType = "bassSwap"; dur = 6;
+            } else if (currProf.energy > 0.1) {
+                mixType = "filterRise"; dur = 8;
+            } else if (currProf.energy < 0.05) {
+                mixType = "smoothBlend"; dur = 10;
+            } else {
+                mixType = Math.random() > 0.5 ? "quickCutDrop" : "smoothBlend"; dur = 5;
+            }
+            
+            // Humanización de mezcla (Timing)
+            dur += (Math.random() - 0.5) * 0.8; 
+            currentMixDuration = dur;
+            
+            console.log(`[AutoMix] Queuing: ${cancionesData[nextIdx].title}`);
+            console.log(`[AutoMix] Mix Type: ${mixType} | BPM Diff: ${bpmDiff} | Mix Length: ${dur.toFixed(1)}s`);
+            
+            showAutoMixBadge(mixType);
+            triggerUIForSong(nextIdx);
+            
+            activeAudio.src = cancionesData[nextIdx].url;
+            activeAudio.play().then(() => {
+                applyTransitionFX(mixType, dur);
+            }).catch(e=>console.log("Audio Play Error:", e));
+
+            // Limpiar deck muerto al finalizar la transición
+            setTimeout(() => {
+                if (isCrossfading && fadingAudio) {
+                    fadingAudio.pause(); fadingAudio.src = "";
+                    isCrossfading = false;
+                    hideAutoMixBadge();
+                }
+            }, dur * 1000);
+        }
+
+        function applyTransitionFX(type, dur) {
+            const now = audioCtx.currentTime;
+            resetDeckFX(activeDeck);
+            
+            activeDeck.deckGain.gain.setValueAtTime(0.001, now); // Arranca inaudible
+            
+            if (type === "echoOut") {
+                fadingDeck.delayOut.gain.setValueAtTime(0, now);
+                fadingDeck.delayOut.gain.linearRampToValueAtTime(0.8, now + 1);
+                fadingDeck.feedback.gain.setValueAtTime(0, now);
+                fadingDeck.feedback.gain.linearRampToValueAtTime(0.6, now + 1);
+                fadingDeck.deckGain.gain.setValueAtTime(1, now);
+                fadingDeck.deckGain.gain.exponentialRampToValueAtTime(0.001, now + (dur * 0.5));
+                
+                activeDeck.deckGain.gain.linearRampToValueAtTime(1, now + 1.5);
+                
+            } else if (type === "filterRise") {
+                fadingDeck.highpass.frequency.setValueAtTime(0, now);
+                fadingDeck.highpass.frequency.exponentialRampToValueAtTime(10000, now + dur);
+                fadingDeck.deckGain.gain.setValueAtTime(1, now);
+                fadingDeck.deckGain.gain.linearRampToValueAtTime(0.001, now + dur);
+                
+                activeDeck.lowpass.frequency.setValueAtTime(400, now);
+                activeDeck.lowpass.frequency.exponentialRampToValueAtTime(22000, now + dur);
+                activeDeck.deckGain.gain.linearRampToValueAtTime(1, now + dur);
+                
+            } else if (type === "bassSwap") {
+                const swapTime = now + (dur * 0.6);
+                
+                fadingDeck.deckGain.gain.setValueAtTime(1, now);
+                fadingDeck.deckGain.gain.linearRampToValueAtTime(0.001, now + dur);
+                fadingDeck.bass.gain.setValueAtTime(0, now);
+                fadingDeck.bass.gain.setValueAtTime(0, swapTime - 0.1);
+                fadingDeck.bass.gain.linearRampToValueAtTime(-24, swapTime);
+                
+                activeDeck.deckGain.gain.linearRampToValueAtTime(1, now + (dur * 0.8));
+                activeDeck.bass.gain.setValueAtTime(-24, now);
+                activeDeck.bass.gain.setValueAtTime(-24, swapTime - 0.1);
+                activeDeck.bass.gain.linearRampToValueAtTime(0, swapTime + 0.1);
+                
+            } else if (type === "quickCutDrop") {
+                fadingDeck.deckGain.gain.setValueAtTime(1, now);
+                fadingDeck.deckGain.gain.linearRampToValueAtTime(0.001, now + 1.5);
+                activeDeck.deckGain.gain.linearRampToValueAtTime(1, now + 1.5);
+                
+            } else { // smoothBlend
+                fadingDeck.deckGain.gain.setValueAtTime(1, now);
+                fadingDeck.deckGain.gain.exponentialRampToValueAtTime(0.001, now + dur);
+                activeDeck.deckGain.gain.linearRampToValueAtTime(1, now + dur);
+            }
+        }
+
+        // ============================================
+        // VISUALES AUTOMIX
+        // ============================================
+        function showAutoMixBadge(text) {
+            // Formateo visual
+            let label = "MIX";
+            if(text === "echoOut") label = "Echo Out";
+            if(text === "bassSwap") label = "Bass Swap";
+            if(text === "filterRise") label = "Filter Sweep";
+            if(text === "quickCutDrop") label = "Quick Drop";
+            if(text === "smoothBlend") label = "Smooth Blend";
+
+            const badges = document.querySelectorAll('.automix-badge');
+            badges.forEach(b => {
+                b.innerText = `AutoMix: ${label}`;
+                b.classList.add('active');
+            });
+        }
+        
+        function hideAutoMixBadge() {
+            document.querySelectorAll('.automix-badge').forEach(b => b.classList.remove('active'));
+        }
+
+        // ============================================
+        // LOOP PRINCIPAL OPTIMIZADO
+        // ============================================
+        
+        function audioLoop() {
+            if(activeAudio.duration && !isNaN(activeAudio.duration)) {
+                const curr = activeAudio.currentTime;
+                const dur = activeAudio.duration;
+                const remaining = dur - curr;
+                
+                // Calcula el dynamic mix window inteligente basado en la Outro
+                const currProf = trackAnalysis[cancionesData[currentPlayingIndex]?.url];
+                let dynamicMixWindow = currProf && currProf.outroDuration ? currProf.outroDuration : 8;
+                
+                // Pequeña humanización de la decisión
+                if(mixTimingHumanized === 0) mixTimingHumanized = (Math.random() - 0.5) * 1.5;
+                let actualTriggerTime = dynamicMixWindow + mixTimingHumanized;
+                
+                if (remaining <= actualTriggerTime && !isCrossfading && remaining > 0.5) {
+                    startSmartAutoMix();
+                    mixTimingHumanized = 0; // Reset para el siguiente track
+                }
+            }
+        }
+
+        // ============================================
+        // RESTO DE FUNCIONES (INTACTAS / ADAPTADAS)
+        // ============================================
 
         let currentPlayingIndex = -1;
         let isNPOpen = false;
@@ -510,16 +854,15 @@
             renderArtists();
             
             document.getElementById('volume-fill').style.width = `${globalVolume * 100}%`;
-            activeAudio.volume = globalVolume;
-
-            setInterval(audioLoop, 50); 
-            audio1.addEventListener('timeupdate', audioLoop);
-            audio2.addEventListener('timeupdate', audioLoop);
             
+            // Loop ligero solo de checks de lógica cada 250ms para no penalizar batería/CPU
+            setInterval(audioLoop, 250); 
             requestAnimationFrame(renderLoop);
+            
+            // Inicia la pre-audición inteligente silenciosa de todas las canciones
+            initBackgroundAnalysis();
         }
 
-        // --- SISTEMA DE VOLUMEN ---
         function changeVolume(e, el) {
             const rect = el.getBoundingClientRect();
             let vol = (e.clientX - rect.left) / rect.width;
@@ -527,139 +870,87 @@
         }
 
         function setVolumeLevel(vol) {
-            if(vol < 0) vol = 0;
-            if(vol > 1) vol = 1;
-            
+            if(vol < 0) vol = 0; if(vol > 1) vol = 1;
             globalVolume = vol;
             document.getElementById('volume-fill').style.width = `${globalVolume * 100}%`;
             
-            if(!isCrossfading && activeAudio) {
-                activeAudio.volume = globalVolume;
+            if(audioCtx && masterGain) {
+                masterGain.gain.linearRampToValueAtTime(globalVolume, audioCtx.currentTime + 0.1);
+            } else {
+                activeAudio.volume = globalVolume; 
             }
         }
 
-        // --- SISTEMA DE PESTAÑAS (TABS) ---
         function switchTab(tabId) {
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            
-            if(tabId === 'songs') {
-                document.getElementById('view-songs').classList.add('active');
-                document.getElementById('nav-songs').classList.add('active');
-            } else if(tabId === 'artists') {
-                document.getElementById('view-artists').classList.add('active');
-                document.getElementById('nav-artists').classList.add('active');
-            }
+            if(tabId === 'songs') { document.getElementById('view-songs').classList.add('active'); document.getElementById('nav-songs').classList.add('active'); } 
+            else if(tabId === 'artists') { document.getElementById('view-artists').classList.add('active'); document.getElementById('nav-artists').classList.add('active'); }
         }
 
-        // --- VISTA DETALLADA DEL ARTISTA ---
         function openArtistDetail(artistName, imgUrl) {
             document.getElementById('detail-artist-name').innerText = artistName;
             document.getElementById('detail-artist-img').src = imgUrl;
-            
             const artistSongs = cancionesData.filter(s => s.artist.includes(artistName));
             let top10, latestRelease, singles;
 
             if (artistName === "Yan Block") {
                 latestRelease =[artistSongs.find(s => s.title === "666")];
-                
-                // Top 10 Manual Exclusivo para probar la vista estructurada
                 const top10Titles =["YOGURCITO REMIX", "WYA REMIX RED", "444 - REMIX", "TALENTO", "EXPRESSO MARTINI", "111", "VACILE", "SECUESTRO", "YO SE", "444"];
                 top10 = artistSongs.filter(s => top10Titles.includes(s.title));
-                
-                // El resto son los Singles descartando 666 que va en Latest Release
                 singles = artistSongs.filter(s => s.title !== "666");
             } else {
-                top10 = artistSongs.slice(0, 10);
-                latestRelease = artistSongs.slice(0, 1);
-                singles = artistSongs.slice(1);
+                top10 = artistSongs.slice(0, 10); latestRelease = artistSongs.slice(0, 1); singles = artistSongs.slice(1);
             }
-            
-            renderSongs(top10, 'artist-top-songs-grid');
-            renderSongs(latestRelease, 'artist-latest-release-grid');
-            renderSongs(singles, 'artist-singles-grid');
-
+            renderSongs(top10, 'artist-top-songs-grid'); renderSongs(latestRelease, 'artist-latest-release-grid'); renderSongs(singles, 'artist-singles-grid');
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
             document.getElementById('view-artist-detail').classList.add('active');
         }
 
-        // --- RENDERIZADO UI DE CANCIONES ---
         function renderSongs(songsArray, containerId) {
-            const gridEl = document.getElementById(containerId);
-            gridEl.innerHTML = '';
+            const gridEl = document.getElementById(containerId); gridEl.innerHTML = '';
             if(!songsArray || songsArray.length === 0) return;
-            
             songsArray.forEach((song) => {
                 if(!song) return;
-                const realIndex = cancionesData.findIndex(s => s.title === song.title);
-                if(realIndex === -1) return;
-
+                const realIndex = cancionesData.findIndex(s => s.title === song.title); if(realIndex === -1) return;
                 if(!song.cover) song.cover = imageArtistUrl;
-
                 const card = document.createElement('div');
                 card.className = `glass-card card-song-${realIndex}`; 
                 if (currentPlayingIndex === realIndex) card.classList.add('active');
                 card.onclick = () => playSong(realIndex);
-                
                 card.innerHTML = `
                     <div class="card-img-wrapper">
                         <img src="${song.cover}" class="card-img cover-song-${realIndex}">
                         <div class="card-play-btn"><i class="ph-fill ph-play"></i></div>
                     </div>
                     <div class="card-info">
-                        <div class="card-title">${song.title}</div>
-                        <div class="card-artist">${song.artist}</div>
-                    </div>
-                `;
+                        <div class="card-title">${song.title}</div><div class="card-artist">${song.artist}</div>
+                    </div>`;
                 gridEl.appendChild(card);
 
-                // Evitar múltiples llamadas simultáneas de lectura a la misma canción
                 if(!song.coverLoaded && !song.coverLoading) {
                     song.coverLoading = true;
-                    jsmediatags.read(song.url, {
-                        onSuccess: function(tag) {
-                            if (tag.tags.picture) {
-                                let b64 = "";
-                                for (let j = 0; j < tag.tags.picture.data.length; j++) b64 += String.fromCharCode(tag.tags.picture.data[j]);
+                    jsmediatags.read(song.url, { onSuccess: function(tag) { if (tag.tags.picture) {
+                                let b64 = ""; for (let j = 0; j < tag.tags.picture.data.length; j++) b64 += String.fromCharCode(tag.tags.picture.data[j]);
                                 const imgUrl = `data:${tag.tags.picture.format};base64,${window.btoa(b64)}`;
-                                song.cover = imgUrl;
-                                song.coverLoaded = true;
-                                
-                                // Actualiza todas las instancias clonadas de la misma canción usando la clase en vez de IDs
+                                song.cover = imgUrl; song.coverLoaded = true;
                                 document.querySelectorAll(`.cover-song-${realIndex}`).forEach(img => img.src = imgUrl);
                                 if(currentPlayingIndex === realIndex) updateCovers(imgUrl);
-                            }
-                        }
-                    });
-                } else if(song.coverLoaded) {
-                    document.querySelectorAll(`.cover-song-${realIndex}`).forEach(img => img.src = song.cover);
-                }
+                    }}});
+                } else if(song.coverLoaded) { document.querySelectorAll(`.cover-song-${realIndex}`).forEach(img => img.src = song.cover); }
             });
         }
 
         function renderArtists() {
-            const gridEl = document.getElementById('artists-grid');
-            gridEl.innerHTML = '';
-
+            const gridEl = document.getElementById('artists-grid'); gridEl.innerHTML = '';
             artistsData.forEach(artist => {
-                const card = document.createElement('div');
-                card.className = 'glass-card';
-                card.onclick = () => openArtistDetail(artist.name, artist.img);
-                
-                card.innerHTML = `
-                    <div class="card-img-wrapper is-artist">
-                        <img src="${artist.img}" class="card-img">
-                    </div>
-                    <div class="card-info is-artist-info">
-                        <div class="card-title" style="font-size: 18px;">${artist.name}</div>
-                        <div class="card-artist">Artist</div>
-                    </div>
-                `;
+                const card = document.createElement('div'); card.className = 'glass-card'; card.onclick = () => openArtistDetail(artist.name, artist.img);
+                card.innerHTML = `<div class="card-img-wrapper is-artist"><img src="${artist.img}" class="card-img"></div>
+                                  <div class="card-info is-artist-info"><div class="card-title" style="font-size: 18px;">${artist.name}</div><div class="card-artist">Artist</div></div>`;
                 gridEl.appendChild(card);
             });
         }
 
-        // --- SISTEMA DE REPRODUCCIÓN ---
         function updateCovers(img) {
             document.getElementById('pill-cover').src = img;
             document.getElementById('fs-large-cover').src = img;
@@ -667,26 +958,35 @@
         }
 
         async function playSong(idx) {
+            initAudioEngine();
+            if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+            
             isCrossfading = false;
+            hideAutoMixBadge();
+            
             if(fadingAudio) { fadingAudio.pause(); fadingAudio.src = ""; fadingAudio = null; }
             activeAudio.pause();
             
-            activeAudio.volume = globalVolume;
+            // Si el usuario da click, agregamos al historial
+            if(currentPlayingIndex !== -1 && !recentHistory.includes(currentPlayingIndex)){
+                recentHistory.push(currentPlayingIndex);
+                if(recentHistory.length > 5) recentHistory.shift();
+            }
+            
+            resetDeckFX(activeDeck);
             
             triggerUIForSong(idx);
             
             activeAudio.src = cancionesData[idx].url;
-            activeAudio.play().catch(e=>console.log(e));
+            activeAudio.play().catch(e=>console.log("Play err:", e));
             setPlayIcon(true);
         }
 
         function triggerUIForSong(idx) {
-            // Elimina clases a todos y se la añade a las cartas clonadas de la misma canción
             document.querySelectorAll('.glass-card.active').forEach(el => el.classList.remove('active'));
             document.querySelectorAll(`.card-song-${idx}`).forEach(el => el.classList.add('active'));
             
-            currentPlayingIndex = idx;
-            activeLyricIndex = -1;
+            currentPlayingIndex = idx; activeLyricIndex = -1;
             const song = cancionesData[idx];
 
             updateCovers(song.cover || imageArtistUrl);
@@ -698,152 +998,63 @@
             fetchLyrics(song.lrc);
         }
 
-        function startCrossfade() {
-            isCrossfading = true;
-            fadingAudio = activeAudio;
-            activeAudio = (activeAudio === audio1) ? audio2 : audio1;
-            
-            let nextIdx = (currentPlayingIndex + 1) % cancionesData.length;
-            triggerUIForSong(nextIdx);
-            
-            activeAudio.src = cancionesData[nextIdx].url;
-            activeAudio.volume = 0; 
-            activeAudio.play().catch(e=>console.log(e));
-        }
-
-        // ============================================
-        // MOTOR 1: AUDIO
-        // ============================================
-        function audioLoop() {
-            if(activeAudio.duration && !isNaN(activeAudio.duration)) {
-                const curr = activeAudio.currentTime;
-                const dur = activeAudio.duration;
-                const remaining = dur - curr;
-                
-                if (remaining <= CROSSFADE_DURATION && !isCrossfading && remaining > 0.5) {
-                    startCrossfade();
-                }
-
-                if (isCrossfading && fadingAudio && fadingAudio.duration) {
-                    const fadeRemaining = fadingAudio.duration - fadingAudio.currentTime;
-                    let ratio = fadeRemaining / CROSSFADE_DURATION;
-                    if(ratio < 0) ratio = 0; if(ratio > 1) ratio = 1;
-                    
-                    fadingAudio.volume = ratio * globalVolume;         
-                    activeAudio.volume = (1 - ratio) * globalVolume;   
-
-                    if (ratio <= 0 || fadingAudio.ended) {
-                        fadingAudio.pause(); fadingAudio.src = "";
-                        isCrossfading = false; activeAudio.volume = globalVolume;
-                    }
-                }
-            }
-        }
-
-        // ============================================
-        // MOTOR 2: VISUAL
-        // ============================================
+        // Loop Visual para animar progress bar independientemente
         function renderLoop() {
             if(activeAudio.duration && !isNaN(activeAudio.duration)) {
-                const curr = activeAudio.currentTime;
-                const dur = activeAudio.duration;
-                
+                const curr = activeAudio.currentTime; const dur = activeAudio.duration;
                 const pct = (curr / dur) * 100;
                 document.getElementById('pill-fill').style.width = `${pct}%`;
                 document.getElementById('fs-fill').style.width = `${pct}%`;
-                
                 document.getElementById('fs-time-curr').innerText = fmt(curr);
                 document.getElementById('fs-time-tot').innerText = "-" + fmt(dur - curr);
-                
                 if(isNPOpen) updateKaraoke(curr);
             }
             requestAnimationFrame(renderLoop);
         }
 
-        // --- SISTEMA DE LETRAS ---
         async function fetchLyrics(url) {
-            const container = document.getElementById('lyrics-content');
-            parsedLyrics =[];
-
-            if(!url) {
-                container.innerHTML = "<div style='height:100%; display:flex; align-items:center;'><p style='color:rgba(255,255,255,0.4); font-size:24px; font-weight:600;'>Letras no disponibles.</p></div>";
-                return;
-            }
-
+            const container = document.getElementById('lyrics-content'); parsedLyrics =[];
+            if(!url) { container.innerHTML = "<div style='height:100%; display:flex; align-items:center;'><p style='color:rgba(255,255,255,0.4); font-size:24px; font-weight:600;'>Letras no disponibles.</p></div>"; return; }
             container.innerHTML = "<p style='color:rgba(255,255,255,0.4); font-size:24px; font-weight:600;'>Cargando letras...</p>";
-
             try {
-                const res = await fetch(url);
-                const text = await res.text();
-                const lines = text.split('\n');
-                
+                const res = await fetch(url); const text = await res.text(); const lines = text.split('\n');
                 lines.forEach(line => {
                     const match = line.match(/\[(\d{2,}):(\d{2}(?:\.\d{1,3})?)\](.*)/);
-                    if(match) {
-                        parsedLyrics.push({ 
-                            time: (parseInt(match[1]) * 60) + parseFloat(match[2]), 
-                            text: match[3].trim(), 
-                            element: null,
-                            duration: 0
-                        });
-                    }
+                    if(match) { parsedLyrics.push({ time: (parseInt(match[1]) * 60) + parseFloat(match[2]), text: match[3].trim(), element: null, duration: 0 }); }
                 });
-
-                for(let i=0; i < parsedLyrics.length; i++) {
-                    parsedLyrics[i].duration = (i < parsedLyrics.length - 1) ? Math.min(6, parsedLyrics[i+1].time - parsedLyrics[i].time) : 6;
-                }
-                
-                container.innerHTML = "";
-                if(parsedLyrics.length === 0) throw new Error();
-
+                for(let i=0; i < parsedLyrics.length; i++) { parsedLyrics[i].duration = (i < parsedLyrics.length - 1) ? Math.min(6, parsedLyrics[i+1].time - parsedLyrics[i].time) : 6; }
+                container.innerHTML = ""; if(parsedLyrics.length === 0) throw new Error();
                 parsedLyrics.forEach(lyric => {
-                    const div = document.createElement('div');
-                    div.className = 'lyric-line';
-                    div.innerText = lyric.text || "♪";
+                    const div = document.createElement('div'); div.className = 'lyric-line'; div.innerText = lyric.text || "♪";
                     div.onclick = () => { activeAudio.currentTime = lyric.time; activeAudio.play(); setPlayIcon(true); };
-                    lyric.element = div;
-                    container.appendChild(div);
+                    lyric.element = div; container.appendChild(div);
                 });
-            } catch (e) {
-                container.innerHTML = "<div style='height:100%; display:flex; align-items:center;'><p style='color:rgba(255,255,255,0.4); font-size:24px; font-weight:600;'>Letras no disponibles.</p></div>";
-            }
+            } catch (e) { container.innerHTML = "<div style='height:100%; display:flex; align-items:center;'><p style='color:rgba(255,255,255,0.4); font-size:24px; font-weight:600;'>Letras no disponibles.</p></div>"; }
         }
 
         function updateKaraoke(currTime) {
             if(!parsedLyrics.length) return;
-
-            let newIdx = -1;
-            for(let i=0; i<parsedLyrics.length; i++) {
-                if(currTime >= parsedLyrics[i].time) newIdx = i; else break;
-            }
-
+            let newIdx = -1; for(let i=0; i<parsedLyrics.length; i++) { if(currTime >= parsedLyrics[i].time) newIdx = i; else break; }
             if(newIdx !== activeLyricIndex) {
                 parsedLyrics.forEach((lyric, i) => {
                     if(!lyric.element) return;
-                    if(i < newIdx) {
-                        lyric.element.className = 'lyric-line passed';
-                        lyric.element.style.setProperty('--fill-pct', '100%');
-                    } else if(i > newIdx) {
-                        lyric.element.className = 'lyric-line';
-                        lyric.element.style.setProperty('--fill-pct', '0%');
-                    } else {
-                        lyric.element.className = 'lyric-line active';
+                    if(i < newIdx) { lyric.element.className = 'lyric-line passed'; lyric.element.style.setProperty('--fill-pct', '100%'); } 
+                    else if(i > newIdx) { lyric.element.className = 'lyric-line'; lyric.element.style.setProperty('--fill-pct', '0%'); } 
+                    else { lyric.element.className = 'lyric-line active';
                         const scrollEl = document.getElementById('lyrics-scroll');
                         scrollEl.scrollTo({ top: lyric.element.offsetTop - (scrollEl.clientHeight/2) + (lyric.element.clientHeight/2), behavior: 'smooth' });
                     }
-                });
-                activeLyricIndex = newIdx;
+                }); activeLyricIndex = newIdx;
             }
-
             if(newIdx !== -1 && parsedLyrics[newIdx].duration > 0) {
-                const activeLyric = parsedLyrics[newIdx];
-                let pct = ((currTime - activeLyric.time) / activeLyric.duration) * 100;
+                const activeLyric = parsedLyrics[newIdx]; let pct = ((currTime - activeLyric.time) / activeLyric.duration) * 100;
                 activeLyric.element.style.setProperty('--fill-pct', `${Math.max(0, Math.min(pct, 100))}%`);
             }
         }
 
-        // --- CONTROLES AUXILIARES ---
         function togglePlay() {
+            initAudioEngine();
+            if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
             if(!activeAudio.src) return playSong(0);
             if(activeAudio.paused) { activeAudio.play(); setPlayIcon(true); } 
             else { activeAudio.pause(); setPlayIcon(false); }
