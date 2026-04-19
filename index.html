@@ -244,7 +244,7 @@
         .np-volume-area i { cursor: pointer; transition: 0.2s; }
         .np-volume-area i:hover { color: #fff; transform: scale(1.1); }
 
-        /* --- Lado Derecho (Letras Estilo Apple Music) --- */
+        /* --- Lado Derecho (Letras) --- */
         .np-right {
             flex: 1.2; height: 85vh; display: flex; flex-direction: column; justify-content: center; position: relative;
         }
@@ -260,30 +260,16 @@
         .lyric-line {
             font-size: 46px; font-weight: 800; line-height: 1.3; letter-spacing: -1.5px;
             margin-bottom: 30px; cursor: pointer; transform-origin: left center;
-            /* Transiciones de escala, opacidad y blur ultra suaves */
-            transition: transform 0.6s var(--spring), filter 0.6s var(--spring), opacity 0.6s var(--spring);
-            opacity: 0.25; filter: blur(3px); transform: scale(0.92);
+            transition: transform 0.5s var(--spring), filter 0.5s var(--spring), opacity 0.5s;
+            opacity: 0.3; filter: blur(3px); transform: scale(0.95);
             
             --fill-pct: 0%;
-            /* Relleno progresivo con borde suavizado estilo iOS */
-            background: linear-gradient(to right, 
-                #ffffff 0%, 
-                #ffffff calc(var(--fill-pct) - 4%), 
-                rgba(255, 255, 255, 0.2) calc(var(--fill-pct) + 6%), 
-                rgba(255, 255, 255, 0.2) 100%);
-            -webkit-background-clip: text; 
-            -webkit-text-fill-color: transparent; 
-            background-clip: text;
+            background: linear-gradient(to right, #ffffff var(--fill-pct), rgba(255, 255, 255, 0.3) var(--fill-pct));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
         }
-        .lyric-line.active { 
-            opacity: 1; filter: blur(0); transform: scale(1.02); 
-        }
-        .lyric-line.passed { 
-            opacity: 0.15; filter: blur(2px); --fill-pct: 100%; transform: scale(0.92); 
-        }
-        .lyric-line:hover { 
-            opacity: 0.8; filter: blur(0); transform: scale(1); 
-        }
+        .lyric-line.active { opacity: 1; filter: blur(0); transform: scale(1); }
+        .lyric-line.passed { opacity: 0.15; filter: blur(1px); --fill-pct: 100%; transform: scale(0.95); }
+        .lyric-line:hover { opacity: 0.8; filter: blur(0); }
 
     </style>
 </head>
@@ -449,7 +435,7 @@
             { title: "Tú Con Él", artist: "Rauw Alejandro", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776204415/T%C3%BA_Con_%C3%89l_Rauw_Alejandro_oswchd.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776204786/T%C3%BA_Con_%C3%89l_-_Rauw_Alejandro_wvzfbu.lrc" },
 
             // Yan Block
-            { title: "666", artist: "Yan Block, Cris MJ, Panda Black", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776377223/666_Yan_Block_Cris_MJ_Panda_Black_yphkaz.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776607618/666_dcyhlv.lrc" },
+            { title: "666", artist: "Yan Block, Cris MJ, Panda Black", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776377223/666_Yan_Block_Cris_MJ_Panda_Black_yphkaz.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776608460/666_dcyhlv.lrc" },
             { title: "PIN", artist: "TORRRES, Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211833/PIN_TORRRES_Yan_Block_khikhb.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212486/PIN_-_TORRRES_Yan_Block_eefmle.lrc" },
             { title: "Mascara - Remix", artist: "Mvchoo23, K John, Hades66, Yan Block, Juhn", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211880/Mascara_-_Remix_Mvchoo23_K_John_Hades66_Yan_Block_Juhn_zywu63.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212481/Mascara_-_Remix_-_Mvchoo23_K_John_Hades66_Yan_Block_Juhn_clb4f7.lrc" },
             { title: "VICIO MÍO", artist: "De La Rose, Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211806/VICIO_M%C3%8DO_De_La_Rose_Yan_Block_xp4sgm.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212493/VICIO_M%C3%8DO_-_De_La_Rose_Yan_Block_tt9qsl.lrc" },
@@ -1097,13 +1083,7 @@
                     const match = line.match(/\[(\d{2,}):(\d{2}(?:\.\d{1,3})?)\](.*)/);
                     if(match) { parsedLyrics.push({ time: (parseInt(match[1]) * 60) + parseFloat(match[2]), text: match[3].trim(), element: null, duration: 0 }); }
                 });
-                for(let i=0; i < parsedLyrics.length; i++) { 
-                    let gap = (i < parsedLyrics.length - 1) ? (parsedLyrics[i+1].time - parsedLyrics[i].time) : 6;
-                    // APPLE MUSIC STYLE LOGIC: Calcula matemáticamente la duración real del canto basado en la longitud de la línea,
-                    // evitando que una frase corta se estire infinitamente por un hueco instrumental.
-                    let estimatedVocalDuration = (parsedLyrics[i].text.length * 0.07) + 0.4;
-                    parsedLyrics[i].duration = Math.min(gap, estimatedVocalDuration);
-                }
+                for(let i=0; i < parsedLyrics.length; i++) { parsedLyrics[i].duration = (i < parsedLyrics.length - 1) ? Math.min(6, parsedLyrics[i+1].time - parsedLyrics[i].time) : 6; }
                 container.innerHTML = ""; if(parsedLyrics.length === 0) throw new Error();
                 parsedLyrics.forEach(lyric => {
                     const div = document.createElement('div'); div.className = 'lyric-line'; div.innerText = lyric.text || "♪";
