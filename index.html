@@ -19,7 +19,7 @@
            APPLE GLASSMORPHISM 2026 THEME
            ======================== */
         :root {
-            --bg-base: #000000;
+            --bg-base: #050505; /* [FIX] Cambiado de #000000 a gris muy oscuro para profundidad */
             --text-main: #ffffff;
             --text-muted: rgba(255, 255, 255, 0.55);
             --text-active: #ffffff;
@@ -33,7 +33,7 @@
             --spring: cubic-bezier(0.25, 1, 0.5, 1);
             --spring-bounce: cubic-bezier(0.175, 0.885, 0.32, 1.275);
             
-            --accent: #FF2E93; /* <-- ESTO AHORA ES DINÁMICO */
+            --accent: #FF2E93; 
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; -webkit-tap-highlight-color: transparent;}
@@ -44,11 +44,12 @@
             position: relative; user-select: none;
         }
 
-        /* --- [NUEVO] APP WRAPPER PARA EFECTO PROFUNDIDAD --- */
+        /* --- [FIX] APP WRAPPER --- */
         #app-wrapper {
             width: 100vw; height: 100vh; overflow: hidden; position: relative;
             transition: transform 0.6s var(--spring), filter 0.6s var(--spring), border-radius 0.6s var(--spring);
             transform-origin: center top; background: var(--bg-base);
+            z-index: 10;
         }
         #app-wrapper.scaled {
             transform: scale(0.93) translateY(20px); filter: blur(10px); border-radius: 40px; pointer-events: none;
@@ -56,10 +57,10 @@
 
         /* --- FONDO AMBIENTAL OPTIMIZADO --- */
         .ambient-bg { position: absolute; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; background: #000;}
-        .orb { position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.4; animation: float 25s infinite alternate ease-in-out; will-change: transform; transform: translateZ(0); }
+        .orb { position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.5; animation: float 25s infinite alternate ease-in-out; will-change: transform; transform: translateZ(0); }
         .orb-1 { top: -20%; left: -10%; width: 60vw; height: 60vw; background: #7F49B4; }
         .orb-2 { bottom: -20%; right: -10%; width: 70vw; height: 70vw; background: #2b2b2b; animation-delay: -5s;}
-        .orb-3 { top: 30%; left: 40%; width: 50vw; height: 50vw; background: var(--accent); opacity: 0.15; animation-delay: -10s; transition: background 1s ease;}
+        .orb-3 { top: 30%; left: 40%; width: 50vw; height: 50vw; background: var(--accent); opacity: 0.2; animation-delay: -10s; transition: background 1s ease;}
         
         @keyframes float { 0% { transform: translate(0, 0) scale(1) translateZ(0); } 100% { transform: translate(3%, 8%) scale(1.05) translateZ(0); } }
 
@@ -194,7 +195,6 @@
         }
         .player-pill:hover { transform: translateY(-4px); border-color: rgba(255,255,255,0.2); }
 
-        /* [NUEVO] MINI PROGRESS PILL */
         .pill-mini-progress { position: absolute; bottom: 0; left: 30px; right: 30px; height: 2px; border-radius: 2px; overflow: hidden; opacity: 0.8; }
         .pill-mini-fill { height: 100%; width: 0%; background: var(--accent); transition: width 0.1s linear, background 1s; }
 
@@ -243,10 +243,16 @@
         /* ========================
            APPLE MUSIC NOW PLAYING UI
            ======================== */
-        .now-playing-fs { position: fixed; inset: 0; z-index: 100; display: flex; flex-direction: column; transform: translateY(100%); opacity: 0; visibility: hidden; transition: transform 0.6s var(--spring), opacity 0.4s; background: #000; }
+        .now-playing-fs { 
+            position: fixed; inset: 0; z-index: 100; display: flex; flex-direction: column; 
+            transform: translateY(100%); opacity: 0; visibility: hidden; 
+            transition: transform 0.6s var(--spring), opacity 0.4s; 
+            /* [FIX] Gradiente base para evitar fondo negro puro si la imagen falla */
+            background: radial-gradient(circle at 50% 0%, #1a1a1a 0%, #000000 80%);
+        }
         .now-playing-fs.active { transform: translateY(0); opacity: 1; visibility: visible; }
         
-        /* --- [NUEVO] CROSSFADE BG --- */
+        /* [FIX] CROSSFADE BG */
         .np-bg-container { position: absolute; inset: -10%; width: 120%; height: 120%; z-index: 0; pointer-events: none; }
         .np-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: blur(60px) brightness(0.4) saturate(150%); transition: opacity 1.2s ease-in-out; opacity: 0; }
         .np-bg.active { opacity: 1; }
@@ -261,7 +267,6 @@
         .np-large-cover { width: 100%; aspect-ratio: 1; border-radius: 24px; box-shadow: 0 40px 80px rgba(0,0,0,0.8), inset 0 1px 1px rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.05); margin-bottom: 20px; object-fit: cover; transition: transform 0.8s var(--spring); }
         .np-large-cover:hover { transform: scale(1.02); }
         
-        /* [NUEVO] VISUALIZER CONTAINER */
         .visualizer-container { width: 100%; height: 30px; margin-bottom: 10px; display: flex; align-items: flex-end; opacity: 0.8;}
         #visualizer { width: 100%; height: 100%; }
 
@@ -326,7 +331,6 @@
 </head>
 <body>
 
-    <!-- [MEJORA UI/UX] Wrapper principal para hacer el efecto scale(0.93) al abrir Now Playing -->
     <div id="app-wrapper">
         <div class="ambient-bg">
             <div class="orb orb-1"></div>
@@ -451,7 +455,6 @@
                     <div class="btn-expand" onclick="toggleNP()"><i class="ph-bold ph-arrows-out-simple" style="color: rgba(255,255,255,0.8); font-size: 18px;"></i></div>
                 </div>
                 
-                <!--[MEJORA UI/UX] Progreso Mini en el Pill -->
                 <div class="pill-mini-progress"><div class="pill-mini-fill" id="pill-mini-fill"></div></div>
             </div>
         </div>
@@ -460,7 +463,7 @@
     <!-- APPLE MUSIC NOW PLAYING UI (FULLSCREEN) -->
     <div class="now-playing-fs" id="np-screen">
         
-        <!-- [NUEVO] CROSSFADE BG CONTAINER -->
+        <!-- CROSSFADE BG CONTAINER -->
         <div class="np-bg-container">
             <img src="" class="np-bg active" id="fs-bg-1" crossorigin="anonymous">
             <img src="" class="np-bg" id="fs-bg-2" crossorigin="anonymous">
@@ -473,7 +476,7 @@
             <div class="np-left">
                 <img src="https://res.cloudinary.com/ddcbl694n/image/upload/v1776007400/Yan_Block_u0inwd.jpg" class="np-large-cover" id="fs-large-cover" crossorigin="anonymous">
                 
-                <!-- [NUEVO] VISUALIZER MINIMALISTA -->
+                <!-- VISUALIZER MINIMALISTA -->
                 <div class="visualizer-container">
                     <canvas id="visualizer"></canvas>
                 </div>
@@ -593,9 +596,7 @@
             { title: "I N T R O", artist: "Omar Courtz, Kendo Kaponi", album: "primera-musa", trackNum: 1, url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776693098/I_N_T_R_O_Omar_Courtz_Kendo_Kaponi_gkyvry.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776693067/I_N_T_R_O_-_Omar_Courtz_Kendo_Kaponi_kbyn9k.lrc" },
             { title: "G O D D E S S", artist: "Omar Courtz", album: "primera-musa", trackNum: 2, url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776693106/G_O_D_D_E_S_S_Omar_Courtz_qtpxgj.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776693067/G_O_D_D_E_S_S_-_Omar_Courtz_yyxjyw.lrc" },
             { title: "H E A V Y", artist: "Omar Courtz", album: "primera-musa", trackNum: 3, url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776693210/H_E_A_V_Y_Omar_Courtz_vwgtsw.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776693067/H_E_A_V_Y_-_Omar_Courtz_appopi.lrc" },
-            // --- FIX APLICADO AQUÍ (TRACK 4) ---
             { title: "P I E N S O E N S E X X X O", artist: "Omar Courtz", album: "primera-musa", trackNum: 4, url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776693149/P_I_E_N_S_O_E_N_S_E_X_X_X_O_Omar_Courtz_s2iypv.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776693067/P_I_E_N_S_O_E_N_S_E_X_X_X_O_-_Omar_Courtz_m23dhy.lrc" },
-            // ------------------------------------
             { title: "UNA NOTi", artist: "Omar Courtz", album: "primera-musa", trackNum: 5, url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776693115/UNA_NOTi_Omar_Courtz_iivygm.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776693073/UNA_NOTi_-_Omar_Courtz_hryxbi.lrc" },
             { title: "M U S A E L E V Á", artist: "Omar Courtz", album: "primera-musa", trackNum: 6, url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776693188/M_U_S_A_E_L_E_V_%C3%81_Omar_Courtz_ayylli.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776693067/M_U_S_A_E_L_E_V_%C3%81_-_Omar_Courtz_hwmllu.lrc" },
             { title: "DRIPPEO KBRON", artist: "Omar Courtz, Dei V", album: "primera-musa", trackNum: 7, url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776693206/DRIPPEO_KBRON_Omar_Courtz_Dei_V_t3djch.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776693067/DRIPPEO_KBRON_-_Omar_Courtz_Dei_V_cizlno.lrc" },
@@ -748,9 +749,8 @@
             masterCompressor.threshold.value = -3; masterCompressor.knee.value = 10; masterCompressor.ratio.value = 5; masterCompressor.attack.value = 0.003; masterCompressor.release.value = 0.25;
             masterGain = audioCtx.createGain(); masterGain.gain.value = globalVolume;
             
-            // [MEJORA UI/UX] Visualizador
             analyser = audioCtx.createAnalyser();
-            analyser.fftSize = 128; // Resolución del visualizador
+            analyser.fftSize = 128; 
             
             masterCompressor.connect(masterGain); 
             masterGain.connect(analyser); 
@@ -759,7 +759,6 @@
             deck1 = createDeck(audio1); deck2 = createDeck(audio2); activeDeck = deck1;
         }
 
-        // Función auxiliar para reanudar contexto
         function ensureAudioContext() {
             initAudioEngine();
             if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
@@ -876,7 +875,7 @@
         }
 
         // ============================================
-        // MEJORA UI/UX: DIBUJAR VISUALIZADOR
+        // DIBUJAR VISUALIZADOR
         // ============================================
         function drawVisualizer() {
             if(!analyser || !isNPOpen) return; 
@@ -900,7 +899,7 @@
             
             for(let i = 0; i < bufferLength; i++) {
                 let barHeight = (dataArray[i] / 255) * canvas.height;
-                if(barHeight < 3) barHeight = 3; // mínimo
+                if(barHeight < 3) barHeight = 3;
                 ctx.beginPath();
                 ctx.roundRect(x, canvas.height - barHeight, barWidth - 1, barHeight, 2);
                 ctx.fill();
@@ -915,7 +914,9 @@
         let currentPlayingIndex = -1;
         let isNPOpen = false; let parsedLyrics =[]; let activeLyricIndex = -1;
         let currentAlbumOpen = null;
-        let activeBgIndex = 1; // Para crossfade de fondos
+        let activeBgIndex = 1; 
+        let isUserScrolling = false; // [FIX] Flag para detectar scroll manual del usuario
+        let scrollTimeout; 
 
         function init() {
             renderSongs(cancionesData.filter(s => !s.album), 'songs-grid');
@@ -923,17 +924,13 @@
             document.getElementById('volume-fill').style.width = `${globalVolume * 100}%`;
             document.getElementById('search-input').addEventListener('input', handleSearch);
             
-            // Reanudar contexto si iOS lo bloquea
             document.body.addEventListener('click', ensureAudioContext, { once: true });
             document.body.addEventListener('touchstart', ensureAudioContext, { once: true });
 
             setInterval(audioLoop, 250); requestAnimationFrame(renderLoop); initBackgroundAnalysis();
-            setupGestures(); // Activar swipe down
+            setupGestures();
         }
 
-        // ============================================
-        // MEJORA UI/UX: GESTOS SWIPE DOWN
-        // ============================================
         function setupGestures() {
             let touchStartY = 0;
             let currentTouchY = 0;
@@ -969,7 +966,7 @@
                 appWrapper.style.transition = 'transform 0.6s var(--spring), filter 0.6s var(--spring), border-radius 0.6s var(--spring)';
                 
                 if(delta > 150) { toggleNP(); } 
-                else { npScreen.style.transform = ''; appWrapper.style.transform = 'scale(0.93) translateY(20px)'; } // snap back
+                else { npScreen.style.transform = ''; appWrapper.style.transform = 'scale(0.93) translateY(20px)'; } 
             }, {passive: true});
         }
 
@@ -1141,19 +1138,13 @@
         }
         function renderArtists() { renderSpecificArtists(artistsData, 'artists-grid'); }
 
-        // ============================================
-        // MEJORA UI/UX: UPDATE COVERS (Cross-fade y Color)
-        // ============================================
         function updateCovers(img) {
-            // Actualizar miniatura y grande de inmediato
             document.getElementById('pill-cover').src = img; 
             const largeCover = document.getElementById('fs-large-cover');
             largeCover.src = img;
             
-            // Extraer color dinámico
             updateAccentColor(largeCover);
             
-            // Cross-fade background logic
             const bg1 = document.getElementById('fs-bg-1');
             const bg2 = document.getElementById('fs-bg-2');
             
@@ -1168,8 +1159,13 @@
 
         async function playSong(idx) {
             ensureAudioContext(); hapticPlay();
-            isCrossfading = false; hideAutoMixBadge();
-            if(fadingAudio) { fadingAudio.pause(); fadingAudio.src = ""; fadingAudio = null; }
+            // [FIX] Si ya estamos en crossfade, forzamos limpieza inmediata para evitar solapamiento
+            if (isCrossfading && fadingAudio) {
+                fadingAudio.pause(); fadingAudio.src = "";
+                fadingAudio = null;
+                isCrossfading = false; hideAutoMixBadge();
+            }
+            
             activeAudio.pause();
             
             if(currentPlayingIndex !== -1 && !recentHistory.includes(currentPlayingIndex)){
@@ -1206,14 +1202,14 @@
                 const curr = activeAudio.currentTime; const dur = activeAudio.duration; const pct = (curr / dur) * 100;
                 
                 document.getElementById('pill-fill').style.width = `${pct}%`; 
-                document.getElementById('pill-mini-fill').style.width = `${pct}%`; // [NUEVO] Mini progress
+                document.getElementById('pill-mini-fill').style.width = `${pct}%`; 
                 document.getElementById('fs-fill').style.width = `${pct}%`;
                 
                 document.getElementById('fs-time-curr').innerText = fmt(curr); document.getElementById('fs-time-tot').innerText = "-" + fmt(dur - curr);
                 
                 if(isNPOpen) {
                     updateKaraoke(curr);
-                    drawVisualizer(); // [NUEVO] Dibujar waveform
+                    drawVisualizer(); 
                 }
             }
             requestAnimationFrame(renderLoop);
@@ -1236,12 +1232,26 @@
                     div.onclick = () => { activeAudio.currentTime = lyric.time; activeAudio.play(); setPlayIcon(true); };
                     lyric.element = div; container.appendChild(div);
                 });
+                // [FIX] Agregar listeners para detectar scroll manual
+                setupManualScrollListeners();
             } catch (e) { container.innerHTML = "<div style='height:100%; display:flex; align-items:center;'><p style='color:rgba(255,255,255,0.3); font-size:28px; font-weight:700;'>Instrumental</p></div>"; }
         }
 
-        // ============================================
-        // MEJORA: OPTIMIZACIÓN LRC SYNC 
-        // ============================================
+        // [FIX] Smart Scroll Logic
+        function setupManualScrollListeners() {
+            const scrollEl = document.getElementById('lyrics-scroll');
+            if(!scrollEl) return;
+            
+            const setManualScroll = () => {
+                isUserScrolling = true;
+                clearTimeout(scrollTimeout);
+                scrollTimeout = setTimeout(() => { isUserScrolling = false; }, 5000); // Volver al auto después de 5s
+            };
+
+            scrollEl.addEventListener('wheel', setManualScroll, { passive: true });
+            scrollEl.addEventListener('touchmove', setManualScroll, { passive: true });
+        }
+
         function updateKaraoke(currTime) {
             if(!parsedLyrics.length) return;
             let newIdx = -1; 
@@ -1255,14 +1265,16 @@
                     else if(i > newIdx) { lyric.element.className = 'lyric-line'; lyric.element.style.setProperty('--fill-pct', '0%'); } 
                     else { 
                         lyric.element.className = 'lyric-line active';
-                        const scrollEl = document.getElementById('lyrics-scroll');
-                        scrollEl.scrollTo({ top: lyric.element.offsetTop - (scrollEl.clientHeight/2) + (lyric.element.clientHeight/2), behavior: 'smooth' });
+                        // [FIX] Solo scroll si el usuario no está leyendo manualmente
+                        if(!isUserScrolling) {
+                            const scrollEl = document.getElementById('lyrics-scroll');
+                            scrollEl.scrollTo({ top: lyric.element.offsetTop - (scrollEl.clientHeight/2) + (lyric.element.clientHeight/2), behavior: 'smooth' });
+                        }
                     }
                 }); 
                 activeLyricIndex = newIdx;
             }
             
-            // Interpolación precisa para requestAnimationFrame
             if(newIdx !== -1 && parsedLyrics[newIdx].duration > 0) {
                 const activeLyric = parsedLyrics[newIdx];
                 let pct = ((currTime - activeLyric.time) / activeLyric.duration) * 100;
@@ -1299,7 +1311,7 @@
             if(isNPOpen) {
                 npScreen.classList.add('active');
                 appWrapper.classList.add('scaled');
-                npScreen.style.transform = ''; // Asegurar reseteo de drag
+                npScreen.style.transform = ''; 
             } else {
                 npScreen.classList.remove('active');
                 appWrapper.classList.remove('scaled');
