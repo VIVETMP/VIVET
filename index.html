@@ -28,7 +28,6 @@
             --glass-border: rgba(255, 255, 255, 0.08);
             --glass-blur: blur(40px) saturate(200%);
             
-            /* Tipografías y curvas de animación fluidas */
             --font-main: -apple-system, BlinkMacSystemFont, "SF Pro Display", 'Inter', sans-serif;
             --spring: cubic-bezier(0.25, 1, 0.5, 1);
             --spring-bounce: cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -244,11 +243,14 @@
         .np-volume-area i { cursor: pointer; transition: 0.2s; }
         .np-volume-area i:hover { color: #fff; transform: scale(1.1); }
 
-        /* CONTENEDOR LYRICS */
+        /* CONTENEDOR LYRICS: SE AGREGÓ ESPACIO A LOS LADOS Y OVERFLOW-X HIDDEN PARA EVITAR LA "PARED INVISIBLE" */
         .np-right { flex: 1.2; height: 85vh; display: flex; flex-direction: column; justify-content: center; position: relative; }
         .np-lyrics { 
-            height: 100%; overflow-y: auto; 
-            padding: 35vh 0 50vh 0; 
+            height: 100%; 
+            overflow-y: auto; 
+            overflow-x: hidden; /* Esto previene que se genere un scroll lateral dañino */
+            padding: 35vh 30px 50vh 30px; /* Margen de protección a los lados */
+            margin: 0 -30px; /* Compensa visualmente para mantener la alineación de la grid */
             mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%); 
             -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%); 
             text-align: left; scroll-behavior: smooth; 
@@ -259,8 +261,7 @@
         .lyric-line { 
             font-size: 52px; 
             font-weight: 800; 
-            /* MODIFICADO: Interlineado más amplio para evitar que las palabras salten y choquen */
-            line-height: 1.4; 
+            line-height: 1.45; /* Mucho más interlineado para evitar roces arriba y abajo */
             letter-spacing: -0.03em; 
             margin-bottom: 28px; 
             cursor: pointer; 
@@ -271,33 +272,23 @@
             transform: scale(0.9); 
             will-change: transform, opacity, filter;
             padding-right: 10%;
+            word-wrap: break-word; /* Obliga a que frases largas rompan línea en vez de ir a la derecha */
         }
         
-        .lyric-line.active { 
-            opacity: 1; 
-            filter: blur(0); 
-            transform: scale(1); 
-        }
-        
-        .lyric-line.passed { 
-            opacity: 0.25; 
-            filter: blur(3px); 
-            transform: scale(0.9); 
-        }
+        .lyric-line.active { opacity: 1; filter: blur(0); transform: scale(1); }
+        .lyric-line.passed { opacity: 0.25; filter: blur(3px); transform: scale(0.9); }
 
         /* ======================================================
-           MAGIC WORD-BY-WORD (ANTI-CORTE DE LETRAS)
+           MAGIC WORD-BY-WORD (EVITANDO CORTES EN LAS LETRAS)
            ====================================================== */
         .lyric-word {
             display: inline-block; 
-            white-space: pre-wrap; 
-            
-            /* MODIFICADO: Padding agresivo + Margen negativo. 
-               Esto expande la caja "invisible" del texto para que al usar 
-               background-clip ninguna letra (como la g, p, y) se corte por debajo. */
-            padding: 0.25em 0.15em;
-            margin: -0.25em -0.15em;
-            vertical-align: baseline; /* Mantiene la alineación del texto estable */
+            /* Se añadió un padding agresivo con márgenes negativos 
+               Esto le da a letras como "g", "p" o "y" el espacio necesario 
+               para no cortarse por debajo del límite visual del span */
+            padding: 0.2em 0.15em;
+            margin: -0.2em -0.15em;
+            vertical-align: baseline;
 
             background: linear-gradient(90deg, 
                 #ffffff 0%, 
@@ -309,52 +300,34 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
             
-            /* Animación base y regreso a reposo */
             transition: transform 0.4s var(--apple-spring-word), filter 0.4s ease;
             transform-origin: bottom center;
             will-change: transform, filter;
         }
 
-        /* Cuando la palabra está siendo cantada (elevación y resplandor) */
-        .lyric-word.is-singing {
-            transform: translateY(-4px) scale(1.08); /* Lift Effect */
-            filter: drop-shadow(0px 8px 16px rgba(255, 255, 255, 0.25)); 
-        }
-
-        /* Cuando la palabra ya pasó (se asienta) */
-        .lyric-word.passed {
-            transform: translateY(0) scale(1);
-            filter: drop-shadow(0px 0px 0px rgba(255, 255, 255, 0));
-        }
+        .lyric-word.is-singing { transform: translateY(-4px) scale(1.08); filter: drop-shadow(0px 8px 16px rgba(255, 255, 255, 0.25)); }
+        .lyric-word.passed { transform: translateY(0) scale(1); filter: drop-shadow(0px 0px 0px rgba(255, 255, 255, 0)); }
 
         /* MEDIA QUERIES (Móvil) */
         @media (max-width: 900px) {
             .np-content { flex-direction: column; padding: 100px 6vw 40px 6vw; gap: 6vw; overflow-y: auto; align-items: center;}
             .np-right { height: auto; min-height: 60vh; padding: 5vh 0; width: 100%; mask-image: none; -webkit-mask-image: none;}
-            .np-lyrics { padding: 10vh 0; mask-image: linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%); -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%);}
-            
-            /* MODIFICADO: Tamaño ajustado para móvil con interlineado seguro */
+            .np-lyrics { padding: 10vh 20px; margin: 0 -20px; mask-image: linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%); -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%);}
             .lyric-line { font-size: 32px; line-height: 1.45; margin-bottom: 20px;}
-            
             .np-left { max-width: 400px; margin-top: 0; }
             .btn-close-np { top: 20px; left: 20px; width: 40px; height: 40px; font-size: 20px; }
-            
             .player-pill { width: 95%; height: 70px; padding: 6px 16px 6px 6px; }
             .pill-right { display: none; }
             .pill-controls { gap: 20px; font-size: 20px; }
             .pill-info { width: auto; max-width: 50%; }
             .pill-cover { width: 50px; height: 50px; }
-            
             .top-nav { width: 94%; justify-content: center; top: 16px; padding: 4px; }
             .nav-item { padding: 8px 12px; font-size: 12px; }
-            
             .main-container { padding: 100px 5vw 120px 5vw; }
             .page-header h1 { font-size: 40px; }
-            
             .album-header-box { flex-direction: column; align-items: center; text-align: center; gap: 24px; }
             .album-cover-large { width: 220px; height: 220px; }
             .album-meta h1 { font-size: 32px; }
-            
             .artist-header-profile { flex-direction: column; text-align: center; padding: 24px; }
             .artist-header-img { width: 160px; height: 160px; }
             .artist-stats { justify-content: center; }
@@ -553,7 +526,7 @@
             // -------------------------------------------------------------
             // YAN BLOCK "666" 
             // -------------------------------------------------------------
-            { title: "666", artist: "Yan Block, Cris MJ, Panda Black", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1777064503/666_Yan_Block_Cris_MJ_Panda_Black_yphkaz.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776610355/666_dcyhlv.lrc" },
+            { title: "666", artist: "Yan Block, Cris MJ, Panda Black", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776377223/666_Yan_Block_Cris_MJ_Panda_Black_yphkaz.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776610355/666_dcyhlv.lrc" },
             
             // Rauw Alejandro
             { title: "Qué Pasaría...", artist: "Rauw Alejandro, Bad Bunny", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776204387/Qu%C3%A9_Pasar%C3%ADa..._Rauw_Alejandro_Bad_Bunny_tuxday.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776204782/Qu%C3%A9_Pasar%C3%ADa..._-_Rauw_Alejandro_Bad_Bunny_xuixsm.lrc" },
@@ -568,7 +541,7 @@
             { title: "Tú Con Él", artist: "Rauw Alejandro", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776204415/T%C3%BA_Con_%C3%89l_Rauw_Alejandro_oswchd.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776204786/T%C3%BA_Con_%C3%89l_-_Rauw_Alejandro_wvzfbu.lrc" },
 
             // RESTO Yan Block
-            { title: "PIN", artist: "TORRRES, Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211833/PIN_TORRRES_Yan_Block_khikhb.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1777064283/PIN_TORRRES_Yan_Block_ecs22j.lrc" },
+            { title: "PIN", artist: "TORRRES, Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211833/PIN_TORRRES_Yan_Block_khikhb.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212486/PIN_-_TORRRES_Yan_Block_eefmle.lrc" },
             { title: "Mascara - Remix", artist: "Mvchoo23, K John, Hades66, Yan Block, Juhn", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211880/Mascara_-_Remix_Mvchoo23_K_John_Hades66_Yan_Block_Juhn_zywu63.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212481/Mascara_-_Remix_-_Mvchoo23_K_John_Hades66_Yan_Block_Juhn_clb4f7.lrc" },
             { title: "VICIO MÍO", artist: "De La Rose, Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211806/VICIO_M%C3%8DO_De_La_Rose_Yan_Block_xp4sgm.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212493/VICIO_M%C3%8DO_-_De_La_Rose_Yan_Block_tt9qsl.lrc" },
             { title: "444 - REMIX", artist: "Yan Block, De La Rose, Hades66, Ñengo Flow", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007452/444_-_REMIX_Yan_Block_De_La_Rose_Hades66_%C3%91engo_Flow_lshzau.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009575/444_-_REMIX_t2qoid.lrc" },
@@ -1145,7 +1118,7 @@
         }
 
         // =========================================================================
-        // APPLE MUSIC EXACT WORD-BY-WORD LRC ENGINE
+        // APPLE MUSIC EXACT WORD-BY-WORD LRC ENGINE (TEXT WRAP FIX)
         // =========================================================================
         async function fetchLyrics(url) {
             const container = document.getElementById('lyrics-content'); 
@@ -1206,9 +1179,27 @@
                     
                     if (lyric.words.length > 0) {
                         lyric.words.forEach(w => {
-                            const span = document.createElement('span');
-                            span.className = 'lyric-word'; span.textContent = w.text; 
-                            w.element = span; div.appendChild(span);
+                            // Separación limpia de espacios y texto real para evitar que la grid se rompa y genere la "Pared invisible"
+                            let textContent = w.text;
+                            let trailingSpace = "";
+                            const spaceMatch = textContent.match(/(\s+)$/);
+                            if (spaceMatch) {
+                                trailingSpace = spaceMatch[1];
+                                textContent = textContent.replace(/\s+$/, '');
+                            }
+
+                            if (textContent) {
+                                const span = document.createElement('span');
+                                span.className = 'lyric-word'; 
+                                span.textContent = textContent; 
+                                w.element = span; 
+                                div.appendChild(span);
+                            }
+
+                            // Agregamos el espacio fuera del span como un nodo real para permitir el salto de línea nativo de CSS
+                            if (trailingSpace) {
+                                div.appendChild(document.createTextNode(trailingSpace));
+                            }
                         });
                     }
                     lyric.element = div; container.appendChild(div);
