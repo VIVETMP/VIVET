@@ -33,7 +33,7 @@
             --spring: cubic-bezier(0.25, 1, 0.5, 1);
             --spring-bounce: cubic-bezier(0.175, 0.885, 0.32, 1.275);
             --apple-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
-            --apple-spring-word: cubic-bezier(0.34, 1.56, 0.64, 1); /* Salto de palabra rebotante */
+            --apple-spring-word: cubic-bezier(0.34, 1.56, 0.64, 1);
             
             --accent: #FF2E93; 
         }
@@ -259,7 +259,8 @@
         .lyric-line { 
             font-size: 52px; 
             font-weight: 800; 
-            line-height: 1.25; 
+            /* MODIFICADO: Interlineado más amplio para evitar que las palabras salten y choquen */
+            line-height: 1.4; 
             letter-spacing: -0.03em; 
             margin-bottom: 28px; 
             cursor: pointer; 
@@ -285,11 +286,19 @@
         }
 
         /* ======================================================
-           MAGIC WORD-BY-WORD APPLE MUSIC FLOATING FILL LIFT
+           MAGIC WORD-BY-WORD (ANTI-CORTE DE LETRAS)
            ====================================================== */
         .lyric-word {
-            display: inline-block; /* Crucial para activar transform y no romper espacios */
+            display: inline-block; 
             white-space: pre-wrap; 
+            
+            /* MODIFICADO: Padding agresivo + Margen negativo. 
+               Esto expande la caja "invisible" del texto para que al usar 
+               background-clip ninguna letra (como la g, p, y) se corte por debajo. */
+            padding: 0.25em 0.15em;
+            margin: -0.25em -0.15em;
+            vertical-align: baseline; /* Mantiene la alineación del texto estable */
+
             background: linear-gradient(90deg, 
                 #ffffff 0%, 
                 #ffffff calc(var(--word-fill, 0%) - 4%), 
@@ -304,16 +313,12 @@
             transition: transform 0.4s var(--apple-spring-word), filter 0.4s ease;
             transform-origin: bottom center;
             will-change: transform, filter;
-            
-            /* Prevenir corte vertical al escalar */
-            padding-bottom: 4px;
-            margin-bottom: -4px;
         }
 
         /* Cuando la palabra está siendo cantada (elevación y resplandor) */
         .lyric-word.is-singing {
             transform: translateY(-4px) scale(1.08); /* Lift Effect */
-            filter: drop-shadow(0px 8px 16px rgba(255, 255, 255, 0.25)); /* Elevación visual */
+            filter: drop-shadow(0px 8px 16px rgba(255, 255, 255, 0.25)); 
         }
 
         /* Cuando la palabra ya pasó (se asienta) */
@@ -327,7 +332,10 @@
             .np-content { flex-direction: column; padding: 100px 6vw 40px 6vw; gap: 6vw; overflow-y: auto; align-items: center;}
             .np-right { height: auto; min-height: 60vh; padding: 5vh 0; width: 100%; mask-image: none; -webkit-mask-image: none;}
             .np-lyrics { padding: 10vh 0; mask-image: linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%); -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%);}
-            .lyric-line { font-size: 34px; margin-bottom: 20px;}
+            
+            /* MODIFICADO: Tamaño ajustado para móvil con interlineado seguro */
+            .lyric-line { font-size: 32px; line-height: 1.45; margin-bottom: 20px;}
+            
             .np-left { max-width: 400px; margin-top: 0; }
             .btn-close-np { top: 20px; left: 20px; width: 40px; height: 40px; font-size: 20px; }
             
@@ -543,7 +551,7 @@
 
         const cancionesData =[
             // -------------------------------------------------------------
-            // YAN BLOCK "666" - URL ACTUALIZADA Y LIRICAS LRC PALABRA POR PALABRA
+            // YAN BLOCK "666" 
             // -------------------------------------------------------------
             { title: "666", artist: "Yan Block, Cris MJ, Panda Black", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776377223/666_Yan_Block_Cris_MJ_Panda_Black_yphkaz.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776610355/666_dcyhlv.lrc" },
             
