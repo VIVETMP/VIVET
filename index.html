@@ -243,25 +243,23 @@
         .np-volume-area i { cursor: pointer; transition: 0.2s; }
         .np-volume-area i:hover { color: #fff; transform: scale(1.1); }
 
-        /* CONTENEDOR LYRICS: SE AGREGÓ ESPACIO A LOS LADOS Y OVERFLOW-X HIDDEN PARA EVITAR LA "PARED INVISIBLE" */
         .np-right { flex: 1.2; height: 85vh; display: flex; flex-direction: column; justify-content: center; position: relative; }
         .np-lyrics { 
             height: 100%; 
             overflow-y: auto; 
-            overflow-x: hidden; /* Esto previene que se genere un scroll lateral dañino */
-            padding: 35vh 30px 50vh 30px; /* Margen de protección a los lados */
-            margin: 0 -30px; /* Compensa visualmente para mantener la alineación de la grid */
+            overflow-x: hidden; 
+            padding: 35vh 30px 50vh 30px; 
+            margin: 0 -30px; 
             mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%); 
             -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%); 
             text-align: left; scroll-behavior: smooth; 
         }
         .np-lyrics::-webkit-scrollbar { display: none; }
 
-        /* LÍNEA DE LYRICS APPLE MUSIC */
         .lyric-line { 
             font-size: 52px; 
             font-weight: 800; 
-            line-height: 1.45; /* Mucho más interlineado para evitar roces arriba y abajo */
+            line-height: 1.45; 
             letter-spacing: -0.03em; 
             margin-bottom: 28px; 
             cursor: pointer; 
@@ -272,20 +270,14 @@
             transform: scale(0.9); 
             will-change: transform, opacity, filter;
             padding-right: 10%;
-            word-wrap: break-word; /* Obliga a que frases largas rompan línea en vez de ir a la derecha */
+            word-wrap: break-word; 
         }
         
         .lyric-line.active { opacity: 1; filter: blur(0); transform: scale(1); }
         .lyric-line.passed { opacity: 0.25; filter: blur(3px); transform: scale(0.9); }
 
-        /* ======================================================
-           MAGIC WORD-BY-WORD (EVITANDO CORTES EN LAS LETRAS)
-           ====================================================== */
         .lyric-word {
             display: inline-block; 
-            /* Se añadió un padding agresivo con márgenes negativos 
-               Esto le da a letras como "g", "p" o "y" el espacio necesario 
-               para no cortarse por debajo del límite visual del span */
             padding: 0.2em 0.15em;
             margin: -0.2em -0.15em;
             vertical-align: baseline;
@@ -308,7 +300,6 @@
         .lyric-word.is-singing { transform: translateY(-4px) scale(1.08); filter: drop-shadow(0px 8px 16px rgba(255, 255, 255, 0.25)); }
         .lyric-word.passed { transform: translateY(0) scale(1); filter: drop-shadow(0px 0px 0px rgba(255, 255, 255, 0)); }
 
-        /* MEDIA QUERIES (Móvil) */
         @media (max-width: 900px) {
             .np-content { flex-direction: column; padding: 100px 6vw 40px 6vw; gap: 6vw; overflow-y: auto; align-items: center;}
             .np-right { height: auto; min-height: 60vh; padding: 5vh 0; width: 100%; mask-image: none; -webkit-mask-image: none;}
@@ -873,6 +864,68 @@
         }
 
         // ============================================
+        // MOTOR DE EXTRACCIÓN DE PORTADAS EN SEGUNDO PLANO
+        // ============================================
+        async function processCoverQueueWorker() {
+            for (let i = 0; i < cancionesData.length; i++) {
+                const song = cancionesData[i];
+                if (!song.coverLoaded && !song.coverLoading) {
+                    await new Promise((resolve) => {
+                        song.coverLoading = true;
+                        jsmediatags.read(song.url, {
+                            onSuccess: function(tag) {
+                                if (tag.tags && tag.tags.picture) {
+                                    let b64 = "";
+                                    for (let j = 0; j < tag.tags.picture.data.length; j++) b64 += String.fromCharCode(tag.tags.picture.data[j]);
+                                    const imgUrl = `data:${tag.tags.picture.format};base64,${window.btoa(b64)}`;
+                                    song.cover = imgUrl;
+                                    song.coverLoaded = true;
+                                    
+                                    // Actualiza en vivo todos los lugares donde sale esta canción
+                                    document.querySelectorAll(`.cover-song-${i}`).forEach(img => img.src = imgUrl);
+                                    if(currentPlayingIndex === i) updateCovers(imgUrl);
+                                    if(song.album && currentAlbumOpen === song.album && song.trackNum === 1) {
+                                        document.getElementById('detail-album-img').src = imgUrl;
+                                    }
+                                } else {
+                                    song.coverLoaded = true;
+                                }
+                                setTimeout(resolve, 300); // 300ms de descanso para no ahogar la red
+                            },
+                            onError: function() {
+                                song.coverLoaded = true; // No lo intentamos más si falla
+                                setTimeout(resolve, 300);
+                            }
+                        });
+                    });
+                }
+            }
+        }
+
+        function loadSongCover(song, realIndex) {
+            if (song.coverLoaded || song.coverLoading) return;
+            song.coverLoading = true;
+            jsmediatags.read(song.url, {
+                onSuccess: function(tag) {
+                    if (tag.tags && tag.tags.picture) {
+                        let b64 = "";
+                        for (let j = 0; j < tag.tags.picture.data.length; j++) b64 += String.fromCharCode(tag.tags.picture.data[j]);
+                        const imgUrl = `data:${tag.tags.picture.format};base64,${window.btoa(b64)}`;
+                        song.cover = imgUrl;
+                        song.coverLoaded = true;
+                        
+                        document.querySelectorAll(`.cover-song-${realIndex}`).forEach(img => img.src = imgUrl);
+                        if(currentPlayingIndex === realIndex) updateCovers(imgUrl);
+                        if(song.album && currentAlbumOpen === song.album && song.trackNum === 1) {
+                            document.getElementById('detail-album-img').src = imgUrl;
+                        }
+                    } else { song.coverLoaded = true; }
+                },
+                onError: function() { song.coverLoaded = true; }
+            });
+        }
+
+        // ============================================
         // UI & RENDERING PRINCIPAL
         // ============================================
         let currentPlayingIndex = -1;
@@ -891,7 +944,12 @@
             document.body.addEventListener('click', ensureAudioContext, { once: true });
             document.body.addEventListener('touchstart', ensureAudioContext, { once: true });
 
-            setInterval(audioLoop, 250); requestAnimationFrame(renderLoop); initBackgroundAnalysis();
+            setInterval(audioLoop, 250); requestAnimationFrame(renderLoop); 
+            initBackgroundAnalysis();
+            
+            // Iniciar la extracción de todas las portadas en segundo plano
+            setTimeout(processCoverQueueWorker, 1500);
+
             setupGestures();
         }
 
@@ -1012,14 +1070,10 @@
                 tracklistEl.appendChild(row);
 
                 if(song.trackNum === 1 && !song.coverLoaded && !song.coverLoading) {
-                    song.coverLoading = true;
-                    jsmediatags.read(song.url, { onSuccess: function(tag) { if (tag.tags.picture) {
-                                let b64 = ""; for (let j = 0; j < tag.tags.picture.data.length; j++) b64 += String.fromCharCode(tag.tags.picture.data[j]);
-                                const imgUrl = `data:${tag.tags.picture.format};base64,${window.btoa(b64)}`;
-                                song.cover = imgUrl; song.coverLoaded = true;
-                                if(currentAlbumOpen === albumId) document.getElementById('detail-album-img').src = imgUrl;
-                    }}});
-                } else if(song.trackNum === 1 && song.coverLoaded && currentAlbumOpen === albumId) { document.getElementById('detail-album-img').src = song.cover; }
+                    loadSongCover(song, realIndex);
+                } else if(song.trackNum === 1 && song.coverLoaded && currentAlbumOpen === albumId) { 
+                    document.getElementById('detail-album-img').src = song.cover; 
+                }
             });
 
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
@@ -1046,15 +1100,10 @@
                 gridEl.appendChild(card);
 
                 if(!song.coverLoaded && !song.coverLoading) {
-                    song.coverLoading = true;
-                    jsmediatags.read(song.url, { onSuccess: function(tag) { if (tag.tags.picture) {
-                                let b64 = ""; for (let j = 0; j < tag.tags.picture.data.length; j++) b64 += String.fromCharCode(tag.tags.picture.data[j]);
-                                const imgUrl = `data:${tag.tags.picture.format};base64,${window.btoa(b64)}`;
-                                song.cover = imgUrl; song.coverLoaded = true;
-                                document.querySelectorAll(`.cover-song-${realIndex}`).forEach(img => img.src = imgUrl);
-                                if(currentPlayingIndex === realIndex) updateCovers(imgUrl);
-                    }}});
-                } else if(song.coverLoaded) { document.querySelectorAll(`.cover-song-${realIndex}`).forEach(img => img.src = song.cover); }
+                    loadSongCover(song, realIndex);
+                } else if(song.coverLoaded) { 
+                    document.querySelectorAll(`.cover-song-${realIndex}`).forEach(img => img.src = song.cover); 
+                }
             });
         }
 
@@ -1179,7 +1228,6 @@
                     
                     if (lyric.words.length > 0) {
                         lyric.words.forEach(w => {
-                            // Separación limpia de espacios y texto real para evitar que la grid se rompa y genere la "Pared invisible"
                             let textContent = w.text;
                             let trailingSpace = "";
                             const spaceMatch = textContent.match(/(\s+)$/);
@@ -1196,7 +1244,6 @@
                                 div.appendChild(span);
                             }
 
-                            // Agregamos el espacio fuera del span como un nodo real para permitir el salto de línea nativo de CSS
                             if (trailingSpace) {
                                 div.appendChild(document.createTextNode(trailingSpace));
                             }
@@ -1224,7 +1271,6 @@
             let newIdx = -1; 
             for(let i=0; i<parsedLyrics.length; i++) { if(currTime >= parsedLyrics[i].time) newIdx = i; else break; }
             
-            // Si cambiamos de LÍNEA
             if(newIdx !== activeLyricIndex) {
                 parsedLyrics.forEach((lyric, i) => {
                     if(!lyric.element) return;
@@ -1252,7 +1298,7 @@
                         lyric.element.className = 'lyric-line active';
                         if(!isUserScrolling) {
                             const scrollEl = document.getElementById('lyrics-scroll');
-                            const offset = scrollEl.clientHeight * 0.4; // Ubicación perfecta estilo iOS
+                            const offset = scrollEl.clientHeight * 0.4; 
                             scrollEl.scrollTo({ top: lyric.element.offsetTop - offset, behavior: 'smooth' });
                         }
                     }
@@ -1260,31 +1306,26 @@
                 activeLyricIndex = newIdx;
             }
             
-            // Lógica Frame a Frame para las PALABRAS de la línea actual
             if(newIdx !== -1) {
                 const activeLyric = parsedLyrics[newIdx];
                 activeLyric.words.forEach((w) => {
                     if(!w.element) return;
                     
                     if (currTime >= w.time + w.duration) {
-                        // Ya la cantó (se asienta)
                         w.element.style.setProperty('--word-fill', '100%'); 
                         w.element.classList.remove('is-singing');
                         w.element.classList.add('passed');
                         
                     } else if (currTime >= w.time) {
-                        // La está cantando ahora mismo (se eleva y se va llenando de tinta)
                         let pct = ((currTime - w.time) / w.duration) * 100;
                         w.element.style.setProperty('--word-fill', `${Math.max(0, Math.min(pct, 100))}%`);
                         
-                        // Agregar estado activo (Floating Lift effect)
                         if (!w.element.classList.contains('is-singing')) {
                             w.element.classList.add('is-singing');
                             w.element.classList.remove('passed');
                         }
                         
                     } else {
-                        // Aún no llega
                         w.element.style.setProperty('--word-fill', '0%'); 
                         w.element.classList.remove('is-singing');
                         w.element.classList.remove('passed');
