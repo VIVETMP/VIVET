@@ -366,15 +366,25 @@
         .lrc-word {
             display: inline-block; padding: 0.15em; margin: -0.15em; vertical-align: baseline;
             background: linear-gradient(90deg, 
-                #ffffff 0%, #ffffff calc(var(--fill, 0%) - 4%), 
-                rgba(255,255,255,0.25) calc(var(--fill, 0%) + 4%), rgba(255,255,255,0.25) 100%
+                rgba(255,255,255,1) 0%, 
+                rgba(255,255,255,1) calc(var(--fill, 0%) - 12%), 
+                rgba(255,255,255,0.25) calc(var(--fill, 0%) + 12%), 
+                rgba(255,255,255,0.25) 100%
             );
             -webkit-background-clip: text; color: transparent; background-clip: text;
-            transition: transform 0.4s var(--ease-spring), filter 0.4s ease;
-            transform-origin: bottom center; will-change: transform, filter;
+            transition: transform 0.25s var(--ease-apple), filter 0.25s ease, letter-spacing 0.25s var(--ease-apple);
+            transform-origin: bottom center; will-change: transform, filter, letter-spacing;
         }
-        .lrc-word.is-singing { transform: translateY(-5px) scale(1.06); filter: drop-shadow(0 8px 16px rgba(255,255,255,0.25)); }
-        .lrc-word.passed { transform: translateY(0) scale(1); filter: drop-shadow(0 0 0 transparent); }
+        .lrc-word.is-singing { 
+            transform: translateY(-2px) scale(1.02); 
+            filter: drop-shadow(0 4px 12px rgba(255,255,255,0.15)); 
+            letter-spacing: 0.01em; 
+        }
+        .lrc-word.passed { 
+            transform: translateY(0) scale(1); 
+            filter: drop-shadow(0 0 0 transparent); 
+            letter-spacing: normal; 
+        }
 
         /* ==================================================================
            MOBILE RESPONSIVE
@@ -1276,11 +1286,11 @@
                         const raw = lineMatch[3].replace('\r', '');
                         
                         let words =[]; let wm; const wReg = /<(\d{2,}):(\d{2}(?:\.\d{1,3})?)>([^<]*)/g; let hasW = false;
-                        while((wm = wReg.exec(raw)) !== null) { hasW = true; words.push({ time: (parseInt(wm[1])*60)+parseFloat(wm[2]), text: wm[3], el: null, dur: 0 }); }
+                        while((wm = wReg.exec(raw)) !== null) { hasW = true; words.push({ time: (parseInt(wm[1])*60)+parseFloat(wm[2]), text: wm[3], el: null, dur: 0, fill: 0, lastRenderedFill: 0 }); }
                         
                         const clean = raw.replace(/<\d{2,}:\d{2}(?:\.\d{1,3})?>/g, '').trim();
-                        if(clean === "" || clean === "♪") words =[{ time, text: "•••", el: null, dur: 0 }];
-                        else if(!hasW) words =[{ time, text: clean, el: null, dur: 0 }];
+                        if(clean === "" || clean === "♪") words =[{ time, text: "•••", el: null, dur: 0, fill: 0, lastRenderedFill: 0 }];
+                        else if(!hasW) words =[{ time, text: clean, el: null, dur: 0, fill: 0, lastRenderedFill: 0 }];
                         
                         parsedLyrics.push({ time, text: clean, words, el: null, dur: 0 });
                     }
@@ -1330,10 +1340,25 @@
                     if(!l.el) return;
                     if(i < nIdx) {
                         l.el.className = 'lrc-line passed';
-                        l.words.forEach(w => { if(w.el) { w.el.style.setProperty('--fill', '100%'); w.el.classList.remove('is-singing'); w.el.classList.add('passed'); } });
+                        l.words.forEach(w => { 
+                            if(w.el) { 
+                                w.fill = 100;
+                                w.lastRenderedFill = 100;
+                                w.el.style.setProperty('--fill', '100%'); 
+                                w.el.classList.remove('is-singing'); 
+                                w.el.classList.add('passed'); 
+                            } 
+                        });
                     } else if(i > nIdx) {
                         l.el.className = 'lrc-line';
-                        l.words.forEach(w => { if(w.el) { w.el.style.setProperty('--fill', '0%'); w.el.classList.remove('is-singing', 'passed'); } });
+                        l.words.forEach(w => { 
+                            if(w.el) { 
+                                w.fill = 0;
+                                w.lastRenderedFill = 0;
+                                w.el.style.setProperty('--fill', '0%'); 
+                                w.el.classList.remove('is-singing', 'passed'); 
+                            } 
+                        });
                     } else {
                         l.el.className = 'lrc-line active';
                         if(!isUserScrolling) {
@@ -1346,16 +1371,36 @@
             }
             
             if(nIdx !== -1) {
+                const LERP_FACTOR = 0.25;
                 parsedLyrics[nIdx].words.forEach(w => {
                     if(!w.el) return;
+                    
+                    let targetFill = 0;
                     if(cur >= w.time + w.dur) {
-                        w.el.style.setProperty('--fill', '100%'); w.el.classList.remove('is-singing'); w.el.classList.add('passed');
+                        targetFill = 100;
+                        if(w.fill > 99) {
+                            w.el.classList.remove('is-singing'); 
+                            w.el.classList.add('passed');
+                        }
                     } else if(cur >= w.time) {
                         let p = ((cur - w.time) / w.dur) * 100;
-                        w.el.style.setProperty('--fill', `${Math.max(0, Math.min(p, 100))}%`);
-                        if(!w.el.classList.contains('is-singing')) { w.el.classList.add('is-singing'); w.el.classList.remove('passed'); }
+                        targetFill = Math.max(0, Math.min(p, 100));
+                        if(!w.el.classList.contains('is-singing')) { 
+                            w.el.classList.add('is-singing'); 
+                            w.el.classList.remove('passed'); 
+                        }
                     } else {
-                        w.el.style.setProperty('--fill', '0%'); w.el.classList.remove('is-singing', 'passed');
+                        targetFill = 0;
+                        w.el.classList.remove('is-singing', 'passed');
+                    }
+
+                    w.fill += (targetFill - w.fill) * LERP_FACTOR;
+                    
+                    if(Math.abs(targetFill - w.fill) < 0.1) w.fill = targetFill;
+
+                    if(Math.abs(w.fill - w.lastRenderedFill) > 0.4 || w.fill === 100 || w.fill === 0) {
+                        w.el.style.setProperty('--fill', `${w.fill}%`);
+                        w.lastRenderedFill = w.fill;
                     }
                 });
             }
@@ -1464,7 +1509,7 @@
 
             requestAnimationFrame(renderLoop);
             
-            analysisQueue = [...cancionesData];
+            analysisQueue =[...cancionesData];
             setTimeout(runAnalysisQueue, 1000);
             setTimeout(processCoverQueue, 1500);
             
