@@ -356,25 +356,22 @@
         .lrc-line {
             font-size: 48px; font-weight: 800; line-height: 1.4; letter-spacing: -0.03em; margin-bottom: 28px;
             cursor: pointer; transform-origin: left center;
-            transition: transform 0.6s var(--ease-apple), opacity 0.5s ease, filter 0.5s ease;
-            opacity: 0.25; filter: blur(3px); transform: scale(0.9); will-change: transform, opacity, filter;
             padding-right: 10%; word-wrap: break-word;
         }
-        .lrc-line.active { opacity: 1; filter: blur(0); transform: scale(1); }
-        .lrc-line.passed { opacity: 0.25; filter: blur(3px); transform: scale(0.9); }
 
         .lrc-word {
             display: inline-block; padding: 0.15em; margin: -0.15em; vertical-align: baseline;
-            background: linear-gradient(90deg, 
-                #ffffff 0%, #ffffff calc(var(--fill, 0%) - 4%), 
-                rgba(255,255,255,0.25) calc(var(--fill, 0%) + 4%), rgba(255,255,255,0.25) 100%
-            );
-            -webkit-background-clip: text; color: transparent; background-clip: text;
-            transition: transform 0.4s var(--ease-spring), filter 0.4s ease;
-            transform-origin: bottom center; will-change: transform, filter;
+            color: #ffffff;
+            transform-origin: left center;
+            transition: transform 0.6s var(--ease-apple), opacity 0.5s ease, filter 0.5s ease;
+            opacity: 0.25; filter: blur(3px); transform: scale(0.9);
+            will-change: transform, opacity, filter;
         }
-        .lrc-word.is-singing { transform: translateY(-5px) scale(1.06); filter: drop-shadow(0 8px 16px rgba(255,255,255,0.25)); }
-        .lrc-word.passed { transform: translateY(0) scale(1); filter: drop-shadow(0 0 0 transparent); }
+
+        .lrc-line.active .lrc-word.is-singing,
+        .lrc-line.active .lrc-word.passed {
+            opacity: 1; filter: blur(0); transform: scale(1);
+        }
 
         /* ==================================================================
            MOBILE RESPONSIVE
@@ -733,7 +730,7 @@
             { title: "TATE QUIETA", artist: "ROA, CDobleta", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776106896/TATE_QUIETA_ROA_CDobleta_nnb2ei.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1777306897/TATE_QUIETA_ROA_CDobleta_1_ftfhpm.lrc" },
             { title: "Falsas Promesas Remix", artist: "Midnvght, ROA, Mora, Eladio Carrion, Clarent, Finesse", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776106856/Falsas_Promesas_Remix_Midnvght_ROA_Mora_Eladio_Carrion_Clarent_Finesse_nbxewu.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1777323972/Falsas_Promesas_Remix_Midnvght_ROA_Mora_Eladio_Carrion_Clarent_Finesse_1_x8lut0.lrc" },
             { title: "PASIÓN Y SEXO", artist: "Kris R., ROA", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776106845/PASI%C3%93N_Y_SEXO_Kris_R._ROA_kgtazm.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776107157/PASI%C3%93N_Y_SEXO_-_Kris_R._ROA_z6v1t5.lrc" },
-            { title: "Pieza Exhibición", artist: "Luar La L, ROA, Blessd", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776106886/Pieza_Exhibici%C3%B3n_Luar_La_L_ROA_Blessd_ptt1ly.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776107160/Pieza_Exhibici%C3%B3n_-_Luar_La_L_ROA_Blessd_uxe8zm.lrc" }
+            { title: "Pieza Exhibición", artist: "Luar La L, ROA, Blessd", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776106886/Pieza_Exhibici%C3%B3n_Luar_La_L_ROA_Blessd_ptt1ly.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1777574058/Pieza_Exhibici%C3%B3n_Luar_La_L_ROA_Blessd_yesedd.lrc" }
         ];
 
         const artistsData =[
@@ -1464,7 +1461,7 @@
 
             requestAnimationFrame(renderLoop);
             
-            analysisQueue = [...cancionesData];
+            analysisQueue =[...cancionesData];
             setTimeout(runAnalysisQueue, 1000);
             setTimeout(processCoverQueue, 1500);
             
