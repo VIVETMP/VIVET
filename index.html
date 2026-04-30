@@ -344,21 +344,24 @@
 
         .np-vol-area { display: flex; align-items: center; gap: 20px; width: 100%; color: rgba(255,255,255,0.5); font-size: 22px; }
 
-        /* EXACT APPLE MUSIC LYRICS ENGINE */
+        /* EXACT APPLE MUSIC LYRICS ENGINE - MODIFICADO PARA TEXTO ESTÁTICO */
         .np-right-pane { flex: 1.2; height: 85vh; display: flex; flex-direction: column; justify-content: center; position: relative; }
         .lyrics-scroll-area {
-            height: 100%; overflow-y: auto; overflow-x: hidden; padding: 40vh 40px 50vh 40px; margin: 0 -40px;
+            height: 100%; overflow-y: auto; overflow-x: auto; /* Permite scroll horizontal en lugar de forzar wraps rotos */
+            padding: 40vh 40px 50vh 40px; margin: 0 -40px;
             scroll-behavior: smooth; mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
             -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
         }
-        .lyrics-scroll-area::-webkit-scrollbar { display: none; }
+        .lyrics-scroll-area::-webkit-scrollbar { display: none; } /* Oculta la barra de scroll para mantener el estilo limpio */
 
         .lrc-line {
             font-size: 48px; font-weight: 800; line-height: 1.4; letter-spacing: -0.03em; margin-bottom: 28px;
             cursor: pointer; transform-origin: left center;
             transition: transform 0.6s var(--ease-apple), opacity 0.5s ease, filter 0.5s ease;
             opacity: 0.25; filter: blur(3px); transform: scale(0.9); will-change: transform, opacity, filter;
-            padding-right: 10%; word-wrap: break-word;
+            padding-right: 40px;
+            white-space: nowrap; /* Fuerza a que cada línea siempre sea una sola frase estática */
+            width: max-content; /* Asegura que el contenedor de la línea crezca lo suficiente sin romperse */
         }
         .lrc-line.active { opacity: 1; filter: blur(0); transform: scale(1); }
         .lrc-line.passed { opacity: 0.25; filter: blur(3px); transform: scale(0.9); }
@@ -372,18 +375,18 @@
                 rgba(255,255,255,0.25) 100%
             );
             -webkit-background-clip: text; color: transparent; background-clip: text;
-            transition: transform 0.25s var(--ease-apple), filter 0.25s ease, letter-spacing 0.25s var(--ease-apple);
-            transform-origin: bottom center; will-change: transform, filter, letter-spacing;
+            /* Eliminé la animación de letter-spacing que causaba saltos y desacomodos */
+            transition: transform 0.25s var(--ease-apple), filter 0.25s ease;
+            transform-origin: bottom center; will-change: transform, filter;
         }
         .lrc-word.is-singing { 
             transform: translateY(-2px) scale(1.02); 
             filter: drop-shadow(0 4px 12px rgba(255,255,255,0.15)); 
-            letter-spacing: 0.01em; 
+            /* Se mantiene estático sin expandir o empujar otras letras */
         }
         .lrc-word.passed { 
             transform: translateY(0) scale(1); 
             filter: drop-shadow(0 0 0 transparent); 
-            letter-spacing: normal; 
         }
 
         /* ==================================================================
@@ -427,8 +430,8 @@
             .btn-collapse { top: 20px; left: 20px; width: 40px; height: 40px; font-size: 20px; }
             .np-left-pane { max-width: 380px; width: 100%; }
             .np-right-pane { width: 100%; height: 60vh; }
-            .lyrics-scroll-area { padding: 10vh 10px 30vh; margin: 0 -10px; mask-image: linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%); -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%); }
-            .lrc-line { font-size: 32px; margin-bottom: 20px; }
+            .lyrics-scroll-area { padding: 10vh 10px 30vh; margin: 0 -10px; mask-image: linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%); -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%); overflow-x: auto; }
+            .lrc-line { font-size: 32px; margin-bottom: 20px; padding-right: 20px; }
         }
     </style>
 </head>
@@ -670,7 +673,7 @@
             { title: "444 - REMIX", artist: "Yan Block, De La Rose, Hades66, Ñengo Flow", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007452/444_-_REMIX_Yan_Block_De_La_Rose_Hades66_%C3%91engo_Flow_lshzau.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009575/444_-_REMIX_t2qoid.lrc" },
             { title: "TALENTO", artist: "Yan Block, Panda Black", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007391/TALENTO_Yan_Block_Panda_Black_r4ugu2.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009576/TALENTO_s4qtf2.lrc" },
             { title: "En Tus Sueños", artist: "Arcángel, Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211916/En_Tus_Sue%C3%B1os_Arc%C3%A1ngel_Yan_Block_g0qdo5.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212476/En_Tus_Sue%C3%B1os_-_Arc%C3%A1ngel_Yan_Block_xyfoah.lrc" },
-            { title: "YOGURCITO REMIX", artist: "Blessd, Anuel AA, Yan Block, Luar La L, Kris R., ROA", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007457/YOGURCITO_REMIX_Blessd_Anuel_AA_Yan_Block_Luar_La_L_Kris_R._ROA_ocxlgl.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009576/YOGURCITO_REMIX_wwua9w.lrc" },
+            { title: "YOGURCITO REMIX", artist: "Blessd, Anuel AA, Yan Block, Luar La L, Kris R., ROA", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007457/YOGURCITO_REMIX_Blessd_Anuel_AA_Yan_Block_Luar_La_L_Kris_R._ROA_ocxlgl.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1777582387/YOGURCITO_REMIX_Blessd_Anuel_AA_Yan_Block_Luar_La_L_Kris_R._ROA_eih2d3.lrc" },
             { title: "SUERTE", artist: "Yan Block, RaiNao, Slow Jamz", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211775/SUERTE_Yan_Block_RaiNao_Slow_Jamz_zxqcge.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1777570930/SUERTE_Yan_Block_RaiNao_Slow_Jamz_1_zqfe7m.lrc" },
             { title: "Te Colaboro - Remix", artist: "Brray, Feid, De La Rose, Yan Block, NTG", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211918/Te_Colaboro_-_Remix_Brray_Feid_De_La_Rose_Yan_Block_NTG_gemijz.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212491/Te_Colaboro_-_Remix_-_Brray_Feid_De_La_Rose_Yan_Block_NTG_mvifxs.lrc" },
             { title: "5/3", artist: "Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211912/5_3_Yan_Block_xpbqo6.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212473/5_3_-_Yan_Block_rppnt5.lrc" },
@@ -1363,7 +1366,7 @@
                         l.el.className = 'lrc-line active';
                         if(!isUserScrolling) {
                             const sc = document.getElementById('lyrics-scroller');
-                            sc.scrollTo({ top: l.el.offsetTop - (sc.clientHeight * 0.4), behavior: 'smooth' });
+                            sc.scrollTo({ top: l.el.offsetTop - (sc.clientHeight * 0.4), left: 0, behavior: 'smooth' });
                         }
                     }
                 });
