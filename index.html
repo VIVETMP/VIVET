@@ -356,22 +356,25 @@
         .lrc-line {
             font-size: 48px; font-weight: 800; line-height: 1.4; letter-spacing: -0.03em; margin-bottom: 28px;
             cursor: pointer; transform-origin: left center;
+            transition: transform 0.6s var(--ease-apple), opacity 0.5s ease, filter 0.5s ease;
+            opacity: 0.25; filter: blur(3px); transform: scale(0.9); will-change: transform, opacity, filter;
             padding-right: 10%; word-wrap: break-word;
         }
+        .lrc-line.active { opacity: 1; filter: blur(0); transform: scale(1); }
+        .lrc-line.passed { opacity: 0.25; filter: blur(3px); transform: scale(0.9); }
 
         .lrc-word {
             display: inline-block; padding: 0.15em; margin: -0.15em; vertical-align: baseline;
-            color: #ffffff;
-            transform-origin: left center;
-            transition: transform 0.6s var(--ease-apple), opacity 0.5s ease, filter 0.5s ease;
-            opacity: 0.25; filter: blur(3px); transform: scale(0.9);
-            will-change: transform, opacity, filter;
+            background: linear-gradient(90deg, 
+                #ffffff 0%, #ffffff calc(var(--fill, 0%) - 4%), 
+                rgba(255,255,255,0.25) calc(var(--fill, 0%) + 4%), rgba(255,255,255,0.25) 100%
+            );
+            -webkit-background-clip: text; color: transparent; background-clip: text;
+            transition: transform 0.4s var(--ease-spring), filter 0.4s ease;
+            transform-origin: bottom center; will-change: transform, filter;
         }
-
-        .lrc-line.active .lrc-word.is-singing,
-        .lrc-line.active .lrc-word.passed {
-            opacity: 1; filter: blur(0); transform: scale(1);
-        }
+        .lrc-word.is-singing { transform: translateY(-5px) scale(1.06); filter: drop-shadow(0 8px 16px rgba(255,255,255,0.25)); }
+        .lrc-word.passed { transform: translateY(0) scale(1); filter: drop-shadow(0 0 0 transparent); }
 
         /* ==================================================================
            MOBILE RESPONSIVE
@@ -1461,7 +1464,7 @@
 
             requestAnimationFrame(renderLoop);
             
-            analysisQueue =[...cancionesData];
+            analysisQueue = [...cancionesData];
             setTimeout(runAnalysisQueue, 1000);
             setTimeout(processCoverQueue, 1500);
             
