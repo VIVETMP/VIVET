@@ -673,7 +673,7 @@
             { title: "Juguete", artist: "Yan Block, NTG, SAIKO, SHB", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211824/Juguete_Yan_Block_NTG_SAIKO_SHB_wysyo0.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212480/Juguete_-_Yan_Block_NTG_SAIKO_SHB_aqm31e.lrc" },
             { title: "Epica", artist: "Caleb Calloway, iZaak, Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211915/Epica_Caleb_Calloway_iZaak_Yan_Block_b7aepf.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212477/Epica_ilc4zb.lrc" },
             { title: "Media Hora", artist: "Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211838/Media_Hora_Yan_Block_bcvcu9.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212484/Media_Hora_-_Yan_Block_xmzzka.lrc" },
-            { title: "3 Doritos", artist: "Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211784/3_Doritos_Yan_Block_lprati.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212471/3_Doritos_-_Yan_Block_jlqvb5.lrc" },
+            { title: "3 Doritos", artist: "Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211784/3_Doritos_Yan_Block_lprati.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1777572465/3_Doritos_Yan_Block_vkhgxz.lrc" },
             { title: "YO SE", artist: "Yan Block, TORRRES", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007440/YO_SE_Yan_Block_TORRRES_i8ianx.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009576/YO_SE_hiutok.lrc" },
             { title: "WYA REMIX RED", artist: "J Abdiel, De La Rose, Yan Block, iZaak, Jay Wheeler", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007447/WYA_REMIX_RED_J_Abdiel_De_La_Rose_Yan_Block_iZaak_Jay_Wheeler_mvfmrz.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009576/WYA_REMIX_RED_ic1sdd.lrc" },
             { title: "444", artist: "Yan Block, Panda Black", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007376/444_Yan_Block_Panda_Black_upxnup.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009575/444_ie7e6d.lrc" },
@@ -745,194 +745,73 @@
         ];
 
         /* ==================================================================
-           CORE STATE & PROFESSIONAL AUTOMIX ENGINE (WEB AUDIO API)
+           CORE STATE & AUDIO ENGINE
            ================================================================== */
         let currentPlayingIndex = -1;
         let isNPOpen = false;
         let activeBgIndex = 1;
         let currentAlbumOpen = null;
-        let recentHistory =[];
-        let analysisQueue =[];
 
-        // Global Audio Engine Variables
-        let automixSystem = null;
-        let activeAudio = null; 
-        let audioCtx = null;
-        let analyser = null;
-        let masterGain = null;
-        let isCrossfading = false;
+        let audio1 = new Audio(); audio1.crossOrigin = "anonymous";
+        let audio2 = new Audio(); audio2.crossOrigin = "anonymous";
+        let activeAudio = audio1, fadingAudio = null, isCrossfading = false, mixTimingHumanized = 0;
+        let audioCtx, masterGain, masterCompressor, analyser, deck1, deck2, activeDeck, fadingDeck;
         let globalVolume = 0.75;
 
-        class ProfessionalAutomix {
-            constructor() {
-                const AudioContext = window.AudioContext || window.webkitAudioContext;
-                this.ctx = new AudioContext();
-                
-                // Master Dynamics Compressor
-                this.masterCompressor = this.ctx.createDynamicsCompressor();
-                this.masterCompressor.threshold.value = -3;
-                this.masterCompressor.knee.value = 10;
-                this.masterCompressor.ratio.value = 5;
-                this.masterCompressor.attack.value = 0.003;
-                this.masterCompressor.release.value = 0.25;
-                
-                this.masterGain = this.ctx.createGain();
-                this.masterGain.gain.value = globalVolume;
-                
-                this.analyser = this.ctx.createAnalyser();
-                this.analyser.fftSize = 128;
-                
-                this.masterCompressor.connect(this.masterGain);
-                this.masterGain.connect(this.analyser);
-                this.analyser.connect(this.ctx.destination);
-                
-                this.deckA = this._createDeck();
-                this.deckB = this._createDeck();
-                this.activeDeck = this.deckA;
-                
-                this.analysisCache = {};
-            }
-
-            _createDeck() {
-                const audio = new Audio();
-                audio.crossOrigin = "anonymous";
-                audio.preservesPitch = true; // Enables phase/tempo manipulation seamlessly
-                
-                const source = this.ctx.createMediaElementSource(audio);
-                
-                // Professional Crossover Filters (Lowshelf for DJ style drop)
-                const lowShelf = this.ctx.createBiquadFilter();
-                lowShelf.type = 'lowshelf';
-                lowShelf.frequency.value = 250; 
-                lowShelf.gain.value = 0;
-                
-                const gainNode = this.ctx.createGain();
-                gainNode.gain.value = 1;
-                
-                source.connect(lowShelf);
-                lowShelf.connect(gainNode);
-                gainNode.connect(this.masterCompressor);
-                
-                return { audio, source, lowShelf, gainNode, bpm: 120 };
-            }
-
-            // Dynamic BPM Analysis with Peak Detection
-            async analyzeTrack(url) {
-                if (this.analysisCache[url]) return this.analysisCache[url];
-                try {
-                    const tempCtx = new (window.OfflineAudioContext || window.webkitOfflineAudioContext)(1, 1, 44100);
-                    const res = await fetch(url);
-                    const buf = await tempCtx.decodeAudioData(await res.arrayBuffer());
-                    
-                    const data = buf.getChannelData(0);
-                    const sr = buf.sampleRate;
-                    let peaks =[];
-                    const threshold = 0.7; 
-                    const minDistance = Math.floor(sr * 0.3); // ~200 BPM max speed constraint
-                    let lastPeak = 0;
-                    
-                    for(let i = 0; i < data.length; i++) {
-                        if (Math.abs(data[i]) > threshold && (i - lastPeak) > minDistance) {
-                            peaks.push(i);
-                            lastPeak = i;
-                        }
-                    }
-                    
-                    let intervals = {};
-                    for(let i = 1; i < peaks.length; i++) {
-                        let interval = peaks[i] - peaks[i-1];
-                        let bpm = Math.round(60 / (interval / sr));
-                        if (bpm >= 60 && bpm <= 180) {
-                            intervals[bpm] = (intervals[bpm] || 0) + 1;
-                        }
-                    }
-                    
-                    let bestBPM = 120;
-                    let maxCount = 0;
-                    for (let b in intervals) {
-                        if (intervals[b] > maxCount) { maxCount = intervals[b]; bestBPM = parseInt(b); }
-                    }
-                    
-                    this.analysisCache[url] = { bpm: bestBPM };
-                    return this.analysisCache[url];
-                } catch(e) {
-                    this.analysisCache[url] = { bpm: 120 };
-                    return this.analysisCache[url];
-                }
-            }
-
-            async triggerCrossfade(nextUrl, transitionDuration = 10) {
-                const fadingDeck = this.activeDeck;
-                const incomingDeck = (this.activeDeck === this.deckA) ? this.deckB : this.deckA;
-                
-                const nextData = await this.analyzeTrack(nextUrl);
-                const currData = this.analysisCache[fadingDeck.audio.src] || { bpm: 120 };
-                
-                incomingDeck.bpm = nextData.bpm;
-                fadingDeck.bpm = currData.bpm;
-                
-                // Phase Match (Sincronización Rítmica): Adapta el tempo del nuevo track al actual
-                let rate = fadingDeck.bpm / incomingDeck.bpm;
-                if (rate > 1.25 || rate < 0.8) rate = 1.0; // Restricción para evitar distorsiones extremas
-                incomingDeck.audio.playbackRate = rate;
-                incomingDeck.audio.src = nextUrl;
-                
-                const now = this.ctx.currentTime;
-                
-                // Lógica avanzada de EQ Crossover
-                // Outgoing: Desvanece gain exponencialmente, corta bajos progresivamente
-                fadingDeck.lowShelf.gain.cancelScheduledValues(now);
-                fadingDeck.lowShelf.gain.setValueAtTime(0, now);
-                fadingDeck.lowShelf.gain.linearRampToValueAtTime(-24, now + transitionDuration * 0.5);
-                
-                fadingDeck.gainNode.gain.cancelScheduledValues(now);
-                fadingDeck.gainNode.gain.setValueAtTime(1, now);
-                fadingDeck.gainNode.gain.exponentialRampToValueAtTime(0.001, now + transitionDuration);
-                
-                // Incoming: Sube gain exponencialmente, inicia sin bajos y los restaura poco a poco
-                incomingDeck.lowShelf.gain.cancelScheduledValues(now);
-                incomingDeck.lowShelf.gain.setValueAtTime(-24, now);
-                incomingDeck.lowShelf.gain.linearRampToValueAtTime(0, now + transitionDuration);
-                
-                incomingDeck.gainNode.gain.cancelScheduledValues(now);
-                incomingDeck.gainNode.gain.setValueAtTime(0.001, now);
-                incomingDeck.gainNode.gain.exponentialRampToValueAtTime(1, now + transitionDuration);
-                
-                this.activeDeck = incomingDeck;
-                
-                try {
-                    await incomingDeck.audio.play();
-                } catch(e) {}
-                
-                // Cleanup al finalizar el cruce
-                setTimeout(() => {
-                    fadingDeck.audio.pause();
-                    fadingDeck.audio.src = "";
-                    fadingDeck.lowShelf.gain.value = 0;
-                    fadingDeck.gainNode.gain.value = 1;
-                    incomingDeck.audio.playbackRate = 1.0; // Retorna al tempo natural del track
-                }, transitionDuration * 1000);
-                
-                return incomingDeck;
-            }
-
-            resetActiveDeckFX() {
-                const now = this.ctx.currentTime;
-                this.activeDeck.lowShelf.gain.cancelScheduledValues(now);
-                this.activeDeck.lowShelf.gain.setValueAtTime(0, now);
-                this.activeDeck.gainNode.gain.cancelScheduledValues(now);
-                this.activeDeck.gainNode.gain.setValueAtTime(1, now);
-                this.activeDeck.audio.playbackRate = 1.0;
-            }
-        }
+        const trackAnalysis = {};
+        let recentHistory = [];
+        let analysisQueue =[];
 
         function initAudioEngine() {
-            if (automixSystem) return;
-            automixSystem = new ProfessionalAutomix();
-            audioCtx = automixSystem.ctx;
-            analyser = automixSystem.analyser;
-            masterGain = automixSystem.masterGain;
-            activeAudio = automixSystem.activeDeck.audio;
+            if (audioCtx) return;
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            audioCtx = new AudioContext();
+            
+            masterCompressor = audioCtx.createDynamicsCompressor();
+            masterCompressor.threshold.value = -3;
+            masterCompressor.knee.value = 10;
+            masterCompressor.ratio.value = 5;
+            masterCompressor.attack.value = 0.003;
+            masterCompressor.release.value = 0.25;
+            
+            masterGain = audioCtx.createGain();
+            masterGain.gain.value = globalVolume;
+            
+            analyser = audioCtx.createAnalyser();
+            analyser.fftSize = 128;
+            
+            masterCompressor.connect(masterGain);
+            masterGain.connect(analyser);
+            analyser.connect(audioCtx.destination);
+            
+            deck1 = createDeck(audio1);
+            deck2 = createDeck(audio2);
+            activeDeck = deck1;
+        }
+
+        function createDeck(audioEl) {
+            const source = audioCtx.createMediaElementSource(audioEl);
+            const highpass = audioCtx.createBiquadFilter(); highpass.type = 'highpass'; highpass.frequency.value = 0;
+            const lowpass = audioCtx.createBiquadFilter(); lowpass.type = 'lowpass'; lowpass.frequency.value = 22000;
+            const bass = audioCtx.createBiquadFilter(); bass.type = 'lowshelf'; bass.frequency.value = 200; bass.gain.value = 0;
+            const delay = audioCtx.createDelay(5.0); delay.delayTime.value = 0.45;
+            const feedback = audioCtx.createGain(); feedback.gain.value = 0; delay.connect(feedback); feedback.connect(delay);
+            const delayOut = audioCtx.createGain(); delayOut.gain.value = 0; delay.connect(delayOut);
+            const deckGain = audioCtx.createGain(); deckGain.gain.value = 1;
+            
+            source.connect(highpass); highpass.connect(lowpass); lowpass.connect(bass); bass.connect(deckGain); bass.connect(delay);
+            deckGain.connect(masterCompressor); delayOut.connect(masterCompressor);
+            return { source, highpass, lowpass, bass, delay, feedback, delayOut, deckGain };
+        }
+
+        function resetDeckFX(deck) {
+            if(!audioCtx) return; const now = audioCtx.currentTime;
+            deck.highpass.frequency.cancelScheduledValues(now); deck.highpass.frequency.setValueAtTime(0, now);
+            deck.lowpass.frequency.cancelScheduledValues(now); deck.lowpass.frequency.setValueAtTime(22000, now);
+            deck.bass.gain.cancelScheduledValues(now); deck.bass.gain.setValueAtTime(0, now);
+            deck.deckGain.gain.cancelScheduledValues(now); deck.deckGain.gain.setValueAtTime(1, now);
+            deck.delayOut.gain.cancelScheduledValues(now); deck.delayOut.gain.setValueAtTime(0, now);
+            deck.feedback.gain.cancelScheduledValues(now); deck.feedback.gain.setValueAtTime(0, now);
         }
 
         function ensureAudioContext() {
@@ -1038,13 +917,44 @@
         }
 
         /* ==================================================================
-           BACKGROUND ANALYSIS QUEUE
+           BACKGROUND ANALYSIS & AUTOMIX
            ================================================================== */
         async function runAnalysisQueue() {
-            if (!analysisQueue.length || !automixSystem) return;
+            if (!analysisQueue.length) return;
             const song = analysisQueue.shift();
-            await automixSystem.analyzeTrack(song.url);
+            if (!trackAnalysis[song.url]) await analyzeTrack(song);
             setTimeout(runAnalysisQueue, 1500);
+        }
+
+        async function analyzeTrack(song) {
+            if (trackAnalysis[song.url]) return trackAnalysis[song.url];
+            try {
+                const tempCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const res = await fetch(song.url);
+                const buf = await tempCtx.decodeAudioData(await res.arrayBuffer());
+                const data = buf.getChannelData(0);
+                const sr = buf.sampleRate;
+                const len = data.length;
+                let tot = 0; const rmsArr =[];
+                
+                for(let i=0; i<len; i+=sr) {
+                    let sum = 0, count = 0;
+                    for(let j=0; j<sr && (i+j)<len; j+=100) { sum += data[i+j]*data[i+j]; count++; }
+                    const rms = Math.sqrt(sum/count); rmsArr.push(rms); tot += rms;
+                }
+                const avg = tot / rmsArr.length;
+                let outro = 6;
+                for(let i = rmsArr.length-1; i >= Math.max(0, rmsArr.length-30); i--) {
+                    if(rmsArr[i] > avg * 0.4) { outro = (rmsArr.length-1-i); break; }
+                }
+                outro = Math.max(4, Math.min(15, outro));
+                
+                trackAnalysis[song.url] = { bpm: 110, energy: avg, outroDuration: outro };
+                tempCtx.close(); return trackAnalysis[song.url];
+            } catch(e) {
+                trackAnalysis[song.url] = { bpm: 110, energy: 0.1, outroDuration: 8 };
+                return trackAnalysis[song.url];
+            }
         }
 
         function getBestNextTrack(currIdx) {
@@ -1057,27 +967,53 @@
         }
 
         function startAutoMix() {
-            isCrossfading = true; 
-            ensureAudioContext();
+            isCrossfading = true; ensureAudioContext();
+            fadingDeck = activeDeck; fadingAudio = activeAudio;
+            activeAudio = (activeAudio === audio1) ? audio2 : audio1;
+            activeDeck = (activeDeck === deck1) ? deck2 : deck1;
             
             let nextIdx = getBestNextTrack(currentPlayingIndex);
             recentHistory.push(currentPlayingIndex);
             if(recentHistory.length > 5) recentHistory.shift();
             
-            let dur = 8 + (Math.random() * 4); // Transición de 8 a 12 segundos según indicaciones
+            let mixType = Math.random() > 0.5 ? "filterRise" : "smoothBlend";
+            let dur = 6 + (Math.random() - 0.5);
             
             showAutoMixBadge();
             triggerUIForSong(nextIdx);
             
-            automixSystem.triggerCrossfade(cancionesData[nextIdx].url, dur).then(() => {});
-            
-            // Swap sincrónico de referencia para el UI
-            activeAudio = automixSystem.activeDeck === automixSystem.deckA ? automixSystem.deckB.audio : automixSystem.deckA.audio;
+            activeAudio.src = cancionesData[nextIdx].url;
+            activeAudio.play().then(() => {
+                applyTransitionFX(mixType, dur);
+            }).catch(e=>{});
             
             setTimeout(() => {
-                isCrossfading = false;
-                hideAutoMixBadge();
+                if (isCrossfading && fadingAudio) {
+                    fadingAudio.pause(); fadingAudio.src = ""; isCrossfading = false;
+                    hideAutoMixBadge();
+                }
             }, dur * 1000);
+        }
+
+        function applyTransitionFX(type, dur) {
+            const now = audioCtx.currentTime;
+            resetDeckFX(activeDeck);
+            activeDeck.deckGain.gain.setValueAtTime(0.001, now);
+            
+            if (type === "filterRise") {
+                fadingDeck.highpass.frequency.setValueAtTime(0, now);
+                fadingDeck.highpass.frequency.exponentialRampToValueAtTime(10000, now + dur);
+                fadingDeck.deckGain.gain.setValueAtTime(1, now);
+                fadingDeck.deckGain.gain.linearRampToValueAtTime(0.001, now + dur);
+                
+                activeDeck.lowpass.frequency.setValueAtTime(400, now);
+                activeDeck.lowpass.frequency.exponentialRampToValueAtTime(22000, now + dur);
+                activeDeck.deckGain.gain.linearRampToValueAtTime(1, now + dur);
+            } else {
+                fadingDeck.deckGain.gain.setValueAtTime(1, now);
+                fadingDeck.deckGain.gain.exponentialRampToValueAtTime(0.001, now + dur);
+                activeDeck.deckGain.gain.linearRampToValueAtTime(1, now + dur);
+            }
         }
 
         function showAutoMixBadge() { document.querySelectorAll('.ai-badge').forEach(b => b.classList.add('active')); }
@@ -1246,25 +1182,17 @@
            ================================================================== */
         function playSong(idx) {
             ensureAudioContext(); haptic();
-            
-            if(isCrossfading && automixSystem) { 
-                isCrossfading = false; 
-                hideAutoMixBadge();
-                const otherDeck = automixSystem.activeDeck === automixSystem.deckA ? automixSystem.deckB : automixSystem.deckA;
-                otherDeck.audio.pause(); 
-            }
-            if(activeAudio) activeAudio.pause();
+            if(isCrossfading && fadingAudio) { fadingAudio.pause(); fadingAudio.src = ""; fadingAudio = null; isCrossfading = false; hideAutoMixBadge(); }
+            activeAudio.pause();
             
             if(currentPlayingIndex !== -1 && !recentHistory.includes(currentPlayingIndex)) {
                 recentHistory.push(currentPlayingIndex); if(recentHistory.length > 5) recentHistory.shift();
             }
             
-            if(automixSystem) automixSystem.resetActiveDeckFX(); 
-            triggerUIForSong(idx);
+            resetDeckFX(activeDeck); triggerUIForSong(idx);
             
             activeAudio.src = cancionesData[idx].url;
-            activeAudio.play().catch(e=>{}); 
-            setPlayIcon(true);
+            activeAudio.play().catch(e=>{}); setPlayIcon(true);
         }
 
         function triggerUIForSong(idx) {
@@ -1286,7 +1214,7 @@
 
         function togglePlay() {
             ensureAudioContext(); haptic();
-            if (!activeAudio || !activeAudio.src) return playSong(0);
+            if (!activeAudio.src) return playSong(0);
             
             if (activeAudio.paused) { activeAudio.play(); setPlayIcon(true); } 
             else { activeAudio.pause(); setPlayIcon(false); }
@@ -1302,7 +1230,7 @@
             document.getElementById('icon-play-np').className = icon;
         }
 
-        function seek(e, el) { if(!activeAudio || !activeAudio.duration) return; const r = el.getBoundingClientRect(); activeAudio.currentTime = ((e.clientX - r.left) / r.width) * activeAudio.duration; }
+        function seek(e, el) { if(!activeAudio.duration) return; const r = el.getBoundingClientRect(); activeAudio.currentTime = ((e.clientX - r.left) / r.width) * activeAudio.duration; }
         
         function changeVolume(e, el) {
             const r = el.getBoundingClientRect(); let vol = (e.clientX - r.left) / r.width;
@@ -1313,10 +1241,7 @@
             if(vol < 0) vol = 0; if(vol > 1) vol = 1; globalVolume = vol;
             document.getElementById('vol-fill-desk').style.width = `${vol*100}%`;
             document.getElementById('vol-fill-np').style.width = `${vol*100}%`;
-            if(audioCtx && masterGain) {
-                masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
-                masterGain.gain.linearRampToValueAtTime(vol, audioCtx.currentTime + 0.1); 
-            } else if (activeAudio) activeAudio.volume = vol;
+            if(audioCtx && masterGain) masterGain.gain.linearRampToValueAtTime(vol, audioCtx.currentTime + 0.1); else activeAudio.volume = vol;
         }
 
         function toggleNP() {
@@ -1327,7 +1252,7 @@
         }
 
         /* ==================================================================
-           LYRICS ENGINE (APPLE MUSIC STYLE - WORD FOR WORD SIMULATOR)
+           LYRICS ENGINE (APPLE MUSIC STYLE)
            ================================================================== */
         let parsedLyrics =[];
         let activeLyricIndex = -1;
@@ -1342,9 +1267,7 @@
             container.innerHTML = "<p style='color:rgba(255,255,255,0.3); font-size:32px; font-weight:800; text-align:center;'>Loading...</p>";
             
             try {
-                const res = await fetch(url); 
-                const text = await res.text(); 
-                const lines = text.split('\n');
+                const res = await fetch(url); const text = await res.text(); const lines = text.split('\n');
                 
                 lines.forEach(line => {
                     const lineMatch = line.match(/\[(\d{2,}):(\d{2}(?:\.\d{1,3})?)\](.*)/);
@@ -1352,79 +1275,34 @@
                         const time = (parseInt(lineMatch[1])*60) + parseFloat(lineMatch[2]);
                         const raw = lineMatch[3].replace('\r', '');
                         
-                        let words =[]; 
-                        let wm; 
-                        const wReg = /<(\d{2,}):(\d{2}(?:\.\d{1,3})?)>([^<]*)/g; 
-                        let hasW = false;
-                        
-                        // Parse true word-for-word if available
-                        while((wm = wReg.exec(raw)) !== null) { 
-                            hasW = true; 
-                            words.push({ time: (parseInt(wm[1])*60)+parseFloat(wm[2]), text: wm[3], el: null, dur: 0 }); 
-                        }
+                        let words =[]; let wm; const wReg = /<(\d{2,}):(\d{2}(?:\.\d{1,3})?)>([^<]*)/g; let hasW = false;
+                        while((wm = wReg.exec(raw)) !== null) { hasW = true; words.push({ time: (parseInt(wm[1])*60)+parseFloat(wm[2]), text: wm[3], el: null, dur: 0 }); }
                         
                         const clean = raw.replace(/<\d{2,}:\d{2}(?:\.\d{1,3})?>/g, '').trim();
-                        let isLineOnly = false;
+                        if(clean === "" || clean === "♪") words =[{ time, text: "•••", el: null, dur: 0 }];
+                        else if(!hasW) words =[{ time, text: clean, el: null, dur: 0 }];
                         
-                        // If empty line (music note)
-                        if(clean === "" || clean === "♪") {
-                            words =[{ time, text: "•••", el: null, dur: 0 }];
-                        } 
-                        // Simulate Word-for-Word for standard lyrics
-                        else if(!hasW) {
-                            isLineOnly = true;
-                            const textWords = clean.split(' ').filter(w => w.length > 0);
-                            words = textWords.map((w, idx) => ({ 
-                                time: time, 
-                                // Appending space directly text node matches Apple Music engine DOM builder
-                                text: w + (idx < textWords.length - 1 ? ' ' : ''), 
-                                el: null, 
-                                dur: 0 
-                            }));
-                        }
-                        
-                        parsedLyrics.push({ time, text: clean, words, el: null, dur: 0, isLineOnly });
+                        parsedLyrics.push({ time, text: clean, words, el: null, dur: 0 });
                     }
                 });
                 
-                // Second Pass: Distribute Durations
                 parsedLyrics.forEach((l, i) => {
                     let nTime = (i < parsedLyrics.length - 1) ? parsedLyrics[i+1].time : l.time + 8;
-                    l.dur = Math.max(0.1, nTime - l.time);
-                    
-                    if (l.isLineOnly && l.words.length > 0) {
-                        // Word-for-Word Interpolation: Distribuye el tiempo por cada letra orgánicamente
-                        let totalChars = l.words.reduce((acc, w) => acc + w.text.length, 0);
-                        // Asegura que las palabras no tarden eternidades en líneas muy separadas
-                        let usableDur = Math.min(l.dur * 0.9, totalChars * 0.1); 
-                        
-                        let currentTime = l.time;
-                        l.words.forEach((w) => {
-                            let weight = w.text.length / totalChars;
-                            let wDur = usableDur * weight;
-                            w.time = currentTime;
-                            w.dur = wDur;
-                            currentTime += wDur;
-                        });
-                    } else {
-                        // Native Word-for-Word computation
-                        for(let j=0; j<l.words.length; j++) {
-                            if(j < l.words.length - 1) l.words[j].dur = Math.max(0.1, l.words[j+1].time - l.words[j].time);
-                            else l.words[j].dur = Math.min(2.5, Math.max(0.1, nTime - l.words[j].time));
-                        }
+                    l.dur = Math.max(0, nTime - l.time);
+                    for(let j=0; j<l.words.length; j++) {
+                        if(j < l.words.length - 1) l.words[j].dur = Math.max(0.1, l.words[j+1].time - l.words[j].time);
+                        else l.words[j].dur = Math.min(2.5, Math.max(0.1, nTime - l.words[j].time));
                     }
                 });
 
                 container.innerHTML = ""; if(!parsedLyrics.length) throw new Error();
                 
-                // Build DOM Elements
                 parsedLyrics.forEach(l => {
                     const div = document.createElement('div'); div.className = 'lrc-line';
                     div.onclick = () => { activeAudio.currentTime = l.time; activeAudio.play(); setPlayIcon(true); };
                     
                     l.words.forEach(w => {
-                        let t = w.text; let sp = ""; 
-                        const sm = t.match(/(\s+)$/);
+                        let t = w.text; let sp = ""; const sm = t.match(/(\s+)$/);
                         if(sm) { sp = sm[1]; t = t.replace(/\s+$/, ''); }
                         if(t) { const s = document.createElement('span'); s.className = 'lrc-word'; s.textContent = t; w.el = s; div.appendChild(s); }
                         if(sp) div.appendChild(document.createTextNode(sp));
@@ -1484,7 +1362,7 @@
         }
 
         /* ==================================================================
-           MAIN LOOP & VISUALIZER & PHRASING CHECK
+           MAIN LOOP & VISUALIZER
            ================================================================== */
         function fmt(s) { return `${Math.floor(s/60)}:${Math.floor(s%60).toString().padStart(2,'0')}`; }
 
@@ -1512,20 +1390,17 @@
         }
 
         function checkAutoMix() {
-            if(activeAudio && activeAudio.duration && !isNaN(activeAudio.duration)) {
-                const cur = activeAudio.currentTime; 
-                const dur = activeAudio.duration; 
-                
-                // Detección de Fraseo: 85% Rule solicitada por el Ing. Senior
-                // Nos aseguramos que quede al menos un margen de transición (ej. > 8s)
-                if((cur / dur) >= 0.85 && !isCrossfading && (dur - cur) > 5) { 
-                    startAutoMix(); 
-                }
+            if(activeAudio.duration && !isNaN(activeAudio.duration)) {
+                const rem = activeAudio.duration - activeAudio.currentTime;
+                const anal = trackAnalysis[cancionesData[currentPlayingIndex]?.url];
+                let out = anal && anal.outroDuration ? anal.outroDuration : 8;
+                if(mixTimingHumanized === 0) mixTimingHumanized = (Math.random()-0.5)*1.5;
+                if(rem <= (out + mixTimingHumanized) && !isCrossfading && rem > 0.5) { startAutoMix(); mixTimingHumanized = 0; }
             }
         }
 
         function renderLoop() {
-            if(activeAudio && activeAudio.duration && !isNaN(activeAudio.duration)) {
+            if(activeAudio.duration && !isNaN(activeAudio.duration)) {
                 const cur = activeAudio.currentTime; const dur = activeAudio.duration; const pct = (cur/dur)*100;
                 
                 document.getElementById('bar-fill-mini').style.width = `${pct}%`;
@@ -1584,26 +1459,16 @@
             renderGrid(artistsData, 'grid-artists', 'artist');
             
             document.getElementById('search-input').addEventListener('input', handleSearch);
-            
-            // AudioContexts require an interaction.
             document.body.addEventListener('click', ensureAudioContext, { once: true });
             document.body.addEventListener('touchstart', ensureAudioContext, { once: true });
 
             requestAnimationFrame(renderLoop);
             
             analysisQueue = [...cancionesData];
-            
-            // Wait for User interaction to create context, then start analysis queue
-            const queueInterval = setInterval(() => {
-                if(automixSystem) {
-                    clearInterval(queueInterval);
-                    runAnalysisQueue();
-                }
-            }, 1000);
-            
+            setTimeout(runAnalysisQueue, 1000);
             setTimeout(processCoverQueue, 1500);
-            setupGestures();
             
+            setupGestures();
             document.getElementById('vol-fill-desk').style.width = `${globalVolume*100}%`;
             document.getElementById('vol-fill-np').style.width = `${globalVolume*100}%`;
         }
