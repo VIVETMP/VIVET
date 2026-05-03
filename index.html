@@ -347,7 +347,7 @@
         /* EXACT APPLE MUSIC LYRICS ENGINE - MODIFICADO PARA AJUSTE PERFECTO EN PANTALLA */
         .np-right-pane { flex: 1.2; height: 85vh; display: flex; flex-direction: column; justify-content: center; position: relative; }
         .lyrics-scroll-area {
-            height: 100%; overflow-y: auto; overflow-x: hidden; /* Volvemos a ocultar el scroll horizontal */
+            height: 100%; overflow-y: auto; overflow-x: hidden; 
             padding: 40vh 40px 50vh 40px; margin: 0 -40px;
             scroll-behavior: smooth; mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
             -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
@@ -360,18 +360,19 @@
             transition: transform 0.6s var(--ease-apple), opacity 0.5s ease, filter 0.5s ease;
             opacity: 0.25; filter: blur(3px); transform: scale(0.9); will-change: transform, opacity, filter;
             padding-right: 10%; 
-            word-wrap: break-word; /* Permitimos que las frases largas salten de línea para ajustarse a la pantalla */
-            white-space: pre-wrap; /* Mantiene los espacios, pero permite que encaje perfectamente */
+            word-wrap: break-word; 
+            white-space: pre-wrap; 
         }
         .lrc-line.active { opacity: 1; filter: blur(0); transform: scale(1); }
         .lrc-line.passed { opacity: 0.25; filter: blur(3px); transform: scale(0.9); }
 
+        /* DEGRADADO ULTRA FLUIDO */
         .lrc-word {
             display: inline-block; padding: 0.15em; margin: -0.15em; vertical-align: baseline;
             background: linear-gradient(90deg, 
                 rgba(255,255,255,1) 0%, 
-                rgba(255,255,255,1) calc(var(--fill, 0%) * 1.3 - 27%), 
-                rgba(255,255,255,0.25) calc(var(--fill, 0%) * 1.3 - 3%), 
+                rgba(255,255,255,1) calc(var(--fill, 0%) - 15%), 
+                rgba(255,255,255,0.25) calc(var(--fill, 0%) + 15%), 
                 rgba(255,255,255,0.25) 100%
             );
             -webkit-background-clip: text; color: transparent; background-clip: text;
@@ -680,7 +681,7 @@
             { title: "SECUESTRO", artist: "Slayter, Yan Block, NTG", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007396/SECUESTRO_Slayter_Yan_Block_NTG_bqszzh.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009576/SECUESTRO_m4absd.lrc" },
             { title: "piña", artist: "Slayter, Yan Block, SOMBRA PR", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211874/pi%C3%B1a_Slayter_Yan_Block_SOMBRA_PR_muapp2.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212487/pi%C3%B1a_-_Slayter_Yan_Block_SOMBRA_PR_myh5kb.lrc" },
             { title: "111", artist: "Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007415/111_Yan_Block_h3poua.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1777683795/111_Yan_Block_q5mjlj.lrc" },
-            { title: "Religión", artist: "Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211878/Religi%C3%B3n_Yan_Block_txwxle.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212488/Religi%C3%B3n_-_Yan_Block_l6c3xy.lrc" },
+            { title: "Religión", artist: "Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211878/Religi%C3%B3n_Yan_Block_txwxle.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1777815839/Religi%C3%B3n_Yan_Block_m1prnn.lrc" },
             { title: "NEVER 2 LATE", artist: "ROA, Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211844/NEVER_2_LATE_ROA_Yan_Block_jwdqma.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212485/NEVER_2_LATE_-_ROA_Yan_Block_u84d8i.lrc" },
             { title: "EXPRESSO MARTINI", artist: "Rauw Alejandro, Marconi Impara, Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007397/EXPRESSO_MARTINI_Rauw_Alejandro_Marconi_Impara_Yan_Block_ac5x3j.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1777684858/EXPRESSO_MARTINI_Rauw_Alejandro_Marconi_Impara_Yan_Block_buwbmz.lrc" },
             { title: "Juguete", artist: "Yan Block, NTG, SAIKO, SHB", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211824/Juguete_Yan_Block_NTG_SAIKO_SHB_wysyo0.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212480/Juguete_-_Yan_Block_NTG_SAIKO_SHB_aqm31e.lrc" },
@@ -770,6 +771,8 @@
         let activeAudio = audio1, fadingAudio = null, isCrossfading = false, mixTimingHumanized = 0;
         let audioCtx, masterGain, masterCompressor, analyser, deck1, deck2, activeDeck, fadingDeck;
         let globalVolume = 0.75;
+        let lastAudioTime = 0;
+        let lastTimeUpdate = 0;
 
         const trackAnalysis = {};
         let recentHistory =[];
@@ -1374,14 +1377,14 @@
             }
             
             if(nIdx !== -1) {
-                const LERP_FACTOR = 0.25;
+                const LERP_FACTOR = 0.4;
                 parsedLyrics[nIdx].words.forEach(w => {
                     if(!w.el) return;
                     
                     let targetFill = 0;
                     if(cur >= w.time + w.dur) {
                         targetFill = 100;
-                        if(w.fill > 99) {
+                        if(w.fill > 99 && w.el.classList.contains('is-singing')) {
                             w.el.classList.remove('is-singing'); 
                             w.el.classList.add('passed');
                         }
@@ -1401,7 +1404,7 @@
                     
                     if(Math.abs(targetFill - w.fill) < 0.1) w.fill = targetFill;
 
-                    if(Math.abs(w.fill - w.lastRenderedFill) > 0.4 || w.fill === 100 || w.fill === 0) {
+                    if(Math.abs(w.fill - w.lastRenderedFill) > 0.01 || w.fill === 100 || w.fill === 0) {
                         w.el.style.setProperty('--fill', `${w.fill}%`);
                         w.lastRenderedFill = w.fill;
                     }
@@ -1410,7 +1413,7 @@
         }
 
         /* ==================================================================
-           MAIN LOOP & VISUALIZER
+           MAIN LOOP & VISUALIZER (CON INTERPOLACIÓN DE TIEMPO FLUIDA)
            ================================================================== */
         function fmt(s) { return `${Math.floor(s/60)}:${Math.floor(s%60).toString().padStart(2,'0')}`; }
 
@@ -1449,7 +1452,21 @@
 
         function renderLoop() {
             if(activeAudio.duration && !isNaN(activeAudio.duration)) {
-                const cur = activeAudio.currentTime; const dur = activeAudio.duration; const pct = (cur/dur)*100;
+                let cur = activeAudio.currentTime; 
+                
+                // --- INICIO INTERPOLACIÓN FLUÍDA ---
+                const now = performance.now();
+                if (cur !== lastAudioTime) {
+                    lastAudioTime = cur;
+                    lastTimeUpdate = now;
+                }
+                if (!activeAudio.paused) {
+                    cur = lastAudioTime + (now - lastTimeUpdate) / 1000;
+                    if (cur > lastAudioTime + 0.3) cur = lastAudioTime + 0.3;
+                }
+                // --- FIN INTERPOLACIÓN FLUÍDA ---
+                
+                const dur = activeAudio.duration; const pct = (cur/dur)*100;
                 
                 document.getElementById('bar-fill-mini').style.width = `${pct}%`;
                 document.getElementById('bar-fill-desk').style.width = `${pct}%`;
