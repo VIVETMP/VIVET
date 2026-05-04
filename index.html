@@ -304,7 +304,7 @@
         .btn-fullscreen:hover { background: rgba(255,255,255,0.15); transform: scale(1.1); color: #fff; border-color: rgba(255,255,255,0.2); }
 
         /* ==================================================================
-           FULLSCREEN NOW PLAYING (APPLE MUSIC STYLE)
+           FULLSCREEN NOW PLAYING
            ================================================================== */
         #np-fs {
             position: fixed; inset: 0; z-index: 100; transform: translateY(100%); opacity: 0; visibility: hidden;
@@ -344,7 +344,7 @@
 
         .np-vol-area { display: flex; align-items: center; gap: 20px; width: 100%; color: rgba(255,255,255,0.5); font-size: 22px; }
 
-        /* EXACT APPLE MUSIC LYRICS ENGINE - MODIFICADO PARA AJUSTE PERFECTO EN PANTALLA */
+        /* CLEAN AND SMOOTH LYRICS ENGINE */
         .np-right-pane { flex: 1.2; height: 85vh; display: flex; flex-direction: column; justify-content: center; position: relative; }
         .lyrics-scroll-area {
             height: 100%; overflow-y: auto; overflow-x: hidden; 
@@ -356,36 +356,25 @@
 
         .lrc-line {
             font-size: 48px; font-weight: 800; line-height: 1.4; letter-spacing: -0.03em; margin-bottom: 28px;
-            cursor: pointer; transform-origin: left center;
-            transition: transform 0.6s var(--ease-apple), opacity 0.5s ease, filter 0.5s ease;
-            opacity: 0.25; filter: blur(3px); transform: scale(0.9); will-change: transform, opacity, filter;
+            cursor: pointer;
+            transition: opacity 0.5s ease;
+            opacity: 0.3;
             padding-right: 10%; 
             word-wrap: break-word; 
             white-space: pre-wrap; 
         }
-        .lrc-line.active { opacity: 1; filter: blur(0); transform: scale(1); }
-        .lrc-line.passed { opacity: 0.25; filter: blur(3px); transform: scale(0.9); }
+        .lrc-line.active { opacity: 1; }
+        .lrc-line.passed { opacity: 0.3; }
 
-        /* DEGRADADO ULTRA FLUIDO */
         .lrc-word {
             display: inline-block; padding: 0.15em; margin: -0.15em; vertical-align: baseline;
             background: linear-gradient(90deg, 
                 rgba(255,255,255,1) 0%, 
-                rgba(255,255,255,1) calc(var(--fill, 0%) - 15%), 
-                rgba(255,255,255,0.25) calc(var(--fill, 0%) + 15%), 
-                rgba(255,255,255,0.25) 100%
+                rgba(255,255,255,1) calc(var(--fill, 0%) - 5%), 
+                rgba(255,255,255,0.3) calc(var(--fill, 0%) + 5%), 
+                rgba(255,255,255,0.3) 100%
             );
             -webkit-background-clip: text; color: transparent; background-clip: text;
-            transition: transform 0.25s var(--ease-apple), filter 0.25s ease;
-            transform-origin: bottom center; will-change: transform, filter;
-        }
-        .lrc-word.is-singing { 
-            transform: translateY(-2px) scale(1.02); 
-            filter: drop-shadow(0 4px 12px rgba(255,255,255,0.15)); 
-        }
-        .lrc-word.passed { 
-            transform: translateY(0) scale(1); 
-            filter: drop-shadow(0 0 0 transparent); 
         }
 
         /* ==================================================================
@@ -646,7 +635,7 @@
 
     <script>
         /* ==================================================================
-           DATA (Preserved exactly)
+           DATA
            ================================================================== */
         const imageArtistUrl = "https://res.cloudinary.com/ddcbl694n/image/upload/v1776007400/Yan_Block_u0inwd.jpg";
         const omarCourtzImg = "https://res.cloudinary.com/ddcbl694n/image/upload/v1776097822/Omar_Courtz_k4ozll.jpg";
@@ -689,7 +678,7 @@
             { title: "Media Hora", artist: "Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211838/Media_Hora_Yan_Block_bcvcu9.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1777816947/Media_Hora_Yan_Block_sapswf.lrc" },
             { title: "3 Doritos", artist: "Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211784/3_Doritos_Yan_Block_lprati.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1777572465/3_Doritos_Yan_Block_vkhgxz.lrc" },
             { title: "YO SE", artist: "Yan Block, TORRRES", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007440/YO_SE_Yan_Block_TORRRES_i8ianx.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009576/YO_SE_hiutok.lrc" },
-            { title: "WYA REMIX RED", artist: "J Abdiel, De La Rose, Yan Block, iZaak, Jay Wheeler", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007447/WYA_REMIX_RED_J_Abdiel_De_La_Rose_Yan_Block_iZaak_Jay_Wheeler_mvfmrz.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009576/WYA_REMIX_RED_ic1sdd.lrc" },
+            { title: "WYA REMIX RED", artist: "J Abdiel, De La Rose, Yan Block, iZaak, Jay Wheeler", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007447/WYA_REMIX_RED_J_Abdiel_De_La_Rose_Yan_Block_iZaak_Jay_Wheeler_mvfmrz.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1777905183/WYA_REMIX_RED_J_Abdiel_De_La_Rose_Yan_Block_iZaak_Jay_Wheeler_x6lzou.lrc" },
             { title: "444", artist: "Yan Block, Panda Black", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007376/444_Yan_Block_Panda_Black_upxnup.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009575/444_ie7e6d.lrc" },
             { title: "18", artist: "Yan Block, Young Martino", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211873/18_Yan_Block_Young_Martino_wp84u6.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212471/18_-_Yan_Block_Young_Martino_ytasjo.lrc" },
             { title: "GPS", artist: "Yan Block, Young Martino", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211911/GPS_Yan_Block_Young_Martino_cqookv.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212478/GPS_-_Yan_Block_Young_Martino_t793sb.lrc" },
@@ -1093,7 +1082,7 @@
                     </div>
                     <div class="card-info" style="${type==='artist'?'text-align:center':''}">
                         <div class="card-title">${item.title || item.name}</div>
-                        <div class="card-subtitle">${type==='artist' ? 'Artist' : (item.artist + (item.year ? ` • ${item.year}` : ''))}</div>
+                        <div class="card-subtitle">${type==='artist' ? 'Artist' : (item.artist + (item.year ? `- ${item.year}` : ''))}</div>
                     </div>
                 `;
                 container.appendChild(card);
@@ -1268,7 +1257,7 @@
         }
 
         /* ==================================================================
-           LYRICS ENGINE (APPLE MUSIC STYLE)
+           LYRICS ENGINE (CLEAN & SMOOTH FILL)
            ================================================================== */
         let parsedLyrics =[];
         let activeLyricIndex = -1;
@@ -1351,8 +1340,6 @@
                                 w.fill = 100;
                                 w.lastRenderedFill = 100;
                                 w.el.style.setProperty('--fill', '100%'); 
-                                w.el.classList.remove('is-singing'); 
-                                w.el.classList.add('passed'); 
                             } 
                         });
                     } else if(i > nIdx) {
@@ -1362,7 +1349,6 @@
                                 w.fill = 0;
                                 w.lastRenderedFill = 0;
                                 w.el.style.setProperty('--fill', '0%'); 
-                                w.el.classList.remove('is-singing', 'passed'); 
                             } 
                         });
                     } else {
@@ -1377,34 +1363,25 @@
             }
             
             if(nIdx !== -1) {
-                const LERP_FACTOR = 0.4;
+                const LERP_FACTOR = 0.3; // Factor suavizado de JS
                 parsedLyrics[nIdx].words.forEach(w => {
                     if(!w.el) return;
                     
                     let targetFill = 0;
                     if(cur >= w.time + w.dur) {
                         targetFill = 100;
-                        if(w.fill > 99 && w.el.classList.contains('is-singing')) {
-                            w.el.classList.remove('is-singing'); 
-                            w.el.classList.add('passed');
-                        }
                     } else if(cur >= w.time) {
                         let p = ((cur - w.time) / w.dur) * 100;
                         targetFill = Math.max(0, Math.min(p, 100));
-                        if(!w.el.classList.contains('is-singing')) { 
-                            w.el.classList.add('is-singing'); 
-                            w.el.classList.remove('passed'); 
-                        }
                     } else {
                         targetFill = 0;
-                        w.el.classList.remove('is-singing', 'passed');
                     }
 
                     w.fill += (targetFill - w.fill) * LERP_FACTOR;
                     
                     if(Math.abs(targetFill - w.fill) < 0.1) w.fill = targetFill;
 
-                    if(Math.abs(w.fill - w.lastRenderedFill) > 0.01 || w.fill === 100 || w.fill === 0) {
+                    if(Math.abs(w.fill - w.lastRenderedFill) > 0.05 || w.fill === 100 || w.fill === 0) {
                         w.el.style.setProperty('--fill', `${w.fill}%`);
                         w.lastRenderedFill = w.fill;
                     }
