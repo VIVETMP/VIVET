@@ -349,7 +349,8 @@
         .lyrics-scroll-area {
             height: 100%; overflow-y: auto; overflow-x: hidden; 
             padding: 40vh 40px 50vh 40px; margin: 0 -40px;
-            scroll-behavior: smooth; mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
+            /* SE ELIMINA el scroll-behavior: smooth; para no interferir con la interpolacion lineal programada (Lerp) */
+            mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
             -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
         }
         .lyrics-scroll-area::-webkit-scrollbar { display: none; }
@@ -1257,16 +1258,25 @@
         }
 
         /* ==================================================================
-           LYRICS ENGINE (CLEAN & SMOOTH FILL)
+           LYRICS ENGINE (CLEAN FILL & CINEMATIC SCROLL)
            ================================================================== */
         let parsedLyrics =[];
         let activeLyricIndex = -1;
+        
+        // Variables para motor de scroll cinemático
         let isUserScrolling = false;
         let scrollTimeout;
+        let targetScrollY = 0;
+        let currentScrollY = 0;
 
         async function fetchLyrics(url) {
             const container = document.getElementById('lyrics-content');
+            const scroller = document.getElementById('lyrics-scroller');
+            
             parsedLyrics =[];
+            targetScrollY = 0;
+            currentScrollY = 0;
+            scroller.scrollTop = 0;
             
             if(!url) { container.innerHTML = "<div style='height:100%; display:flex; align-items:center; justify-content:center;'><p style='color:rgba(255,255,255,0.3); font-size:32px; font-weight:800;'>Instrumental</p></div>"; return; }
             container.innerHTML = "<p style='color:rgba(255,255,255,0.3); font-size:32px; font-weight:800; text-align:center;'>Loading...</p>";
@@ -1316,8 +1326,12 @@
                     l.el = div; container.appendChild(div);
                 });
                 
-                const scroller = document.getElementById('lyrics-scroller');
-                const setManual = () => { isUserScrolling = true; clearTimeout(scrollTimeout); scrollTimeout = setTimeout(() => isUserScrolling = false, 4000); };
+                const setManual = () => { 
+                    isUserScrolling = true; 
+                    clearTimeout(scrollTimeout); 
+                    scrollTimeout = setTimeout(() => { isUserScrolling = false; }, 4000); 
+                };
+                
                 scroller.addEventListener('wheel', setManual, {passive: true});
                 scroller.addEventListener('touchmove', setManual, {passive: true});
                 
@@ -1353,9 +1367,10 @@
                         });
                     } else {
                         l.el.className = 'lrc-line active';
+                        // Actualiza el target del scroll cinematográfico en lugar de saltar
                         if(!isUserScrolling) {
                             const sc = document.getElementById('lyrics-scroller');
-                            sc.scrollTo({ top: l.el.offsetTop - (sc.clientHeight * 0.4), left: 0, behavior: 'smooth' });
+                            targetScrollY = l.el.offsetTop - (sc.clientHeight * 0.4) + (l.el.clientHeight / 2);
                         }
                     }
                 });
@@ -1363,7 +1378,7 @@
             }
             
             if(nIdx !== -1) {
-                const LERP_FACTOR = 0.3; // Factor suavizado de JS
+                const LERP_FACTOR = 0.3; // Factor suavizado de JS para relleno
                 parsedLyrics[nIdx].words.forEach(w => {
                     if(!w.el) return;
                     
@@ -1390,7 +1405,7 @@
         }
 
         /* ==================================================================
-           MAIN LOOP & VISUALIZER (CON INTERPOLACIÓN DE TIEMPO FLUIDA)
+           MAIN LOOP & VISUALIZER (INTERPOLACIÓN FLUIDA & SCROLL CINEMÁTICO)
            ================================================================== */
         function fmt(s) { return `${Math.floor(s/60)}:${Math.floor(s%60).toString().padStart(2,'0')}`; }
 
@@ -1456,7 +1471,22 @@
                 
                 checkAutoMix();
                 
-                if(isNPOpen) { updateKaraoke(cur); drawVisualizer(); }
+                if(isNPOpen) { 
+                    updateKaraoke(cur); 
+                    drawVisualizer(); 
+
+                    // --- MOTOR DE SCROLL CINEMÁTICO (Lerp) ---
+                    const sc = document.getElementById('lyrics-scroller');
+                    if (isUserScrolling) {
+                        currentScrollY = sc.scrollTop;
+                    } else {
+                        const scrollDiff = targetScrollY - currentScrollY;
+                        if (Math.abs(scrollDiff) > 0.5) {
+                            currentScrollY += scrollDiff * 0.06; // Factor de deslizamiento cinemático
+                            sc.scrollTop = currentScrollY;
+                        }
+                    }
+                }
             }
             requestAnimationFrame(renderLoop);
         }
