@@ -313,7 +313,7 @@
 
         .np-vol-area { display: flex; align-items: center; gap: 24px; width: 100%; color: rgba(255,255,255,0.6); font-size: 20px; }
 
-        /* FLUID LYRICS ENGINE */
+        /* ULTRA FLUID LYRICS ENGINE (PREVENTS PREMATURE BLEED) */
         .np-right-pane { flex: 1.2; height: 100vh; display: flex; flex-direction: column; justify-content: center; position: relative; }
         .lyrics-scroll-area {
             height: 100%; overflow-y: auto; overflow-x: hidden; 
@@ -324,33 +324,35 @@
         .lyrics-scroll-area::-webkit-scrollbar { display: none; }
 
         .lrc-line {
-            font-family: var(--font-display); font-size: 36px; font-weight: 700; line-height: 1.4; 
+            font-family: var(--font-display); font-size: 44px; /* Aumentado */ font-weight: 800; line-height: 1.4; 
             letter-spacing: -0.02em; margin-bottom: 28px; cursor: pointer;
             transition: opacity 0.5s ease, filter 0.5s ease;
-            opacity: 0.4; filter: blur(2px); transform: none; padding-right: 0;
+            opacity: 0.35; filter: blur(2px); transform: none; padding-right: 0;
             word-wrap: break-word; white-space: pre-wrap; color: #fff;
         }
         .lrc-line.active { opacity: 1; filter: blur(0); }
-        .lrc-line.passed { opacity: 0.4; filter: blur(2px); }
+        .lrc-line.passed { opacity: 0.35; filter: blur(2px); }
         
         .lrc-line:hover { opacity: 0.8 !important; filter: blur(0) !important; }
 
         .lrc-word {
             display: inline-block; padding: 0.15em; margin: -0.15em; vertical-align: baseline;
             /* Smooth CSS transition applied to the custom property and shadow */
-            transition: --fill 0.15s ease-out, text-shadow 0.2s ease;
-            /* Wider feathering area for an ultra-smooth wipe */
+            transition: --fill 0.1s linear, text-shadow 0.2s ease;
+            
+            /* Trailing Gradient Technique: Eliminates bleeding white before the word starts.
+               When fill is 0%, the entire gradient sits precisely at the unlit color state */
             background: linear-gradient(90deg, 
                 rgba(255,255,255,1) 0%, 
                 rgba(255,255,255,1) calc(var(--fill, 0%) - 15%), 
-                rgba(255,255,255,0.3) calc(var(--fill, 0%) + 15%), 
-                rgba(255,255,255,0.3) 100%
+                rgba(255,255,255,0.25) var(--fill, 0%), 
+                rgba(255,255,255,0.25) 100%
             );
             -webkit-background-clip: text; color: transparent; background-clip: text;
         }
         /* Dynamic glow based on how filled the word is */
         .lrc-line.active .lrc-word {
-            text-shadow: 0 0 calc((var(--fill, 0%) / 100) * 12px) rgba(255,255,255,0.3);
+            text-shadow: 0 0 calc((var(--fill, 0%) / 120) * 12px) rgba(255,255,255,0.3);
         }
 
         /* ==================================================================
@@ -413,7 +415,7 @@
                 mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 60%, transparent 100%); 
                 -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 60%, transparent 100%); 
             }
-            .lrc-line { font-size: 28px; text-align: left; margin-bottom: 20px; }
+            .lrc-line { font-size: 34px; /* Aumentado en Móvil */ text-align: left; margin-bottom: 20px; }
         }
     </style>
 </head>
@@ -717,7 +719,7 @@
             { title: "TU$$I", artist: "YOVNGCHIMI, Dei V", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776099834/TU_I_YOVNGCHIMI_Dei_V_jldeg7.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776100288/TU_I_with_Dei_V_-_YOVNGCHIMI_Dei_V_dgihne.lrc" },
             { title: "Narcotics", artist: "Dei V, Bryant Myers", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776099845/Narcotics_Dei_V_Bryant_Myers_dhsfml.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1778085705/Narcotics_Dei_V_Bryant_Myers_nsywqu.lrc" },
             { title: "Toa", artist: "Dei V, De La Rose", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776099845/Toa_Dei_V_De_La_Rose_lsmwni.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776100288/Toa_with_De_La_Rose_-_Dei_V_De_La_Rose_icesv8.lrc" },
-            { title: "Diabólica", artist: "Cris MJ, Dei V", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776099792/Diab%C3%B3lica_Cris_MJ_Dei_V_vcifcn.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776100281/Diab%C3%B3lica_-_Cris_MJ_Dei_V_qwg9la.lrc" },
+            { title: "Diabólica", artist: "Cris MJ, Dei V", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776099792/Diab%C3%B3lica_Cris_MJ_Dei_V_vcifcn.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1778348642/Diab%C3%B3lica_Cris_MJ_Dei_V_qdzq9j.lrc" },
             { title: "FLIPA", artist: "JC Reyes, Dei V", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776099817/FLIPA_JC_Reyes_Dei_V_eijnff.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776100285/FLIPA_-_JC_Reyes_Dei_V_rruxjx.lrc" },
             { title: "Duro Ma", artist: "Bryant Myers, Dei V, SAIKO", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776099837/Duro_Ma_Bryant_Myers_Dei_V_SAIKO_hjpzc6.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776100282/Duro_Ma_-_Bryant_Myers_Dei_V_SAIKO_y0uegy.lrc" },
 
@@ -1341,7 +1343,7 @@
                     if(i < nIdx) {
                         l.el.className = 'lrc-line passed';
                         l.words.forEach(w => { 
-                            if(w.el) { w.fill = 100; w.lastRenderedFill = 100; w.el.style.setProperty('--fill', '100%'); } 
+                            if(w.el) { w.fill = 120; w.lastRenderedFill = 120; w.el.style.setProperty('--fill', '120%'); } 
                         });
                     } else if(i > nIdx) {
                         l.el.className = 'lrc-line';
@@ -1360,17 +1362,16 @@
             }
             
             if(nIdx !== -1) {
-                // REDUCED LERP_FACTOR makes the transition visually much smoother, frame by frame.
                 const LERP_FACTOR = 0.15; 
                 parsedLyrics[nIdx].words.forEach(w => {
                     if(!w.el) return;
                     
                     let targetFill = 0;
                     if(cur >= w.time + w.dur) {
-                        targetFill = 100;
+                        targetFill = 120;
                     } else if(cur >= w.time) {
-                        let p = ((cur - w.time) / w.dur) * 100;
-                        targetFill = Math.max(0, Math.min(p, 100));
+                        let p = ((cur - w.time) / w.dur) * 120;
+                        targetFill = Math.max(0, Math.min(p, 120));
                     } else {
                         targetFill = 0;
                     }
@@ -1379,7 +1380,7 @@
                     
                     if(Math.abs(targetFill - w.fill) < 0.1) w.fill = targetFill;
 
-                    if(Math.abs(w.fill - w.lastRenderedFill) > 0.05 || w.fill === 100 || w.fill === 0) {
+                    if(Math.abs(w.fill - w.lastRenderedFill) > 0.05 || w.fill === 120 || w.fill === 0) {
                         w.el.style.setProperty('--fill', `${w.fill}%`);
                         w.lastRenderedFill = w.fill;
                     }
