@@ -5,21 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>VIVETMP Music - Premium Edition</title>
     
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    
     <!-- Icons & Tools -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsmediatags/3.9.5/jsmediatags.min.js"></script>
     
     <style>
         /* ==================================================================
-           PREMIUM DESIGN SYSTEM & VARIABLES
+           APPLE MUSIC DESIGN SYSTEM & VARIABLES (2026 EDITION)
            ================================================================== */
         :root {
-            --bg-deep: #050507;
+            --bg-deep: #000000;
             --bg-surface: #0a0a0e;
             --bg-glass-heavy: rgba(15, 15, 20, 0.75);
             --bg-glass-light: rgba(255, 255, 255, 0.03);
@@ -38,8 +33,9 @@
             --accent-2: #7F49B4;
             --accent-glow: rgba(255, 46, 147, 0.3);
             
-            --font-display: 'Outfit', -apple-system, sans-serif;
-            --font-main: 'Plus Jakarta Sans', -apple-system, sans-serif;
+            /* Official Apple System Fonts Stack */
+            --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            --font-main: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
             
             --ease-fluid: cubic-bezier(0.2, 0.8, 0.2, 1);
             --ease-snappy: cubic-bezier(0.3, 1.2, 0.4, 1);
@@ -50,7 +46,7 @@
             --nav-height-mob: 80px;
         }
 
-        /* Essential for pure CSS dynamic percentage styling */
+        /* Allow hardware-accelerated fluid CSS interpolation for lyrics */
         @property --fill {
             syntax: '<percentage>';
             inherits: true;
@@ -119,7 +115,7 @@
         }
         #sidebar::before { content: ''; position: absolute; inset: 0; border-radius: 28px; background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, transparent 100%); pointer-events: none; }
         
-        .brand { font-family: var(--font-display); font-size: 26px; font-weight: 900; letter-spacing: -0.02em; display: flex; align-items: center; gap: 14px; color: #fff; text-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+        .brand { font-family: var(--font-display); font-size: 26px; font-weight: 800; letter-spacing: -0.02em; display: flex; align-items: center; gap: 14px; color: #fff; text-shadow: 0 4px 20px rgba(0,0,0,0.5); }
         .brand i { font-size: 32px; color: #fff; filter: drop-shadow(0 0 12px var(--accent-glow)); }
         
         .nav-menu { display: flex; flex-direction: column; gap: 8px; position: relative; z-index: 2; }
@@ -198,7 +194,7 @@
         .hero-img.is-circle { border-radius: 50%; }
         .hero-meta { display: flex; flex-direction: column; gap: 10px; padding-bottom: 12px; z-index: 2; }
         .hero-label { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; color: var(--text-secondary); }
-        .hero-title { font-family: var(--font-display); font-size: 80px; font-weight: 900; letter-spacing: -0.04em; line-height: 1; margin-bottom: 8px; }
+        .hero-title { font-family: var(--font-display); font-size: 80px; font-weight: 800; letter-spacing: -0.04em; line-height: 1; margin-bottom: 8px; }
         .hero-subtitle { font-family: var(--font-display); font-size: 24px; font-weight: 700; color: var(--accent-1); }
         .hero-stats { font-size: 15px; font-weight: 500; color: var(--text-secondary); margin-top: 8px; }
         .hero-actions { display: flex; gap: 16px; margin-top: 32px; }
@@ -249,6 +245,7 @@
             position: fixed; inset: 0; z-index: 100; transform: translateY(100%); opacity: 0; visibility: hidden;
             transition: transform 0.8s var(--ease-cinematic), opacity 0.5s; display: flex; flex-direction: column; overflow: hidden;
             background: #000;
+            font-family: var(--font-display);
         }
         #np-fs.active { transform: translateY(0); opacity: 1; visibility: visible; }
 
@@ -304,7 +301,9 @@
         .np-vol-area { display: flex; align-items: center; gap: 20px; width: 100%; color: rgba(255,255,255,0.6); font-size: 20px; }
         .np-vol-area .scrubber-bg { height: 6px; }
 
-        /* ULTRA FLUID LYRICS ENGINE (APPLE MUSIC STYLE 2026) */
+        /* ==================================================================
+           ULTRA FLUID LYRICS ENGINE (APPLE MUSIC STYLE 2026)
+           ================================================================== */
         .np-right-pane { flex: 1; height: 100vh; display: flex; flex-direction: column; position: relative; overflow: hidden; }
         .lyrics-scroll-area {
             height: 100%; overflow-y: auto; overflow-x: hidden; 
@@ -317,33 +316,33 @@
         .lyrics-scroll-area::-webkit-scrollbar { display: none; }
 
         .lrc-line {
-            font-family: var(--font-main); 
-            font-size: 56px; /* Letra gigantesca tipo Apple Desktop */
-            font-weight: 800; line-height: 1.3; 
-            letter-spacing: -0.03em; margin-bottom: 32px; cursor: pointer;
+            font-family: var(--font-display); 
+            font-size: clamp(32px, 4vw, 56px); /* Letra colosal responsive */
+            font-weight: 700; line-height: 1.25; 
+            letter-spacing: -0.04em; margin-bottom: 24px; cursor: pointer;
             transform-origin: left center;
-            /* Smooth cinematic transform */
-            transition: opacity 0.8s var(--ease-cinematic), filter 0.8s var(--ease-cinematic), transform 0.8s var(--ease-cinematic);
-            opacity: 0.25; filter: blur(5px); transform: scale(0.95);
+            /* Smooth cinematic transform exactly like Apple */
+            transition: opacity 0.7s var(--ease-cinematic), filter 0.7s var(--ease-cinematic), transform 0.7s var(--ease-cinematic);
+            opacity: 0.25; filter: blur(3px); transform: scale(0.95);
             word-wrap: break-word; white-space: pre-wrap; color: #fff;
-            padding-right: 40px; /* Room to breathe */
+            padding-right: 40px;
         }
-        .lrc-line.active { opacity: 1; filter: blur(0); transform: scale(1); }
-        .lrc-line.passed { opacity: 0.15; filter: blur(8px); transform: scale(0.95) translateY(-5px); }
+        
+        .lrc-line.active { opacity: 1; filter: blur(0); transform: scale(1) translateY(0); }
+        .lrc-line.passed { opacity: 0.25; filter: blur(2px); transform: scale(0.95) translateY(-12px); }
         .lrc-line:hover { opacity: 0.8; filter: blur(0); }
 
         .lrc-word {
             display: inline-block; vertical-align: baseline;
-            /* SE ELIMINA LA TRANSICIÓN EN --fill PARA EVITAR BLEED BLANCO */
-            transition: text-shadow 0.2s ease;
+            /* SE ELIMINÓ CUALQUIER TRANSICIÓN CSS. Todo se dibuja a 120fps en JS */
             
-            /* Trailing Gradient Technique Apple Music 2026: 
-               Uses strict calc boundaries to ensure exactly 0 light bleeds forward */
+            /* Trailing Gradient Exacto de Apple (0% BLEED GARANTIZADO):
+               Si --fill es 0%, calc(0% - 15%) evita que el blanco se escape. */
             background: linear-gradient(90deg, 
-                #ffffff 0%, 
-                #ffffff calc(var(--fill, 0%) - 5%), 
-                rgba(255, 255, 255, 0.3) calc(var(--fill, 0%) + 1%), 
-                rgba(255, 255, 255, 0.3) 100%
+                rgba(255,255,255,1) 0%, 
+                rgba(255,255,255,1) calc(var(--fill, 0%) - 15%), 
+                rgba(255,255,255,0.3) var(--fill, 0%), 
+                rgba(255,255,255,0.3) 100%
             );
             -webkit-background-clip: text; color: transparent; background-clip: text;
             will-change: --fill;
@@ -614,7 +613,7 @@
 
     <script>
         /* ==================================================================
-           DATA (INTACTO COMO FUE PROPORCIONADO)
+           DATA 
            ================================================================== */
         const imageArtistUrl = "https://res.cloudinary.com/ddcbl694n/image/upload/v1776007400/Yan_Block_u0inwd.jpg";
         const omarCourtzImg = "https://res.cloudinary.com/ddcbl694n/image/upload/v1776097822/Omar_Courtz_k4ozll.jpg";
@@ -1155,7 +1154,7 @@
                     if(i < nIdx) {
                         l.el.className = 'lrc-line passed';
                         l.words.forEach(w => { 
-                            if(w.el) { w.fill = 100; w.lastRenderedFill = 100; w.el.style.setProperty('--fill', '100%'); } 
+                            if(w.el) { w.fill = 115; w.lastRenderedFill = 115; w.el.style.setProperty('--fill', '115%'); } 
                         });
                     } else if(i > nIdx) {
                         l.el.className = 'lrc-line';
@@ -1166,7 +1165,7 @@
                         l.el.className = 'lrc-line active';
                         if(!isUserScrolling) {
                             const sc = document.getElementById('lyrics-scroller');
-                            // Alineación central de Apple Music Desktop
+                            // Alineación central perfecta
                             targetScrollY = l.el.offsetTop - (sc.clientHeight / 2) + (l.el.clientHeight / 2);
                         }
                     }
@@ -1174,18 +1173,18 @@
                 activeLyricIndex = nIdx;
             }
             
-            // Ultra-precise word LERP (Sin CSS transition interference)
+            // LERP EXTREMADAMENTE FLUIDO
             if(nIdx !== -1) {
-                const LERP_FACTOR = 0.4; 
+                const LERP_FACTOR = 0.25; // Controla la suavidad del "barrido"
                 parsedLyrics[nIdx].words.forEach(w => {
                     if(!w.el) return;
                     
                     let targetFill = 0;
                     if(cur >= w.time + w.dur) {
-                        targetFill = 100;
+                        targetFill = 115; // 115% asegura que toda la palabra sea blanca al final
                     } else if(cur >= w.time) {
-                        let p = ((cur - w.time) / w.dur) * 100;
-                        targetFill = Math.max(0, Math.min(p, 100));
+                        let p = ((cur - w.time) / w.dur) * 115;
+                        targetFill = Math.max(0, Math.min(p, 115));
                     } else {
                         targetFill = 0;
                     }
@@ -1194,7 +1193,7 @@
                     
                     if(Math.abs(targetFill - w.fill) < 0.2) w.fill = targetFill;
 
-                    if(Math.abs(w.fill - w.lastRenderedFill) > 0.1 || w.fill === 100 || w.fill === 0) {
+                    if(Math.abs(w.fill - w.lastRenderedFill) > 0.1 || w.fill === 115 || w.fill === 0) {
                         w.el.style.setProperty('--fill', `${w.fill}%`);
                         w.lastRenderedFill = w.fill;
                     }
@@ -1232,13 +1231,13 @@
                 if(isNPOpen) { 
                     updateKaraoke(cur); 
 
-                    // Smooth Scrolling interpolation
+                    // Scroll Cinemático
                     const sc = document.getElementById('lyrics-scroller');
                     if (isUserScrolling) { currentScrollY = sc.scrollTop; } 
                     else {
                         const scrollDiff = targetScrollY - currentScrollY;
                         if (Math.abs(scrollDiff) > 0.5) {
-                            currentScrollY += scrollDiff * 0.08; 
+                            currentScrollY += scrollDiff * 0.05; // 0.05 da un movimiento sumamente sedoso
                             sc.scrollTop = currentScrollY;
                         }
                     }
