@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>VIVETMP Music - Premium Edition</title>
+    <title>VIVETMP Music</title>
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -472,6 +472,479 @@
             .lrc-line { font-size: 34px; text-align: left; margin-bottom: 20px; }
         }
     </style>
+
+<style id="apple-music-desktop-overrides">
+    :root{
+        --bg-deep:#08090c;
+        --bg-surface:#101116;
+        --bg-glass-heavy:rgba(18,18,22,.86);
+        --bg-glass-light:rgba(255,255,255,.04);
+        --bg-glass-hover:rgba(255,255,255,.08);
+        --text-primary:#f5f5f7;
+        --text-secondary:rgba(245,245,247,.66);
+        --text-tertiary:rgba(245,245,247,.38);
+        --border-subtle:rgba(255,255,255,.05);
+        --border-highlight:rgba(255,255,255,.08);
+        --shadow-float:0 24px 60px rgba(0,0,0,.45);
+        --shadow-glow:0 0 40px rgba(255,59,48,.24);
+        --accent-1:#ff3b30;
+        --accent-2:#ff6b5a;
+        --accent-glow:rgba(255,59,48,.28);
+    }
+
+    body{
+        background:
+            radial-gradient(circle at top left, rgba(255,59,48,.10), transparent 28%),
+            radial-gradient(circle at bottom right, rgba(255,255,255,.05), transparent 34%),
+            linear-gradient(180deg, #090a0d 0%, #0b0c10 100%) !important;
+    }
+
+    #ambient-bg{
+        background: radial-gradient(circle at center, rgba(22,24,28,.9) 0%, #08090c 62%, #050608 100%) !important;
+    }
+    .orb{ opacity:.16; filter: blur(120px); }
+    .orb-1{ background: rgba(255,59,48,.72) !important; }
+    .orb-2{ background: rgba(255,255,255,.18) !important; }
+    .orb-3{ background: rgba(120,120,140,.28) !important; }
+
+    #app-wrapper{
+        padding: 16px;
+        gap: 16px;
+        background: transparent !important;
+    }
+
+    #sidebar{
+        width: 282px;
+        margin: 0;
+        padding: 24px 18px;
+        height: calc(100vh - 32px - var(--player-height));
+        border-radius: 28px;
+        background: rgba(18,18,22,.78);
+        border: 1px solid rgba(255,255,255,.06);
+        backdrop-filter: blur(28px) saturate(170%);
+        -webkit-backdrop-filter: blur(28px) saturate(170%);
+        box-shadow: 0 20px 50px rgba(0,0,0,.32);
+    }
+
+    .brand{
+        font-size: 22px;
+        letter-spacing: -0.02em;
+        gap: 12px;
+        margin-bottom: 4px;
+        opacity: .98;
+    }
+    .brand i{
+        font-size: 28px;
+        color: var(--accent-1);
+        filter: none;
+    }
+
+    .nav-menu{ gap: 10px; }
+    .nav-item{
+        padding: 14px 16px;
+        border-radius: 14px;
+        color: var(--text-secondary);
+        background: transparent;
+    }
+    .nav-item i{ font-size: 22px; }
+    .nav-item:hover{
+        transform: translateX(0);
+        background: rgba(255,255,255,.05);
+    }
+    .nav-item.active{
+        background: rgba(255,255,255,.08);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
+    }
+    .nav-item.active i{ color: var(--accent-1); }
+
+    #main-content{
+        height: calc(100vh - 32px);
+        margin: 0;
+        padding: 30px 30px calc(var(--player-height) + 110px);
+        border-radius: 28px;
+        background: rgba(16,17,21,.72);
+        border: 1px solid rgba(255,255,255,.06);
+        backdrop-filter: blur(28px) saturate(160%);
+        -webkit-backdrop-filter: blur(28px) saturate(160%);
+        box-shadow: 0 20px 50px rgba(0,0,0,.30);
+        mask-image: none;
+        -webkit-mask-image: none;
+    }
+
+    .view-section{
+        max-width: 1500px;
+        padding-right: 6px;
+    }
+    .view-section.active{
+        animation: viewEnter .45s cubic-bezier(.2,.8,.2,1) forwards;
+    }
+
+    .page-header{
+        margin-bottom: 32px;
+    }
+    .page-header h1{
+        font-size: 56px;
+        letter-spacing: -0.05em;
+        background: none;
+        color: var(--text-primary);
+    }
+    .page-header p{
+        font-size: 16px;
+        color: var(--text-secondary);
+    }
+
+    .section-title{
+        font-size: 22px;
+        margin: 36px 0 20px;
+        color: var(--text-primary);
+    }
+
+    .search-container{
+        max-width: 560px;
+        margin-top: 24px;
+    }
+    .search-input{
+        height: 56px;
+        padding: 0 20px 0 56px;
+        border-radius: 16px;
+        background: rgba(255,255,255,.05);
+        border: 1px solid rgba(255,255,255,.07);
+        box-shadow: none;
+        font-size: 16px;
+    }
+    .search-input:focus{
+        transform: none;
+        background: rgba(255,255,255,.07);
+        border-color: rgba(255,59,48,.35);
+        box-shadow: 0 0 0 4px rgba(255,59,48,.12);
+    }
+    .search-container i{
+        left: 18px;
+        font-size: 20px;
+    }
+
+    .grid-container{
+        grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+        gap: 24px;
+    }
+
+    .card{
+        gap: 12px;
+    }
+    .card:hover{
+        transform: translateY(-6px);
+    }
+    .card-img-wrapper{
+        border-radius: 18px;
+        box-shadow: 0 14px 30px rgba(0,0,0,.28);
+    }
+    .card-img-wrapper::after{
+        border-radius: 18px;
+    }
+    .card-title{
+        font-size: 16px;
+    }
+    .card-subtitle{
+        color: var(--text-secondary);
+    }
+    .card-badge{
+        background: rgba(0,0,0,.50);
+        border-color: rgba(255,255,255,.10);
+        letter-spacing: .6px;
+    }
+    .card.active .card-title{
+        color: var(--accent-1);
+    }
+
+    .track-list{
+        gap: 6px;
+    }
+    .track-row{
+        padding: 14px 16px;
+        border-radius: 14px;
+    }
+    .track-row:hover,
+    .track-row.active{
+        transform: translateX(0);
+        background: rgba(255,255,255,.06);
+    }
+    .track-title{
+        font-size: 15px;
+    }
+    .track-artist{
+        color: var(--text-secondary);
+    }
+
+    .hero-section{
+        gap: 36px;
+        margin-bottom: 42px;
+    }
+    .hero-img{
+        width: 280px;
+        height: 280px;
+        border-radius: 24px;
+        box-shadow: 0 26px 60px rgba(0,0,0,.45);
+    }
+    .hero-title{
+        font-size: 66px;
+        letter-spacing: -0.05em;
+        background: none;
+        color: var(--text-primary);
+        text-shadow: none;
+    }
+    .hero-subtitle{
+        font-size: 20px;
+        color: var(--accent-1);
+        text-shadow: none;
+    }
+    .hero-label{
+        letter-spacing: 1.4px;
+        color: var(--text-tertiary);
+    }
+    .hero-stats{
+        color: var(--text-secondary);
+    }
+
+    .btn-back{
+        background: rgba(255,255,255,.05);
+        border: 1px solid rgba(255,255,255,.06);
+        border-radius: 999px;
+        padding: 11px 18px;
+    }
+    .btn-back:hover{
+        background: rgba(255,255,255,.09);
+        border-color: rgba(255,255,255,.12);
+        transform: translateX(-4px);
+    }
+    .btn-primary{
+        background: #fff;
+        color: #000;
+        box-shadow: 0 12px 24px rgba(255,255,255,.16);
+    }
+
+    .player-wrapper{
+        bottom: 18px;
+        padding: 0 16px;
+    }
+    .player-pill{
+        max-width: 1360px;
+        height: 82px;
+        padding: 10px 18px;
+        border-radius: 22px;
+        background: rgba(18,18,22,.88);
+        border: 1px solid rgba(255,255,255,.08);
+        backdrop-filter: blur(30px) saturate(170%);
+        -webkit-backdrop-filter: blur(30px) saturate(170%);
+        box-shadow: 0 18px 44px rgba(0,0,0,.34);
+    }
+    .progress-mini-wrapper{ height: 2px; background: rgba(255,255,255,.05); }
+    .progress-mini-fill{
+        background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+    }
+    .player-info{
+        width: 30%;
+        border-radius: 14px;
+    }
+    .player-info:hover{
+        background: rgba(255,255,255,.05);
+    }
+    .player-img{
+        width: 54px;
+        height: 54px;
+        border-radius: 13px;
+    }
+    .player-title{
+        font-size: 15px;
+    }
+    .player-artist{
+        font-size: 12px;
+    }
+    .ai-badge{
+        border-color: rgba(255,59,48,.18);
+    }
+    .btn-play-circle{
+        width: 48px;
+        height: 48px;
+        box-shadow: 0 8px 18px rgba(0,0,0,.22);
+    }
+    .controls-buttons{
+        gap: 28px;
+        font-size: 22px;
+        color: var(--text-secondary);
+    }
+    .scrubber-container{
+        max-width: 500px;
+        color: var(--text-tertiary);
+    }
+    .scrubber-bg{
+        background: rgba(255,255,255,.10);
+    }
+    .scrubber-fill{
+        background: #fff;
+        box-shadow: none;
+    }
+    .vol-slider{
+        background: rgba(255,255,255,.10);
+    }
+
+    #np-fs{
+        background:
+            radial-gradient(circle at top left, rgba(255,255,255,.05), transparent 26%),
+            linear-gradient(180deg, rgba(10,11,14,.92) 0%, rgba(8,9,12,.98) 100%);
+    }
+    .np-gradient{
+        background: linear-gradient(180deg, rgba(0,0,0,.08) 0%, rgba(0,0,0,.58) 100%);
+    }
+    .btn-collapse{
+        top: 18px;
+        width: 44px;
+        height: 6px;
+        background: rgba(255,255,255,.25);
+    }
+
+    .np-layout{
+        max-width: 1440px;
+        padding: 56px 52px 44px;
+        gap: 56px;
+    }
+    .np-left-pane{
+        width: clamp(250px, 25vw, 360px);
+    }
+    .np-art-wrap{
+        border-radius: 20px;
+        box-shadow: 0 30px 70px rgba(0,0,0,.50);
+    }
+    .np-center-pane{
+        width: clamp(240px, 20vw, 330px);
+    }
+    .np-track-info{
+        margin-bottom: 16px;
+    }
+    .np-track-title{
+        font-size: 20px;
+        letter-spacing: -0.03em;
+    }
+    .np-track-artist{
+        color: var(--text-secondary);
+        font-size: 14px;
+    }
+    .np-main-controls{
+        margin: 24px 0 20px;
+        color: var(--text-secondary);
+    }
+    .np-main-controls i:hover{
+        filter: none;
+        transform: scale(1.12);
+    }
+    .np-play-massive{
+        width: 52px;
+        height: 52px;
+        background: #fff;
+        color: #000;
+    }
+    .np-vol-area{
+        color: var(--text-secondary);
+    }
+    .np-right-pane{
+        flex: 1.35;
+    }
+    .lyrics-scroll-area{
+        padding: 38vh 0 44vh 0;
+    }
+    .lrc-line{
+        font-size: 40px;
+        line-height: 1.38;
+        letter-spacing: -0.03em;
+        margin-bottom: 24px;
+        opacity: .24;
+        filter: blur(2px);
+    }
+    .lrc-line.active{
+        opacity: 1;
+    }
+    .lrc-word{
+        background: linear-gradient(90deg,
+            rgba(255,255,255,1) 0%,
+            rgba(255,255,255,1) var(--fill, 0%),
+            rgba(255,255,255,.26) var(--fill, 0%),
+            rgba(255,255,255,.26) 100%
+        );
+    }
+
+    @media (max-width: 1024px){
+        #app-wrapper{
+            padding: 0;
+        }
+        #main-content{
+            margin: 0;
+            border-radius: 0;
+            padding: 28px 6vw calc(var(--player-height) + var(--nav-height-mob) + 20px);
+        }
+        .page-header h1{
+            font-size: 44px;
+        }
+        .hero-title{
+            font-size: 46px;
+        }
+        .hero-img{
+            width: 240px;
+            height: 240px;
+        }
+        .player-wrapper{
+            bottom: calc(var(--nav-height-mob) + 12px);
+        }
+        .player-pill{
+            height: 74px;
+            border-radius: 18px;
+        }
+        .player-controls,
+        .player-actions{
+            display: none;
+        }
+        .player-info{
+            width: 76%;
+        }
+        .mobile-play-btn{
+            display: flex;
+            background: #fff;
+            color: #000;
+        }
+        #np-fs{
+            overflow-y: hidden;
+        }
+        .np-layout{
+            flex-direction: column;
+            padding: 52px 5vw 18px;
+            gap: 18px;
+        }
+        .np-left-pane,
+        .np-center-pane,
+        .np-right-pane{
+            width: 100%;
+        }
+        .np-left-pane{
+            align-items: flex-start;
+        }
+        .np-art-wrap{
+            width: 100%;
+            max-width: 280px;
+        }
+        .np-vis-container{
+            display: none;
+        }
+        .np-right-pane{
+            min-height: 0;
+        }
+        .lyrics-scroll-area{
+            padding: 8vh 0 28vh 0;
+        }
+        .lrc-line{
+            font-size: 32px;
+            line-height: 1.32;
+        }
+    }
+</style>
+
 </head>
 <body>
 
