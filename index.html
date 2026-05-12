@@ -278,7 +278,7 @@
         }
         @keyframes breatheBg { 0% { transform: scale(1) translate(0, 0); } 100% { transform: scale(1.1) translate(-2%, 2%); } }
         .np-bg-blur.active { opacity: 1; }
-        .np-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.55); z-index: 1; } /* Darken to match Apple style */
+        .np-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.55); z-index: 1; }
         .np-grain { position: absolute; inset: 0; z-index: 2; opacity: 0.04; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none;}
 
         /* Collapse Button */
@@ -320,7 +320,7 @@
         .np-scrubber-group .scrubber-bg { height: 4px; border-radius: 2px; background: rgba(255,255,255,0.2); }
         .np-scrubber-group .scrubber-bg:hover { height: 6px; }
         .np-scrubber-group .scrubber-fill { border-radius: 2px; box-shadow: none; transition: width 0.1s linear;}
-        .np-scrubber-group .scrubber-fill::after { display: none; } /* Match clean lines */
+        .np-scrubber-group .scrubber-fill::after { display: none; }
 
         .np-track-info-center { display: flex; flex-direction: column; gap: 4px; align-items: center; text-align: center; }
         .np-track-title { font-size: 18px; font-weight: 700; color: #fff; letter-spacing: -0.01em;}
@@ -359,7 +359,7 @@
             margin-bottom: 32px; 
             cursor: pointer;
             transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
-            opacity: 0.3; /* Gris difuminado */
+            opacity: 0.3; /* Gris difuminado base */
             transform: scale(0.98); transform-origin: left center;
             word-wrap: break-word; white-space: normal; 
             color: #fff; text-align: left;
@@ -370,11 +370,12 @@
 
         .lrc-word {
             display: inline; padding: 0; margin: 0; vertical-align: baseline;
+            /* AQUÍ ESTÁ LA MAGIA RESTAURADA: Gradiente empujando hacia atrás (-15%) con opacidad 0.25 (Gris) */
             background: linear-gradient(90deg,
                 rgba(255, 255, 255, 1) 0%,
-                rgba(255, 255, 255, 1) calc(var(--fill, 0%) - 5%),
-                rgba(255, 255, 255, 0.3) var(--fill, 0%),
-                rgba(255, 255, 255, 0.3) 100%
+                rgba(255, 255, 255, 1) calc(var(--fill, 0%) - 15%),
+                rgba(255, 255, 255, 0.25) var(--fill, 0%),
+                rgba(255, 255, 255, 0.25) 100%
             );
             -webkit-background-clip: text;
             background-clip: text;
@@ -440,7 +441,7 @@
             .np-track-title { font-size: 22px; white-space: normal; line-height: 1.2; }
             .np-track-artist { font-size: 18px; }
             
-            /* En móvil los controles sí deben verse */
+            /* En móvil los controles sí deben verse siempre */
             .hidden-controls { position: relative; opacity: 1; pointer-events: auto; bottom: 0; margin-top: 0; gap: 40px;}
             
             .np-right-pane { width: 100%; max-width: 400px; flex: none; height: 70vh; position: relative; margin-top: 10px; }
@@ -759,7 +760,7 @@
             // ROA
             { title: "ME GUSTAS CC", artist: "ROA", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776106828/ME_GUSTAS_CC_ROA_yswplu.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776107157/ME_GUSTAS_CC_-_ROA_qhajjh.lrc" },
             { title: "ETA - RMX", artist: "ROA, De La Rose, Luar La L, Yan Block, Omar Courtz", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776106904/ETA_-_RMX_ROA_De_La_Rose_Luar_La_L_Yan_Block_Omar_Courtz_dxp8eb.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776107156/ETA_-_RMX_-_ROA_De_La_Rose_Luar_La_L_Yan_Block_Omar_Courtz_vauxdo.lrc" },
-            { title: "FANTASÍA", artist: "ROA", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776106831/FANTAS%C3%8DA_ROA_nmlho5.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1778612973/SpotiDown.App_-_FANTAS%C3%8DA_-_ROA_q36etm.ttml" },
+            { title: "FANTASÍA", artist: "ROA", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776106831/FANTAS%C3%8DA_ROA_nmlho5.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1778613850/FANTAS%C3%8DA_spotdown.org_nu49lq.ttml" },
             { title: "PPC", artist: "ROA, Hades66", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776106883/PPC_ROA_Hades66_nd3bcm.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1778591865/PPC_spotdown.org_lb26or.ttml" },
             { title: "TATE QUIETA", artist: "ROA, CDobleta", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776106896/TATE_QUIETA_ROA_CDobleta_nnb2ei.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1777306897/TATE_QUIETA_ROA_CDobleta_1_ftfhpm.lrc" },
             { title: "Falsas Promesas Remix", artist: "Midnvght, ROA, Mora, Eladio Carrion, Clarent, Finesse", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776106856/Falsas_Promesas_Remix_Midnvght_ROA_Mora_Eladio_Carrion_Clarent_Finesse_nbxewu.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1777323972/Falsas_Promesas_Remix_Midnvght_ROA_Mora_Eladio_Carrion_Clarent_Finesse_1_x8lut0.lrc" },
@@ -1475,7 +1476,7 @@
                     if(i < nIdx) {
                         l.el.className = 'lrc-line passed';
                         l.words.forEach(w => { 
-                            if(w.el) { w.fill = 110; w.lastRenderedFill = 110; w.el.style.setProperty('--fill', '110%'); } 
+                            if(w.el) { w.fill = 115; w.lastRenderedFill = 115; w.el.style.setProperty('--fill', '115%'); } 
                         });
                     } else if(i > nIdx) {
                         l.el.className = 'lrc-line';
@@ -1499,19 +1500,20 @@
                     
                     let targetFill = 0;
                     if(cur >= w.time + w.dur) {
-                        targetFill = 110;
+                        targetFill = 115;
                     } else if(cur >= w.time) {
-                        targetFill = w.dur > 0 ? ((cur - w.time) / w.dur) * 110 : 110;
-                        targetFill = Math.max(0, Math.min(targetFill, 110));
+                        targetFill = w.dur > 0 ? ((cur - w.time) / w.dur) * 115 : 115;
+                        targetFill = Math.max(0, Math.min(targetFill, 115));
                     } else {
                         targetFill = 0;
                     }
 
+                    // AQUI VOLVIMOS A LA MATEMÁTICA Y LERP SUAVE EXACTAMENTE COMO TE GUSTA
                     w.fill += (targetFill - w.fill) * 0.6;
                     
                     if(Math.abs(w.fill - targetFill) < 0.5) w.fill = targetFill;
 
-                    if(Math.abs(w.fill - w.lastRenderedFill) > 0.5 || w.fill === 110 || w.fill === 0) {
+                    if(Math.abs(w.fill - w.lastRenderedFill) > 0.5 || w.fill === 115 || w.fill === 0) {
                         w.el.style.setProperty('--fill', `${w.fill.toFixed(1)}%`);
                         w.lastRenderedFill = w.fill;
                     }
