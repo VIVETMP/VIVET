@@ -366,7 +366,7 @@
 
         .lrc-word {
             display: inline; padding: 0; margin: 0; vertical-align: baseline;
-            transition: text-shadow 0.3s ease;
+            /* La luz avanza sin interpolacion CSS pesada, Javascript dictará el progreso fluido a 60fps */
             background: linear-gradient(90deg,
                 rgba(255,255,255,1)    0%,
                 rgba(255,255,255,1)    var(--fill, 0%),
@@ -786,7 +786,7 @@
             { title: "PPC", artist: "ROA, Hades66", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776106883/PPC_ROA_Hades66_nd3bcm.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1778255758/PPC_ROA_Hades66_hgofws.lrc" },
             { title: "TATE QUIETA", artist: "ROA, CDobleta", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776106896/TATE_QUIETA_ROA_CDobleta_nnb2ei.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1777306897/TATE_QUIETA_ROA_CDobleta_1_ftfhpm.lrc" },
             { title: "Falsas Promesas Remix", artist: "Midnvght, ROA, Mora, Eladio Carrion, Clarent, Finesse", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776106856/Falsas_Promesas_Remix_Midnvght_ROA_Mora_Eladio_Carrion_Clarent_Finesse_nbxewu.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1777323972/Falsas_Promesas_Remix_Midnvght_ROA_Mora_Eladio_Carrion_Clarent_Finesse_1_x8lut0.lrc" },
-            { title: "PASIÓN Y SEXO", artist: "Kris R., ROA", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776106845/PASI%C3%93N_Y_SEXO_Kris_R._ROA_kgtazm.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1778347044/PASI%C3%93N_Y_SEXO_Kris_R._ROA_1_qiwagg.lrc" },
+            { title: "PASIÓN Y SEXO", artist: "Kris R., ROA", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776106845/PASI%C3%93N_Y_SEXO_Kris_R._ROA_kgtazm.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1778590325/PASI%C3%93N_Y_SEXO_spotdown.org_mxlcy8.ttml" },
             { title: "Pieza Exhibición", artist: "Luar La L, ROA, Blessd", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776106886/Pieza_Exhibici%C3%B3n_Luar_La_L_ROA_Blessd_ptt1ly.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1777574058/Pieza_Exhibici%C3%B3n_Luar_La_L_ROA_Blessd_yesedd.lrc" }
         ];
 
@@ -1320,6 +1320,7 @@
 
         function parseTTMLTime(str) {
             if(!str) return 0;
+            str = str.replace(/s$/, '').trim(); 
             const parts = str.split(':');
             let sec = 0;
             if(parts.length === 3) {
@@ -1329,7 +1330,7 @@
             } else {
                 sec = parseFloat(str.replace(',', '.'));
             }
-            return sec;
+            return sec || 0;
         }
 
         async function fetchLyrics(url) {
@@ -1365,38 +1366,43 @@
                         const pEnd = endAttr ? parseTTMLTime(endAttr) : 0;
                         
                         let words =[];
-                        const spans = p.getElementsByTagName('span');
                         
-                        if (spans.length > 0) {
-                            let fullText = "";
-                            for(let j=0; j<spans.length; j++) {
-                                const span = spans[j];
-                                const sBegin = parseTTMLTime(span.getAttribute('begin') || beginAttr);
-                                const sEndAttr = span.getAttribute('end');
+                        // Recorremos los nodos hijos para preservar exactamente los espacios y separaciones reales
+                        Array.from(p.childNodes).forEach(node => {
+                            if (node.nodeType === Node.TEXT_NODE) {
+                                let val = node.nodeValue;
+                                if(val) {
+                                    // Convierte múltiples espacios y saltos de línea XML en un solo espacio limpio
+                                    val = val.replace(/[\r\n\t]+/g, ' ').replace(/\s{2,}/g, ' ');
+                                    if(val !== '' && words.length > 0) {
+                                        words[words.length - 1].text += val;
+                                    }
+                                }
+                            } else if (node.nodeName.toLowerCase() === 'span') {
+                                const sBeginAttr = node.getAttribute('begin');
+                                const sBegin = sBeginAttr ? parseTTMLTime(sBeginAttr) : pBegin;
+                                
+                                const sEndAttr = node.getAttribute('end');
                                 const sEnd = sEndAttr ? parseTTMLTime(sEndAttr) : 0;
-                                const wText = span.textContent || "";
-                                fullText += wText;
-                                words.push({ 
-                                    time: sBegin, 
-                                    dur: sEnd > sBegin ? sEnd - sBegin : 0, 
-                                    text: wText, el: null, fill: 0, lastRenderedFill: 0 
-                                });
+                                
+                                const dur = sEnd > sBegin ? sEnd - sBegin : 0;
+                                words.push({ time: sBegin, dur: dur, text: node.textContent || "", el: null, fill: 0, lastRenderedFill: 0 });
                             }
-                            const cleanLine = fullText.trim();
-                            if (cleanLine === "" || cleanLine === "♪") {
-                                words = [{ time: pBegin, dur: pEnd > pBegin ? pEnd - pBegin : 0, text: "•••", el: null, fill: 0, lastRenderedFill: 0 }];
-                            }
-                            parsedLyrics.push({ time: pBegin, text: cleanLine || "•••", words, el: null, dur: pEnd > pBegin ? pEnd - pBegin : 0 });
-                        } else {
+                        });
+
+                        // Fallback por si la etiqueta <p> no tiene <span> internos
+                        if (words.length === 0) {
                             const rawText = p.textContent || "";
                             const cleanLine = rawText.trim();
                             const pDur = pEnd > pBegin ? pEnd - pBegin : 0;
-                            if (cleanLine === "" || cleanLine === "♪") {
-                                words.push({ time: pBegin, dur: pDur, text: "•••", el: null, fill: 0, lastRenderedFill: 0 });
-                            } else {
-                                words.push({ time: pBegin, dur: pDur, text: rawText, el: null, fill: 0, lastRenderedFill: 0 });
+                            if (cleanLine) {
+                                words.push({ time: pBegin, dur: pDur, text: cleanLine, el: null, fill: 0, lastRenderedFill: 0 });
                             }
-                            parsedLyrics.push({ time: pBegin, text: cleanLine || "•••", words, el: null, dur: pDur });
+                        }
+                        
+                        if(words.length > 0) {
+                            const cleanLine = words.map(w => w.text).join('').trim();
+                            parsedLyrics.push({ time: pBegin, text: cleanLine, words, el: null, dur: pEnd > pBegin ? pEnd - pBegin : 0 });
                         }
                     }
 
@@ -1426,28 +1432,53 @@
                 parsedLyrics.forEach((l, i) => {
                     let nTime = (i < parsedLyrics.length - 1) ? parsedLyrics[i+1].time : l.time + 8;
                     if(!l.dur) l.dur = Math.max(0, nTime - l.time);
+                    
                     for(let j=0; j<l.words.length; j++) {
-                        if(!l.words[j].dur) {
-                            if(j < l.words.length - 1) l.words[j].dur = Math.max(0.1, l.words[j+1].time - l.words[j].time);
-                            else l.words[j].dur = Math.min(2.5, Math.max(0.1, nTime - l.words[j].time));
+                        if(!l.words[j].dur || l.words[j].dur <= 0) {
+                            if(j < l.words.length - 1) l.words[j].dur = Math.max(0.05, l.words[j+1].time - l.words[j].time);
+                            else l.words[j].dur = Math.min(2.5, Math.max(0.05, nTime - l.words[j].time));
                         }
                     }
                 });
 
                 container.innerHTML = ""; if(!parsedLyrics.length) throw new Error();
                 
-                // RENDERIZADO VISUAL
+                // RENDERIZADO VISUAL DEL DOM
                 parsedLyrics.forEach(l => {
                     const div = document.createElement('div'); div.className = 'lrc-line';
                     div.onclick = () => { activeAudio.currentTime = l.time; activeAudio.play(); setPlayIcon(true); };
                     
                     l.words.forEach(w => {
-                        let t = w.text; let sp = ""; 
-                        // Separar espacios en blanco del final para no iluminar el espacio vacío.
-                        const sm = t.match(/(\s+)$/);
-                        if(sm) { sp = sm[1]; t = t.replace(/\s+$/, ''); }
-                        if(t) { const s = document.createElement('span'); s.className = 'lrc-word'; s.textContent = t; w.el = s; div.appendChild(s); }
-                        if(sp) div.appendChild(document.createTextNode(sp));
+                        let t = w.text;
+                        let leadSpace = "";
+                        let trailSpace = "";
+                        
+                        // Extraemos de forma exacta los espacios del comienzo y el final para aislarlos de la luz
+                        const leadMatch = t.match(/^(\s+)/);
+                        if(leadMatch) {
+                            leadSpace = leadMatch[1];
+                            t = t.substring(leadSpace.length);
+                        }
+                        
+                        const trailMatch = t.match(/(\s+)$/);
+                        if(trailMatch) {
+                            trailSpace = trailMatch[1];
+                            t = t.substring(0, t.length - trailSpace.length);
+                        }
+                        
+                        // El espacio al principio se pone como un elemento nativo (evita verse afectado por el fill de color)
+                        if(leadSpace) div.appendChild(document.createTextNode(leadSpace));
+                        
+                        if(t) { 
+                            const s = document.createElement('span'); 
+                            s.className = 'lrc-word'; 
+                            s.textContent = t; 
+                            w.el = s; 
+                            div.appendChild(s); 
+                        }
+                        
+                        // El espacio al final nativo de HTML
+                        if(trailSpace) div.appendChild(document.createTextNode(trailSpace));
                     });
                     
                     l.el = div; container.appendChild(div);
@@ -1503,20 +1534,18 @@
                     if(cur >= w.time + w.dur) {
                         targetFill = 120;
                     } else if(cur >= w.time) {
-                        let p = ((cur - w.time) / w.dur) * 120;
-                        targetFill = Math.max(0, Math.min(p, 120));
+                        // Sincronización milimétrica exacta: se quita el interpolador LERP con retardo 
+                        // y el pintado se amarra 100% matemáticamente al tiempo delta actual de la canción
+                        targetFill = ((cur - w.time) / w.dur) * 120;
+                        targetFill = Math.max(0, Math.min(targetFill, 120));
                     } else {
                         targetFill = 0;
                     }
 
-                    const diff = targetFill - w.fill;
-                    const absDiff = Math.abs(diff);
-                    const LERP = absDiff > 30 ? 0.25 : absDiff > 8 ? 0.18 : 0.12;
-                    w.fill += diff * LERP;
-                    
-                    if(absDiff < 0.08) w.fill = targetFill;
+                    w.fill = targetFill;
 
-                    if(Math.abs(w.fill - w.lastRenderedFill) > 0.3 || w.fill === 120 || w.fill === 0) {
+                    // Optimización de renderizado para evitar repintado excesivo del navegador
+                    if(Math.abs(w.fill - w.lastRenderedFill) > 0.5 || w.fill === 120 || w.fill === 0) {
                         w.el.style.setProperty('--fill', `${w.fill.toFixed(2)}%`);
                         w.lastRenderedFill = w.fill;
                     }
@@ -1566,6 +1595,7 @@
             if(activeAudio.duration && !isNaN(activeAudio.duration)) {
                 let cur = activeAudio.currentTime; 
                 
+                // Sistema de extrapolación a 60fps para mantener sincronía entre las actualizaciones del archivo de audio nativo (~250ms)
                 const now = performance.now();
                 if (cur !== lastAudioTime) { lastAudioTime = cur; lastTimeUpdate = now; }
                 if (!activeAudio.paused) {
