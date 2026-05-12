@@ -243,7 +243,7 @@
         .btn-play-circle i { margin-left: 3px; }
         .btn-play-circle:hover { transform: scale(1.1); box-shadow: 0 15px 30px rgba(255,255,255,0.4); }
 
-        .scrubber-container { display: flex; align-items: center; gap: 16px; width: 100%; font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.6); font-variant-numeric: tabular-nums; }
+        .scrubber-container { display: flex; align-items: center; gap: 16px; width: 100%; max-width: 480px; font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.6); font-variant-numeric: tabular-nums; }
         .scrubber-bg { flex: 1; height: 6px; background: rgba(255,255,255,0.15); border-radius: 4px; cursor: pointer; position: relative; transition: height 0.3s var(--ease-snappy); overflow: visible; }
         .scrubber-bg:hover { height: 10px; background: rgba(255,255,255,0.25); }
         .scrubber-fill { width: 0%; height: 100%; background: #fff; border-radius: 4px; transition: width 0.1s linear; position: relative; box-shadow: 0 0 12px rgba(255,255,255,0.6); }
@@ -772,7 +772,10 @@
             { title: "TU$$I", artist: "YOVNGCHIMI, Dei V", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776099834/TU_I_YOVNGCHIMI_Dei_V_jldeg7.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776100288/TU_I_with_Dei_V_-_YOVNGCHIMI_Dei_V_dgihne.lrc" },
             { title: "Narcotics", artist: "Dei V, Bryant Myers", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776099845/Narcotics_Dei_V_Bryant_Myers_dhsfml.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1778085705/Narcotics_Dei_V_Bryant_Myers_nsywqu.lrc" },
             { title: "Toa", artist: "Dei V, De La Rose", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776099845/Toa_Dei_V_De_La_Rose_lsmwni.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776100288/Toa_with_De_La_Rose_-_Dei_V_De_La_Rose_icesv8.lrc" },
-            { title: "Diabólica", artist: "Cris MJ, Dei V", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776099792/Diab%C3%B3lica_Cris_MJ_Dei_V_vcifcn.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1778348642/Diab%C3%B3lica_Cris_MJ_Dei_V_qdzq9j.lrc" },
+            
+            // CANCION CON LETRA TTML ("Diabólica")
+            { title: "Diabólica", artist: "Cris MJ, Dei V", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776099792/Diab%C3%B3lica_Cris_MJ_Dei_V_vcifcn.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1778588993/Diab%C3%B3lica_spotdown.org_1_nv5fn2.ttml" },
+            
             { title: "FLIPA", artist: "JC Reyes, Dei V", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776099817/FLIPA_JC_Reyes_Dei_V_eijnff.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776100285/FLIPA_-_JC_Reyes_Dei_V_rruxjx.lrc" },
             { title: "Duro Ma", artist: "Bryant Myers, Dei V, SAIKO", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776099837/Duro_Ma_Bryant_Myers_Dei_V_SAIKO_hjpzc6.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776100282/Duro_Ma_-_Bryant_Myers_Dei_V_SAIKO_y0uegy.lrc" },
 
@@ -1305,7 +1308,7 @@
         }
 
         /* ==================================================================
-           LYRICS ENGINE (SMOOTH INTERPOLATION & CINEMATIC SCROLL)
+           LYRICS ENGINE (HYBRID LRC / TTML PARSER)
            ================================================================== */
         let parsedLyrics =[];
         let activeLyricIndex = -1;
@@ -1314,6 +1317,20 @@
         let scrollTimeout;
         let targetScrollY = 0;
         let currentScrollY = 0;
+
+        function parseTTMLTime(str) {
+            if(!str) return 0;
+            const parts = str.split(':');
+            let sec = 0;
+            if(parts.length === 3) {
+                sec = parseInt(parts[0], 10) * 3600 + parseInt(parts[1], 10) * 60 + parseFloat(parts[2].replace(',', '.'));
+            } else if(parts.length === 2) {
+                sec = parseInt(parts[0], 10) * 60 + parseFloat(parts[1].replace(',', '.'));
+            } else {
+                sec = parseFloat(str.replace(',', '.'));
+            }
+            return sec;
+        }
 
         async function fetchLyrics(url) {
             const container = document.getElementById('lyrics-content');
@@ -1328,42 +1345,106 @@
             container.innerHTML = "<p style='color:rgba(255,255,255,0.3); font-size:32px; font-weight:800; text-align:center;'>Loading...</p>";
             
             try {
-                const res = await fetch(url); const text = await res.text(); const lines = text.split('\n');
+                const res = await fetch(url); 
+                const text = await res.text(); 
                 
-                lines.forEach(line => {
-                    const lineMatch = line.match(/\[(\d{2,}):(\d{2}(?:\.\d{1,3})?)\](.*)/);
-                    if(lineMatch) {
-                        const time = (parseInt(lineMatch[1])*60) + parseFloat(lineMatch[2]);
-                        const raw = lineMatch[3].replace('\r', '');
+                // --- DETECCIÓN DE FORMATO (TTML vs LRC) ---
+                if (url.endsWith('.ttml') || text.includes('http://www.w3.org/ns/ttml') || text.includes('<?xml')) {
+                    
+                    const parser = new DOMParser();
+                    const xmlDoc = parser.parseFromString(text, "text/xml");
+                    const pTags = xmlDoc.getElementsByTagName('p');
+                    
+                    for(let i=0; i<pTags.length; i++) {
+                        const p = pTags[i];
+                        const beginAttr = p.getAttribute('begin');
+                        if (!beginAttr) continue;
                         
-                        let words =[]; let wm; const wReg = /<(\d{2,}):(\d{2}(?:\.\d{1,3})?)>([^<]*)/g; let hasW = false;
-                        while((wm = wReg.exec(raw)) !== null) { hasW = true; words.push({ time: (parseInt(wm[1])*60)+parseFloat(wm[2]), text: wm[3], el: null, dur: 0, fill: 0, lastRenderedFill: 0 }); }
+                        const pBegin = parseTTMLTime(beginAttr);
+                        const endAttr = p.getAttribute('end');
+                        const pEnd = endAttr ? parseTTMLTime(endAttr) : 0;
                         
-                        const clean = raw.replace(/<\d{2,}:\d{2}(?:\.\d{1,3})?>/g, '').trim();
-                        if(clean === "" || clean === "♪") words =[{ time, text: "•••", el: null, dur: 0, fill: 0, lastRenderedFill: 0 }];
-                        else if(!hasW) words =[{ time, text: clean, el: null, dur: 0, fill: 0, lastRenderedFill: 0 }];
+                        let words =[];
+                        const spans = p.getElementsByTagName('span');
                         
-                        parsedLyrics.push({ time, text: clean, words, el: null, dur: 0 });
+                        if (spans.length > 0) {
+                            let fullText = "";
+                            for(let j=0; j<spans.length; j++) {
+                                const span = spans[j];
+                                const sBegin = parseTTMLTime(span.getAttribute('begin') || beginAttr);
+                                const sEndAttr = span.getAttribute('end');
+                                const sEnd = sEndAttr ? parseTTMLTime(sEndAttr) : 0;
+                                const wText = span.textContent || "";
+                                fullText += wText;
+                                words.push({ 
+                                    time: sBegin, 
+                                    dur: sEnd > sBegin ? sEnd - sBegin : 0, 
+                                    text: wText, el: null, fill: 0, lastRenderedFill: 0 
+                                });
+                            }
+                            const cleanLine = fullText.trim();
+                            if (cleanLine === "" || cleanLine === "♪") {
+                                words = [{ time: pBegin, dur: pEnd > pBegin ? pEnd - pBegin : 0, text: "•••", el: null, fill: 0, lastRenderedFill: 0 }];
+                            }
+                            parsedLyrics.push({ time: pBegin, text: cleanLine || "•••", words, el: null, dur: pEnd > pBegin ? pEnd - pBegin : 0 });
+                        } else {
+                            const rawText = p.textContent || "";
+                            const cleanLine = rawText.trim();
+                            const pDur = pEnd > pBegin ? pEnd - pBegin : 0;
+                            if (cleanLine === "" || cleanLine === "♪") {
+                                words.push({ time: pBegin, dur: pDur, text: "•••", el: null, fill: 0, lastRenderedFill: 0 });
+                            } else {
+                                words.push({ time: pBegin, dur: pDur, text: rawText, el: null, fill: 0, lastRenderedFill: 0 });
+                            }
+                            parsedLyrics.push({ time: pBegin, text: cleanLine || "•••", words, el: null, dur: pDur });
+                        }
                     }
-                });
+
+                } else {
+                    
+                    // --- LRC CLÁSICO ---
+                    const lines = text.split('\n');
+                    lines.forEach(line => {
+                        const lineMatch = line.match(/\[(\d{2,}):(\d{2}(?:\.\d{1,3})?)\](.*)/);
+                        if(lineMatch) {
+                            const time = (parseInt(lineMatch[1])*60) + parseFloat(lineMatch[2]);
+                            const raw = lineMatch[3].replace('\r', '');
+                            
+                            let words =[]; let wm; const wReg = /<(\d{2,}):(\d{2}(?:\.\d{1,3})?)>([^<]*)/g; let hasW = false;
+                            while((wm = wReg.exec(raw)) !== null) { hasW = true; words.push({ time: (parseInt(wm[1])*60)+parseFloat(wm[2]), text: wm[3], el: null, dur: 0, fill: 0, lastRenderedFill: 0 }); }
+                            
+                            const clean = raw.replace(/<\d{2,}:\d{2}(?:\.\d{1,3})?>/g, '').trim();
+                            if(clean === "" || clean === "♪") words =[{ time, text: "•••", el: null, dur: 0, fill: 0, lastRenderedFill: 0 }];
+                            else if(!hasW) words =[{ time, text: clean, el: null, dur: 0, fill: 0, lastRenderedFill: 0 }];
+                            
+                            parsedLyrics.push({ time, text: clean, words, el: null, dur: 0 });
+                        }
+                    });
+                }
                 
+                // Fallback global de cálculo de duraciones por si faltan en TTML o es un LRC.
                 parsedLyrics.forEach((l, i) => {
                     let nTime = (i < parsedLyrics.length - 1) ? parsedLyrics[i+1].time : l.time + 8;
-                    l.dur = Math.max(0, nTime - l.time);
+                    if(!l.dur) l.dur = Math.max(0, nTime - l.time);
                     for(let j=0; j<l.words.length; j++) {
-                        if(j < l.words.length - 1) l.words[j].dur = Math.max(0.1, l.words[j+1].time - l.words[j].time);
-                        else l.words[j].dur = Math.min(2.5, Math.max(0.1, nTime - l.words[j].time));
+                        if(!l.words[j].dur) {
+                            if(j < l.words.length - 1) l.words[j].dur = Math.max(0.1, l.words[j+1].time - l.words[j].time);
+                            else l.words[j].dur = Math.min(2.5, Math.max(0.1, nTime - l.words[j].time));
+                        }
                     }
                 });
 
                 container.innerHTML = ""; if(!parsedLyrics.length) throw new Error();
                 
+                // RENDERIZADO VISUAL
                 parsedLyrics.forEach(l => {
                     const div = document.createElement('div'); div.className = 'lrc-line';
                     div.onclick = () => { activeAudio.currentTime = l.time; activeAudio.play(); setPlayIcon(true); };
                     
                     l.words.forEach(w => {
-                        let t = w.text; let sp = ""; const sm = t.match(/(\s+)$/);
+                        let t = w.text; let sp = ""; 
+                        // Separar espacios en blanco del final para no iluminar el espacio vacío.
+                        const sm = t.match(/(\s+)$/);
                         if(sm) { sp = sm[1]; t = t.replace(/\s+$/, ''); }
                         if(t) { const s = document.createElement('span'); s.className = 'lrc-word'; s.textContent = t; w.el = s; div.appendChild(s); }
                         if(sp) div.appendChild(document.createTextNode(sp));
