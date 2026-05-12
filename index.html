@@ -38,8 +38,8 @@
             --accent-2: #7F49B4;
             --accent-glow: rgba(255, 46, 147, 0.3);
             
-            --font-display: 'Outfit', -apple-system, sans-serif;
-            --font-main: 'Plus Jakarta Sans', -apple-system, sans-serif;
+            --font-display: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Outfit', sans-serif;
+            --font-main: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Plus Jakarta Sans', sans-serif;
             
             --ease-fluid: cubic-bezier(0.2, 0.8, 0.2, 1);
             --ease-snappy: cubic-bezier(0.3, 1.2, 0.4, 1);
@@ -197,7 +197,7 @@
         .track-artist { font-size: 14px; font-weight: 500; color: var(--text-secondary); }
         .track-row.active .track-title { color: var(--accent-1); text-shadow: 0 0 10px var(--accent-glow); }
 
-        .btn-back { display: inline-flex; align-items: center; gap: 10px; padding: 12px 24px; border-radius: 100px; background: var(--bg-glass-light); border: 1px solid var(--border-subtle); color: var(--text-primary); font-size: 15px; font-weight: 600; cursor: pointer; margin-bottom: 48px; transition: all 0.4s var(--ease-snappy); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); width: fit-content; }
+        .btn-back { display: inline-flex; align-items: center; gap: 10px; padding: 12px 24px; border-radius: 100px; background: var(--bg-glass-light); border: 1px solid var(--border-subtle); color: var(--text-primary); font-size: 15px; font-weight: 600; cursor: margin-bottom: 48px; transition: all 0.4s var(--ease-snappy); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); width: fit-content; }
         .btn-back:hover { background: rgba(255,255,255,0.1); transform: translateX(-8px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); border-color: rgba(255,255,255,0.2); }
 
         .hero-section { display: flex; align-items: flex-end; gap: 56px; margin-bottom: 64px; position: relative; }
@@ -260,7 +260,7 @@
         .btn-fullscreen:hover { background: rgba(255,255,255,0.15); transform: scale(1.1); color: #fff; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
 
         /* ==================================================================
-           FULLSCREEN NOW PLAYING (PREMIUM REDESIGN)
+           FULLSCREEN NOW PLAYING (APPLE MUSIC REPLICA)
            ================================================================== */
         #np-fs {
             position: fixed; inset: 0; z-index: 100; transform: translateY(100%); opacity: 0; visibility: hidden;
@@ -272,78 +272,97 @@
         .np-bg-wrap { position: fixed; inset: -15%; width: 130%; height: 130%; z-index: 0; pointer-events: none; }
         .np-bg-blur { 
             position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; 
-            filter: blur(80px) saturate(200%) brightness(0.4); opacity: 0; 
+            filter: blur(120px) saturate(300%); opacity: 0; /* Mayor blur y saturación, como en la captura */
             transition: opacity 2s ease-in-out; will-change: opacity, transform; 
             animation: breatheBg 20s infinite alternate ease-in-out;
         }
-        @keyframes breatheBg { 0% { transform: scale(1); } 100% { transform: scale(1.15); } }
+        @keyframes breatheBg { 0% { transform: scale(1); } 100% { transform: scale(1.1); } }
         .np-bg-blur.active { opacity: 1; }
-        .np-gradient { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.85) 100%); z-index: 1; }
+        /* Overlay oscuro uniforme para legibilidad de letras blancas */
+        .np-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.45); z-index: 1; }
         .np-grain { position: absolute; inset: 0; z-index: 2; opacity: 0.05; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none;}
 
-        /* Desktop Layout: 2 Columns */
+        /* Desktop specific Close Button - Top Left */
+        @media (min-width: 1025px) {
+            .btn-collapse {
+                position: absolute; top: 40px; left: 40px; width: 44px; height: 44px;
+                background: transparent; border: none; cursor: pointer; z-index: 10;
+                display: flex; align-items: center; justify-content: center; font-size: 32px; 
+                color: rgba(255,255,255,0.6); transition: all 0.2s var(--ease-snappy); outline: none;
+            }
+            .btn-collapse:hover { color: #fff; transform: scale(1.1); }
+            .btn-collapse i { display: block; }
+            .btn-collapse-mob { display: none; }
+        }
+
+        /* Desktop Layout: 2 Columns perfectly spaced */
         .np-layout { 
             position: relative; z-index: 3; display: flex; width: 100%; height: 100%; 
-            max-width: 1400px; padding: 100px 56px 60px; gap: 80px; margin: 0 auto; align-items: center; 
+            max-width: 1400px; padding: 80px 60px; gap: 80px; margin: 0 auto; align-items: center; justify-content: center;
         }
         
         .np-left-pane {
-            flex: 0 0 420px; display: flex; flex-direction: column; justify-content: center; gap: 40px;
+            flex: 0 0 420px; display: flex; flex-direction: column; justify-content: center; gap: 32px;
         }
 
         .np-art-wrap { 
-            width: 100%; aspect-ratio: 1; border-radius: 20px; 
-            box-shadow: 0 30px 60px rgba(0,0,0,0.6), 0 0 60px var(--accent-glow); 
-            overflow: hidden; transition: transform 0.6s var(--ease-cinematic), box-shadow 0.6s; 
-            border: 1px solid rgba(255,255,255,0.06); background: #111;
+            width: 100%; aspect-ratio: 1; border-radius: 12px; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5); 
+            overflow: hidden; transition: transform 0.6s var(--ease-cinematic); 
+            background: #111;
         }
-        .np-art-wrap:hover { transform: scale(1.02); box-shadow: 0 40px 90px rgba(0,0,0,0.8), 0 0 100px var(--accent-glow); }
+        .np-art-wrap:hover { transform: scale(1.02); }
         .np-art { width: 100%; height: 100%; object-fit: cover; }
 
-        .np-controls-wrap { display: flex; flex-direction: column; gap: 20px; }
+        .np-controls-wrap { display: flex; flex-direction: column; gap: 28px; }
 
-        .np-track-info { display: flex; flex-direction: column; gap: 4px; }
+        .np-info-row { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+        .np-track-info { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
         .np-track-title {
-            font-family: var(--font-display); font-size: 28px; font-weight: 800;
-            letter-spacing: -0.02em; display: flex; align-items: center; gap: 10px;
+            font-family: var(--font-display); font-size: 20px; font-weight: 700;
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-            color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            color: #fff;
         }
         .np-track-artist {
-            font-size: 18px; color: rgba(255,255,255,0.6); font-weight: 600;
+            font-size: 16px; color: rgba(255,255,255,0.7); font-weight: 500;
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
+        .np-actions { display: flex; gap: 12px; }
+        .btn-icon-circle { 
+            width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.15); 
+            display: flex; align-items: center; justify-content: center; color: #fff; border: none; cursor: pointer; transition: 0.2s; 
+        }
+        .btn-icon-circle:hover { background: rgba(255,255,255,0.3); transform: scale(1.1); }
 
-        .np-vis-container { width: 100%; height: 32px; margin-top: -10px; margin-bottom: 10px; opacity: 0.5; filter: drop-shadow(0 0 8px var(--accent-glow)); }
-        #canvas-vis { width: 100%; height: 100%; }
+        .np-scrubber-group { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+        .np-scrubber-group .scrubber-bg { height: 4px; border-radius: 2px; background: rgba(255,255,255,0.2); }
+        .np-scrubber-group .scrubber-bg:hover { height: 6px; }
+        .np-scrubber-group .scrubber-fill { border-radius: 2px; box-shadow: none; }
+        .np-scrubber-group .scrubber-fill::after { width: 12px; height: 12px; right: -6px; transform: translateY(-50%) scale(1); box-shadow: none; }
+        .np-time-row { display: flex; justify-content: space-between; font-size: 11px; font-weight: 500; color: rgba(255,255,255,0.6); font-variant-numeric: tabular-nums; }
 
+        /* Solid play controls, no circle background */
         .np-main-controls {
             display: flex; align-items: center; justify-content: space-between;
-            width: 100%; color: rgba(255,255,255,0.8); margin: 10px 0; gap: 20px;
+            width: 100%; color: #fff; margin: 0; padding: 0 10px;
         }
-        .np-main-controls i { cursor: pointer; transition: 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); }
-        .np-main-controls i:hover { color: #fff; transform: scale(1.2); filter: drop-shadow(0 0 10px rgba(255,255,255,0.4));}
-        
-        .np-play-massive {
-            width: 72px; height: 72px; background: #fff; color: #000;
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-size: 32px; cursor: pointer; transition: 0.4s cubic-bezier(0.3, 1.2, 0.4, 1);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-        }
-        .np-play-massive i { margin-left: 4px; font-size: 32px; }
-        .np-play-massive:hover { transform: scale(1.1); box-shadow: 0 15px 40px rgba(255,255,255,0.4), 0 0 40px var(--accent-glow); }
-        .np-play-massive:active { transform: scale(0.95); }
+        .np-main-controls i { cursor: pointer; transition: 0.2s; }
+        .np-main-controls i:hover { color: #fff; transform: scale(1.1); opacity: 1 !important;}
+        .np-main-controls i:active { transform: scale(0.95); }
 
         .np-vol-area {
-            display: flex; align-items: center; gap: 16px; width: 100%;
-            color: rgba(255,255,255,0.5); font-size: 20px; margin-top: 10px;
+            display: flex; align-items: center; gap: 12px; width: 100%;
+            color: rgba(255,255,255,0.6); font-size: 14px; margin-top: 4px;
         }
-        .np-vol-area i { cursor: pointer; transition: 0.3s; }
-        .np-vol-area i:hover { color: #fff; transform: scale(1.1); }
+        .np-vol-area .scrubber-bg { height: 4px; border-radius: 2px; background: rgba(255,255,255,0.2); }
+        .np-vol-area .scrubber-bg:hover { height: 6px; }
+        .np-vol-area .scrubber-fill { border-radius: 2px; box-shadow: none; }
+        .np-vol-area .scrubber-fill::after { display: none; }
 
         /* Lyrics Engine UI */
         .np-right-pane { 
             flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: center; position: relative; 
+            max-width: 650px;
             mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,1) 15%, rgba(0,0,0,1) 85%, transparent 100%);
             -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,1) 15%, rgba(0,0,0,1) 85%, transparent 100%);
         }
@@ -355,33 +374,28 @@
 
         .lrc-line {
             font-family: var(--font-display); 
-            font-size: 42px; 
-            font-weight: 800; 
-            line-height: 1.45; /* Mejora: Mas espacio vertical para que no se vean pegados */
-            letter-spacing: 0.01em; /* Mejora: Separar un poco las letras para prevenir "pegado" */
-            margin-bottom: 40px; /* Mejora: Separación clara entre líneas */
+            font-size: 38px; 
+            font-weight: 700; 
+            line-height: 1.3; 
+            margin-bottom: 32px; 
             cursor: pointer;
-            transition: all 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
-            opacity: 0.25; filter: blur(3px); transform: scale(0.95); transform-origin: left center;
-            word-wrap: break-word; white-space: normal; /* Normal respeta espacios físicos del DOM sin romper el padding */
+            transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+            opacity: 0.45; transform: scale(0.96); transform-origin: left center;
+            word-wrap: break-word; white-space: normal; 
             color: #fff; text-align: left;
         }
-        .lrc-line.active { opacity: 1; filter: drop-shadow(0 0 10px rgba(255,255,255,0.15)); transform: scale(1); }
-        .lrc-line.passed { opacity: 0.15; filter: blur(4px); transform: scale(0.95) translateY(-10px); }
-        .lrc-line:hover { opacity: 0.8 !important; filter: blur(0) !important; transform: scale(1) !important; }
+        .lrc-line.active { opacity: 1; transform: scale(1); filter: drop-shadow(0 2px 10px rgba(0,0,0,0.2)); }
+        .lrc-line.passed { opacity: 0.45; transform: scale(0.96); }
+        .lrc-line:hover { opacity: 0.8 !important; transform: scale(1) !important; }
 
         .lrc-word {
             display: inline; padding: 0; margin: 0; vertical-align: baseline;
-            /* 
-               Mejora: El gradiente ahora empuja hacia *atrás* desde var(--fill). 
-               Nunca ilumina hacia adelante, garantizando que NUNCA se ponga blanco antes de tiempo.
-               Anima hasta el 115% para asegurar un blanco completo al final.
-            */
+            /* La luz avanza difuminada hacia ATRÁS, la próxima palabra es gris claro (~50% opacidad) */
             background: linear-gradient(90deg,
                 rgba(255, 255, 255, 1) 0%,
                 rgba(255, 255, 255, 1) calc(var(--fill, 0%) - 15%),
-                rgba(255, 255, 255, 0.25) var(--fill, 0%),
-                rgba(255, 255, 255, 0.25) 100%
+                rgba(255, 255, 255, 0.45) var(--fill, 0%),
+                rgba(255, 255, 255, 0.45) 100%
             );
             -webkit-background-clip: text;
             background-clip: text;
@@ -389,19 +403,14 @@
             will-change: background-position;
         }
 
-        /* Desktop specific Collapse Button */
-        @media (min-width: 1025px) {
-            .btn-collapse {
-                position: absolute; top: 40px; left: 56px; width: 56px; height: 56px;
-                background: rgba(255,255,255,0.05); border-radius: 50%; 
-                border: 1px solid rgba(255,255,255,0.1); cursor: pointer; z-index: 10;
-                display: flex; align-items: center; justify-content: center; font-size: 28px; color: #fff;
-                backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-                transition: all 0.4s var(--ease-snappy); outline: none;
-            }
-            .btn-collapse:hover { background: rgba(255,255,255,0.15); transform: scale(1.1); border-color: rgba(255,255,255,0.2); }
-            .btn-collapse i { display: block; }
+        .np-bottom-right-actions {
+            position: absolute; bottom: 40px; right: 40px; z-index: 10;
         }
+        .btn-icon-square {
+            width: 44px; height: 44px; border-radius: 8px; background: rgba(255,255,255,0.15); 
+            display: flex; align-items: center; justify-content: center; color: #fff; font-size: 20px; border: none; cursor: pointer; transition: 0.2s;
+        }
+        .btn-icon-square:hover { background: rgba(255,255,255,0.3); transform: scale(1.05); }
 
         /* ==================================================================
            MOBILE RESPONSIVE
@@ -442,14 +451,13 @@
             /* Fullscreen NP Mobile */
             #np-fs { overflow-y: auto; overflow-x: hidden; } 
             
-            .btn-collapse { 
+            .btn-collapse { display: none; }
+            .btn-collapse-mob { 
                 position: absolute; top: 16px; left: 50%; transform: translateX(-50%);
                 width: 48px; height: 6px; border-radius: 3px;
                 background: rgba(255,255,255,0.4); border: none; cursor: pointer; z-index: 10;
                 display: block; transition: 0.3s;
             }
-            .btn-collapse:hover { background: rgba(255,255,255,0.6); }
-            .btn-collapse i { display: none; }
             
             .np-layout { 
                 flex-direction: column; padding: 60px 8vw 40px; gap: 32px; 
@@ -457,22 +465,20 @@
             }
             .np-left-pane { max-width: 100%; width: 100%; gap: 24px; flex: none; align-items: center; }
             
-            .np-art-wrap { width: 100%; max-width: 360px; aspect-ratio: 1; border-radius: 16px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+            .np-art-wrap { width: 100%; max-width: 360px; aspect-ratio: 1; border-radius: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
             .np-controls-wrap { width: 100%; max-width: 400px; gap: 24px; }
             
-            .np-track-info { align-items: flex-start; margin-bottom: 8px; }
-            .np-track-title { font-size: 26px; white-space: normal; line-height: 1.2; }
+            .np-info-row { align-items: center; }
+            .np-track-title { font-size: 24px; white-space: normal; line-height: 1.2; }
             .np-track-artist { font-size: 18px; }
             
-            .np-vis-container { display: none; }
-            
-            .np-main-controls { font-size: 28px; justify-content: space-between; margin: 8px 0; }
-            .np-play-massive { width: 68px; height: 68px; font-size: 28px; }
+            .np-main-controls { justify-content: space-between; margin: 8px 0; padding: 0; }
             
             .np-vol-area { display: none; }
+            .np-bottom-right-actions { display: none; }
             
-            .np-right-pane { width: 100%; max-width: 400px; flex: none; height: 70vh; position: relative; margin-top: 20px; }
-            .lyrics-scroll-area { padding: 10vh 0 30vh 0; mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 80%, transparent 100%); -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 80%, transparent 100%); }
+            .np-right-pane { width: 100%; max-width: 400px; flex: none; height: 70vh; position: relative; margin-top: 10px; }
+            .lyrics-scroll-area { padding: 10vh 0 30vh 0; }
             .lrc-line { font-size: 32px; margin-bottom: 24px; }
         }
     </style>
@@ -502,7 +508,7 @@
 
         <!-- MAIN SCROLLING CONTENT -->
         <main id="main-content">
-            
+            <!-- (CONTENIDO INTACTO) -->
             <!-- SONGS VIEW -->
             <section id="view-songs" class="view-section active">
                 <div class="page-header">
@@ -583,7 +589,6 @@
                 <h2 class="section-title">Essential Singles</h2>
                 <div class="grid-container" id="grid-artist-singles"></div>
             </section>
-
         </main>
     </div>
 
@@ -633,16 +638,17 @@
         </div>
     </div>
 
-    <!-- FULLSCREEN NOW PLAYING OVERLAY (REDESIGNED) -->
+    <!-- FULLSCREEN NOW PLAYING OVERLAY (APPLE MUSIC REPLICA) -->
     <div id="np-fs">
         <div class="np-bg-wrap">
             <img src="" class="np-bg-blur active" id="np-bg-1" crossorigin="anonymous">
             <img src="" class="np-bg-blur" id="np-bg-2" crossorigin="anonymous">
-            <div class="np-gradient"></div>
+            <div class="np-overlay"></div>
             <div class="np-grain"></div>
         </div>
         
-        <button class="btn-collapse" onclick="toggleNP()"><i class="ph-bold ph-caret-down"></i></button>
+        <button class="btn-collapse" onclick="toggleNP()"><i class="ph ph-x"></i></button>
+        <button class="btn-collapse-mob" onclick="toggleNP()"></button>
 
         <div class="np-layout">
             <!-- Left Pane: Info & Controls -->
@@ -650,31 +656,37 @@
                 <div class="np-art-wrap"><img src="" id="np-img-large" class="np-art" crossorigin="anonymous"></div>
                 
                 <div class="np-controls-wrap">
-                    <div class="np-track-info">
-                        <h2 class="np-track-title"><span id="np-title-large">Not Playing</span> <div class="ai-badge" id="badge-fs" style="font-size:11px; padding:3px 9px;">AutoMix</div></h2>
-                        <p class="np-track-artist" id="np-artist-large">VIVETMP</p>
+                    
+                    <div class="np-info-row">
+                        <div class="np-track-info">
+                            <h2 class="np-track-title"><span id="np-title-large">Not Playing</span></h2>
+                            <p class="np-track-artist" id="np-artist-large">VIVETMP</p>
+                        </div>
+                        <div class="np-actions">
+                            <button class="btn-icon-circle"><i class="ph-fill ph-star"></i></button>
+                            <button class="btn-icon-circle"><i class="ph-bold ph-dots-three"></i></button>
+                        </div>
                     </div>
 
-                    <div class="np-vis-container"><canvas id="canvas-vis"></canvas></div>
-
-                    <div class="scrubber-container" style="max-width: 100%; font-size: 14px; color: rgba(255,255,255,0.6);">
-                        <span id="time-curr-np">0:00</span>
-                        <div class="scrubber-bg" style="height:6px;" onclick="seek(event, this)"><div class="scrubber-fill" id="bar-fill-np"></div></div>
-                        <span id="time-tot-np">-0:00</span>
+                    <div class="np-scrubber-group">
+                        <div class="scrubber-bg" onclick="seek(event, this)"><div class="scrubber-fill" id="bar-fill-np"></div></div>
+                        <div class="np-time-row">
+                            <span id="time-curr-np">0:00</span>
+                            <span id="time-tot-np">-0:00</span>
+                        </div>
                     </div>
 
                     <div class="np-main-controls">
-                        <i class="ph-fill ph-shuffle" style="font-size: 24px;"></i>
+                        <i class="ph-bold ph-shuffle" style="font-size: 20px; color: rgba(255,255,255,0.5);"></i>
                         <i class="ph-fill ph-skip-back" onclick="prevSong()" style="font-size: 32px;"></i>
-                        <div class="np-play-massive" onclick="togglePlay()"><i class="ph-fill ph-play" id="icon-play-np"></i></div>
+                        <i class="ph-fill ph-play" id="icon-play-np" onclick="togglePlay()" style="font-size: 42px;"></i>
                         <i class="ph-fill ph-skip-forward" onclick="nextSong()" style="font-size: 32px;"></i>
-                        <i class="ph-bold ph-repeat" style="font-size: 24px;"></i>
+                        <i class="ph-bold ph-repeat" style="font-size: 20px; color: rgba(255,255,255,0.5);"></i>
                     </div>
                     
                     <div class="np-vol-area">
-                        <i class="ph-fill ph-speaker-low" onclick="setVolumeLevel(0)"></i>
-                        <div class="scrubber-bg" style="height:6px;" onclick="changeVolume(event, this)"><div class="scrubber-fill" id="vol-fill-np" style="width:75%;"></div></div>
-                        <i class="ph-fill ph-speaker-high" onclick="setVolumeLevel(1)"></i>
+                        <i class="ph-fill ph-speaker-low"></i>
+                        <div class="scrubber-bg" onclick="changeVolume(event, this)"><div class="scrubber-fill" id="vol-fill-np" style="width:75%;"></div></div>
                     </div>
                 </div>
             </div>
@@ -685,6 +697,10 @@
                     <div id="lyrics-content"></div>
                 </div>
             </div>
+        </div>
+        
+        <div class="np-bottom-right-actions">
+            <button class="btn-icon-square"><i class="ph-fill ph-quotes"></i></button>
         </div>
     </div>
 
@@ -1359,7 +1375,6 @@
                 const res = await fetch(url); 
                 const text = await res.text(); 
                 
-                // --- DETECCIÓN DE FORMATO (TTML vs LRC) ---
                 if (url.endsWith('.ttml') || text.includes('http://www.w3.org/ns/ttml') || text.includes('<?xml')) {
                     
                     const parser = new DOMParser();
@@ -1377,7 +1392,6 @@
                         
                         let words =[];
                         
-                        // Extraer cuidadosamente los espacios físicos generados en el DOM XML (previene palabras "pegadas")
                         Array.from(p.childNodes).forEach(node => {
                             if (node.nodeType === Node.TEXT_NODE) {
                                 let val = node.nodeValue;
@@ -1400,7 +1414,6 @@
                             }
                         });
 
-                        // Fallback si la etiqueta P no tiene spans
                         if (words.length === 0) {
                             const rawText = p.textContent || "";
                             const cleanLine = rawText.trim();
@@ -1418,7 +1431,6 @@
 
                 } else {
                     
-                    // --- LRC CLÁSICO ---
                     const lines = text.split('\n');
                     lines.forEach(line => {
                         const lineMatch = line.match(/\[(\d{2,}):(\d{2}(?:\.\d{1,3})?)\](.*)/);
@@ -1438,7 +1450,6 @@
                     });
                 }
                 
-                // Fallback preventivo de duraciones faltantes para evitar animaciones infinitas/vacías
                 parsedLyrics.forEach((l, i) => {
                     let nTime = (i < parsedLyrics.length - 1) ? parsedLyrics[i+1].time : l.time + 8;
                     if(!l.dur) l.dur = Math.max(0, nTime - l.time);
@@ -1453,7 +1464,6 @@
 
                 container.innerHTML = ""; if(!parsedLyrics.length) throw new Error();
                 
-                // RENDERIZADO VISUAL
                 parsedLyrics.forEach(l => {
                     const div = document.createElement('div'); div.className = 'lrc-line';
                     div.onclick = () => { activeAudio.currentTime = l.time; activeAudio.play(); setPlayIcon(true); };
@@ -1463,8 +1473,6 @@
                         let leadingSpace = false;
                         let trailingSpace = false;
                         
-                        // Separar espacios iniciales y finales para forzarlos en nodos HTML nativos
-                        // Esto soluciona de raíz que las palabras se vean juntas ("pegadas")
                         if (/^\s+/.test(t)) {
                             leadingSpace = true;
                             t = t.trimStart();
@@ -1474,7 +1482,6 @@
                             t = t.trimEnd();
                         }
                         
-                        // Los espacios ahora viven fuera del <span> iluminado, dándoles oxígeno a las palabras
                         if(leadingSpace) div.appendChild(document.createTextNode(" "));
                         
                         if(t) { 
@@ -1541,15 +1548,12 @@
                     if(cur >= w.time + w.dur) {
                         targetFill = 115;
                     } else if(cur >= w.time) {
-                        // Sincronía matemática exacta: El porcentaje cruza de 0 a 115% de manera continua
-                        // (Llega hasta el 115% para asegurar que la cola difuminada del gradiente pinte todo de blanco al final)
                         targetFill = w.dur > 0 ? ((cur - w.time) / w.dur) * 115 : 115;
                         targetFill = Math.max(0, Math.min(targetFill, 115));
                     } else {
                         targetFill = 0;
                     }
 
-                    // Lerp Ultra-rápido para absorber cualquier temblor en los frames sin generar "lag" visual.
                     w.fill += (targetFill - w.fill) * 0.6;
                     
                     if(Math.abs(w.fill - targetFill) < 0.5) w.fill = targetFill;
@@ -1562,33 +1566,7 @@
             }
         }
 
-        /* ==================================================================
-           MAIN LOOP & VISUALIZER
-           ================================================================== */
         function fmt(s) { return `${Math.floor(s/60)}:${Math.floor(s%60).toString().padStart(2,'0')}`; }
-
-        function drawVisualizer() {
-            if(!analyser || !isNPOpen) return;
-            const cvs = document.getElementById('canvas-vis'); if(!cvs) return;
-            const ctx = cvs.getContext('2d');
-            
-            if(cvs.width !== cvs.clientWidth) { cvs.width = cvs.clientWidth; cvs.height = cvs.clientHeight; }
-            
-            const bl = analyser.frequencyBinCount;
-            const data = new Uint8Array(bl);
-            analyser.getByteFrequencyData(data);
-            
-            ctx.clearRect(0,0,cvs.width,cvs.height);
-            const bw = (cvs.width / bl) * 1.5;
-            let x = 0;
-            ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--accent-1').trim() || '#fff';
-            
-            for(let i=0; i<bl; i++) {
-                let bh = (data[i]/255) * cvs.height; if(bh<4) bh=4;
-                ctx.beginPath(); ctx.roundRect(x, cvs.height - bh, bw - 2, bh, 3); ctx.fill();
-                x += bw;
-            }
-        }
 
         function checkAutoMix() {
             if(activeAudio.duration && !isNaN(activeAudio.duration)) {
@@ -1604,9 +1582,6 @@
             if(activeAudio.duration && !isNaN(activeAudio.duration)) {
                 let cur = activeAudio.currentTime; 
                 
-                // Sistema de extrapolación de tiempo a 60fps.
-                // Previene los "saltos bruscos" haciendo que el tiempo suba uniformemente 
-                // incluso entre los eventos lentos nativos del reproductor de audio del navegador.
                 const now = performance.now();
                 if (cur !== lastAudioTime) { 
                     lastAudioTime = cur; 
@@ -1633,14 +1608,13 @@
                 
                 if(isNPOpen) { 
                     updateKaraoke(cur); 
-                    drawVisualizer(); 
 
                     const sc = document.getElementById('lyrics-scroller');
                     if (isUserScrolling) { currentScrollY = sc.scrollTop; } 
                     else {
                         const scrollDiff = targetScrollY - currentScrollY;
                         if (Math.abs(scrollDiff) > 0.5) {
-                            currentScrollY += scrollDiff * 0.1; // Scrolling suave
+                            currentScrollY += scrollDiff * 0.1;
                             sc.scrollTop = currentScrollY;
                         }
                     }
