@@ -358,7 +358,7 @@
             letter-spacing: -0.01em; 
             margin-bottom: 32px; 
             cursor: pointer;
-            transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+            transition: all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
             opacity: 0.3; /* Gris difuminado base */
             transform: scale(0.98); transform-origin: left center;
             word-wrap: break-word; white-space: normal; 
@@ -370,7 +370,7 @@
 
         .lrc-word {
             display: inline; padding: 0; margin: 0; vertical-align: baseline;
-            /* LUZ DIFUMINADA AL 15% HACIA ATRÁS: El secreto para que no se ponga blanco antes de tiempo */
+            /* LUZ DIFUMINADA AL 15% HACIA ATRÁS */
             background: linear-gradient(90deg,
                 rgba(255, 255, 255, 1) 0%,
                 rgba(255, 255, 255, 1) calc(var(--fill, 0%) - 15%),
@@ -1288,7 +1288,7 @@
         }
 
         /* ==================================================================
-           LYRICS ENGINE (HYBRID LRC / TTML PARSER) ULTRA PRECISO
+           LYRICS ENGINE (HYBRID LRC / TTML PARSER)
            ================================================================== */
         let parsedLyrics =[];
         let activeLyricIndex = -1;
@@ -1300,7 +1300,7 @@
 
         function parseTTMLTime(str) {
             if(!str) return 0;
-            str = str.replace(/s$/, '').trim(); 
+            str = str.toString().replace(/s$/, '').trim(); 
             const parts = str.split(':');
             let sec = 0;
             if(parts.length === 3) {
@@ -1337,7 +1337,7 @@
                     
                     for(let i=0; i<pTags.length; i++) {
                         const p = pTags[i];
-                        const beginAttr = p.getAttribute('begin');
+                        const beginAttr = p.getAttribute('begin') || p.getAttribute('t');
                         if (!beginAttr) continue;
                         
                         const pBegin = parseTTMLTime(beginAttr);
@@ -1357,13 +1357,18 @@
                                         words.push({ time: pBegin, dur: 0, text: val, el: null, fill: 0, lastRenderedFill: 0 });
                                     }
                                 }
-                            } else if (node.nodeName.toLowerCase() === 'span') {
-                                const sBeginAttr = node.getAttribute('begin');
+                            } else if (node.nodeType === Node.ELEMENT_NODE && (node.nodeName.toLowerCase() === 'span' || node.nodeName.toLowerCase() === 's')) {
+                                const sBeginAttr = node.getAttribute('begin') || node.getAttribute('t');
                                 const sBegin = sBeginAttr ? parseTTMLTime(sBeginAttr) : pBegin;
-                                const sEndAttr = node.getAttribute('end');
-                                const sEnd = sEndAttr ? parseTTMLTime(sEndAttr) : 0;
-                                const dur = sEnd > sBegin ? sEnd - sBegin : 0;
                                 
+                                const sEndAttr = node.getAttribute('end');
+                                const sDurAttr = node.getAttribute('d');
+                                
+                                let dur = 0;
+                                if(sEndAttr) dur = parseTTMLTime(sEndAttr) - sBegin;
+                                else if(sDurAttr) dur = parseTTMLTime(sDurAttr);
+                                else dur = 0;
+
                                 words.push({ time: sBegin, dur: dur, text: node.textContent || "", el: null, fill: 0, lastRenderedFill: 0 });
                             }
                         });
@@ -1502,16 +1507,18 @@
                     if(cur >= w.time + w.dur) {
                         targetFill = 115;
                     } else if(cur >= w.time) {
-                        // Sincronización Matemática Directa. Sin suavizados artificiales que causen retraso (Lag).
                         targetFill = w.dur > 0 ? ((cur - w.time) / w.dur) * 115 : 115;
                         targetFill = Math.max(0, Math.min(targetFill, 115));
                     } else {
                         targetFill = 0;
                     }
 
-                    w.fill = targetFill;
+                    // LERP de 60fps ultra suave para evitar que la luz tiemble o salte
+                    w.fill += (targetFill - w.fill) * 0.15;
+                    
+                    if(Math.abs(w.fill - targetFill) < 0.1) w.fill = targetFill;
 
-                    if(Math.abs(w.fill - w.lastRenderedFill) > 0.5 || w.fill === 115 || w.fill === 0) {
+                    if(Math.abs(w.fill - w.lastRenderedFill) > 0.1 || w.fill === 115 || w.fill === 0) {
                         w.el.style.setProperty('--fill', `${w.fill.toFixed(1)}%`);
                         w.lastRenderedFill = w.fill;
                     }
@@ -1535,6 +1542,7 @@
             if(activeAudio.duration && !isNaN(activeAudio.duration)) {
                 let cur = activeAudio.currentTime; 
                 
+                // Extrapolación robusta de 60fps que previene saltos hacia atrás
                 const now = performance.now();
                 if (cur !== lastAudioTime) { 
                     lastAudioTime = cur; 
@@ -1560,8 +1568,8 @@
                 checkAutoMix();
                 
                 if(isNPOpen) { 
-                    // Anticipación visual de 150ms: Evita que el cerebro humano perciba un retraso en la pantalla
-                    const visualTime = cur + 0.15;
+                    // Anticipación visual de 100ms para contrarrestar el LERP y que golpee al mismo tiempo que la voz
+                    const visualTime = cur + 0.1;
                     updateKaraoke(visualTime); 
 
                     const sc = document.getElementById('lyrics-scroller');
@@ -1569,7 +1577,8 @@
                     else {
                         const scrollDiff = targetScrollY - currentScrollY;
                         if (Math.abs(scrollDiff) > 0.5) {
-                            currentScrollY += scrollDiff * 0.1;
+                            // Fricción bajada a 0.05 para deslizamiento vertical perfecto y suave
+                            currentScrollY += scrollDiff * 0.05;
                             sc.scrollTop = currentScrollY;
                         }
                     }
