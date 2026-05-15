@@ -44,10 +44,18 @@
             --ease-fluid: cubic-bezier(0.2, 0.8, 0.2, 1);
             --ease-snappy: cubic-bezier(0.3, 1.2, 0.4, 1);
             --ease-cinematic: cubic-bezier(0.25, 1, 0.5, 1);
+            /* Spring curve for natural physics */
+            --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.2); 
             
             --sidebar-width: 260px;
             --player-height: 88px;
             --nav-height-mob: 80px;
+        }
+
+        @property --fill {
+            syntax: '<percentage>';
+            inherits: true;
+            initial-value: 0%;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -89,7 +97,7 @@
         @keyframes drift3 { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(10%, -10%) scale(1.2); } }
 
         /* ==================================================================
-           APP LAYOUT (BACKGROUND UI)
+           APP LAYOUT
            ================================================================== */
         #app-wrapper {
             display: flex; width: 100vw; height: 100vh; position: relative; z-index: 10;
@@ -162,7 +170,7 @@
         .card-play-btn i { margin-left: 4px; }
         .card:hover .card-play-btn { opacity: 1; transform: translateY(0) scale(1); }
         .card.active .card-play-btn { opacity: 1; transform: translateY(0) scale(1); background: var(--accent-1); border-color: var(--accent-1); color: #fff; }
-
+        
         .card-info { padding: 0 4px; }
         .card-title { font-family: var(--font-display); font-size: 17px; font-weight: 700; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-primary); margin-bottom: 4px; }
         .card-subtitle { font-size: 14px; font-weight: 500; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -178,17 +186,17 @@
         .track-artist { font-size: 14px; font-weight: 500; color: var(--text-secondary); }
         .track-row.active .track-title { color: var(--accent-1); text-shadow: 0 0 10px var(--accent-glow); }
 
+        .btn-back { display: inline-flex; align-items: center; gap: 10px; padding: 12px 24px; border-radius: 100px; background: var(--bg-glass-light); border: 1px solid var(--border-subtle); color: var(--text-primary); font-size: 15px; font-weight: 600; cursor: pointer; margin-bottom: 48px; transition: all 0.4s var(--ease-snappy); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); width: fit-content; }
+        .btn-back:hover { background: rgba(255,255,255,0.1); transform: translateX(-8px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); border-color: rgba(255,255,255,0.2); }
+
         .hero-section { display: flex; align-items: flex-end; gap: 56px; margin-bottom: 64px; position: relative; }
         .hero-img { width: 300px; height: 300px; border-radius: 24px; object-fit: cover; box-shadow: 0 40px 80px rgba(0,0,0,0.8); border: 1px solid rgba(255,255,255,0.1); transition: transform 0.5s var(--ease-snappy); }
-        .hero-img:hover { transform: scale(1.02); }
         .hero-meta { display: flex; flex-direction: column; gap: 10px; padding-bottom: 12px; z-index: 2; }
         .hero-label { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; color: var(--text-secondary); }
-        .hero-title { font-family: var(--font-display); font-size: 80px; font-weight: 900; letter-spacing: -0.04em; line-height: 1; margin-bottom: 8px; background: linear-gradient(to bottom right, #fff, #bbb); -webkit-background-clip: text; color: transparent; }
+        .hero-title { font-family: var(--font-display); font-size: 80px; font-weight: 900; letter-spacing: -0.04em; line-height: 1; margin-bottom: 8px; text-shadow: 0 10px 40px rgba(0,0,0,0.6); background: linear-gradient(to bottom right, #fff, #bbb); -webkit-background-clip: text; color: transparent; }
         .hero-subtitle { font-family: var(--font-display); font-size: 24px; font-weight: 700; color: var(--accent-1); text-shadow: 0 0 20px var(--accent-glow); }
-        .hero-stats { font-size: 15px; font-weight: 500; color: var(--text-secondary); margin-top: 8px; display: flex; align-items: center; gap: 12px;}
         .hero-actions { display: flex; gap: 16px; margin-top: 32px; }
         .btn-primary { background: #fff; color: #000; font-family: var(--font-display); font-weight: 700; font-size: 16px; padding: 16px 48px; border-radius: 100px; display: inline-flex; align-items: center; gap: 12px; cursor: pointer; transition: all 0.4s var(--ease-snappy); border: none; outline: none; box-shadow: 0 15px 30px rgba(255,255,255,0.2); }
-        .btn-primary:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 20px 40px rgba(255,255,255,0.3); }
 
         /* ==================================================================
            PERSISTENT BOTTOM PLAYER
@@ -205,14 +213,15 @@
         .player-title { font-family: var(--font-display); font-size: 16px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 10px;}
         .player-artist { font-size: 13px; font-weight: 500; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
+        .ai-badge { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; background: linear-gradient(135deg, var(--accent-1), var(--accent-2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; padding: 2px 6px; border: 1px solid var(--accent-glow); border-radius: 6px; opacity: 0; transform: scale(0.9); transition: all 0.5s var(--ease-snappy); display: none; }
+        .ai-badge.active { display: block; opacity: 1; transform: scale(1); animation: pulseGlow 2s infinite; }
+
         .player-controls { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 40%; gap: 12px; }
         .controls-buttons { display: flex; align-items: center; gap: 32px; font-size: 24px; color: var(--text-secondary); }
         .controls-buttons i { cursor: pointer; transition: 0.2s; }
         .controls-buttons i:hover { color: #fff; transform: scale(1.1); }
         .btn-play-circle { width: 52px; height: 52px; background: #fff; color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; transition: 0.2s; box-shadow: 0 10px 20px rgba(255,255,255,0.2); }
-        .btn-play-circle i { margin-left: 3px; }
-        .btn-play-circle:hover { transform: scale(1.1); }
-
+        
         .scrubber-container { display: flex; align-items: center; gap: 16px; width: 100%; max-width: 480px; font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.6); font-variant-numeric: tabular-nums; }
         .scrubber-bg { flex: 1; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; cursor: pointer; position: relative; transition: height 0.2s; overflow: visible; }
         .scrubber-bg:hover { height: 6px; }
@@ -221,6 +230,8 @@
         .player-actions { display: flex; align-items: center; justify-content: flex-end; width: 30%; gap: 24px; color: var(--text-secondary); font-size: 22px; }
         .player-actions i { cursor: pointer; transition: 0.3s; }
         .player-actions i:hover { color: #fff; transform: scale(1.1); }
+        .vol-slider { width: 100px; height: 6px; background: rgba(255,255,255,0.15); border-radius: 3px; cursor: pointer; transition: height 0.3s var(--ease-snappy); position: relative;}
+        .vol-fill { width: 75%; height: 100%; background: #fff; border-radius: 3px; box-shadow: 0 0 10px rgba(255,255,255,0.3);}
         .btn-fullscreen { width: 40px; height: 40px; border-radius: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
         .btn-fullscreen:hover { background: rgba(255,255,255,0.15); transform: scale(1.1); color: #fff; }
 
@@ -243,9 +254,8 @@
         }
         @keyframes breatheBg { 0% { transform: scale(1) translate(0, 0); } 100% { transform: scale(1.1) translate(-2%, 2%); } }
         .np-bg-blur.active { opacity: 1; }
-        .np-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.65); z-index: 1; } /* Dark tone for high contrast */
+        .np-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.65); z-index: 1; }
 
-        /* Close Button (Top Left) */
         @media (min-width: 1025px) {
             .btn-collapse {
                 position: absolute; top: 32px; left: 32px; width: 44px; height: 44px;
@@ -257,7 +267,6 @@
             .btn-collapse-mob { display: none; }
         }
 
-        /* Desktop Layout */
         .np-layout { 
             position: relative; z-index: 3; display: flex; width: 100%; height: 100%; 
             max-width: 1400px; padding: 0 6vw; gap: 8vw; margin: 0 auto; align-items: center; justify-content: center;
@@ -270,14 +279,11 @@
         .np-art-wrap { 
             width: 100%; aspect-ratio: 1; border-radius: 12px; 
             box-shadow: 0 20px 60px rgba(0,0,0,0.5); 
-            overflow: hidden; background: #111; cursor: pointer;
-            margin-bottom: 24px;
+            overflow: hidden; background: #111; cursor: pointer; margin-bottom: 24px;
         }
         .np-art { width: 100%; height: 100%; object-fit: cover; }
 
-        .np-metadata-row {
-            display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;
-        }
+        .np-metadata-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
         .np-metadata-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px;}
         .np-track-title { font-size: 20px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: -0.01em;}
         .np-track-artist { font-size: 15px; color: rgba(255,255,255,0.6); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
@@ -297,24 +303,17 @@
         }
         .np-scrubber-group .scrubber-bg:hover .scrubber-fill::after { transform: translateY(-50%) scale(1); }
 
-        .np-playback-controls {
-            display: flex; align-items: center; justify-content: space-between;
-            width: 100%; color: #fff; font-size: 24px; padding: 0 10px; margin-bottom: 24px;
-        }
+        .np-playback-controls { display: flex; align-items: center; justify-content: space-between; width: 100%; color: #fff; font-size: 24px; padding: 0 10px; margin-bottom: 24px; }
         .np-playback-controls i { cursor: pointer; transition: 0.2s; }
         .np-playback-controls i:hover { opacity: 0.7; }
-        .np-playback-controls i:active { transform: scale(0.9); }
         .np-playback-controls .ph-play, .np-playback-controls .ph-pause { font-size: 40px; }
         .np-playback-controls .ph-shuffle, .np-playback-controls .ph-repeat { font-size: 20px; color: rgba(255,255,255,0.5); }
 
-        .np-volume-row {
-            display: flex; align-items: center; gap: 12px; color: rgba(255,255,255,0.5); font-size: 14px;
-        }
+        .np-volume-row { display: flex; align-items: center; gap: 12px; color: rgba(255,255,255,0.5); font-size: 14px; }
         .np-volume-row .scrubber-bg { flex: 1; height: 4px; border-radius: 2px; background: rgba(255,255,255,0.2); cursor: pointer; }
-        .np-volume-row .scrubber-bg:hover { height: 6px; }
         .np-volume-row .scrubber-fill { background: #fff; border-radius: 2px; height: 100%; width: 75%; pointer-events: none;}
 
-        /* Right Pane: Lyrics */
+        /* Right Pane: Lyrics (ZERO-REFLOW & SPRING PHYSICS) */
         .np-right-pane { 
             flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: center; position: relative; 
             max-width: 700px;
@@ -323,7 +322,9 @@
         }
         .lyrics-scroll-area {
             position: relative; height: 100%; overflow-y: auto; overflow-x: hidden; 
-            padding: 40vh 0 50vh 0; margin: 0; scroll-behavior: smooth;
+            padding: 45vh 0 50vh 0; margin: 0; 
+            /* Removing smooth scroll behavior here because we will mathematically drive it via JS LERP for butter-smoothness */
+            scroll-behavior: auto; 
         }
         .lyrics-scroll-area::-webkit-scrollbar { display: none; }
 
@@ -334,39 +335,46 @@
             letter-spacing: -0.01em; 
             margin-bottom: 28px; 
             cursor: pointer;
-            transition: opacity 0.4s ease;
-            opacity: 0.4; /* Inactive text color exactly matching image (translucent, NO BLUR, NO SCALE) */
+            /* FÍSICAS DE RESORTE TIPO APPLE: Translación sutil, Opacidad y Blur */
+            transition: transform 0.7s var(--ease-spring), opacity 0.5s ease, filter 0.5s ease;
+            opacity: 0.4; 
+            filter: blur(2px);
+            transform: scale(0.95); transform-origin: left center;
             word-wrap: break-word; white-space: normal; 
             color: #fff; text-align: left;
+            will-change: transform, opacity, filter;
         }
-        .lrc-line.active { opacity: 1; }
-        .lrc-line.passed { opacity: 0.4; }
-        .lrc-line:hover { opacity: 0.8 !important; }
+        .lrc-line.active { 
+            opacity: 1; 
+            filter: blur(0px);
+            transform: scale(1.1) translateZ(0); 
+            text-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        .lrc-line.passed { opacity: 0.35; filter: blur(3px); transform: scale(0.95); }
+        .lrc-line:hover { opacity: 0.8 !important; transform: scale(1) !important; filter: blur(0) !important; }
 
         .lrc-word {
             display: inline; padding: 0; margin: 0; vertical-align: baseline;
-            /* ZERO-REFLOW ENGINE: Exact math-driven gradient clip. No delays, 100% accurate */
+            /* ZERO-REFLOW SHADER: Exact math-driven gradient clip con 5% feathering */
             background-image: linear-gradient(
                 to right,
-                rgba(255, 255, 255, 1) calc(var(--word-progress) * 100% - 5%),
-                rgba(255, 255, 255, 0.9) calc(var(--word-progress) * 100%),
-                rgba(255, 255, 255, 0.4) calc(var(--word-progress) * 100% + 5%),
+                rgba(255, 255, 255, 1) 0%,
+                rgba(255, 255, 255, 1) calc(var(--fill, 0%) - 5%),
+                rgba(255, 255, 255, 0.4) calc(var(--fill, 0%) + 5%),
                 rgba(255, 255, 255, 0.4) 100%
             );
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
             will-change: background-image;
-            --word-progress: 0; /* Updated dynamically 0 to 1 via JS */
+            --fill: 0%; /* Injectado directo por JS para evitar reflows */
         }
 
-        /* Bottom Right Lyrics Icon */
         .np-lyrics-btn {
             position: absolute; bottom: 32px; right: 32px; width: 44px; height: 44px;
             background: transparent; display: flex; align-items: center; justify-content: center;
             font-size: 28px; color: rgba(255,255,255,0.6); cursor: pointer; transition: 0.2s; z-index: 10;
         }
-        .np-lyrics-btn:hover { color: #fff; }
 
         /* ==================================================================
            MOBILE RESPONSIVE
@@ -394,9 +402,7 @@
             .player-info { width: 75%; }
             .mobile-play-btn { display: flex; position: absolute; right: 20px; width: 44px; height: 44px; background: #fff; color: #000; border-radius: 50%; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.4); }
 
-            /* Fullscreen NP Mobile */
             #np-fs { overflow-y: auto; overflow-x: hidden; } 
-            
             .btn-collapse { display: none; }
             .btn-collapse-mob { 
                 position: absolute; top: 16px; left: 50%; transform: translateX(-50%);
@@ -405,20 +411,14 @@
                 display: block; transition: 0.3s;
             }
             
-            .np-layout { 
-                flex-direction: column; padding: 60px 8vw 40px; gap: 32px; 
-                height: auto; min-height: 100vh; justify-content: flex-start;
-            }
+            .np-layout { flex-direction: column; padding: 60px 8vw 40px; gap: 32px; height: auto; min-height: 100vh; justify-content: flex-start; }
             .np-left-pane { max-width: 100%; width: 100%; gap: 0; flex: none; align-items: center; margin-bottom: 20px; }
-            
             .np-art-wrap { width: 100%; max-width: 360px; aspect-ratio: 1; border-radius: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); margin-bottom: 24px;}
-            
-            .np-track-title { font-size: 22px; white-space: normal; line-height: 1.2; }
-            .np-track-artist { font-size: 16px; }
             
             .np-right-pane { width: 100%; max-width: 400px; flex: none; height: 60vh; position: relative; }
             .lyrics-scroll-area { padding: 10vh 0 30vh 0; }
-            .lrc-line { font-size: 30px; margin-bottom: 24px; }
+            .lrc-line { font-size: 30px; margin-bottom: 24px; transform-origin: center center; text-align: center; }
+            .lrc-line.active { transform: scale(1.05); }
             .np-lyrics-btn { display: none; }
         }
     </style>
@@ -435,7 +435,6 @@
 
     <!-- MAIN APP SHELL -->
     <div id="app-wrapper">
-        <!-- SIDEBAR (DESKTOP) -->
         <aside id="sidebar">
             <div class="brand"><i class="ph-fill ph-waveform"></i> VIVETMP</div>
             <nav class="nav-menu">
@@ -448,8 +447,6 @@
 
         <!-- MAIN SCROLLING CONTENT -->
         <main id="main-content">
-            <!-- (CONTENIDO INTACTO) -->
-            <!-- SONGS VIEW -->
             <section id="view-songs" class="view-section active">
                 <div class="page-header">
                     <h1>Listen Now</h1>
@@ -458,7 +455,6 @@
                 <div class="grid-container" id="grid-songs"></div>
             </section>
 
-            <!-- ALBUMS VIEW -->
             <section id="view-albums" class="view-section">
                 <div class="page-header">
                     <h1>Albums</h1>
@@ -467,7 +463,6 @@
                 <div class="grid-container" id="grid-albums"></div>
             </section>
 
-            <!-- ARTISTS VIEW -->
             <section id="view-artists" class="view-section">
                 <div class="page-header">
                     <h1>Artists</h1>
@@ -476,7 +471,6 @@
                 <div class="grid-container" id="grid-artists"></div>
             </section>
 
-            <!-- SEARCH VIEW -->
             <section id="view-search" class="view-section">
                 <div class="page-header">
                     <h1>Search</h1>
@@ -493,7 +487,6 @@
                 <div class="grid-container" id="grid-search-songs"></div>
             </section>
 
-            <!-- ALBUM DETAIL VIEW -->
             <section id="view-album-detail" class="view-section">
                 <button class="btn-back" onclick="navTo('albums')"><i class="ph-bold ph-arrow-left"></i> Back</button>
                 <div class="hero-section">
@@ -509,7 +502,6 @@
                 <div class="track-list" id="tracklist-album"></div>
             </section>
 
-            <!-- ARTIST DETAIL VIEW -->
             <section id="view-artist-detail" class="view-section">
                 <button class="btn-back" onclick="navTo('artists')"><i class="ph-bold ph-arrow-left"></i> Back</button>
                 <div class="hero-section">
@@ -1274,7 +1266,7 @@
         }
 
         /* ==================================================================
-           LYRICS ENGINE (ZERO-REFLOW, HYBRID LRC / TTML PARSER)
+           LYRICS ENGINE (ZERO-REFLOW / HYBRID TTML PARSER)
            ================================================================== */
         let parsedLyrics =[];
         let activeLyricIndex = -1;
@@ -1467,18 +1459,18 @@
                     if(i < nIdx) {
                         l.el.className = 'lrc-line passed';
                         l.words.forEach(w => { 
-                            if(w.el) { w.fill = 1; w.el.style.setProperty('--word-progress', '1'); } 
+                            if(w.el) { w.fill = 110; w.lastRenderedFill = 110; w.el.style.setProperty('--fill', '110%'); } 
                         });
                     } else if(i > nIdx) {
                         l.el.className = 'lrc-line';
                         l.words.forEach(w => { 
-                            if(w.el) { w.fill = 0; w.el.style.setProperty('--word-progress', '0'); } 
+                            if(w.el) { w.fill = 0; w.lastRenderedFill = 0; w.el.style.setProperty('--fill', '0%'); } 
                         });
                     } else {
                         l.el.className = 'lrc-line active';
                         if(!isUserScrolling) {
                             const sc = document.getElementById('lyrics-scroller');
-                            targetScrollY = l.el.offsetTop - (sc.clientHeight / 2) + (l.el.clientHeight / 2);
+                            targetScrollY = l.el.offsetTop - (sc.clientHeight * 0.4) + (l.el.clientHeight / 2);
                         }
                     }
                 });
@@ -1491,18 +1483,19 @@
                     
                     let targetFill = 0;
                     if(cur >= w.time + w.dur) {
-                        targetFill = 1;
+                        targetFill = 110;
                     } else if(cur >= w.time) {
-                        // CERO REFLOW MATEMATICO EXACTO: Sin LERP (saltos) para no atrasar la letra.
-                        targetFill = w.dur > 0 ? (cur - w.time) / w.dur : 1;
-                        targetFill = Math.max(0, Math.min(targetFill, 1));
+                        // Precisión matemática pura a 120hz. No más saltos LERP que retrasen el progreso visual
+                        targetFill = w.dur > 0 ? ((cur - w.time) / w.dur) * 110 : 110;
+                        targetFill = Math.max(0, Math.min(targetFill, 110));
                     } else {
                         targetFill = 0;
                     }
 
-                    if(w.fill !== targetFill) {
+                    if(Math.abs(w.fill - targetFill) > 0.1 || targetFill === 110 || targetFill === 0) {
                         w.fill = targetFill;
-                        w.el.style.setProperty('--word-progress', targetFill.toString());
+                        w.el.style.setProperty('--fill', `${w.fill.toFixed(2)}%`);
+                        w.lastRenderedFill = w.fill;
                     }
                 });
             }
@@ -1524,6 +1517,7 @@
             if(activeAudio.duration && !isNaN(activeAudio.duration)) {
                 let cur = activeAudio.currentTime; 
                 
+                // Extrapolación de 60fps usando performance.now() para ignorar el lag natural de <audio>
                 const now = performance.now();
                 if (cur !== lastAudioTime) { 
                     lastAudioTime = cur; 
@@ -1549,15 +1543,18 @@
                 checkAutoMix();
                 
                 if(isNPOpen) { 
-                    updateKaraoke(cur); 
+                    // Adelantamos la visualización 100ms para combatir el retraso de percepción visual humano
+                    const visualTime = cur + 0.1;
+                    updateKaraoke(visualTime); 
 
                     const sc = document.getElementById('lyrics-scroller');
                     if (isUserScrolling) { currentScrollY = sc.scrollTop; } 
                     else {
                         const scrollDiff = targetScrollY - currentScrollY;
                         if (Math.abs(scrollDiff) > 0.5) {
-                            // Fricción a 0.05 crea el scroll "Buttery Smooth" como Apple Music sin brincos
-                            currentScrollY += scrollDiff * 0.05;
+                            // Algoritmo de inercia perfecto, dt independiente (Smoothness mantequilla)
+                            const dt = (now - lastTimeUpdate) / 1000;
+                            currentScrollY += scrollDiff * (1 - Math.exp(-12 * dt)); 
                             sc.scrollTop = currentScrollY;
                         }
                     }
