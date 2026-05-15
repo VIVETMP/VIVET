@@ -38,8 +38,8 @@
             --accent-2: #7F49B4;
             --accent-glow: rgba(255, 46, 147, 0.3);
             
-            --font-display: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Outfit', sans-serif;
-            --font-main: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Plus Jakarta Sans', sans-serif;
+            --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
+            --font-main: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
             
             --ease-fluid: cubic-bezier(0.2, 0.8, 0.2, 1);
             --ease-snappy: cubic-bezier(0.3, 1.2, 0.4, 1);
@@ -48,12 +48,6 @@
             --sidebar-width: 260px;
             --player-height: 88px;
             --nav-height-mob: 80px;
-        }
-
-        @property --fill {
-            syntax: '<percentage>';
-            inherits: true;
-            initial-value: 0%;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -95,7 +89,7 @@
         @keyframes drift3 { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(10%, -10%) scale(1.2); } }
 
         /* ==================================================================
-           APP LAYOUT
+           APP LAYOUT (BACKGROUND UI)
            ================================================================== */
         #app-wrapper {
             display: flex; width: 100vw; height: 100vh; position: relative; z-index: 10;
@@ -151,13 +145,6 @@
         .page-header p { font-size: 18px; color: var(--text-secondary); font-weight: 500; letter-spacing: -0.01em; }
         .section-title { font-family: var(--font-display); font-size: 28px; font-weight: 700; letter-spacing: -0.02em; margin: 56px 0 32px; display: flex; align-items: center; justify-content: space-between; }
 
-        .search-container { position: relative; width: 100%; max-width: 640px; margin-top: 32px; }
-        .search-container i { position: absolute; left: 28px; top: 50%; transform: translateY(-50%); font-size: 24px; color: var(--text-secondary); transition: 0.3s; }
-        .search-input { width: 100%; background: var(--bg-glass-light); border: 1px solid rgba(255,255,255,0.08); border-radius: 100px; padding: 24px 28px 24px 72px; font-size: 18px; font-weight: 500; color: #fff; font-family: var(--font-main); outline: none; transition: all 0.4s var(--ease-snappy); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
-        .search-input:focus { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); box-shadow: 0 0 0 4px var(--accent-glow), 0 20px 50px rgba(0,0,0,0.5); transform: translateY(-2px); }
-        .search-input:focus + i { color: var(--accent-1); }
-        .search-input::placeholder { color: var(--text-tertiary); font-weight: 400; }
-
         .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 32px; width: 100%; }
         
         .card { background: transparent; padding: 0; cursor: pointer; transition: all 0.5s var(--ease-snappy); position: relative; display: flex; flex-direction: column; gap: 16px; border-radius: 20px; }
@@ -175,92 +162,70 @@
         .card-play-btn i { margin-left: 4px; }
         .card:hover .card-play-btn { opacity: 1; transform: translateY(0) scale(1); }
         .card.active .card-play-btn { opacity: 1; transform: translateY(0) scale(1); background: var(--accent-1); border-color: var(--accent-1); color: #fff; }
-        .card-play-btn:hover { background: #fff !important; color: #000 !important; border-color: #fff !important; transform: scale(1.1) !important; }
 
         .card-info { padding: 0 4px; }
         .card-title { font-family: var(--font-display); font-size: 17px; font-weight: 700; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-primary); margin-bottom: 4px; }
         .card-subtitle { font-size: 14px; font-weight: 500; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .card.active .card-title { color: var(--accent-1); }
-        .card-badge { position: absolute; top: 16px; left: 16px; background: rgba(0,0,0,0.5); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); color: #fff; font-size: 11px; font-weight: 800; padding: 6px 10px; border-radius: 8px; text-transform: uppercase; letter-spacing: 0.5px; z-index: 3; border: 1px solid rgba(255,255,255,0.1); }
-        .card-badge.playing { background: var(--accent-1); border-color: var(--accent-1); animation: pulseGlow 2s infinite; }
-        @keyframes pulseGlow { 0% { box-shadow: 0 0 0 0 var(--accent-glow); } 70% { box-shadow: 0 0 15px 10px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
 
         .track-list { display: flex; flex-direction: column; gap: 8px; width: 100%; padding-bottom: 40px;}
         .track-row { display: flex; align-items: center; gap: 24px; padding: 16px 24px; border-radius: 16px; cursor: pointer; transition: all 0.3s var(--ease-snappy); border: 1px solid transparent; background: transparent; }
         .track-row:hover { background: var(--bg-glass-hover); transform: translateX(8px); }
         .track-row.active { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); box-shadow: var(--shadow-float); transform: translateX(8px); }
         .track-num { width: 32px; font-family: var(--font-display); font-size: 16px; color: var(--text-secondary); font-weight: 600; text-align: center; }
-        .track-row.active .track-num { color: transparent; position: relative; }
-        .track-row.active .track-num::before { content: ""; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 20px; height: 20px; background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23fff"><rect x="4" y="10" width="4" height="14" rx="2" transform-origin="bottom"><animateTransform attributeName="transform" type="scale" values="1 0.3; 1 1; 1 0.3" dur="0.8s" repeatCount="indefinite"/></rect><rect x="10" y="4" width="4" height="20" rx="2" transform-origin="bottom"><animateTransform attributeName="transform" type="scale" values="1 1; 1 0.4; 1 1" dur="0.8s" repeatCount="indefinite"/></rect><rect x="16" y="12" width="4" height="12" rx="2" transform-origin="bottom"><animateTransform attributeName="transform" type="scale" values="1 0.5; 1 0.9; 1 0.5" dur="0.8s" repeatCount="indefinite"/></rect></svg>') no-repeat center; filter: drop-shadow(0 0 5px var(--accent-glow)); }
         .track-info { display: flex; flex-direction: column; gap: 4px; flex: 1; }
         .track-title { font-family: var(--font-display); font-size: 16px; font-weight: 600; color: var(--text-primary); letter-spacing: -0.01em;}
         .track-artist { font-size: 14px; font-weight: 500; color: var(--text-secondary); }
         .track-row.active .track-title { color: var(--accent-1); text-shadow: 0 0 10px var(--accent-glow); }
 
-        .btn-back { display: inline-flex; align-items: center; gap: 10px; padding: 12px 24px; border-radius: 100px; background: var(--bg-glass-light); border: 1px solid var(--border-subtle); color: var(--text-primary); font-size: 15px; font-weight: 600; cursor: pointer; margin-bottom: 48px; transition: all 0.4s var(--ease-snappy); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); width: fit-content; }
-        .btn-back:hover { background: rgba(255,255,255,0.1); transform: translateX(-8px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); border-color: rgba(255,255,255,0.2); }
-
         .hero-section { display: flex; align-items: flex-end; gap: 56px; margin-bottom: 64px; position: relative; }
         .hero-img { width: 300px; height: 300px; border-radius: 24px; object-fit: cover; box-shadow: 0 40px 80px rgba(0,0,0,0.8); border: 1px solid rgba(255,255,255,0.1); transition: transform 0.5s var(--ease-snappy); }
         .hero-img:hover { transform: scale(1.02); }
-        .hero-img.is-circle { border-radius: 50%; box-shadow: 0 30px 60px rgba(0,0,0,0.6); }
         .hero-meta { display: flex; flex-direction: column; gap: 10px; padding-bottom: 12px; z-index: 2; }
         .hero-label { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; color: var(--text-secondary); }
-        .hero-title { font-family: var(--font-display); font-size: 80px; font-weight: 900; letter-spacing: -0.04em; line-height: 1; margin-bottom: 8px; text-shadow: 0 10px 40px rgba(0,0,0,0.6); background: linear-gradient(to bottom right, #fff, #bbb); -webkit-background-clip: text; color: transparent; }
+        .hero-title { font-family: var(--font-display); font-size: 80px; font-weight: 900; letter-spacing: -0.04em; line-height: 1; margin-bottom: 8px; background: linear-gradient(to bottom right, #fff, #bbb); -webkit-background-clip: text; color: transparent; }
         .hero-subtitle { font-family: var(--font-display); font-size: 24px; font-weight: 700; color: var(--accent-1); text-shadow: 0 0 20px var(--accent-glow); }
         .hero-stats { font-size: 15px; font-weight: 500; color: var(--text-secondary); margin-top: 8px; display: flex; align-items: center; gap: 12px;}
         .hero-actions { display: flex; gap: 16px; margin-top: 32px; }
         .btn-primary { background: #fff; color: #000; font-family: var(--font-display); font-weight: 700; font-size: 16px; padding: 16px 48px; border-radius: 100px; display: inline-flex; align-items: center; gap: 12px; cursor: pointer; transition: all 0.4s var(--ease-snappy); border: none; outline: none; box-shadow: 0 15px 30px rgba(255,255,255,0.2); }
         .btn-primary:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 20px 40px rgba(255,255,255,0.3); }
-        .btn-primary:active { transform: scale(0.96); }
 
         /* ==================================================================
            PERSISTENT BOTTOM PLAYER
            ================================================================== */
         .player-wrapper { position: fixed; bottom: 32px; left: 0; width: 100%; display: flex; justify-content: center; z-index: 50; pointer-events: none; padding: 0 32px; }
-        .player-pill { pointer-events: auto; width: 100%; max-width: 1100px; height: var(--player-height); background: var(--bg-glass-heavy); backdrop-filter: blur(50px) saturate(200%); -webkit-backdrop-filter: blur(50px) saturate(200%); border: 1px solid var(--border-highlight); border-radius: 24px; display: flex; align-items: center; justify-content: space-between; padding: 12px 24px; box-shadow: 0 30px 60px rgba(0,0,0,0.6), inset 0 1px 2px rgba(255,255,255,0.1); transition: transform 0.5s var(--ease-snappy), border-color 0.3s; position: relative; overflow: hidden; }
+        .player-pill { pointer-events: auto; width: 100%; max-width: 1100px; height: var(--player-height); background: var(--bg-glass-heavy); backdrop-filter: blur(50px) saturate(200%); border: 1px solid var(--border-highlight); border-radius: 24px; display: flex; align-items: center; justify-content: space-between; padding: 12px 24px; box-shadow: 0 30px 60px rgba(0,0,0,0.6); transition: transform 0.5s var(--ease-snappy); position: relative; overflow: hidden; }
         .player-pill:hover { transform: translateY(-4px); border-color: rgba(255,255,255,0.2); }
         .progress-mini-wrapper { position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: rgba(255,255,255,0.05); }
-        .progress-mini-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent-1), var(--accent-2)); transition: width 0.1s linear; box-shadow: 0 0 10px var(--accent-glow); }
+        .progress-mini-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent-1), var(--accent-2)); transition: width 0.1s linear; }
 
         .player-info { display: flex; align-items: center; gap: 16px; width: 30%; cursor: pointer; transition: 0.3s; padding: 6px; border-radius: 16px; }
-        .player-info:hover { background: rgba(255,255,255,0.08); }
-        .player-img { width: 56px; height: 56px; border-radius: 12px; object-fit: cover; box-shadow: 0 10px 20px rgba(0,0,0,0.4); transition: transform 0.5s var(--ease-snappy); }
-        .player-info:hover .player-img { transform: scale(1.08) rotate(3deg); }
+        .player-img { width: 56px; height: 56px; border-radius: 12px; object-fit: cover; box-shadow: 0 10px 20px rgba(0,0,0,0.4); }
         .player-meta { display: flex; flex-direction: column; gap: 4px; overflow: hidden; }
         .player-title { font-family: var(--font-display); font-size: 16px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 10px;}
         .player-artist { font-size: 13px; font-weight: 500; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        .ai-badge { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; background: linear-gradient(135deg, var(--accent-1), var(--accent-2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; padding: 2px 6px; border: 1px solid var(--accent-glow); border-radius: 6px; opacity: 0; transform: scale(0.9); transition: all 0.5s var(--ease-snappy); display: none; }
-        .ai-badge.active { display: block; opacity: 1; transform: scale(1); animation: pulseGlow 2s infinite; }
-
         .player-controls { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 40%; gap: 12px; }
         .controls-buttons { display: flex; align-items: center; gap: 32px; font-size: 24px; color: var(--text-secondary); }
-        .controls-buttons i { cursor: pointer; transition: all 0.3s var(--ease-snappy); }
-        .controls-buttons i:hover { color: #fff; transform: scale(1.2); text-shadow: 0 0 10px rgba(255,255,255,0.5); }
-        .controls-buttons i:active { transform: scale(0.9); }
-        .btn-play-circle { width: 52px; height: 52px; background: #fff; color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; transition: all 0.4s var(--ease-snappy); box-shadow: 0 10px 20px rgba(255,255,255,0.2); }
+        .controls-buttons i { cursor: pointer; transition: 0.2s; }
+        .controls-buttons i:hover { color: #fff; transform: scale(1.1); }
+        .btn-play-circle { width: 52px; height: 52px; background: #fff; color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; transition: 0.2s; box-shadow: 0 10px 20px rgba(255,255,255,0.2); }
         .btn-play-circle i { margin-left: 3px; }
-        .btn-play-circle:hover { transform: scale(1.1); box-shadow: 0 15px 30px rgba(255,255,255,0.4); }
+        .btn-play-circle:hover { transform: scale(1.1); }
 
         .scrubber-container { display: flex; align-items: center; gap: 16px; width: 100%; max-width: 480px; font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.6); font-variant-numeric: tabular-nums; }
-        .scrubber-bg { flex: 1; height: 6px; background: rgba(255,255,255,0.15); border-radius: 4px; cursor: pointer; position: relative; transition: height 0.3s var(--ease-snappy); overflow: visible; }
-        .scrubber-bg:hover { height: 10px; background: rgba(255,255,255,0.25); }
-        .scrubber-fill { width: 0%; height: 100%; background: #fff; border-radius: 4px; transition: width 0.1s linear; position: relative; box-shadow: 0 0 12px rgba(255,255,255,0.6); }
-        .scrubber-fill::after { content: ''; position: absolute; right: -8px; top: 50%; transform: translateY(-50%) scale(0); width: 16px; height: 16px; background: #fff; border-radius: 50%; transition: transform 0.3s var(--ease-snappy); box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
-        .scrubber-bg:hover .scrubber-fill::after { transform: translateY(-50%) scale(1); }
-
+        .scrubber-bg { flex: 1; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; cursor: pointer; position: relative; transition: height 0.2s; overflow: visible; }
+        .scrubber-bg:hover { height: 6px; }
+        .scrubber-fill { width: 0%; height: 100%; background: #fff; border-radius: 2px; position: relative; pointer-events: none;}
+        
         .player-actions { display: flex; align-items: center; justify-content: flex-end; width: 30%; gap: 24px; color: var(--text-secondary); font-size: 22px; }
         .player-actions i { cursor: pointer; transition: 0.3s; }
         .player-actions i:hover { color: #fff; transform: scale(1.1); }
-        .vol-slider { width: 100px; height: 6px; background: rgba(255,255,255,0.15); border-radius: 3px; cursor: pointer; transition: height 0.3s var(--ease-snappy); position: relative;}
-        .vol-slider:hover { height: 10px; background: rgba(255,255,255,0.25); }
-        .vol-fill { width: 75%; height: 100%; background: #fff; border-radius: 3px; box-shadow: 0 0 10px rgba(255,255,255,0.3);}
-        .btn-fullscreen { width: 40px; height: 40px; border-radius: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.4s var(--ease-snappy); }
-        .btn-fullscreen:hover { background: rgba(255,255,255,0.15); transform: scale(1.1); color: #fff; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .btn-fullscreen { width: 40px; height: 40px; border-radius: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
+        .btn-fullscreen:hover { background: rgba(255,255,255,0.15); transform: scale(1.1); color: #fff; }
 
         /* ==================================================================
-           FULLSCREEN NOW PLAYING (APPLE TV / DESKTOP REPLICA)
+           FULLSCREEN NOW PLAYING (APPLE MUSIC MAC DESKTOP REPLICA)
            ================================================================== */
         #np-fs {
             position: fixed; inset: 0; z-index: 100; transform: translateY(100%); opacity: 0; visibility: hidden;
@@ -272,76 +237,87 @@
         .np-bg-wrap { position: fixed; inset: -15%; width: 130%; height: 130%; z-index: 0; pointer-events: none; }
         .np-bg-blur { 
             position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; 
-            filter: blur(140px) saturate(250%) brightness(0.6); opacity: 0; 
+            filter: blur(100px) saturate(200%); opacity: 0; 
             transition: opacity 2s ease-in-out; will-change: opacity, transform; 
             animation: breatheBg 25s infinite alternate ease-in-out;
         }
         @keyframes breatheBg { 0% { transform: scale(1) translate(0, 0); } 100% { transform: scale(1.1) translate(-2%, 2%); } }
         .np-bg-blur.active { opacity: 1; }
-        .np-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.55); z-index: 1; }
-        .np-grain { position: absolute; inset: 0; z-index: 2; opacity: 0.04; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none;}
+        .np-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.65); z-index: 1; } /* Dark tone for high contrast */
 
-        /* Collapse Button */
+        /* Close Button (Top Left) */
         @media (min-width: 1025px) {
             .btn-collapse {
-                position: absolute; top: 40px; left: 40px; width: 44px; height: 44px;
+                position: absolute; top: 32px; left: 32px; width: 44px; height: 44px;
                 background: transparent; border: none; cursor: pointer; z-index: 10;
-                display: flex; align-items: center; justify-content: center; font-size: 32px; 
-                color: rgba(255,255,255,0.5); transition: all 0.2s var(--ease-snappy); outline: none;
+                display: flex; align-items: center; justify-content: center; font-size: 28px; 
+                color: rgba(255,255,255,0.6); transition: all 0.2s var(--ease-snappy); outline: none;
             }
             .btn-collapse:hover { color: #fff; transform: scale(1.1); }
-            .btn-collapse i { display: block; }
             .btn-collapse-mob { display: none; }
         }
 
-        /* Desktop 2-Column Layout */
+        /* Desktop Layout */
         .np-layout { 
             position: relative; z-index: 3; display: flex; width: 100%; height: 100%; 
-            max-width: 1600px; padding: 0 8vw; gap: 8vw; margin: 0 auto; align-items: center; justify-content: center;
+            max-width: 1400px; padding: 0 6vw; gap: 8vw; margin: 0 auto; align-items: center; justify-content: center;
         }
         
         .np-left-pane {
-            flex: 0 0 clamp(320px, 35vw, 480px); display: flex; flex-direction: column; justify-content: center; gap: 24px; position: relative;
+            flex: 0 0 clamp(320px, 35vw, 420px); display: flex; flex-direction: column; justify-content: center; position: relative;
         }
 
         .np-art-wrap { 
             width: 100%; aspect-ratio: 1; border-radius: 12px; 
-            box-shadow: 0 25px 60px rgba(0,0,0,0.5); 
-            overflow: hidden; transition: transform 0.6s var(--ease-cinematic); 
-            background: #111; cursor: pointer;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5); 
+            overflow: hidden; background: #111; cursor: pointer;
+            margin-bottom: 24px;
         }
-        .np-art-wrap:hover { transform: scale(1.02); }
         .np-art { width: 100%; height: 100%; object-fit: cover; }
 
-        .np-info-block { display: flex; flex-direction: column; gap: 16px; width: 100%; }
-
-        .np-scrubber-group { display: flex; flex-direction: column; gap: 6px; width: 100%; }
-        .np-time-row { display: flex; justify-content: space-between; font-size: 11px; font-weight: 500; color: rgba(255,255,255,0.7); font-variant-numeric: tabular-nums; margin-bottom: 2px;}
-        .np-scrubber-group .scrubber-bg { height: 4px; border-radius: 2px; background: rgba(255,255,255,0.2); }
-        .np-scrubber-group .scrubber-bg:hover { height: 6px; }
-        .np-scrubber-group .scrubber-fill { border-radius: 2px; box-shadow: none; transition: width 0.1s linear;}
-        .np-scrubber-group .scrubber-fill::after { display: none; }
-
-        .np-track-info-center { display: flex; flex-direction: column; gap: 4px; align-items: center; text-align: center; }
-        .np-track-title { font-size: 18px; font-weight: 700; color: #fff; letter-spacing: -0.01em;}
-        .np-track-artist { font-size: 16px; color: rgba(255,255,255,0.6); font-weight: 500; letter-spacing: -0.01em;}
-
-        /* Controls visible only on hover on Desktop */
-        .hidden-controls { 
-            display: flex; justify-content: center; align-items: center; gap: 32px; 
-            opacity: 0; pointer-events: none; transition: opacity 0.3s ease; 
-            margin-top: 10px; position: absolute; bottom: -80px; width: 100%;
+        .np-metadata-row {
+            display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;
         }
-        .np-left-pane:hover .hidden-controls { opacity: 1; pointer-events: auto; }
+        .np-metadata-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px;}
+        .np-track-title { font-size: 20px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: -0.01em;}
+        .np-track-artist { font-size: 15px; color: rgba(255,255,255,0.6); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
         
-        .np-main-controls i { cursor: pointer; transition: 0.2s; color: #fff; }
-        .np-main-controls i:hover { transform: scale(1.15); filter: drop-shadow(0 0 10px rgba(255,255,255,0.4));}
-        .np-main-controls i:active { transform: scale(0.95); }
+        .np-metadata-actions { display: flex; gap: 12px; color: rgba(255,255,255,0.6); font-size: 22px; }
+        .np-metadata-actions i { cursor: pointer; transition: 0.2s; }
+        .np-metadata-actions i:hover { color: #fff; }
 
-        /* Right Pane: Immersive Lyrics */
+        .np-scrubber-group { margin-bottom: 16px; width: 100%; display: flex; flex-direction: column; gap: 6px; }
+        .np-time-labels { display: flex; justify-content: space-between; font-size: 11px; font-weight: 500; color: rgba(255,255,255,0.5); font-variant-numeric: tabular-nums; }
+        .np-scrubber-group .scrubber-bg { height: 4px; border-radius: 2px; background: rgba(255,255,255,0.2); cursor: pointer; position: relative;}
+        .np-scrubber-group .scrubber-bg:hover { height: 6px; }
+        .np-scrubber-group .scrubber-fill { background: #fff; border-radius: 2px; height: 100%; width: 0%; pointer-events: none; }
+        .np-scrubber-group .scrubber-fill::after { 
+            content: ''; position: absolute; right: -6px; top: 50%; transform: translateY(-50%) scale(0); 
+            width: 12px; height: 12px; background: #fff; border-radius: 50%; transition: transform 0.2s; 
+        }
+        .np-scrubber-group .scrubber-bg:hover .scrubber-fill::after { transform: translateY(-50%) scale(1); }
+
+        .np-playback-controls {
+            display: flex; align-items: center; justify-content: space-between;
+            width: 100%; color: #fff; font-size: 24px; padding: 0 10px; margin-bottom: 24px;
+        }
+        .np-playback-controls i { cursor: pointer; transition: 0.2s; }
+        .np-playback-controls i:hover { opacity: 0.7; }
+        .np-playback-controls i:active { transform: scale(0.9); }
+        .np-playback-controls .ph-play, .np-playback-controls .ph-pause { font-size: 40px; }
+        .np-playback-controls .ph-shuffle, .np-playback-controls .ph-repeat { font-size: 20px; color: rgba(255,255,255,0.5); }
+
+        .np-volume-row {
+            display: flex; align-items: center; gap: 12px; color: rgba(255,255,255,0.5); font-size: 14px;
+        }
+        .np-volume-row .scrubber-bg { flex: 1; height: 4px; border-radius: 2px; background: rgba(255,255,255,0.2); cursor: pointer; }
+        .np-volume-row .scrubber-bg:hover { height: 6px; }
+        .np-volume-row .scrubber-fill { background: #fff; border-radius: 2px; height: 100%; width: 75%; pointer-events: none;}
+
+        /* Right Pane: Lyrics */
         .np-right-pane { 
             flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: center; position: relative; 
-            max-width: 800px;
+            max-width: 700px;
             mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,1) 15%, rgba(0,0,0,1) 85%, transparent 100%);
             -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,1) 15%, rgba(0,0,0,1) 85%, transparent 100%);
         }
@@ -352,36 +328,45 @@
         .lyrics-scroll-area::-webkit-scrollbar { display: none; }
 
         .lrc-line {
-            font-size: clamp(32px, 4vw, 56px); 
+            font-size: clamp(32px, 4vw, 44px); 
             font-weight: 700; 
-            line-height: 1.4; 
+            line-height: 1.35; 
             letter-spacing: -0.01em; 
-            margin-bottom: 32px; 
+            margin-bottom: 28px; 
             cursor: pointer;
-            transition: all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
-            opacity: 0.3; /* Gris difuminado base */
-            transform: scale(0.98); transform-origin: left center;
+            transition: opacity 0.4s ease;
+            opacity: 0.4; /* Inactive text color exactly matching image (translucent, NO BLUR, NO SCALE) */
             word-wrap: break-word; white-space: normal; 
             color: #fff; text-align: left;
         }
-        .lrc-line.active { opacity: 1; transform: scale(1); filter: drop-shadow(0 4px 15px rgba(0,0,0,0.3)); }
-        .lrc-line.passed { opacity: 0.3; transform: scale(0.98); }
-        .lrc-line:hover { opacity: 0.8 !important; transform: scale(1) !important; }
+        .lrc-line.active { opacity: 1; }
+        .lrc-line.passed { opacity: 0.4; }
+        .lrc-line:hover { opacity: 0.8 !important; }
 
         .lrc-word {
             display: inline; padding: 0; margin: 0; vertical-align: baseline;
-            /* LUZ DIFUMINADA AL 15% HACIA ATRÁS */
-            background: linear-gradient(90deg,
-                rgba(255, 255, 255, 1) 0%,
-                rgba(255, 255, 255, 1) calc(var(--fill, 0%) - 15%),
-                rgba(255, 255, 255, 0.3) var(--fill, 0%),
-                rgba(255, 255, 255, 0.3) 100%
+            /* ZERO-REFLOW ENGINE: Exact math-driven gradient clip. No delays, 100% accurate */
+            background-image: linear-gradient(
+                to right,
+                rgba(255, 255, 255, 1) calc(var(--word-progress) * 100% - 5%),
+                rgba(255, 255, 255, 0.9) calc(var(--word-progress) * 100%),
+                rgba(255, 255, 255, 0.4) calc(var(--word-progress) * 100% + 5%),
+                rgba(255, 255, 255, 0.4) 100%
             );
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            will-change: background-position;
+            will-change: background-image;
+            --word-progress: 0; /* Updated dynamically 0 to 1 via JS */
         }
+
+        /* Bottom Right Lyrics Icon */
+        .np-lyrics-btn {
+            position: absolute; bottom: 32px; right: 32px; width: 44px; height: 44px;
+            background: transparent; display: flex; align-items: center; justify-content: center;
+            font-size: 28px; color: rgba(255,255,255,0.6); cursor: pointer; transition: 0.2s; z-index: 10;
+        }
+        .np-lyrics-btn:hover { color: #fff; }
 
         /* ==================================================================
            MOBILE RESPONSIVE
@@ -394,14 +379,13 @@
             
             .mobile-nav {
                 display: flex; position: fixed; bottom: 0; left: 0; width: 100%; height: var(--nav-height-mob);
-                background: rgba(10, 10, 14, 0.85); backdrop-filter: blur(40px) saturate(200%); -webkit-backdrop-filter: blur(40px) saturate(200%);
-                border-top: 1px solid rgba(255,255,255,0.05); z-index: 60;
+                background: rgba(10, 10, 14, 0.85); backdrop-filter: blur(40px) saturate(200%); border-top: 1px solid rgba(255,255,255,0.05); z-index: 60;
                 justify-content: space-around; align-items: center; padding-bottom: env(safe-area-inset-bottom);
             }
             .nav-item-mob { display: flex; flex-direction: column; align-items: center; gap: 6px; color: var(--text-secondary); font-size: 11px; font-weight: 600; cursor: pointer; }
             .nav-item-mob i { font-size: 28px; transition: 0.4s var(--ease-snappy); }
             .nav-item-mob.active { color: var(--text-primary); }
-            .nav-item-mob.active i { transform: scale(1.2) translateY(-4px); color: var(--accent-1); filter: drop-shadow(0 4px 10px var(--accent-glow)); }
+            .nav-item-mob.active i { transform: scale(1.2) translateY(-4px); color: var(--accent-1); }
 
             .player-wrapper { bottom: calc(var(--nav-height-mob) + 16px); padding: 0 16px; }
             .player-pill { height: 72px; padding: 8px 20px 8px 8px; border-radius: 20px; background: rgba(20, 20, 25, 0.95); }
@@ -409,15 +393,6 @@
             .player-controls, .player-actions { display: none; }
             .player-info { width: 75%; }
             .mobile-play-btn { display: flex; position: absolute; right: 20px; width: 44px; height: 44px; background: #fff; color: #000; border-radius: 50%; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.4); }
-            .mobile-play-btn i { margin-left: 3px; }
-
-            .page-header h1 { font-size: 48px; }
-            .hero-section { flex-direction: column; align-items: center; text-align: center; gap: 32px; margin-bottom: 48px;}
-            .hero-img { width: 240px; height: 240px; }
-            .hero-title { font-size: 48px; }
-            .hero-actions { justify-content: center; }
-            .track-row { padding: 12px; gap: 16px; }
-            .search-container { max-width: 100%; }
 
             /* Fullscreen NP Mobile */
             #np-fs { overflow-y: auto; overflow-x: hidden; } 
@@ -434,19 +409,17 @@
                 flex-direction: column; padding: 60px 8vw 40px; gap: 32px; 
                 height: auto; min-height: 100vh; justify-content: flex-start;
             }
-            .np-left-pane { max-width: 100%; width: 100%; gap: 24px; flex: none; align-items: center; }
+            .np-left-pane { max-width: 100%; width: 100%; gap: 0; flex: none; align-items: center; margin-bottom: 20px; }
             
-            .np-art-wrap { width: 100%; max-width: 360px; aspect-ratio: 1; border-radius: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
+            .np-art-wrap { width: 100%; max-width: 360px; aspect-ratio: 1; border-radius: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); margin-bottom: 24px;}
             
             .np-track-title { font-size: 22px; white-space: normal; line-height: 1.2; }
-            .np-track-artist { font-size: 18px; }
+            .np-track-artist { font-size: 16px; }
             
-            /* En móvil los controles sí deben verse siempre */
-            .hidden-controls { position: relative; opacity: 1; pointer-events: auto; bottom: 0; margin-top: 0; gap: 40px;}
-            
-            .np-right-pane { width: 100%; max-width: 400px; flex: none; height: 70vh; position: relative; margin-top: 10px; }
+            .np-right-pane { width: 100%; max-width: 400px; flex: none; height: 60vh; position: relative; }
             .lyrics-scroll-area { padding: 10vh 0 30vh 0; }
-            .lrc-line { font-size: 32px; margin-bottom: 24px; }
+            .lrc-line { font-size: 30px; margin-bottom: 24px; }
+            .np-lyrics-btn { display: none; }
         }
     </style>
 </head>
@@ -475,7 +448,7 @@
 
         <!-- MAIN SCROLLING CONTENT -->
         <main id="main-content">
-            
+            <!-- (CONTENIDO INTACTO) -->
             <!-- SONGS VIEW -->
             <section id="view-songs" class="view-section active">
                 <div class="page-header">
@@ -556,7 +529,6 @@
                 <h2 class="section-title">Essential Singles</h2>
                 <div class="grid-container" id="grid-artist-singles"></div>
             </section>
-
         </main>
     </div>
 
@@ -606,7 +578,7 @@
         </div>
     </div>
 
-    <!-- FULLSCREEN NOW PLAYING OVERLAY (APPLE TV / MUSIC MAC REPLICA) -->
+    <!-- FULLSCREEN NOW PLAYING OVERLAY (APPLE MUSIC MAC DESKTOP REPLICA) -->
     <div id="np-fs">
         <div class="np-bg-wrap">
             <img src="" class="np-bg-blur active" id="np-bg-1" crossorigin="anonymous">
@@ -619,31 +591,42 @@
         <button class="btn-collapse-mob" onclick="toggleNP()"></button>
 
         <div class="np-layout">
-            <!-- Left Pane: Info & Scrubber -->
+            
+            <!-- Left Pane: Album Art & Controls -->
             <div class="np-left-pane">
                 <div class="np-art-wrap" onclick="togglePlay()"><img src="" id="np-img-large" class="np-art" crossorigin="anonymous"></div>
                 
-                <div class="np-info-block">
-                    <div class="np-scrubber-group">
-                        <div class="np-time-row">
-                            <span id="time-curr-np">0:00</span>
-                            <span id="time-tot-np">-0:00</span>
-                        </div>
-                        <div class="scrubber-bg" onclick="seek(event, this)"><div class="scrubber-fill" id="bar-fill-np"></div></div>
-                    </div>
-
-                    <div class="np-track-info-center">
-                        <h2 class="np-track-title"><span id="np-title-large">Not Playing</span></h2>
+                <div class="np-metadata-row">
+                    <div class="np-metadata-text">
+                        <h2 class="np-track-title" id="np-title-large">Not Playing</h2>
                         <p class="np-track-artist" id="np-artist-large">VIVETMP</p>
+                    </div>
+                    <div class="np-metadata-actions">
+                        <i class="ph-fill ph-star"></i>
+                        <i class="ph-bold ph-dots-three"></i>
                     </div>
                 </div>
 
-                <div class="np-main-controls hidden-controls">
-                    <i class="ph-bold ph-shuffle" style="font-size: 20px; color: rgba(255,255,255,0.5);"></i>
-                    <i class="ph-fill ph-skip-back" onclick="prevSong()" style="font-size: 38px;"></i>
-                    <i class="ph-fill ph-play" id="icon-play-np" onclick="togglePlay()" style="font-size: 48px;"></i>
-                    <i class="ph-fill ph-skip-forward" onclick="nextSong()" style="font-size: 38px;"></i>
-                    <i class="ph-bold ph-repeat" style="font-size: 20px; color: rgba(255,255,255,0.5);"></i>
+                <div class="np-scrubber-group">
+                    <div class="np-time-labels">
+                        <span id="time-curr-np">0:00</span>
+                        <span id="time-tot-np">-0:00</span>
+                    </div>
+                    <div class="scrubber-bg" onclick="seek(event, this)"><div class="scrubber-fill" id="bar-fill-np"></div></div>
+                </div>
+
+                <div class="np-playback-controls">
+                    <i class="ph-bold ph-shuffle"></i>
+                    <i class="ph-fill ph-skip-back" onclick="prevSong()"></i>
+                    <i class="ph-fill ph-play" id="icon-play-np" onclick="togglePlay()"></i>
+                    <i class="ph-fill ph-skip-forward" onclick="nextSong()"></i>
+                    <i class="ph-bold ph-repeat"></i>
+                </div>
+                
+                <div class="np-volume-row">
+                    <i class="ph-fill ph-speaker-low" onclick="setVolumeLevel(0)"></i>
+                    <div class="scrubber-bg" onclick="changeVolume(event, this)"><div class="scrubber-fill" id="vol-fill-np" style="width:75%;"></div></div>
+                    <i class="ph-fill ph-speaker-high" onclick="setVolumeLevel(1)"></i>
                 </div>
             </div>
 
@@ -653,7 +636,10 @@
                     <div id="lyrics-content"></div>
                 </div>
             </div>
+            
         </div>
+        
+        <div class="np-lyrics-btn"><i class="ph-fill ph-quotes"></i></div>
     </div>
 
     <!-- Hidden Canvas for Color Extraction -->
@@ -1288,7 +1274,7 @@
         }
 
         /* ==================================================================
-           LYRICS ENGINE (HYBRID LRC / TTML PARSER)
+           LYRICS ENGINE (ZERO-REFLOW, HYBRID LRC / TTML PARSER)
            ================================================================== */
         let parsedLyrics =[];
         let activeLyricIndex = -1;
@@ -1481,18 +1467,18 @@
                     if(i < nIdx) {
                         l.el.className = 'lrc-line passed';
                         l.words.forEach(w => { 
-                            if(w.el) { w.fill = 115; w.lastRenderedFill = 115; w.el.style.setProperty('--fill', '115%'); } 
+                            if(w.el) { w.fill = 1; w.el.style.setProperty('--word-progress', '1'); } 
                         });
                     } else if(i > nIdx) {
                         l.el.className = 'lrc-line';
                         l.words.forEach(w => { 
-                            if(w.el) { w.fill = 0; w.lastRenderedFill = 0; w.el.style.setProperty('--fill', '0%'); } 
+                            if(w.el) { w.fill = 0; w.el.style.setProperty('--word-progress', '0'); } 
                         });
                     } else {
                         l.el.className = 'lrc-line active';
                         if(!isUserScrolling) {
                             const sc = document.getElementById('lyrics-scroller');
-                            targetScrollY = l.el.offsetTop - (sc.clientHeight * 0.4) + (l.el.clientHeight / 2);
+                            targetScrollY = l.el.offsetTop - (sc.clientHeight / 2) + (l.el.clientHeight / 2);
                         }
                     }
                 });
@@ -1505,22 +1491,18 @@
                     
                     let targetFill = 0;
                     if(cur >= w.time + w.dur) {
-                        targetFill = 115;
+                        targetFill = 1;
                     } else if(cur >= w.time) {
-                        targetFill = w.dur > 0 ? ((cur - w.time) / w.dur) * 115 : 115;
-                        targetFill = Math.max(0, Math.min(targetFill, 115));
+                        // CERO REFLOW MATEMATICO EXACTO: Sin LERP (saltos) para no atrasar la letra.
+                        targetFill = w.dur > 0 ? (cur - w.time) / w.dur : 1;
+                        targetFill = Math.max(0, Math.min(targetFill, 1));
                     } else {
                         targetFill = 0;
                     }
 
-                    // LERP de 60fps ultra suave para evitar que la luz tiemble o salte
-                    w.fill += (targetFill - w.fill) * 0.15;
-                    
-                    if(Math.abs(w.fill - targetFill) < 0.1) w.fill = targetFill;
-
-                    if(Math.abs(w.fill - w.lastRenderedFill) > 0.1 || w.fill === 115 || w.fill === 0) {
-                        w.el.style.setProperty('--fill', `${w.fill.toFixed(1)}%`);
-                        w.lastRenderedFill = w.fill;
+                    if(w.fill !== targetFill) {
+                        w.fill = targetFill;
+                        w.el.style.setProperty('--word-progress', targetFill.toString());
                     }
                 });
             }
@@ -1542,7 +1524,6 @@
             if(activeAudio.duration && !isNaN(activeAudio.duration)) {
                 let cur = activeAudio.currentTime; 
                 
-                // Extrapolación robusta de 60fps que previene saltos hacia atrás
                 const now = performance.now();
                 if (cur !== lastAudioTime) { 
                     lastAudioTime = cur; 
@@ -1568,16 +1549,14 @@
                 checkAutoMix();
                 
                 if(isNPOpen) { 
-                    // Anticipación visual de 100ms para contrarrestar el LERP y que golpee al mismo tiempo que la voz
-                    const visualTime = cur + 0.1;
-                    updateKaraoke(visualTime); 
+                    updateKaraoke(cur); 
 
                     const sc = document.getElementById('lyrics-scroller');
                     if (isUserScrolling) { currentScrollY = sc.scrollTop; } 
                     else {
                         const scrollDiff = targetScrollY - currentScrollY;
                         if (Math.abs(scrollDiff) > 0.5) {
-                            // Fricción bajada a 0.05 para deslizamiento vertical perfecto y suave
+                            // Fricción a 0.05 crea el scroll "Buttery Smooth" como Apple Music sin brincos
                             currentScrollY += scrollDiff * 0.05;
                             sc.scrollTop = currentScrollY;
                         }
