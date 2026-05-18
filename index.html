@@ -352,80 +352,82 @@
         .lyrics-scroll-area::-webkit-scrollbar { display: none; }
 
         /* ==================================================================
-           SPRING-PHYSICS LYRICS ENGINE — CSS LAYER
-           Transitions are driven by JS spring integrator; CSS only provides
-           will-change hints and the gradient-mask paint shader.
+           APPLE MUSIC–STYLE TTML LYRICS ENGINE — CSS LAYER
+           Apple Music renders lyrics as large bold lines, where:
+           - inactive/future lines: dim, slightly smaller, no blur
+           - active line: full white, slightly larger scale
+           - passed lines: dim white (same as inactive)
+           - per-word karaoke: gradient sweep left→right, bright white to dim
            ================================================================== */
 
         /* Each lyric line — base (inactive/future) state */
         .lrc-line {
-            font-size: clamp(28px, 3.8vw, 54px);
+            font-size: clamp(26px, 3.5vw, 50px);
             font-weight: 800;
-            line-height: 1.38;
-            letter-spacing: -0.02em;
-            margin-bottom: 28px;
+            line-height: 1.35;
+            letter-spacing: -0.025em;
+            margin-bottom: 22px;
             cursor: pointer;
-            /* Static fallback; spring engine overrides via inline style */
             opacity: 0.28;
-            transform: scale(0.955);
+            transform: scale(0.96);
             transform-origin: left center;
-            filter: blur(0.6px);
             word-wrap: break-word;
             white-space: normal;
-            color: #fff;
+            color: rgba(255,255,255,0.28);
             text-align: left;
-            /* GPU-composite only — no layout reflows */
-            will-change: transform, opacity, filter;
-            /* Hardware-layer isolation */
+            transition: opacity 0.45s cubic-bezier(0.25,1,0.5,1),
+                        transform 0.45s cubic-bezier(0.25,1,0.5,1);
+            will-change: transform, opacity;
             backface-visibility: hidden;
             -webkit-backface-visibility: hidden;
         }
 
-        /* Active line — spring engine writes inline style,
-           these classes act as intent markers only */
+        /* Active line — scale up & full opacity like Apple Music */
         .lrc-line.active {
-            filter: drop-shadow(0 2px 20px rgba(0,0,0,0.25));
-        }
-        .lrc-line.passed { /* intent: fully swept */ }
-
-        /* Hover override for manual exploration */
-        .lrc-line:hover {
-            opacity: 0.72 !important;
+            opacity: 1 !important;
             transform: scale(1.0) !important;
-            filter: none !important;
+            color: #fff;
         }
 
-        /* ── GRADIENT CLIP-MASK WORD PAINT SHADER ──────────────────────────
-         * --word-progress  : 0.0 → 1.0 (written every rAF frame by JS)
-         * The gradient sweep has a 12% soft leading edge so characters
-         * dissolve into the active colour rather than toggling on hard.
-         * Active colour  : rgba(255,255,255,1)   (bright white)
-         * Inactive colour: rgba(255,255,255,0.22) (dim grey)
+        /* Passed lines — same dim as inactive */
+        .lrc-line.passed {
+            opacity: 0.28;
+            transform: scale(0.96);
+        }
+
+        /* Hover */
+        .lrc-line:hover {
+            opacity: 0.65 !important;
+            transform: scale(0.98) !important;
+        }
+
+        /* ── APPLE MUSIC GRADIENT KARAOKE WORD SHADER ──────────────────────
+         * --fill: 0% → 115%, swept by JS every rAF frame
+         * Lit   : rgba(255,255,255,1)
+         * Unlit : rgba(255,255,255,0.28) — matches inactive line color
+         * Soft 14% leading edge for smooth dissolve
          * ------------------------------------------------------------------ */
         .lrc-word {
             display: inline;
             padding: 0;
             margin: 0;
             vertical-align: baseline;
-            /* Gradient is recomputed by JS via setProperty('--fill', …)    */
             background: linear-gradient(
                 90deg,
                 rgba(255,255,255,1)    0%,
-                rgba(255,255,255,1)    calc(var(--fill, 0%) - 12%),
-                rgba(255,255,255,0.55) calc(var(--fill, 0%) - 6%),
-                rgba(255,255,255,0.22) var(--fill, 0%),
-                rgba(255,255,255,0.22) 100%
+                rgba(255,255,255,1)    calc(var(--fill, 0%) - 14%),
+                rgba(255,255,255,0.6)  calc(var(--fill, 0%) - 7%),
+                rgba(255,255,255,0.28) var(--fill, 0%),
+                rgba(255,255,255,0.28) 100%
             );
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            /* Avoid triggering layout; gradient paint is compositor-friendly */
             will-change: background;
-            /* Sub-pixel antialiasing */
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Passed words: instantly fully lit (set via JS) */
+        /* Passed words — fully lit */
         .lrc-word.lit {
             background: rgba(255,255,255,1);
             -webkit-background-clip: text;
@@ -433,19 +435,45 @@
             color: transparent;
         }
 
-        /* Singing dots placeholder (instrumental / empty lines) */
+        /* ── APPLE MUSIC INSTRUMENTAL DOTS ─────────────────────────────────
+         * 3 dots that pulse/bounce while the section plays
+         * ------------------------------------------------------------------ */
         .lrc-dots {
             display: inline-flex;
-            gap: 10px;
+            gap: 12px;
             align-items: center;
-            height: 1.2em;
+            height: 1.1em;
+            padding: 0.1em 0;
         }
         .lrc-dot {
-            width: 9px; height: 9px;
+            width: 10px; height: 10px;
             border-radius: 50%;
             background: rgba(255,255,255,0.35);
             display: inline-block;
             will-change: transform, opacity;
+            transition: transform 0.25s ease, background 0.25s ease;
+        }
+        /* Active dots bounce via JS class */
+        .lrc-line.active .lrc-dot:nth-child(1) { animation: dotBounce 1.1s 0.0s infinite ease-in-out; }
+        .lrc-line.active .lrc-dot:nth-child(2) { animation: dotBounce 1.1s 0.18s infinite ease-in-out; }
+        .lrc-line.active .lrc-dot:nth-child(3) { animation: dotBounce 1.1s 0.36s infinite ease-in-out; }
+        @keyframes dotBounce {
+            0%, 100% { transform: translateY(0) scale(1);   background: rgba(255,255,255,0.45); }
+            40%       { transform: translateY(-6px) scale(1.25); background: rgba(255,255,255,0.9); }
+        }
+
+        /* ── Background vocal lines (ttm:agent != v1) ─────────────────────
+         * Apple Music renders these smaller, right-aligned, italic-ish.
+         * ------------------------------------------------------------------ */
+        .lrc-line.lrc-bg {
+            font-size: clamp(18px, 2.4vw, 34px);
+            text-align: right;
+            padding-left: 20%;
+            font-style: normal;
+            opacity: 0.22;
+        }
+        .lrc-line.lrc-bg.active {
+            opacity: 0.75 !important;
         }
 
         /* ==================================================================
@@ -1353,240 +1381,292 @@
         }
 
         /* ==================================================================
-           LYRICS ENGINE (HYBRID LRC / TTML PARSER)
+           APPLE MUSIC TTML LYRICS ENGINE
+           Full TTML parser: word-level begin/end/dur, itunes:timing,
+           ttm:agent bg-vocals, instrumental dots, line-level fallback.
            ================================================================== */
-        let parsedLyrics =[];
+        let parsedLyrics = [];
         let activeLyricIndex = -1;
-        
+
         let isUserScrolling = false;
         let scrollTimeout;
         let targetScrollY = 0;
         let currentScrollY = 0;
 
+        /* ── Time parser: handles HH:MM:SS.mmm, MM:SS.mmm, SS.mmm, Ns ──── */
         function parseTTMLTime(str) {
-            if(!str) return 0;
-            str = str.toString().replace(/s$/, '').trim(); 
-            const parts = str.split(':');
-            let sec = 0;
-            if(parts.length === 3) {
-                sec = parseInt(parts[0], 10) * 3600 + parseInt(parts[1], 10) * 60 + parseFloat(parts[2].replace(',', '.'));
-            } else if(parts.length === 2) {
-                sec = parseInt(parts[0], 10) * 60 + parseFloat(parts[1].replace(',', '.'));
-            } else {
-                sec = parseFloat(str.replace(',', '.'));
-            }
-            return sec || 0;
+            if (!str) return 0;
+            str = str.toString().trim();
+            // Bare seconds with optional 's' suffix: "3.14s" or "3.14"
+            if (/^\d+(\.\d+)?s?$/.test(str)) return parseFloat(str);
+            // HH:MM:SS.mmm or MM:SS.mmm
+            const parts = str.replace(/s$/, '').split(':');
+            if (parts.length === 3)
+                return parseInt(parts[0], 10) * 3600 + parseInt(parts[1], 10) * 60 + parseFloat(parts[2].replace(',', '.'));
+            if (parts.length === 2)
+                return parseInt(parts[0], 10) * 60 + parseFloat(parts[1].replace(',', '.'));
+            return parseFloat(str.replace(',', '.')) || 0;
         }
 
+        /* ── Parse a single <p> node into a line object ──────────────────── */
+        function parseTTMLParagraph(p, isTimed) {
+            const beginAttr = p.getAttribute('begin');
+            const endAttr   = p.getAttribute('end');
+            if (!beginAttr) return null;
+
+            const pBegin = parseTTMLTime(beginAttr);
+            const pEnd   = endAttr ? parseTTMLTime(endAttr) : 0;
+            const pDur   = pEnd > pBegin ? pEnd - pBegin : 0;
+
+            // Detect bg-vocal lines (Apple Music renders these smaller / right-aligned)
+            const agent = p.getAttribute('ttm:agent') || '';
+            const isBg  = agent.toLowerCase().includes('v') && agent.toLowerCase() !== 'v1';
+
+            const words = [];
+
+            function processNode(node, fallbackTime) {
+                if (node.nodeType === Node.TEXT_NODE) {
+                    const val = node.nodeValue.replace(/[\r\n\t]+/g, ' ');
+                    if (val.trim()) {
+                        // Plain text inside <p> — one word group at line time
+                        words.push({ time: fallbackTime, dur: 0, text: val, el: null, fill: 0, lastRenderedFill: 0, isDots: false });
+                    } else if (val === ' ' && words.length > 0) {
+                        words[words.length - 1].text += ' ';
+                    }
+                } else if (node.nodeType === Node.ELEMENT_NODE) {
+                    const tag = node.nodeName.toLowerCase();
+                    if (tag === 'span' || tag === 's') {
+                        const sBeginAttr = node.getAttribute('begin');
+                        const sEndAttr   = node.getAttribute('end');
+                        const sDurAttr   = node.getAttribute('dur') || node.getAttribute('d');
+
+                        const sBegin = sBeginAttr ? parseTTMLTime(sBeginAttr) : fallbackTime;
+                        let   sDur   = 0;
+                        if (sEndAttr)  sDur = parseTTMLTime(sEndAttr) - sBegin;
+                        else if (sDurAttr) sDur = parseTTMLTime(sDurAttr);
+
+                        const text = node.textContent || '';
+                        if (text.trim()) {
+                            words.push({ time: sBegin, dur: sDur, text, el: null, fill: 0, lastRenderedFill: 0, isDots: false });
+                        }
+                    } else {
+                        // Recurse into unknown wrappers
+                        Array.from(node.childNodes).forEach(c => processNode(c, fallbackTime));
+                    }
+                }
+            }
+
+            Array.from(p.childNodes).forEach(n => processNode(n, pBegin));
+
+            // Fallback: no words parsed — treat full textContent as one line-word
+            if (words.length === 0) {
+                const raw = (p.textContent || '').trim();
+                if (!raw) return null;
+                // Detect instrumental markers (♪ / empty / ···)
+                const isDots = (raw === '♪' || raw === '♩' || raw === '' || /^[♪♩\s]+$/.test(raw));
+                words.push({ time: pBegin, dur: pDur, text: isDots ? '•••' : raw, el: null, fill: 0, lastRenderedFill: 0, isDots });
+            }
+
+            const cleanLine = words.map(w => w.text).join('').trim();
+            return { time: pBegin, text: cleanLine, words, el: null, dur: pDur, isBg };
+        }
+
+        /* ── Full TTML document parser ───────────────────────────────────── */
+        function parseTTML(xmlText) {
+            const xmlDoc = new DOMParser().parseFromString(xmlText, 'text/xml');
+            const lines  = [];
+
+            // Check if Apple Music itunes:timing="Word" is set
+            const ttEl     = xmlDoc.querySelector('tt');
+            const isTimed  = ttEl && (ttEl.getAttribute('itunes:timing') === 'Word');
+
+            const pTags = xmlDoc.getElementsByTagName('p');
+            for (let i = 0; i < pTags.length; i++) {
+                const line = parseTTMLParagraph(pTags[i], isTimed);
+                if (line) lines.push(line);
+            }
+            return lines;
+        }
+
+        /* ── LRC parser (kept for .lrc fallback) ────────────────────────── */
+        function parseLRC(text) {
+            const lines = [];
+            text.split('\n').forEach(line => {
+                const m = line.match(/\[(\d{2,}):(\d{2}(?:\.\d{1,3})?)\](.*)/);
+                if (!m) return;
+                const time = parseInt(m[1], 10) * 60 + parseFloat(m[2]);
+                const raw  = m[3].replace('\r', '');
+                let words  = [];
+                let wm; const wReg = /<(\d{2,}):(\d{2}(?:\.\d{1,3})?)>([^<]*)/g; let hasW = false;
+                while ((wm = wReg.exec(raw)) !== null) {
+                    hasW = true;
+                    words.push({ time: parseInt(wm[1],10)*60+parseFloat(wm[2]), text: wm[3], el: null, dur: 0, fill: 0, lastRenderedFill: 0, isDots: false });
+                }
+                const clean = raw.replace(/<\d{2,}:\d{2}(?:\.\d{1,3})?>/g, '').trim();
+                const isInstrumental = (clean === '' || clean === '♪');
+                if (isInstrumental) words = [{ time, text: '•••', el: null, dur: 0, fill: 0, lastRenderedFill: 0, isDots: true }];
+                else if (!hasW)    words = [{ time, text: clean, el: null, dur: 0, fill: 0, lastRenderedFill: 0, isDots: false }];
+                lines.push({ time, text: clean, words, el: null, dur: 0, isBg: false });
+            });
+            return lines;
+        }
+
+        /* ── Fill in missing durations after all lines are parsed ─────────  */
+        function inferDurations(lines) {
+            lines.forEach((l, i) => {
+                const nTime = i < lines.length - 1 ? lines[i + 1].time : l.time + 8;
+                if (!l.dur || l.dur <= 0) l.dur = Math.max(0, nTime - l.time);
+                for (let j = 0; j < l.words.length; j++) {
+                    const w = l.words[j];
+                    if (!w.dur || w.dur <= 0) {
+                        if (j < l.words.length - 1)
+                            w.dur = Math.max(0.05, l.words[j + 1].time - w.time);
+                        else
+                            w.dur = Math.min(3.0, Math.max(0.05, nTime - w.time));
+                    }
+                }
+            });
+        }
+
+        /* ── Build DOM from parsed lines ─────────────────────────────────── */
+        function buildLyricsDom(container, lines) {
+            container.innerHTML = '';
+            lines.forEach(l => {
+                const div = document.createElement('div');
+                div.className = 'lrc-line' + (l.isBg ? ' lrc-bg' : '');
+                div.onclick = () => { activeAudio.currentTime = l.time; activeAudio.play(); setPlayIcon(true); };
+
+                l.words.forEach(w => {
+                    let t = w.text;
+                    const leading  = /^\s+/.test(t);
+                    const trailing = /\s+$/.test(t);
+                    if (leading)  div.appendChild(document.createTextNode(' '));
+                    t = t.trim();
+
+                    if (t) {
+                        if (w.isDots || t === '•••') {
+                            const wrap = document.createElement('span');
+                            wrap.className = 'lrc-dots';
+                            for (let d = 0; d < 3; d++) {
+                                const dot = document.createElement('span');
+                                dot.className = 'lrc-dot';
+                                wrap.appendChild(dot);
+                            }
+                            w.el = wrap;
+                            div.appendChild(wrap);
+                        } else {
+                            const s = document.createElement('span');
+                            s.className = 'lrc-word';
+                            s.textContent = t;
+                            w.el = s;
+                            div.appendChild(s);
+                        }
+                    }
+                    if (trailing) div.appendChild(document.createTextNode(' '));
+                });
+
+                l.el = div;
+                container.appendChild(div);
+            });
+        }
+
+        /* ── Main fetchLyrics ─────────────────────────────────────────────── */
         async function fetchLyrics(url) {
             const container = document.getElementById('lyrics-content');
-            const scroller = document.getElementById('lyrics-scroller');
-            
-            parsedLyrics = [];
+            const scroller  = document.getElementById('lyrics-scroller');
+
+            parsedLyrics    = [];
             activeLyricIndex = -1;
-            targetScrollY = 0;
-            currentScrollY = 0;
-            springPos = 0;
-            springVel = 0;
-            springTarget = 0;
+            targetScrollY = currentScrollY = springPos = springVel = springTarget = 0;
             scroller.scrollTop = 0;
-            
-            if(!url) { container.innerHTML = "<div style='height:100%; display:flex; align-items:center; justify-content:center;'><p style='color:rgba(255,255,255,0.3); font-size:32px; font-weight:800;'>Instrumental</p></div>"; return; }
-            container.innerHTML = "<p style='color:rgba(255,255,255,0.3); font-size:32px; font-weight:800; text-align:center;'>Loading...</p>";
-            
+
+            if (!url) {
+                container.innerHTML = "<div style='height:100%;display:flex;align-items:center;justify-content:center;'><p style='color:rgba(255,255,255,0.3);font-size:32px;font-weight:800;'>Instrumental</p></div>";
+                return;
+            }
+            container.innerHTML = "<p style='color:rgba(255,255,255,0.3);font-size:32px;font-weight:800;text-align:center;'>Loading...</p>";
+
             try {
-                const res = await fetch(url); 
-                const text = await res.text(); 
-                
-                if (url.endsWith('.ttml') || text.includes('http://www.w3.org/ns/ttml') || text.includes('<?xml')) {
-                    
-                    const parser = new DOMParser();
-                    const xmlDoc = parser.parseFromString(text, "text/xml");
-                    const pTags = xmlDoc.getElementsByTagName('p');
-                    
-                    for(let i=0; i<pTags.length; i++) {
-                        const p = pTags[i];
-                        const beginAttr = p.getAttribute('begin') || p.getAttribute('t');
-                        if (!beginAttr) continue;
-                        
-                        const pBegin = parseTTMLTime(beginAttr);
-                        const endAttr = p.getAttribute('end');
-                        const pEnd = endAttr ? parseTTMLTime(endAttr) : 0;
-                        
-                        let words =[];
-                        
-                        Array.from(p.childNodes).forEach(node => {
-                            if (node.nodeType === Node.TEXT_NODE) {
-                                let val = node.nodeValue;
-                                if(val) {
-                                    val = val.replace(/[\r\n\t]+/g, ' ').replace(/\s{2,}/g, ' ');
-                                    if(val === ' ') {
-                                        if(words.length > 0) words[words.length - 1].text += ' ';
-                                    } else if (val.trim() !== '') {
-                                        words.push({ time: pBegin, dur: 0, text: val, el: null, fill: 0, lastRenderedFill: 0 });
-                                    }
-                                }
-                            } else if (node.nodeType === Node.ELEMENT_NODE && (node.nodeName.toLowerCase() === 'span' || node.nodeName.toLowerCase() === 's')) {
-                                const sBeginAttr = node.getAttribute('begin') || node.getAttribute('t');
-                                const sBegin = sBeginAttr ? parseTTMLTime(sBeginAttr) : pBegin;
-                                
-                                const sEndAttr = node.getAttribute('end');
-                                const sDurAttr = node.getAttribute('d');
-                                
-                                let dur = 0;
-                                if(sEndAttr) dur = parseTTMLTime(sEndAttr) - sBegin;
-                                else if(sDurAttr) dur = parseTTMLTime(sDurAttr);
-                                else dur = 0;
+                const res  = await fetch(url);
+                const text = await res.text();
 
-                                words.push({ time: sBegin, dur: dur, text: node.textContent || "", el: null, fill: 0, lastRenderedFill: 0 });
-                            }
-                        });
+                const isTTML = url.endsWith('.ttml') || text.trimStart().startsWith('<?xml') || text.includes('http://www.w3.org/ns/ttml');
 
-                        if (words.length === 0) {
-                            const rawText = p.textContent || "";
-                            const cleanLine = rawText.trim();
-                            const pDur = pEnd > pBegin ? pEnd - pBegin : 0;
-                            if (cleanLine) {
-                                words.push({ time: pBegin, dur: pDur, text: cleanLine, el: null, fill: 0, lastRenderedFill: 0 });
-                            }
-                        }
-                        
-                        if(words.length > 0) {
-                            const cleanLine = words.map(w => w.text).join('').trim();
-                            parsedLyrics.push({ time: pBegin, text: cleanLine, words, el: null, dur: pEnd > pBegin ? pEnd - pBegin : 0 });
-                        }
-                    }
+                parsedLyrics = isTTML ? parseTTML(text) : parseLRC(text);
+                inferDurations(parsedLyrics);
 
-                } else {
-                    
-                    const lines = text.split('\n');
-                    lines.forEach(line => {
-                        const lineMatch = line.match(/\[(\d{2,}):(\d{2}(?:\.\d{1,3})?)\](.*)/);
-                        if(lineMatch) {
-                            const time = (parseInt(lineMatch[1])*60) + parseFloat(lineMatch[2]);
-                            const raw = lineMatch[3].replace('\r', '');
-                            
-                            let words =[]; let wm; const wReg = /<(\d{2,}):(\d{2}(?:\.\d{1,3})?)>([^<]*)/g; let hasW = false;
-                            while((wm = wReg.exec(raw)) !== null) { hasW = true; words.push({ time: (parseInt(wm[1])*60)+parseFloat(wm[2]), text: wm[3], el: null, dur: 0, fill: 0, lastRenderedFill: 0 }); }
-                            
-                            const clean = raw.replace(/<\d{2,}:\d{2}(?:\.\d{1,3})?>/g, '').trim();
-                            if(clean === "" || clean === "♪") words =[{ time, text: "•••", el: null, dur: 0, fill: 0, lastRenderedFill: 0 }];
-                            else if(!hasW) words =[{ time, text: clean, el: null, dur: 0, fill: 0, lastRenderedFill: 0 }];
-                            
-                            parsedLyrics.push({ time, text: clean, words, el: null, dur: 0 });
-                        }
-                    });
-                }
-                
-                parsedLyrics.forEach((l, i) => {
-                    let nTime = (i < parsedLyrics.length - 1) ? parsedLyrics[i+1].time : l.time + 8;
-                    if(!l.dur) l.dur = Math.max(0, nTime - l.time);
-                    
-                    for(let j=0; j<l.words.length; j++) {
-                        if(!l.words[j].dur || l.words[j].dur <= 0) {
-                            if(j < l.words.length - 1) l.words[j].dur = Math.max(0.05, l.words[j+1].time - l.words[j].time);
-                            else l.words[j].dur = Math.min(2.5, Math.max(0.05, nTime - l.words[j].time));
-                        }
-                    }
-                });
+                if (!parsedLyrics.length) throw new Error('empty');
 
-                container.innerHTML = ""; if(!parsedLyrics.length) throw new Error();
-                
-                parsedLyrics.forEach(l => {
-                    const div = document.createElement('div'); div.className = 'lrc-line';
-                    div.onclick = () => { activeAudio.currentTime = l.time; activeAudio.play(); setPlayIcon(true); };
-                    
-                    l.words.forEach(w => {
-                        let t = w.text;
-                        let leadingSpace = false;
-                        let trailingSpace = false;
-                        
-                        if (/^\s+/.test(t)) { leadingSpace = true; t = t.trimStart(); }
-                        if (/\s+$/.test(t)) { trailingSpace = true; t = t.trimEnd(); }
-                        
-                        if (leadingSpace) div.appendChild(document.createTextNode(' '));
-                        
-                        if (t) {
-                            // Render animated dots for instrumental / pause sections
-                            if (w.isDots || t === '•••') {
-                                const dotsWrap = document.createElement('span');
-                                dotsWrap.className = 'lrc-dots';
-                                for (let d = 0; d < 3; d++) {
-                                    const dot = document.createElement('span');
-                                    dot.className = 'lrc-dot';
-                                    dotsWrap.appendChild(dot);
-                                }
-                                w.el = dotsWrap;
-                                div.appendChild(dotsWrap);
-                            } else {
-                                const s = document.createElement('span');
-                                s.className = 'lrc-word';
-                                s.textContent = t;
-                                w.el = s;
-                                div.appendChild(s);
-                            }
-                        }
-                        
-                        if (trailingSpace) div.appendChild(document.createTextNode(' '));
-                    });
-                    
-                    l.el = div; container.appendChild(div);
-                });
-                
-                const setManual = () => { 
-                    isUserScrolling = true; 
-                    clearTimeout(scrollTimeout); 
-                    // 3-second idle → soft re-engage spring engine to active line
-                    scrollTimeout = setTimeout(() => { 
+                buildLyricsDom(container, parsedLyrics);
+
+                // Re-attach manual-scroll detector
+                const setManual = () => {
+                    isUserScrolling = true;
+                    clearTimeout(scrollTimeout);
+                    scrollTimeout = setTimeout(() => {
                         isUserScrolling = false;
                         if (activeLyricIndex !== -1 && parsedLyrics[activeLyricIndex]?.el) {
                             const sc = document.getElementById('lyrics-scroller');
                             springTarget = parsedLyrics[activeLyricIndex].el.offsetTop
                                 - sc.clientHeight * 0.42
                                 + parsedLyrics[activeLyricIndex].el.clientHeight * 0.5;
-                            springVel *= 0.08; // dampen so it glides back, not snaps
+                            springVel *= 0.08;
                         }
-                    }, 3000); 
+                    }, 3000);
                 };
-                
-                scroller.addEventListener('wheel', setManual, {passive: true});
-                scroller.addEventListener('touchmove', setManual, {passive: true});
-                
-            } catch(e) { container.innerHTML = "<div style='height:100%; display:flex; align-items:center; justify-content:center;'><p style='color:rgba(255,255,255,0.3); font-size:32px; font-weight:800;'>Lyrics Unavailable</p></div>"; }
+                scroller.addEventListener('wheel', setManual, { passive: true });
+                scroller.addEventListener('touchmove', setManual, { passive: true });
+
+            } catch (e) {
+                container.innerHTML = "<div style='height:100%;display:flex;align-items:center;justify-content:center;'><p style='color:rgba(255,255,255,0.3);font-size:32px;font-weight:800;'>Lyrics Unavailable</p></div>";
+            }
         }
 
         /* ================================================================
-           KARAOKE ENGINE — word-level gradient-clip sweep
-           Called every rAF frame with sub-millisecond precise `cur` time.
-           --fill sweeps 0%→115%; 16% soft leading edge baked in CSS.
+           KARAOKE ENGINE — Apple Music style
+           Word-level gradient sweep. Active line: full opacity + scale.
+           Passed/future lines: dim. No blur filters.
+           Called every rAF with sub-ms extrapolated `cur`.
            ================================================================ */
         function updateKaraoke(cur) {
             if (!parsedLyrics.length) return;
 
-            // ── Find active line (forward scan, O(n) but n is small ~100 lines) ──
+            // ── Find active line ──────────────────────────────────────────
             let nIdx = -1;
             for (let i = 0; i < parsedLyrics.length; i++) {
                 if (cur >= parsedLyrics[i].time) nIdx = i;
                 else break;
             }
 
-            // ── On line change: bulk-classify all lines ────────────────────
+            // ── On line change: classify all lines ───────────────────────
             if (nIdx !== activeLyricIndex) {
                 parsedLyrics.forEach((l, i) => {
                     if (!l.el) return;
                     if (i < nIdx) {
-                        if (l.el.className !== 'lrc-line passed') {
-                            l.el.className = 'lrc-line passed';
-                            l.words.forEach(w => { if (w.el) { w.fill = 115; w.lastRenderedFill = 115; w.el.style.setProperty('--fill', '115%'); } });
-                        }
+                        // Passed
+                        l.el.style.opacity = '0.28';
+                        l.el.style.transform = 'scale(0.96)';
+                        l.words.forEach(w => {
+                            if (w.el && w.el.classList.contains('lrc-word')) {
+                                w.fill = 115; w.lastRenderedFill = 115;
+                                w.el.style.setProperty('--fill', '115%');
+                            }
+                        });
                     } else if (i > nIdx) {
-                        if (l.el.className !== 'lrc-line') {
-                            l.el.className = 'lrc-line';
-                            l.words.forEach(w => { if (w.el) { w.fill = 0; w.lastRenderedFill = 0; w.el.style.setProperty('--fill', '0%'); } });
-                        }
+                        // Future
+                        l.el.style.opacity = '0.28';
+                        l.el.style.transform = 'scale(0.96)';
+                        l.words.forEach(w => {
+                            if (w.el && w.el.classList.contains('lrc-word')) {
+                                w.fill = 0; w.lastRenderedFill = 0;
+                                w.el.style.setProperty('--fill', '0%');
+                            }
+                        });
                     } else {
-                        l.el.className = 'lrc-line active';
-                        // Spring scroll: center active line at 42% from top
+                        // Active
+                        l.el.style.opacity = '1';
+                        l.el.style.transform = 'scale(1.0)';
+                        // Spring scroll: center active line at 42% viewport
                         if (!isUserScrolling) {
                             const sc = document.getElementById('lyrics-scroller');
                             springTarget = l.el.offsetTop - sc.clientHeight * 0.42 + l.el.clientHeight * 0.5;
@@ -1596,27 +1676,25 @@
                 activeLyricIndex = nIdx;
             }
 
-            // ── Per-word gradient fill (active line only) ──────────────────
+            // ── Per-word gradient fill on active line only ───────────────
             if (nIdx === -1) return;
             parsedLyrics[nIdx].words.forEach(w => {
-                if (!w.el || w.isDots) return;
+                if (!w.el || w.isDots || !w.el.classList.contains('lrc-word')) return;
 
                 let targetFill;
                 if (cur >= w.time + w.dur) {
                     targetFill = 115;
                 } else if (cur >= w.time) {
-                    // Core: --word-progress = (cur - start) / duration → 0…1 → 0…115%
                     targetFill = w.dur > 0 ? Math.max(0, Math.min((cur - w.time) / w.dur * 115, 115)) : 115;
                 } else {
                     targetFill = 0;
                 }
 
-                // LERP — tuned for human voice response at 60fps
+                // LERP tuned for voice at 60fps
                 const alpha = (targetFill === 115 || targetFill === 0) ? 0.28 : 0.13;
                 w.fill += (targetFill - w.fill) * alpha;
                 if (Math.abs(w.fill - targetFill) < 0.08) w.fill = targetFill;
 
-                // Skip style mutation if change is sub-threshold (< 0.1%)
                 if (Math.abs(w.fill - w.lastRenderedFill) > 0.09 || w.fill === 115 || w.fill === 0) {
                     w.el.style.setProperty('--fill', `${w.fill.toFixed(2)}%`);
                     w.lastRenderedFill = w.fill;
