@@ -38,12 +38,15 @@
             --accent-2: #7F49B4;
             --accent-glow: rgba(255, 46, 147, 0.3);
             
-            --font-display: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Outfit', sans-serif;
-            --font-main: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Plus Jakarta Sans', sans-serif;
+            /* Apple Music Fonts Override */
+            --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
+            --font-main: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
             
             --ease-fluid: cubic-bezier(0.2, 0.8, 0.2, 1);
             --ease-snappy: cubic-bezier(0.3, 1.2, 0.4, 1);
             --ease-cinematic: cubic-bezier(0.25, 1, 0.5, 1);
+            /* Identical Apple Spring Physics curve for scale/blur */
+            --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.15); 
             
             --sidebar-width: 260px;
             --player-height: 88px;
@@ -347,133 +350,43 @@
         }
         .lyrics-scroll-area {
             position: relative; height: 100%; overflow-y: auto; overflow-x: hidden; 
-            padding: 40vh 0 50vh 0; margin: 0; scroll-behavior: smooth;
+            padding: 40vh 0 50vh 0; margin: 0; scroll-behavior: auto;
         }
         .lyrics-scroll-area::-webkit-scrollbar { display: none; }
 
-        /* ==================================================================
-           APPLE MUSIC–STYLE TTML LYRICS ENGINE — CSS LAYER
-           Apple Music renders lyrics as large bold lines, where:
-           - inactive/future lines: dim, slightly smaller, no blur
-           - active line: full white, slightly larger scale
-           - passed lines: dim white (same as inactive)
-           - per-word karaoke: gradient sweep left→right, bright white to dim
-           ================================================================== */
-
-        /* Each lyric line — base (inactive/future) state */
         .lrc-line {
-            font-size: clamp(26px, 3.5vw, 50px);
-            font-weight: 800;
-            line-height: 1.35;
-            letter-spacing: -0.025em;
-            margin-bottom: 22px;
+            font-size: clamp(32px, 3.5vw, 48px); 
+            font-weight: 700; 
+            line-height: 1.25; 
+            letter-spacing: -0.01em; 
+            margin-bottom: 32px; 
             cursor: pointer;
-            opacity: 0.28;
-            transform: scale(0.96);
-            transform-origin: left center;
-            word-wrap: break-word;
-            white-space: normal;
-            color: rgba(255,255,255,0.28);
-            text-align: left;
-            transition: opacity 0.45s cubic-bezier(0.25,1,0.5,1),
-                        transform 0.45s cubic-bezier(0.25,1,0.5,1);
-            will-change: transform, opacity;
-            backface-visibility: hidden;
-            -webkit-backface-visibility: hidden;
+            transition: transform 0.6s var(--ease-spring), filter 0.6s ease, opacity 0.6s ease;
+            opacity: 0.3; /* Gris inactivo */
+            filter: blur(2.5px);
+            transform: scale(0.95); transform-origin: left center;
+            word-wrap: break-word; white-space: normal; 
+            color: #fff; text-align: left;
+            will-change: transform, opacity, filter;
         }
+        .lrc-line.active { opacity: 1; transform: scale(1); filter: blur(0px); text-shadow: 0 4px 15px rgba(0,0,0,0.25); }
+        .lrc-line.passed { opacity: 0.3; transform: scale(0.95); filter: blur(2.5px); }
+        .lrc-line:hover { opacity: 0.8 !important; transform: scale(1) !important; filter: blur(0px) !important; }
 
-        /* Active line — scale up & full opacity like Apple Music */
-        .lrc-line.active {
-            opacity: 1 !important;
-            transform: scale(1.0) !important;
-            color: #fff;
-        }
-
-        /* Passed lines — same dim as inactive */
-        .lrc-line.passed {
-            opacity: 0.28;
-            transform: scale(0.96);
-        }
-
-        /* Hover */
-        .lrc-line:hover {
-            opacity: 0.65 !important;
-            transform: scale(0.98) !important;
-        }
-
-        /* ── APPLE MUSIC GRADIENT KARAOKE WORD SHADER ──────────────────────
-         * --fill: 0% → 115%, swept by JS every rAF frame
-         * Lit   : rgba(255,255,255,1)
-         * Unlit : rgba(255,255,255,0.28) — matches inactive line color
-         * Soft 14% leading edge for smooth dissolve
-         * ------------------------------------------------------------------ */
         .lrc-word {
-            display: inline;
-            padding: 0;
-            margin: 0;
-            vertical-align: baseline;
-            background: linear-gradient(
-                90deg,
-                rgba(255,255,255,1)    0%,
-                rgba(255,255,255,1)    calc(var(--fill, 0%) - 14%),
-                rgba(255,255,255,0.6)  calc(var(--fill, 0%) - 7%),
-                rgba(255,255,255,0.28) var(--fill, 0%),
-                rgba(255,255,255,0.28) 100%
+            display: inline; padding: 0; margin: 0; vertical-align: baseline;
+            /* LUZ DIFUMINADA AL 10% HACIA ATRÁS TIPO APPLE MUSIC */
+            background: linear-gradient(90deg,
+                rgba(255, 255, 255, 1) 0%,
+                rgba(255, 255, 255, 1) calc(var(--fill, 0%) - 10%),
+                rgba(255, 255, 255, 0.35) calc(var(--fill, 0%) + 10%),
+                rgba(255, 255, 255, 0.35) 100%
             );
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
             will-change: background;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        /* Passed words — fully lit */
-        .lrc-word.lit {
-            background: rgba(255,255,255,1);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
-        /* ── APPLE MUSIC INSTRUMENTAL DOTS ─────────────────────────────────
-         * 3 dots that pulse/bounce while the section plays
-         * ------------------------------------------------------------------ */
-        .lrc-dots {
-            display: inline-flex;
-            gap: 12px;
-            align-items: center;
-            height: 1.1em;
-            padding: 0.1em 0;
-        }
-        .lrc-dot {
-            width: 10px; height: 10px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.35);
-            display: inline-block;
-            will-change: transform, opacity;
-            transition: transform 0.25s ease, background 0.25s ease;
-        }
-        /* Active dots bounce via JS class */
-        .lrc-line.active .lrc-dot:nth-child(1) { animation: dotBounce 1.1s 0.0s infinite ease-in-out; }
-        .lrc-line.active .lrc-dot:nth-child(2) { animation: dotBounce 1.1s 0.18s infinite ease-in-out; }
-        .lrc-line.active .lrc-dot:nth-child(3) { animation: dotBounce 1.1s 0.36s infinite ease-in-out; }
-        @keyframes dotBounce {
-            0%, 100% { transform: translateY(0) scale(1);   background: rgba(255,255,255,0.45); }
-            40%       { transform: translateY(-6px) scale(1.25); background: rgba(255,255,255,0.9); }
-        }
-
-        /* ── Background vocal lines (ttm:agent != v1) ─────────────────────
-         * Apple Music renders these smaller, right-aligned, italic-ish.
-         * ------------------------------------------------------------------ */
-        .lrc-line.lrc-bg {
-            font-size: clamp(18px, 2.4vw, 34px);
-            text-align: right;
-            padding-left: 20%;
-            font-style: normal;
-            opacity: 0.22;
-        }
-        .lrc-line.lrc-bg.active {
-            opacity: 0.75 !important;
+            --fill: 0%;
         }
 
         /* ==================================================================
@@ -539,7 +452,7 @@
             
             .np-right-pane { width: 100%; max-width: 400px; flex: none; height: 70vh; position: relative; margin-top: 10px; }
             .lyrics-scroll-area { padding: 10vh 0 30vh 0; }
-            .lrc-line { font-size: 30px; font-weight: 800; margin-bottom: 20px; }
+            .lrc-line { font-size: 28px; margin-bottom: 24px; text-align: left; transform-origin: left center; }
         }
     </style>
 </head>
@@ -555,7 +468,6 @@
 
     <!-- MAIN APP SHELL -->
     <div id="app-wrapper">
-        <!-- SIDEBAR (DESKTOP) -->
         <aside id="sidebar">
             <div class="brand"><i class="ph-fill ph-waveform"></i> VIVETMP</div>
             <nav class="nav-menu">
@@ -765,6 +677,9 @@
         const albumsData =[ { id: "primera-musa", title: "PRIMERA MUSA", artist: "Omar Courtz", cover: omarCourtzImg, year: "2024" } ];
 
         const cancionesData =[
+            // SERIO CON ESE Q (Añadido/Actualizado el XML correcto aquí)
+            { title: "SERIO CON ESE Q", artist: "Omar Courtz, Anuel AA", album: "primera-musa", trackNum: 16, url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776693194/SERIO_CON_ESE_Q_Omar_Courtz_Anuel_AA_ppqcxl.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1779072524/serio_con_ese_q_wvzgin.ttmll" },
+            
             { title: "666", artist: "Yan Block, Cris MJ, Panda Black", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1777064503/666_Yan_Block_Cris_MJ_Panda_Black_yphkaz.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776610355/666_dcyhlv.lrc" },
             { title: "Qué Pasaría...", artist: "Rauw Alejandro, Bad Bunny", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776204387/Qu%C3%A9_Pasar%C3%ADa..._Rauw_Alejandro_Bad_Bunny_tuxday.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1778698748/Qu%C3%A9_Pasar%C3%ADa..._spotdown.org_s4rykk.ttml" },
             { title: "Khé", artist: "Rauw Alejandro, Romeo Santos", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776204333/Kh%C3%A9_Rauw_Alejandro_Romeo_Santos_tkfssk.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776204782/Kh%C3%A9__-_Rauw_Alejandro_Romeo_Santos_dm0jsx.lrc" },
@@ -833,8 +748,7 @@
             { title: "A L O C A - T", artist: "Omar Courtz", album: "primera-musa", trackNum: 13, url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776693181/A_L_O_C_A_-_T_Omar_Courtz_f4fddv.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776693067/A_L_O_C_A_-_T_-_Omar_Courtz_b8j4te.lrc" },
             { title: "S E X P L A Y L I S T 1", artist: "Omar Courtz, Rauw Alejandro", album: "primera-musa", trackNum: 14, url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776693201/S_E_X_P_L_A_Y_L_I_S_T_1_Omar_Courtz_Rauw_Alejandro_w6wlyg.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776693068/S_E_X_P_L_A_Y_L_I_S_T_1_-_Omar_Courtz_Rauw_Alejandro_z6eqw0.lrc" },
             { title: "Q U E V A S H A C E R H O Y", artist: "Omar Courtz, De La Rose", album: "primera-musa", trackNum: 15, url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776693152/Q_U_E_V_A_S_H_A_C_E_R_H_O_Y_Omar_Courtz_De_La_Rose_nhvsmi.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1778705537/Q_U_E_V_A_S_H_A_C_E_R_H_O_Y___spotdown.org_1_x4cksg.ttml" },
-            { title: "SERIO CON ESE Q", artist: "Omar Courtz, Anuel AA", album: "primera-musa", trackNum: 16, url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776693194/SERIO_CON_ESE_Q_Omar_Courtz_Anuel_AA_ppqcxl.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1779072524/serio_con_ese_q_wvzgin.ttml" },
-            { title: "LUCES DE COLORES", artist: "Omar Courtz", album: "primera-musa", trackNum: 17, url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776693141/_LUCES_DE_COLORES_Omar_Courtz_lmhp7d.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776693073/_LUCES_DE_COLORES_-_Omar_Courtz_hha0wl.lrc" },
+            { title: "SERIO CON ESE Q", artist: "Omar Courtz, Anuel AA", album: "primera-musa", trackNum: 17, url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776693141/_LUCES_DE_COLORES_Omar_Courtz_lmhp7d.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776693073/_LUCES_DE_COLORES_-_Omar_Courtz_hha0wl.lrc" },
 
             // Dei V 
             { title: "$UELTA GATITA $UELTA", artist: "Omar Courtz, Dei V, Clarent, Tito El Bambino", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776099825/UELTA_GATITA_UELTA_Omar_Courtz_Dei_V_Clarent_Tito_El_Bambino_iljz1v.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1778086903/UELTA_GATITA_UELTA_Omar_Courtz_Dei_V_Clarent_Tito_El_Bambino_fxpcxk.lrc" },
@@ -1381,292 +1295,212 @@
         }
 
         /* ==================================================================
-           APPLE MUSIC TTML LYRICS ENGINE
-           Full TTML parser: word-level begin/end/dur, itunes:timing,
-           ttm:agent bg-vocals, instrumental dots, line-level fallback.
+           PURE TTML (XML) PARSER — ZERO LRC FALLBACK
            ================================================================== */
-        let parsedLyrics = [];
+        let parsedLyrics =[];
         let activeLyricIndex = -1;
-
+        
         let isUserScrolling = false;
         let scrollTimeout;
-        let targetScrollY = 0;
-        let currentScrollY = 0;
 
-        /* ── Time parser: handles HH:MM:SS.mmm, MM:SS.mmm, SS.mmm, Ns ──── */
         function parseTTMLTime(str) {
-            if (!str) return 0;
-            str = str.toString().trim();
-            // Bare seconds with optional 's' suffix: "3.14s" or "3.14"
-            if (/^\d+(\.\d+)?s?$/.test(str)) return parseFloat(str);
-            // HH:MM:SS.mmm or MM:SS.mmm
-            const parts = str.replace(/s$/, '').split(':');
-            if (parts.length === 3)
-                return parseInt(parts[0], 10) * 3600 + parseInt(parts[1], 10) * 60 + parseFloat(parts[2].replace(',', '.'));
-            if (parts.length === 2)
-                return parseInt(parts[0], 10) * 60 + parseFloat(parts[1].replace(',', '.'));
-            return parseFloat(str.replace(',', '.')) || 0;
-        }
-
-        /* ── Parse a single <p> node into a line object ──────────────────── */
-        function parseTTMLParagraph(p, isTimed) {
-            const beginAttr = p.getAttribute('begin');
-            const endAttr   = p.getAttribute('end');
-            if (!beginAttr) return null;
-
-            const pBegin = parseTTMLTime(beginAttr);
-            const pEnd   = endAttr ? parseTTMLTime(endAttr) : 0;
-            const pDur   = pEnd > pBegin ? pEnd - pBegin : 0;
-
-            // Detect bg-vocal lines (Apple Music renders these smaller / right-aligned)
-            const agent = p.getAttribute('ttm:agent') || '';
-            const isBg  = agent.toLowerCase().includes('v') && agent.toLowerCase() !== 'v1';
-
-            const words = [];
-
-            function processNode(node, fallbackTime) {
-                if (node.nodeType === Node.TEXT_NODE) {
-                    const val = node.nodeValue.replace(/[\r\n\t]+/g, ' ');
-                    if (val.trim()) {
-                        // Plain text inside <p> — one word group at line time
-                        words.push({ time: fallbackTime, dur: 0, text: val, el: null, fill: 0, lastRenderedFill: 0, isDots: false });
-                    } else if (val === ' ' && words.length > 0) {
-                        words[words.length - 1].text += ' ';
-                    }
-                } else if (node.nodeType === Node.ELEMENT_NODE) {
-                    const tag = node.nodeName.toLowerCase();
-                    if (tag === 'span' || tag === 's') {
-                        const sBeginAttr = node.getAttribute('begin');
-                        const sEndAttr   = node.getAttribute('end');
-                        const sDurAttr   = node.getAttribute('dur') || node.getAttribute('d');
-
-                        const sBegin = sBeginAttr ? parseTTMLTime(sBeginAttr) : fallbackTime;
-                        let   sDur   = 0;
-                        if (sEndAttr)  sDur = parseTTMLTime(sEndAttr) - sBegin;
-                        else if (sDurAttr) sDur = parseTTMLTime(sDurAttr);
-
-                        const text = node.textContent || '';
-                        if (text.trim()) {
-                            words.push({ time: sBegin, dur: sDur, text, el: null, fill: 0, lastRenderedFill: 0, isDots: false });
-                        }
-                    } else {
-                        // Recurse into unknown wrappers
-                        Array.from(node.childNodes).forEach(c => processNode(c, fallbackTime));
-                    }
-                }
+            if(!str) return 0;
+            str = str.toString().replace(/s$/, '').trim(); 
+            const parts = str.split(':');
+            let sec = 0;
+            if(parts.length === 3) {
+                sec = parseInt(parts[0], 10) * 3600 + parseInt(parts[1], 10) * 60 + parseFloat(parts[2].replace(',', '.'));
+            } else if(parts.length === 2) {
+                sec = parseInt(parts[0], 10) * 60 + parseFloat(parts[1].replace(',', '.'));
+            } else {
+                sec = parseFloat(str.replace(',', '.'));
             }
-
-            Array.from(p.childNodes).forEach(n => processNode(n, pBegin));
-
-            // Fallback: no words parsed — treat full textContent as one line-word
-            if (words.length === 0) {
-                const raw = (p.textContent || '').trim();
-                if (!raw) return null;
-                // Detect instrumental markers (♪ / empty / ···)
-                const isDots = (raw === '♪' || raw === '♩' || raw === '' || /^[♪♩\s]+$/.test(raw));
-                words.push({ time: pBegin, dur: pDur, text: isDots ? '•••' : raw, el: null, fill: 0, lastRenderedFill: 0, isDots });
-            }
-
-            const cleanLine = words.map(w => w.text).join('').trim();
-            return { time: pBegin, text: cleanLine, words, el: null, dur: pDur, isBg };
+            return sec || 0;
         }
 
-        /* ── Full TTML document parser ───────────────────────────────────── */
-        function parseTTML(xmlText) {
-            const xmlDoc = new DOMParser().parseFromString(xmlText, 'text/xml');
-            const lines  = [];
-
-            // Check if Apple Music itunes:timing="Word" is set
-            const ttEl     = xmlDoc.querySelector('tt');
-            const isTimed  = ttEl && (ttEl.getAttribute('itunes:timing') === 'Word');
-
-            const pTags = xmlDoc.getElementsByTagName('p');
-            for (let i = 0; i < pTags.length; i++) {
-                const line = parseTTMLParagraph(pTags[i], isTimed);
-                if (line) lines.push(line);
-            }
-            return lines;
-        }
-
-        /* ── LRC parser (kept for .lrc fallback) ────────────────────────── */
-        function parseLRC(text) {
-            const lines = [];
-            text.split('\n').forEach(line => {
-                const m = line.match(/\[(\d{2,}):(\d{2}(?:\.\d{1,3})?)\](.*)/);
-                if (!m) return;
-                const time = parseInt(m[1], 10) * 60 + parseFloat(m[2]);
-                const raw  = m[3].replace('\r', '');
-                let words  = [];
-                let wm; const wReg = /<(\d{2,}):(\d{2}(?:\.\d{1,3})?)>([^<]*)/g; let hasW = false;
-                while ((wm = wReg.exec(raw)) !== null) {
-                    hasW = true;
-                    words.push({ time: parseInt(wm[1],10)*60+parseFloat(wm[2]), text: wm[3], el: null, dur: 0, fill: 0, lastRenderedFill: 0, isDots: false });
-                }
-                const clean = raw.replace(/<\d{2,}:\d{2}(?:\.\d{1,3})?>/g, '').trim();
-                const isInstrumental = (clean === '' || clean === '♪');
-                if (isInstrumental) words = [{ time, text: '•••', el: null, dur: 0, fill: 0, lastRenderedFill: 0, isDots: true }];
-                else if (!hasW)    words = [{ time, text: clean, el: null, dur: 0, fill: 0, lastRenderedFill: 0, isDots: false }];
-                lines.push({ time, text: clean, words, el: null, dur: 0, isBg: false });
-            });
-            return lines;
-        }
-
-        /* ── Fill in missing durations after all lines are parsed ─────────  */
-        function inferDurations(lines) {
-            lines.forEach((l, i) => {
-                const nTime = i < lines.length - 1 ? lines[i + 1].time : l.time + 8;
-                if (!l.dur || l.dur <= 0) l.dur = Math.max(0, nTime - l.time);
-                for (let j = 0; j < l.words.length; j++) {
-                    const w = l.words[j];
-                    if (!w.dur || w.dur <= 0) {
-                        if (j < l.words.length - 1)
-                            w.dur = Math.max(0.05, l.words[j + 1].time - w.time);
-                        else
-                            w.dur = Math.min(3.0, Math.max(0.05, nTime - w.time));
-                    }
-                }
-            });
-        }
-
-        /* ── Build DOM from parsed lines ─────────────────────────────────── */
-        function buildLyricsDom(container, lines) {
-            container.innerHTML = '';
-            lines.forEach(l => {
-                const div = document.createElement('div');
-                div.className = 'lrc-line' + (l.isBg ? ' lrc-bg' : '');
-                div.onclick = () => { activeAudio.currentTime = l.time; activeAudio.play(); setPlayIcon(true); };
-
-                l.words.forEach(w => {
-                    let t = w.text;
-                    const leading  = /^\s+/.test(t);
-                    const trailing = /\s+$/.test(t);
-                    if (leading)  div.appendChild(document.createTextNode(' '));
-                    t = t.trim();
-
-                    if (t) {
-                        if (w.isDots || t === '•••') {
-                            const wrap = document.createElement('span');
-                            wrap.className = 'lrc-dots';
-                            for (let d = 0; d < 3; d++) {
-                                const dot = document.createElement('span');
-                                dot.className = 'lrc-dot';
-                                wrap.appendChild(dot);
-                            }
-                            w.el = wrap;
-                            div.appendChild(wrap);
-                        } else {
-                            const s = document.createElement('span');
-                            s.className = 'lrc-word';
-                            s.textContent = t;
-                            w.el = s;
-                            div.appendChild(s);
-                        }
-                    }
-                    if (trailing) div.appendChild(document.createTextNode(' '));
-                });
-
-                l.el = div;
-                container.appendChild(div);
-            });
-        }
-
-        /* ── Main fetchLyrics ─────────────────────────────────────────────── */
         async function fetchLyrics(url) {
             const container = document.getElementById('lyrics-content');
-            const scroller  = document.getElementById('lyrics-scroller');
-
-            parsedLyrics    = [];
+            const scroller = document.getElementById('lyrics-scroller');
+            
+            parsedLyrics = [];
             activeLyricIndex = -1;
-            targetScrollY = currentScrollY = springPos = springVel = springTarget = 0;
+            springPos = 0;
+            springVel = 0;
+            springTarget = 0;
             scroller.scrollTop = 0;
-
-            if (!url) {
-                container.innerHTML = "<div style='height:100%;display:flex;align-items:center;justify-content:center;'><p style='color:rgba(255,255,255,0.3);font-size:32px;font-weight:800;'>Instrumental</p></div>";
-                return;
-            }
-            container.innerHTML = "<p style='color:rgba(255,255,255,0.3);font-size:32px;font-weight:800;text-align:center;'>Loading...</p>";
-
+            
+            if(!url) { container.innerHTML = "<div style='height:100%; display:flex; align-items:center; justify-content:center;'><p style='color:rgba(255,255,255,0.3); font-size:32px; font-weight:800;'>Instrumental</p></div>"; return; }
+            container.innerHTML = "<p style='color:rgba(255,255,255,0.3); font-size:32px; font-weight:800; text-align:center;'>Loading...</p>";
+            
             try {
-                const res  = await fetch(url);
-                const text = await res.text();
+                const res = await fetch(url); 
+                const text = await res.text(); 
+                
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(text, "text/xml");
+                
+                if (xmlDoc.getElementsByTagName("parsererror").length > 0) {
+                    throw new Error("Invalid XML/TTML structure");
+                }
 
-                const isTTML = url.endsWith('.ttml') || text.trimStart().startsWith('<?xml') || text.includes('http://www.w3.org/ns/ttml');
+                const pTags = xmlDoc.getElementsByTagName('p');
+                if (pTags.length === 0) throw new Error("No paragraphs found");
+                
+                for(let i=0; i<pTags.length; i++) {
+                    const p = pTags[i];
+                    const beginAttr = p.getAttribute('begin') || p.getAttribute('t');
+                    if (!beginAttr) continue;
+                    
+                    const pBegin = parseTTMLTime(beginAttr);
+                    const endAttr = p.getAttribute('end');
+                    const pEnd = endAttr ? parseTTMLTime(endAttr) : 0;
+                    
+                    let words =[];
+                    
+                    Array.from(p.childNodes).forEach(node => {
+                        if (node.nodeType === Node.TEXT_NODE) {
+                            let val = node.nodeValue;
+                            if(val) {
+                                // Mantiene la separacion física del DOM XML
+                                val = val.replace(/[\r\n\t]+/g, ' '); 
+                                if(val.trim() === '') {
+                                    if(words.length > 0) words[words.length - 1].text += ' ';
+                                } else {
+                                    words.push({ time: pBegin, dur: 0, text: val, el: null, fill: 0, lastRenderedFill: 0 });
+                                }
+                            }
+                        } else if (node.nodeType === Node.ELEMENT_NODE && (node.nodeName.toLowerCase() === 'span' || node.nodeName.toLowerCase() === 's')) {
+                            const sBeginAttr = node.getAttribute('begin') || node.getAttribute('t');
+                            const sBegin = sBeginAttr ? parseTTMLTime(sBeginAttr) : pBegin;
+                            
+                            const sEndAttr = node.getAttribute('end');
+                            const sDurAttr = node.getAttribute('d');
+                            
+                            let dur = 0;
+                            if(sEndAttr) dur = parseTTMLTime(sEndAttr) - sBegin;
+                            else if(sDurAttr) dur = parseTTMLTime(sDurAttr);
 
-                parsedLyrics = isTTML ? parseTTML(text) : parseLRC(text);
-                inferDurations(parsedLyrics);
+                            words.push({ time: sBegin, dur: dur, text: node.textContent || "", el: null, fill: 0, lastRenderedFill: 0 });
+                        }
+                    });
 
-                if (!parsedLyrics.length) throw new Error('empty');
+                    if (words.length === 0) {
+                        const rawText = p.textContent || "";
+                        const cleanLine = rawText.trim();
+                        const pDur = pEnd > pBegin ? pEnd - pBegin : 0;
+                        if (cleanLine) {
+                            words.push({ time: pBegin, dur: pDur, text: cleanLine, el: null, fill: 0, lastRenderedFill: 0 });
+                        }
+                    }
+                    
+                    if(words.length > 0) {
+                        const cleanLine = words.map(w => w.text).join('').trim();
+                        parsedLyrics.push({ time: pBegin, text: cleanLine, words, el: null, dur: pEnd > pBegin ? pEnd - pBegin : 0 });
+                    }
+                }
 
-                buildLyricsDom(container, parsedLyrics);
+                // Autocalculate fallback durations for lines/words without explicitly defined ends
+                parsedLyrics.forEach((l, i) => {
+                    let nTime = (i < parsedLyrics.length - 1) ? parsedLyrics[i+1].time : l.time + 8;
+                    if(!l.dur || l.dur <= 0) l.dur = Math.max(0, nTime - l.time);
+                    
+                    for(let j=0; j<l.words.length; j++) {
+                        if(!l.words[j].dur || l.words[j].dur <= 0) {
+                            if(j < l.words.length - 1) l.words[j].dur = Math.max(0.05, l.words[j+1].time - l.words[j].time);
+                            else l.words[j].dur = Math.min(2.5, Math.max(0.05, nTime - l.words[j].time));
+                        }
+                    }
+                });
 
-                // Re-attach manual-scroll detector
-                const setManual = () => {
-                    isUserScrolling = true;
-                    clearTimeout(scrollTimeout);
-                    scrollTimeout = setTimeout(() => {
+                container.innerHTML = ""; if(!parsedLyrics.length) throw new Error();
+                
+                parsedLyrics.forEach(l => {
+                    const div = document.createElement('div'); div.className = 'lrc-line';
+                    div.onclick = () => { activeAudio.currentTime = l.time; activeAudio.play(); setPlayIcon(true); };
+                    
+                    l.words.forEach(w => {
+                        let t = w.text;
+                        let leadingSpace = false;
+                        let trailingSpace = false;
+                        
+                        if (/^\s+/.test(t)) { leadingSpace = true; t = t.trimStart(); }
+                        if (/\s+$/.test(t)) { trailingSpace = true; t = t.trimEnd(); }
+                        
+                        // Inyectar espacios físicos (TEXT_NODE) fuera del spam con la mascara CSS
+                        if (leadingSpace) div.appendChild(document.createTextNode(' '));
+                        
+                        if (t) {
+                            if (t === '•••' || t.includes('♪')) {
+                                const dotsWrap = document.createElement('span');
+                                dotsWrap.className = 'lrc-dots';
+                                for (let d = 0; d < 3; d++) {
+                                    const dot = document.createElement('span');
+                                    dot.className = 'lrc-dot';
+                                    dotsWrap.appendChild(dot);
+                                }
+                                w.el = dotsWrap;
+                                div.appendChild(dotsWrap);
+                            } else {
+                                const s = document.createElement('span');
+                                s.className = 'lrc-word';
+                                s.textContent = t;
+                                w.el = s;
+                                div.appendChild(s);
+                            }
+                        }
+                        
+                        if (trailingSpace) div.appendChild(document.createTextNode(' '));
+                    });
+                    
+                    l.el = div; container.appendChild(div);
+                });
+                
+                const setManual = () => { 
+                    isUserScrolling = true; 
+                    clearTimeout(scrollTimeout); 
+                    scrollTimeout = setTimeout(() => { 
                         isUserScrolling = false;
                         if (activeLyricIndex !== -1 && parsedLyrics[activeLyricIndex]?.el) {
                             const sc = document.getElementById('lyrics-scroller');
-                            springTarget = parsedLyrics[activeLyricIndex].el.offsetTop
-                                - sc.clientHeight * 0.42
-                                + parsedLyrics[activeLyricIndex].el.clientHeight * 0.5;
-                            springVel *= 0.08;
+                            springTarget = parsedLyrics[activeLyricIndex].el.offsetTop - sc.clientHeight * 0.42 + parsedLyrics[activeLyricIndex].el.clientHeight * 0.5;
+                            springVel *= 0.08; 
                         }
-                    }, 3000);
+                    }, 3000); 
                 };
-                scroller.addEventListener('wheel', setManual, { passive: true });
-                scroller.addEventListener('touchmove', setManual, { passive: true });
-
-            } catch (e) {
-                container.innerHTML = "<div style='height:100%;display:flex;align-items:center;justify-content:center;'><p style='color:rgba(255,255,255,0.3);font-size:32px;font-weight:800;'>Lyrics Unavailable</p></div>";
-            }
+                
+                scroller.addEventListener('wheel', setManual, {passive: true});
+                scroller.addEventListener('touchmove', setManual, {passive: true});
+                
+            } catch(e) { container.innerHTML = "<div style='height:100%; display:flex; align-items:center; justify-content:center;'><p style='color:rgba(255,255,255,0.3); font-size:32px; font-weight:800;'>Lyrics Unavailable</p></div>"; }
         }
 
         /* ================================================================
-           KARAOKE ENGINE — Apple Music style
-           Word-level gradient sweep. Active line: full opacity + scale.
-           Passed/future lines: dim. No blur filters.
-           Called every rAF with sub-ms extrapolated `cur`.
+           KARAOKE ENGINE — ZERO REFLOW
            ================================================================ */
         function updateKaraoke(cur) {
             if (!parsedLyrics.length) return;
 
-            // ── Find active line ──────────────────────────────────────────
             let nIdx = -1;
             for (let i = 0; i < parsedLyrics.length; i++) {
                 if (cur >= parsedLyrics[i].time) nIdx = i;
                 else break;
             }
 
-            // ── On line change: classify all lines ───────────────────────
             if (nIdx !== activeLyricIndex) {
                 parsedLyrics.forEach((l, i) => {
                     if (!l.el) return;
                     if (i < nIdx) {
-                        // Passed
-                        l.el.style.opacity = '0.28';
-                        l.el.style.transform = 'scale(0.96)';
-                        l.words.forEach(w => {
-                            if (w.el && w.el.classList.contains('lrc-word')) {
-                                w.fill = 115; w.lastRenderedFill = 115;
-                                w.el.style.setProperty('--fill', '115%');
-                            }
-                        });
+                        if (l.el.className !== 'lrc-line passed') {
+                            l.el.className = 'lrc-line passed';
+                            l.words.forEach(w => { if (w.el && !w.el.classList.contains('lrc-dots')) { w.fill = 120; w.lastRenderedFill = 120; w.el.style.setProperty('--fill', '120%'); } });
+                        }
                     } else if (i > nIdx) {
-                        // Future
-                        l.el.style.opacity = '0.28';
-                        l.el.style.transform = 'scale(0.96)';
-                        l.words.forEach(w => {
-                            if (w.el && w.el.classList.contains('lrc-word')) {
-                                w.fill = 0; w.lastRenderedFill = 0;
-                                w.el.style.setProperty('--fill', '0%');
-                            }
-                        });
+                        if (l.el.className !== 'lrc-line') {
+                            l.el.className = 'lrc-line';
+                            l.words.forEach(w => { if (w.el && !w.el.classList.contains('lrc-dots')) { w.fill = 0; w.lastRenderedFill = 0; w.el.style.setProperty('--fill', '0%'); } });
+                        }
                     } else {
-                        // Active
-                        l.el.style.opacity = '1';
-                        l.el.style.transform = 'scale(1.0)';
-                        // Spring scroll: center active line at 42% viewport
+                        l.el.className = 'lrc-line active';
                         if (!isUserScrolling) {
                             const sc = document.getElementById('lyrics-scroller');
                             springTarget = l.el.offsetTop - sc.clientHeight * 0.42 + l.el.clientHeight * 0.5;
@@ -1676,26 +1510,23 @@
                 activeLyricIndex = nIdx;
             }
 
-            // ── Per-word gradient fill on active line only ───────────────
             if (nIdx === -1) return;
             parsedLyrics[nIdx].words.forEach(w => {
-                if (!w.el || w.isDots || !w.el.classList.contains('lrc-word')) return;
+                if (!w.el || w.el.classList.contains('lrc-dots')) return;
 
                 let targetFill;
                 if (cur >= w.time + w.dur) {
-                    targetFill = 115;
+                    targetFill = 120; // 120 asegura que el gradiente desbordó completamente la palabra
                 } else if (cur >= w.time) {
-                    targetFill = w.dur > 0 ? Math.max(0, Math.min((cur - w.time) / w.dur * 115, 115)) : 115;
+                    targetFill = w.dur > 0 ? ((cur - w.time) / w.dur) * 120 : 120;
+                    targetFill = Math.max(0, Math.min(targetFill, 120));
                 } else {
                     targetFill = 0;
                 }
 
-                // LERP tuned for voice at 60fps
-                const alpha = (targetFill === 115 || targetFill === 0) ? 0.28 : 0.13;
-                w.fill += (targetFill - w.fill) * alpha;
-                if (Math.abs(w.fill - targetFill) < 0.08) w.fill = targetFill;
+                w.fill = targetFill;
 
-                if (Math.abs(w.fill - w.lastRenderedFill) > 0.09 || w.fill === 115 || w.fill === 0) {
+                if (Math.abs(w.fill - w.lastRenderedFill) > 0.1 || w.fill === 120 || w.fill === 0) {
                     w.el.style.setProperty('--fill', `${w.fill.toFixed(2)}%`);
                     w.lastRenderedFill = w.fill;
                 }
@@ -1716,7 +1547,6 @@
 
         /* ================================================================
            SPRING PHYSICS ENGINE
-           Euler integration: stiffness=170, damping=26, mass=1
            ================================================================ */
         const SPRING_K  = 170;
         const SPRING_C  = 26;
@@ -1727,11 +1557,11 @@
         let prevRafTime  = 0;
 
         function stepSpring(dt) {
-            const dtClamped = Math.min(dt, 0.033); // clamp: prevent explosion on tab resume
+            const dtClamped = Math.min(dt, 0.033); 
             const a = (-SPRING_K * (springPos - springTarget) - SPRING_C * springVel) / SPRING_M;
             springVel += a * dtClamped;
             springPos += springVel * dtClamped;
-            // Snap when settled to avoid micro-oscillations
+            
             if (Math.abs(springPos - springTarget) < 0.3 && Math.abs(springVel) < 0.5) {
                 springPos = springTarget;
                 springVel = 0;
@@ -1739,13 +1569,13 @@
         }
 
         /* ================================================================
-           MAIN rAF RENDER LOOP — sub-millisecond audio extrapolation
+           MAIN rAF RENDER LOOP
            ================================================================ */
         function renderLoop(rafTimestamp) {
             if (activeAudio.duration && !isNaN(activeAudio.duration)) {
                 const now = performance.now();
 
-                // Sub-ms audio time interpolation
+                // Sub-milisegundo extrapolación (Adiós lag de <audio>)
                 let cur = activeAudio.currentTime;
                 if (cur !== lastAudioTime) {
                     lastAudioTime = cur;
@@ -1770,14 +1600,13 @@
                 checkAutoMix();
 
                 if (isNPOpen) {
-                    // +85ms visual anticipation compensates for LERP latency
-                    updateKaraoke(cur + 0.085);
+                    // Anticipación visual de +150ms 
+                    updateKaraoke(cur + 0.150);
 
-                    // Spring scroll — runs every frame
+                    // Motor físico de scroll vertical 
                     const dt = prevRafTime > 0 ? (rafTimestamp - prevRafTime) / 1000 : 0.016;
 
                     if (isUserScrolling) {
-                        // User in control: sync spring to DOM position
                         const sc = document.getElementById('lyrics-scroller');
                         springPos = sc.scrollTop;
                         springVel = 0;
