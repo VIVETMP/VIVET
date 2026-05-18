@@ -354,39 +354,198 @@
         }
         .lyrics-scroll-area::-webkit-scrollbar { display: none; }
 
-        .lrc-line {
-            font-size: clamp(32px, 3.5vw, 48px); 
-            font-weight: 700; 
-            line-height: 1.25; 
-            letter-spacing: -0.01em; 
-            margin-bottom: 32px; 
-            cursor: pointer;
-            transition: transform 0.6s var(--ease-spring), filter 0.6s ease, opacity 0.6s ease;
-            opacity: 0.3; /* Gris inactivo */
-            filter: blur(2.5px);
-            transform: scale(0.95); transform-origin: left center;
-            word-wrap: break-word; white-space: normal; 
-            color: #fff; text-align: left;
-            will-change: transform, opacity, filter;
-        }
-        .lrc-line.active { opacity: 1; transform: scale(1); filter: blur(0px); text-shadow: 0 4px 15px rgba(0,0,0,0.25); }
-        .lrc-line.passed { opacity: 0.3; transform: scale(0.95); filter: blur(2.5px); }
-        .lrc-line:hover { opacity: 0.8 !important; transform: scale(1) !important; filter: blur(0px) !important; }
+        /* ============================================================
+           APPLE MUSIC 2026 — CINEMATIC LYRICS ENGINE CSS
+           
+           Architecture:
+             .lrc-line        — one paragraph / line container
+             .lrc-word        — per-word gradient-mask span
+             .lrc-dots        — instrumental 3-dot bounce row
+             .lrc-line.lrc-bg — background vocal (smaller, right)
+           
+           State classes written by JS:
+             .is-active   — currently singing line
+             .is-past     — line already sung
+             .is-future   — line not yet reached
+             (no class)   — default = future
+           ============================================================ */
 
+        /* ── Lyrics scroll container masks ──────────────────────── */
+        .np-right-pane {
+            mask-image: linear-gradient(
+                to bottom,
+                transparent 0%,
+                black 12%,
+                black 82%,
+                transparent 100%
+            );
+            -webkit-mask-image: linear-gradient(
+                to bottom,
+                transparent 0%,
+                black 12%,
+                black 82%,
+                transparent 100%
+            );
+        }
+
+        /* ── Base line ───────────────────────────────────────────── */
+        .lrc-line {
+            /* Geometry */
+            display: block;
+            margin-bottom: clamp(20px, 2.8vh, 38px);
+            padding: 0;
+            cursor: pointer;
+            transform-origin: left center;
+            word-wrap: break-word;
+            white-space: normal;
+            text-align: left;
+
+            /* Typography */
+            font-family: var(--font-display);
+            font-size: clamp(28px, 3.2vw, 46px);
+            font-weight: 800;
+            line-height: 1.28;
+            letter-spacing: -0.025em;
+
+            /* Default = future: dim + slight scale-down + blur */
+            opacity: 0.22;
+            filter: blur(1.8px);
+            transform: scale(0.965) translateZ(0);
+            color: #fff;
+
+            /* GPU layers */
+            will-change: transform, opacity, filter;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+
+            /* Smooth transitions for non-active→active changes */
+            transition:
+                opacity   0.52s cubic-bezier(0.25, 1, 0.5, 1),
+                filter    0.52s cubic-bezier(0.25, 1, 0.5, 1),
+                transform 0.52s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        /* ── Active line ─────────────────────────────────────────── */
+        .lrc-line.is-active {
+            opacity: 1 !important;
+            filter: blur(0px) !important;
+            transform: scale(1.0) translateZ(0) !important;
+            /* Very subtle text-glow — Apple uses this sparingly */
+            text-shadow: 0 0 40px rgba(255,255,255,0.08);
+        }
+
+        /* ── Past lines ─────────────────────────────────────────── */
+        .lrc-line.is-past {
+            opacity: 0.22;
+            filter: blur(1.8px);
+            transform: scale(0.965) translateZ(0);
+        }
+
+        /* ── Hover — allow user to read any line ────────────────── */
+        .lrc-line:hover:not(.is-active) {
+            opacity: 0.62 !important;
+            filter: blur(0px) !important;
+            transform: scale(0.985) translateZ(0) !important;
+            transition: opacity 0.18s ease, filter 0.18s ease, transform 0.18s ease;
+        }
+
+        /* ── Background vocal lines (ttm:agent v2 / bg) ─────────── */
+        .lrc-line.lrc-bg {
+            font-size: clamp(19px, 2.1vw, 30px);
+            font-weight: 700;
+            text-align: right;
+            padding-left: 22%;
+            opacity: 0.18;
+        }
+        .lrc-line.lrc-bg.is-active {
+            opacity: 0.72 !important;
+        }
+
+        /* ── Per-word gradient mask (Apple "fill sweep") ─────────
+         *
+         *   --fill : 0% → 115%  (written each rAF by JS)
+         *
+         *   Lit zone   : rgba(255,255,255,1)    — fully bright
+         *   Edge zone  : 16% soft leading feather
+         *   Unlit zone : rgba(255,255,255,0.28) — matches inactive line
+         *
+         * ─────────────────────────────────────────────────────── */
         .lrc-word {
-            display: inline; padding: 0; margin: 0; vertical-align: baseline;
-            /* LUZ DIFUMINADA AL 10% HACIA ATRÁS TIPO APPLE MUSIC */
-            background: linear-gradient(90deg,
-                rgba(255, 255, 255, 1) 0%,
-                rgba(255, 255, 255, 1) calc(var(--fill, 0%) - 10%),
-                rgba(255, 255, 255, 0.35) calc(var(--fill, 0%) + 10%),
-                rgba(255, 255, 255, 0.35) 100%
+            display: inline;
+            padding: 0;
+            margin: 0;
+            vertical-align: baseline;
+
+            background: linear-gradient(
+                90deg,
+                rgba(255,255,255,1)    0%,
+                rgba(255,255,255,1)    calc(var(--fill, 0%) - 16%),
+                rgba(255,255,255,0.55) calc(var(--fill, 0%) -  8%),
+                rgba(255,255,255,0.28) var(--fill, 0%),
+                rgba(255,255,255,0.28) 100%
             );
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
+
+            /* Only background re-paints — no layout, no composite */
             will-change: background;
-            --fill: 0%;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ── Instrumental / pause dots ─────────────────────────── */
+        .lrc-dots {
+            display: inline-flex;
+            align-items: center;
+            gap: 11px;
+            height: 1.1em;
+            vertical-align: middle;
+        }
+        .lrc-dot {
+            display: inline-block;
+            width: 11px; height: 11px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.32);
+            will-change: transform, background;
+        }
+        /* Active dot bounce — staggered */
+        .lrc-line.is-active .lrc-dot:nth-child(1) { animation: amDotBounce 1.15s 0.00s infinite ease-in-out; }
+        .lrc-line.is-active .lrc-dot:nth-child(2) { animation: amDotBounce 1.15s 0.19s infinite ease-in-out; }
+        .lrc-line.is-active .lrc-dot:nth-child(3) { animation: amDotBounce 1.15s 0.38s infinite ease-in-out; }
+        @keyframes amDotBounce {
+            0%,100% { transform: translateY(0) scale(1);     background: rgba(255,255,255,0.38); }
+            42%      { transform: translateY(-7px) scale(1.3); background: rgba(255,255,255,0.92); }
+        }
+
+        /* ── "No lyrics" / loading placeholders ─────────────────── */
+        .lyrics-placeholder {
+            display: flex; align-items: center; justify-content: center;
+            height: 100%; width: 100%;
+            font-size: 28px; font-weight: 800; letter-spacing: -0.02em;
+            color: rgba(255,255,255,0.22);
+            text-align: center; padding: 0 32px;
+        }
+
+        /* ── Loading shimmer ─────────────────────────────────────── */
+        .lrc-shimmer {
+            height: 2.2em; border-radius: 8px;
+            background: linear-gradient(
+                90deg,
+                rgba(255,255,255,0.05) 0%,
+                rgba(255,255,255,0.10) 40%,
+                rgba(255,255,255,0.05) 80%
+            );
+            background-size: 300% 100%;
+            animation: shimmerSlide 1.6s infinite linear;
+            margin-bottom: clamp(20px, 2.8vh, 38px);
+        }
+        .lrc-shimmer:nth-child(2) { width: 72%; animation-delay: 0.2s; }
+        .lrc-shimmer:nth-child(3) { width: 88%; animation-delay: 0.4s; }
+        .lrc-shimmer:nth-child(4) { width: 60%; animation-delay: 0.6s; }
+        .lrc-shimmer:nth-child(5) { width: 80%; animation-delay: 0.1s; }
+        @keyframes shimmerSlide {
+            0%   { background-position: 100% 50%; }
+            100% { background-position:   0% 50%; }
         }
 
         /* ==================================================================
