@@ -354,199 +354,227 @@
         }
         .lyrics-scroll-area::-webkit-scrollbar { display: none; }
 
-        /* ============================================================
-           APPLE MUSIC 2026 — CINEMATIC LYRICS ENGINE CSS
-           
-           Architecture:
-             .lrc-line        — one paragraph / line container
-             .lrc-word        — per-word gradient-mask span
-             .lrc-dots        — instrumental 3-dot bounce row
-             .lrc-line.lrc-bg — background vocal (smaller, right)
-           
-           State classes written by JS:
-             .is-active   — currently singing line
-             .is-past     — line already sung
-             .is-future   — line not yet reached
-             (no class)   — default = future
-           ============================================================ */
+        /* ═══════════════════════════════════════════════════════════════
+           APPLE MUSIC 2026 — CINEMATIC LYRICS ENGINE  ·  v4 FINAL
+           ═══════════════════════════════════════════════════════════════
 
-        /* ── Lyrics scroll container masks ──────────────────────── */
+           LAYER STACK (JS writes these classes):
+             .lrc-line            → future  (dim, blur, small)
+             .lrc-line.is-past    → past    (dim, blur, small)
+             .lrc-line.is-active  → NOW     (bright, crisp, full)
+             .lrc-line.lrc-bg     → backing vocal (right-aligned, smaller)
+
+           PER-WORD shader:
+             .lrc-word  →  --fill custom property  0% → 120%
+             gradient sweeps left→right behind a clip-path mask
+
+           SCROLL:
+             Spring-physics engine in JS, sc.scrollTop written each rAF.
+             Mask fades 14% at top + 18% at bottom for depth illusion.
+        ═══════════════════════════════════════════════════════════════ */
+
+        /* ─── Scroll container ──────────────────────────────────────── */
         .np-right-pane {
+            /* Refined fade — stronger at top so future lines disappear
+               more dramatically, like Apple Music desktop             */
             mask-image: linear-gradient(
                 to bottom,
-                transparent 0%,
-                black 12%,
-                black 82%,
-                transparent 100%
+                transparent    0%,
+                rgba(0,0,0,.2) 5%,
+                rgba(0,0,0,.7) 9%,
+                black          14%,
+                black          80%,
+                rgba(0,0,0,.6) 88%,
+                transparent   100%
             );
             -webkit-mask-image: linear-gradient(
                 to bottom,
-                transparent 0%,
-                black 12%,
-                black 82%,
-                transparent 100%
+                transparent    0%,
+                rgba(0,0,0,.2) 5%,
+                rgba(0,0,0,.7) 9%,
+                black          14%,
+                black          80%,
+                rgba(0,0,0,.6) 88%,
+                transparent   100%
             );
         }
 
-        /* ── Base line ───────────────────────────────────────────── */
+        /* ─── Base lyric line  (= future / not yet sung) ────────────
+           Apple Music keeps future lines at ~22% opacity, no blur.
+           Blur is saved only for the instant of transition.          */
         .lrc-line {
-            /* Geometry */
             display: block;
-            margin-bottom: clamp(20px, 2.8vh, 38px);
-            padding: 0;
             cursor: pointer;
-            transform-origin: left center;
             word-wrap: break-word;
             white-space: normal;
             text-align: left;
+            transform-origin: left center;
 
-            /* Typography */
+            /* SF Pro Display feel */
             font-family: var(--font-display);
-            font-size: clamp(28px, 3.2vw, 46px);
+            font-size: clamp(26px, 3vw, 44px);
             font-weight: 800;
-            line-height: 1.28;
-            letter-spacing: -0.025em;
+            line-height: 1.3;
+            letter-spacing: -0.028em;
 
-            /* Default = future: dim + slight scale-down + blur */
-            opacity: 0.22;
-            filter: blur(1.8px);
-            transform: scale(0.965) translateZ(0);
+            margin-bottom: clamp(18px, 2.6vh, 36px);
             color: #fff;
 
-            /* GPU layers */
+            /* ── Future state ── */
+            opacity: 0.2;
+            filter: blur(0px);                 /* No blur at rest — Apple 2026 */
+            transform: scale(0.96) translateZ(0);
+
+            /* GPU isolation — keeps compositing on its own layer */
             will-change: transform, opacity, filter;
             backface-visibility: hidden;
             -webkit-backface-visibility: hidden;
+            isolation: isolate;
 
-            /* Smooth transitions for non-active→active changes */
+            /* Spring-like CSS transition for opacity/scale changes.
+               filter intentionally fast so entering blur resolves quickly. */
             transition:
-                opacity   0.52s cubic-bezier(0.25, 1, 0.5, 1),
-                filter    0.52s cubic-bezier(0.25, 1, 0.5, 1),
-                transform 0.52s cubic-bezier(0.25, 1, 0.5, 1);
+                opacity   0.55s cubic-bezier(0.22, 1, 0.36, 1),
+                transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+                filter    0.35s cubic-bezier(0.22, 1, 0.36, 1);
         }
 
-        /* ── Active line ─────────────────────────────────────────── */
+        /* ─── ACTIVE line ── the star of the show ───────────────────
+           Full opacity, full scale. Very subtle glow — barely visible,
+           just adds "air" around the text like Apple's renderer does. */
         .lrc-line.is-active {
-            opacity: 1 !important;
-            filter: blur(0px) !important;
-            transform: scale(1.0) translateZ(0) !important;
-            /* Very subtle text-glow — Apple uses this sparingly */
-            text-shadow: 0 0 40px rgba(255,255,255,0.08);
+            opacity: 1;
+            filter: blur(0px);
+            transform: scale(1.0) translateZ(0);
+            text-shadow:
+                0 0 60px rgba(255,255,255,0.06),
+                0 2px 8px  rgba(0,0,0,0.18);
         }
 
-        /* ── Past lines ─────────────────────────────────────────── */
+        /* ─── PAST lines ─────────────────────────────────────────── */
         .lrc-line.is-past {
-            opacity: 0.22;
-            filter: blur(1.8px);
-            transform: scale(0.965) translateZ(0);
+            opacity: 0.2;
+            filter: blur(0px);
+            transform: scale(0.96) translateZ(0);
         }
 
-        /* ── Hover — allow user to read any line ────────────────── */
+        /* ─── Hover  ──  let users read without playing ─────────── */
         .lrc-line:hover:not(.is-active) {
-            opacity: 0.62 !important;
+            opacity: 0.58 !important;
             filter: blur(0px) !important;
-            transform: scale(0.985) translateZ(0) !important;
-            transition: opacity 0.18s ease, filter 0.18s ease, transform 0.18s ease;
+            transform: scale(0.98) translateZ(0) !important;
+            transition:
+                opacity   0.2s ease,
+                transform 0.2s ease;
         }
 
-        /* ── Background vocal lines (ttm:agent v2 / bg) ─────────── */
+        /* ─── Background / choir vocal  ─────────────────────────── */
         .lrc-line.lrc-bg {
-            font-size: clamp(19px, 2.1vw, 30px);
+            font-size: clamp(18px, 2vw, 28px);
             font-weight: 700;
             text-align: right;
-            padding-left: 22%;
-            opacity: 0.18;
+            padding-left: 24%;
+            opacity: 0.16;
         }
-        .lrc-line.lrc-bg.is-active {
-            opacity: 0.72 !important;
-        }
+        .lrc-line.lrc-bg.is-active { opacity: 0.68; }
 
-        /* ── Per-word gradient mask (Apple "fill sweep") ─────────
-         *
-         *   --fill : 0% → 115%  (written each rAF by JS)
-         *
-         *   Lit zone   : rgba(255,255,255,1)    — fully bright
-         *   Edge zone  : 16% soft leading feather
-         *   Unlit zone : rgba(255,255,255,0.28) — matches inactive line
-         *
-         * ─────────────────────────────────────────────────────── */
+        /* ─── Per-word gradient clip-mask  ──────────────────────────
+           --fill sweeps  0% → 120%  (written every rAF frame by JS)
+
+           Zones:
+             0 … (fill-18%) → fully lit    rgba(255,255,255,1)
+             (fill-18%) … (fill-6%) → soft feather  →  rgba(255,255,255,.5)
+             (fill-6%) … fill       → rapid fade    →  rgba(255,255,255,.22)
+             fill … 100%            → unlit          →  rgba(255,255,255,.22)
+
+           The 18% wide feathered leading edge is what gives the sweep
+           its organic, voice-following feel instead of a hard wipe.   */
         .lrc-word {
             display: inline;
             padding: 0;
             margin: 0;
             vertical-align: baseline;
+            -webkit-font-smoothing: antialiased;
+            will-change: background-image;
 
             background: linear-gradient(
                 90deg,
-                rgba(255,255,255,1)    0%,
-                rgba(255,255,255,1)    calc(var(--fill, 0%) - 16%),
-                rgba(255,255,255,0.55) calc(var(--fill, 0%) -  8%),
-                rgba(255,255,255,0.28) var(--fill, 0%),
-                rgba(255,255,255,0.28) 100%
+                rgba(255,255,255,1.00)  0%,
+                rgba(255,255,255,1.00)  calc(var(--fill,0%) - 18%),
+                rgba(255,255,255,0.50)  calc(var(--fill,0%) - 10%),
+                rgba(255,255,255,0.22)  calc(var(--fill,0%) -  3%),
+                rgba(255,255,255,0.22)  100%
             );
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-
-            /* Only background re-paints — no layout, no composite */
-            will-change: background;
-            -webkit-font-smoothing: antialiased;
         }
 
-        /* ── Instrumental / pause dots ─────────────────────────── */
+        /* ─── Instrumental pause  ·  3-dot bounce ───────────────── */
         .lrc-dots {
             display: inline-flex;
             align-items: center;
-            gap: 11px;
-            height: 1.1em;
+            gap: 10px;
+            height: 1.05em;
             vertical-align: middle;
         }
         .lrc-dot {
             display: inline-block;
-            width: 11px; height: 11px;
+            width: 10px; height: 10px;
             border-radius: 50%;
-            background: rgba(255,255,255,0.32);
+            background: rgba(255,255,255,0.28);
             will-change: transform, background;
         }
-        /* Active dot bounce — staggered */
-        .lrc-line.is-active .lrc-dot:nth-child(1) { animation: amDotBounce 1.15s 0.00s infinite ease-in-out; }
-        .lrc-line.is-active .lrc-dot:nth-child(2) { animation: amDotBounce 1.15s 0.19s infinite ease-in-out; }
-        .lrc-line.is-active .lrc-dot:nth-child(3) { animation: amDotBounce 1.15s 0.38s infinite ease-in-out; }
-        @keyframes amDotBounce {
-            0%,100% { transform: translateY(0) scale(1);     background: rgba(255,255,255,0.38); }
-            42%      { transform: translateY(-7px) scale(1.3); background: rgba(255,255,255,0.92); }
+        .lrc-line.is-active .lrc-dot:nth-child(1) {
+            animation: _amDot 1.12s 0.00s infinite cubic-bezier(0.45,0,0.55,1);
+        }
+        .lrc-line.is-active .lrc-dot:nth-child(2) {
+            animation: _amDot 1.12s 0.18s infinite cubic-bezier(0.45,0,0.55,1);
+        }
+        .lrc-line.is-active .lrc-dot:nth-child(3) {
+            animation: _amDot 1.12s 0.36s infinite cubic-bezier(0.45,0,0.55,1);
+        }
+        @keyframes _amDot {
+            0%,100% { transform: translateY(0)    scale(1.0); background: rgba(255,255,255,0.32); }
+            40%     { transform: translateY(-7px) scale(1.35); background: rgba(255,255,255,0.90); }
         }
 
-        /* ── "No lyrics" / loading placeholders ─────────────────── */
-        .lyrics-placeholder {
-            display: flex; align-items: center; justify-content: center;
-            height: 100%; width: 100%;
-            font-size: 28px; font-weight: 800; letter-spacing: -0.02em;
-            color: rgba(255,255,255,0.22);
-            text-align: center; padding: 0 32px;
+        /* ─── Loading shimmer skeleton ───────────────────────────── */
+        .lrc-shimmer-wrap {
+            display: flex; flex-direction: column; gap: clamp(18px,2.6vh,36px);
+            width: 100%; padding: 2vh 0;
         }
-
-        /* ── Loading shimmer ─────────────────────────────────────── */
         .lrc-shimmer {
-            height: 2.2em; border-radius: 8px;
+            height: 2em; border-radius: 6px;
             background: linear-gradient(
                 90deg,
-                rgba(255,255,255,0.05) 0%,
-                rgba(255,255,255,0.10) 40%,
-                rgba(255,255,255,0.05) 80%
+                rgba(255,255,255,0.04) 0%,
+                rgba(255,255,255,0.09) 40%,
+                rgba(255,255,255,0.04) 80%
             );
-            background-size: 300% 100%;
-            animation: shimmerSlide 1.6s infinite linear;
-            margin-bottom: clamp(20px, 2.8vh, 38px);
+            background-size: 280% 100%;
+            animation: _shimmer 1.7s infinite linear;
         }
-        .lrc-shimmer:nth-child(2) { width: 72%; animation-delay: 0.2s; }
-        .lrc-shimmer:nth-child(3) { width: 88%; animation-delay: 0.4s; }
-        .lrc-shimmer:nth-child(4) { width: 60%; animation-delay: 0.6s; }
-        .lrc-shimmer:nth-child(5) { width: 80%; animation-delay: 0.1s; }
-        @keyframes shimmerSlide {
-            0%   { background-position: 100% 50%; }
-            100% { background-position:   0% 50%; }
+        .lrc-shimmer:nth-child(1) { width: 82%; }
+        .lrc-shimmer:nth-child(2) { width: 66%; animation-delay:.25s; }
+        .lrc-shimmer:nth-child(3) { width: 90%; animation-delay:.1s; }
+        .lrc-shimmer:nth-child(4) { width: 58%; animation-delay:.38s; }
+        .lrc-shimmer:nth-child(5) { width: 76%; animation-delay:.15s; }
+        .lrc-shimmer:nth-child(6) { width: 88%; animation-delay:.3s; }
+        @keyframes _shimmer {
+            0%   { background-position: 140% 50%; }
+            100% { background-position:  -60% 50%; }
         }
+
+        /* ─── "No lyrics" / unavailable placeholder ──────────────── */
+        .lrc-empty {
+            display: flex; align-items: center; justify-content: center;
+            height: 100%; width: 100%; flex-direction: column; gap: 16px;
+            font-size: clamp(20px,2.2vw,28px); font-weight: 800;
+            letter-spacing: -0.02em; color: rgba(255,255,255,0.18);
+            text-align: center; padding: 0 40px;
+        }
+        .lrc-empty i { font-size: 2.4em; opacity: .5; }
 
         /* ==================================================================
            MOBILE RESPONSIVE
@@ -611,7 +639,12 @@
             
             .np-right-pane { width: 100%; max-width: 400px; flex: none; height: 70vh; position: relative; margin-top: 10px; }
             .lyrics-scroll-area { padding: 10vh 0 30vh 0; }
-            .lrc-line { font-size: 28px; margin-bottom: 24px; text-align: left; transform-origin: left center; }
+            .lrc-line {
+                font-size: clamp(24px, 6.5vw, 32px);
+                margin-bottom: 22px;
+                letter-spacing: -0.022em;
+                transform-origin: left center;
+            }
         }
     </style>
 </head>
@@ -1454,240 +1487,435 @@
         }
 
         /* ==================================================================
-           PURE TTML (XML) PARSER — ZERO LRC FALLBACK
-           ================================================================== */
-        let parsedLyrics =[];
+           ═══════════════════════════════════════════════════════════════
+           APPLE MUSIC 2026 — LYRICS ENGINE  ·  FULL REWRITE
+           ═══════════════════════════════════════════════════════════════
+
+           MODULES:
+             1. TTMLParser        — parses Apple Music TTML XML
+             2. LyricsRenderer    — builds DOM, manages state classes
+             3. WordFillEngine    — per-word gradient sweep each rAF
+             4. SpringScroller    — physics-based cinematic scroll
+             5. fetchLyrics()     — orchestrates all modules
+             6. updateKaraoke()   — called every rAF from renderLoop()
+
+           TIMING MODEL:
+             • activeAudio.currentTime is extrapolated sub-millisecond
+             • +120ms visual anticipation so highlight lands on the beat
+             • Words use LERP (α=0.11) to feather into their target fill
+               when actively sweeping; instant snap at 0 and 120
+        ================================================================== */
+
+        /* ─── State ──────────────────────────────────────────────── */
+        let parsedLyrics     = [];
         let activeLyricIndex = -1;
-        
-        let isUserScrolling = false;
+        let isUserScrolling  = false;
         let scrollTimeout;
 
-        function parseTTMLTime(str) {
-            if(!str) return 0;
-            str = str.toString().replace(/s$/, '').trim(); 
-            const parts = str.split(':');
-            let sec = 0;
-            if(parts.length === 3) {
-                sec = parseInt(parts[0], 10) * 3600 + parseInt(parts[1], 10) * 60 + parseFloat(parts[2].replace(',', '.'));
-            } else if(parts.length === 2) {
-                sec = parseInt(parts[0], 10) * 60 + parseFloat(parts[1].replace(',', '.'));
-            } else {
-                sec = parseFloat(str.replace(',', '.'));
-            }
-            return sec || 0;
+
+        /* ═══════════════════════════════════════════════════════════
+           MODULE 1 · TTML PARSER
+           Handles Apple Music TTML (itunes:timing="Word"), standard
+           TTML with per-span begin/end, and plain line-level TTML.
+        ═══════════════════════════════════════════════════════════ */
+
+        function _parseTime(str) {
+            /* Supports:  HH:MM:SS.mmm  |  MM:SS.mmm  |  SS.mmm  |  Ns */
+            if (!str) return 0;
+            str = String(str).trim().replace(/s$/,'');
+            const p = str.split(':');
+            if (p.length === 3) return +p[0]*3600 + +p[1]*60 + parseFloat(p[2].replace(',','.'));
+            if (p.length === 2) return +p[0]*60  + parseFloat(p[1].replace(',','.'));
+            return parseFloat(str.replace(',','.')) || 0;
         }
+
+        function _isDots(text) {
+            return /^[♪♩\s•]+$/.test(text.trim()) || text.trim() === '';
+        }
+
+        function _parseParagraph(p, globalBegin) {
+            const bAttr = p.getAttribute('begin') || p.getAttribute('t');
+            if (!bAttr) return null;
+
+            const pBegin = _parseTime(bAttr);
+            const pEnd   = _parseTime(p.getAttribute('end') || '');
+            const pDur   = pEnd > pBegin ? pEnd - pBegin : 0;
+
+            /* bg-vocal detection: agent attribute !== "v1" / first voice */
+            const agent = (p.getAttribute('ttm:agent') || '').toLowerCase();
+            const isBg  = agent && agent !== 'v1';
+
+            const words = [];
+
+            function walk(node, fallbackTime) {
+                if (node.nodeType === Node.TEXT_NODE) {
+                    const raw = node.nodeValue.replace(/[\r\n\t]+/g,' ');
+                    const trimmed = raw.trim();
+                    if (!trimmed) {
+                        /* pure-whitespace text node → append space to prev word */
+                        if (words.length) words[words.length-1].text += ' ';
+                        return;
+                    }
+                    words.push({
+                        time: fallbackTime, dur: 0,
+                        text: raw, isDots: _isDots(raw),
+                        el: null, fill: 0, renderedFill: -1
+                    });
+                } else if (node.nodeType === Node.ELEMENT_NODE) {
+                    const tag = node.nodeName.toLowerCase();
+                    if (tag === 'span' || tag === 's') {
+                        const sB = _parseTime(node.getAttribute('begin') || node.getAttribute('t') || '');
+                        const wBegin = sB > 0 ? sB : fallbackTime;
+                        const sE = _parseTime(node.getAttribute('end') || '');
+                        const sD = _parseTime(node.getAttribute('dur') || node.getAttribute('d') || '');
+                        let wDur = 0;
+                        if (sE > wBegin) wDur = sE - wBegin;
+                        else if (sD > 0) wDur = sD;
+                        const txt = node.textContent || '';
+                        if (txt) {
+                            words.push({
+                                time: wBegin, dur: wDur,
+                                text: txt, isDots: _isDots(txt),
+                                el: null, fill: 0, renderedFill: -1
+                            });
+                        }
+                    } else {
+                        Array.from(node.childNodes).forEach(c => walk(c, fallbackTime));
+                    }
+                }
+            }
+
+            Array.from(p.childNodes).forEach(n => walk(n, pBegin));
+
+            /* Fallback: no words found — treat full textContent as one block */
+            if (!words.length) {
+                const raw = (p.textContent || '').trim();
+                if (!raw) return null;
+                words.push({
+                    time: pBegin, dur: pDur,
+                    text: raw, isDots: _isDots(raw),
+                    el: null, fill: 0, renderedFill: -1
+                });
+            }
+
+            return {
+                time: pBegin, dur: pDur, isBg,
+                text: words.map(w=>w.text).join('').trim(),
+                words, el: null
+            };
+        }
+
+        function _inferDurations(lines) {
+            lines.forEach((l, i) => {
+                const nextTime = i < lines.length-1 ? lines[i+1].time : l.time + 8;
+                if (!l.dur || l.dur <= 0) l.dur = Math.max(0, nextTime - l.time);
+
+                l.words.forEach((w, j) => {
+                    if (!w.dur || w.dur <= 0) {
+                        if (j < l.words.length-1)
+                            w.dur = Math.max(0.04, l.words[j+1].time - w.time);
+                        else
+                            w.dur = Math.min(3.5, Math.max(0.04, nextTime - w.time));
+                    }
+                });
+            });
+        }
+
+        function parseTTML(xmlText) {
+            const doc  = new DOMParser().parseFromString(xmlText, 'text/xml');
+            if (doc.getElementsByTagName('parsererror').length) throw new Error('TTML parse error');
+            const pTags = doc.getElementsByTagName('p');
+            if (!pTags.length) throw new Error('No <p> elements');
+            const lines = [];
+            for (let i=0; i<pTags.length; i++) {
+                const l = _parseParagraph(pTags[i]);
+                if (l) lines.push(l);
+            }
+            _inferDurations(lines);
+            return lines;
+        }
+
+        /* LRC fallback (word-timed LRC with <mm:ss.xx> inline tags) */
+        function parseLRC(text) {
+            const lines = [];
+            text.split('\n').forEach(line => {
+                const lm = line.match(/^\[(\d{2,}):(\d{2}(?:\.\d{1,3})?)\](.*)/);
+                if (!lm) return;
+                const pTime = +lm[1]*60 + parseFloat(lm[2]);
+                const raw   = lm[3].replace('\r','');
+                const words = [];
+                let hasWordTimes = false;
+                const wReg = /<(\d{2,}):(\d{2}(?:\.\d{1,3})?)>([^<]*)/g;
+                let wm;
+                while ((wm = wReg.exec(raw)) !== null) {
+                    hasWordTimes = true;
+                    const txt = wm[3];
+                    if (txt) words.push({
+                        time: +wm[1]*60+parseFloat(wm[2]), dur: 0,
+                        text: txt, isDots: _isDots(txt),
+                        el: null, fill: 0, renderedFill: -1
+                    });
+                }
+                const clean = raw.replace(/<\d{2,}:\d{2}(?:\.\d{1,3})?>/g,'').trim();
+                if (!hasWordTimes) {
+                    const isDots = _isDots(clean);
+                    words.push({ time: pTime, dur: 0, text: isDots ? '♪' : clean,
+                        isDots, el: null, fill: 0, renderedFill: -1 });
+                }
+                if (words.length)
+                    lines.push({ time: pTime, dur: 0, isBg: false,
+                        text: clean, words, el: null });
+            });
+            _inferDurations(lines);
+            return lines;
+        }
+
+
+        /* ═══════════════════════════════════════════════════════════
+           MODULE 2 · DOM RENDERER
+           Builds lrc-line / lrc-word / lrc-dots nodes.
+           Called once after parse. Never touches DOM again except
+           via style.setProperty and className.
+        ═══════════════════════════════════════════════════════════ */
+
+        function buildLyricsDOM(container, lines) {
+            const frag = document.createDocumentFragment();
+
+            lines.forEach(l => {
+                const div = document.createElement('div');
+                div.className = 'lrc-line' + (l.isBg ? ' lrc-bg' : '');
+                div.addEventListener('click', () => {
+                    activeAudio.currentTime = l.time;
+                    activeAudio.play().catch(()=>{});
+                    setPlayIcon(true);
+                });
+
+                l.words.forEach(w => {
+                    const raw = w.text;
+                    const hasLeadSpace  = /^\s/.test(raw);
+                    const hasTrailSpace = /\s$/.test(raw);
+                    const core = raw.trim();
+
+                    if (hasLeadSpace) div.appendChild(document.createTextNode('\u00A0'));
+
+                    if (core) {
+                        if (w.isDots) {
+                            const wrap = document.createElement('span');
+                            wrap.className = 'lrc-dots';
+                            for (let d=0; d<3; d++) {
+                                const dot = document.createElement('span');
+                                dot.className = 'lrc-dot';
+                                wrap.appendChild(dot);
+                            }
+                            w.el = wrap;
+                            div.appendChild(wrap);
+                        } else {
+                            const s = document.createElement('span');
+                            s.className = 'lrc-word';
+                            s.textContent = core;
+                            s.style.setProperty('--fill','0%');
+                            w.el = s;
+                            div.appendChild(s);
+                        }
+                    }
+
+                    if (hasTrailSpace) div.appendChild(document.createTextNode(' '));
+                });
+
+                l.el = div;
+                frag.appendChild(div);
+            });
+
+            container.innerHTML = '';
+            container.appendChild(frag);
+        }
+
+        function showShimmer(container) {
+            container.innerHTML = `
+                <div class="lrc-shimmer-wrap">
+                    <div class="lrc-shimmer"></div>
+                    <div class="lrc-shimmer"></div>
+                    <div class="lrc-shimmer"></div>
+                    <div class="lrc-shimmer"></div>
+                    <div class="lrc-shimmer"></div>
+                    <div class="lrc-shimmer"></div>
+                </div>`;
+        }
+
+        function showEmpty(container, msg, icon) {
+            container.innerHTML = `
+                <div class="lrc-empty">
+                    <i class="ph-fill ${icon || 'ph-music-note'}"></i>
+                    <span>${msg}</span>
+                </div>`;
+        }
+
+
+        /* ═══════════════════════════════════════════════════════════
+           MODULE 3 · FETCH + ORCHESTRATE
+        ═══════════════════════════════════════════════════════════ */
 
         async function fetchLyrics(url) {
             const container = document.getElementById('lyrics-content');
-            const scroller = document.getElementById('lyrics-scroller');
-            
-            parsedLyrics = [];
+            const scroller  = document.getElementById('lyrics-scroller');
+
+            /* Reset state */
+            parsedLyrics     = [];
             activeLyricIndex = -1;
-            springPos = 0;
-            springVel = 0;
-            springTarget = 0;
+            springPos = springVel = springTarget = 0;
             scroller.scrollTop = 0;
-            
-            if(!url) { container.innerHTML = "<div style='height:100%; display:flex; align-items:center; justify-content:center;'><p style='color:rgba(255,255,255,0.3); font-size:32px; font-weight:800;'>Instrumental</p></div>"; return; }
-            container.innerHTML = "<p style='color:rgba(255,255,255,0.3); font-size:32px; font-weight:800; text-align:center;'>Loading...</p>";
-            
+            isUserScrolling    = false;
+
+            if (!url) { showEmpty(container, 'Instrumental', 'ph-waveform'); return; }
+
+            showShimmer(container);
+
             try {
-                const res = await fetch(url); 
-                const text = await res.text(); 
-                
-                const parser = new DOMParser();
-                const xmlDoc = parser.parseFromString(text, "text/xml");
-                
-                if (xmlDoc.getElementsByTagName("parsererror").length > 0) {
-                    throw new Error("Invalid XML/TTML structure");
-                }
+                const res  = await fetch(url);
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const text = await res.text();
 
-                const pTags = xmlDoc.getElementsByTagName('p');
-                if (pTags.length === 0) throw new Error("No paragraphs found");
-                
-                for(let i=0; i<pTags.length; i++) {
-                    const p = pTags[i];
-                    const beginAttr = p.getAttribute('begin') || p.getAttribute('t');
-                    if (!beginAttr) continue;
-                    
-                    const pBegin = parseTTMLTime(beginAttr);
-                    const endAttr = p.getAttribute('end');
-                    const pEnd = endAttr ? parseTTMLTime(endAttr) : 0;
-                    
-                    let words =[];
-                    
-                    Array.from(p.childNodes).forEach(node => {
-                        if (node.nodeType === Node.TEXT_NODE) {
-                            let val = node.nodeValue;
-                            if(val) {
-                                // Mantiene la separacion física del DOM XML
-                                val = val.replace(/[\r\n\t]+/g, ' '); 
-                                if(val.trim() === '') {
-                                    if(words.length > 0) words[words.length - 1].text += ' ';
-                                } else {
-                                    words.push({ time: pBegin, dur: 0, text: val, el: null, fill: 0, lastRenderedFill: 0 });
-                                }
-                            }
-                        } else if (node.nodeType === Node.ELEMENT_NODE && (node.nodeName.toLowerCase() === 'span' || node.nodeName.toLowerCase() === 's')) {
-                            const sBeginAttr = node.getAttribute('begin') || node.getAttribute('t');
-                            const sBegin = sBeginAttr ? parseTTMLTime(sBeginAttr) : pBegin;
-                            
-                            const sEndAttr = node.getAttribute('end');
-                            const sDurAttr = node.getAttribute('d');
-                            
-                            let dur = 0;
-                            if(sEndAttr) dur = parseTTMLTime(sEndAttr) - sBegin;
-                            else if(sDurAttr) dur = parseTTMLTime(sDurAttr);
+                const isTTML = url.endsWith('.ttml')
+                    || text.trimStart().startsWith('<?xml')
+                    || text.includes('http://www.w3.org/ns/ttml');
 
-                            words.push({ time: sBegin, dur: dur, text: node.textContent || "", el: null, fill: 0, lastRenderedFill: 0 });
-                        }
-                    });
+                parsedLyrics = isTTML ? parseTTML(text) : parseLRC(text);
 
-                    if (words.length === 0) {
-                        const rawText = p.textContent || "";
-                        const cleanLine = rawText.trim();
-                        const pDur = pEnd > pBegin ? pEnd - pBegin : 0;
-                        if (cleanLine) {
-                            words.push({ time: pBegin, dur: pDur, text: cleanLine, el: null, fill: 0, lastRenderedFill: 0 });
-                        }
-                    }
-                    
-                    if(words.length > 0) {
-                        const cleanLine = words.map(w => w.text).join('').trim();
-                        parsedLyrics.push({ time: pBegin, text: cleanLine, words, el: null, dur: pEnd > pBegin ? pEnd - pBegin : 0 });
-                    }
-                }
+                if (!parsedLyrics.length) throw new Error('empty');
 
-                // Autocalculate fallback durations for lines/words without explicitly defined ends
-                parsedLyrics.forEach((l, i) => {
-                    let nTime = (i < parsedLyrics.length - 1) ? parsedLyrics[i+1].time : l.time + 8;
-                    if(!l.dur || l.dur <= 0) l.dur = Math.max(0, nTime - l.time);
-                    
-                    for(let j=0; j<l.words.length; j++) {
-                        if(!l.words[j].dur || l.words[j].dur <= 0) {
-                            if(j < l.words.length - 1) l.words[j].dur = Math.max(0.05, l.words[j+1].time - l.words[j].time);
-                            else l.words[j].dur = Math.min(2.5, Math.max(0.05, nTime - l.words[j].time));
-                        }
-                    }
-                });
+                buildLyricsDOM(container, parsedLyrics);
 
-                container.innerHTML = ""; if(!parsedLyrics.length) throw new Error();
-                
-                parsedLyrics.forEach(l => {
-                    const div = document.createElement('div'); div.className = 'lrc-line';
-                    div.onclick = () => { activeAudio.currentTime = l.time; activeAudio.play(); setPlayIcon(true); };
-                    
-                    l.words.forEach(w => {
-                        let t = w.text;
-                        let leadingSpace = false;
-                        let trailingSpace = false;
-                        
-                        if (/^\s+/.test(t)) { leadingSpace = true; t = t.trimStart(); }
-                        if (/\s+$/.test(t)) { trailingSpace = true; t = t.trimEnd(); }
-                        
-                        // Inyectar espacios físicos (TEXT_NODE) fuera del spam con la mascara CSS
-                        if (leadingSpace) div.appendChild(document.createTextNode(' '));
-                        
-                        if (t) {
-                            if (t === '•••' || t.includes('♪')) {
-                                const dotsWrap = document.createElement('span');
-                                dotsWrap.className = 'lrc-dots';
-                                for (let d = 0; d < 3; d++) {
-                                    const dot = document.createElement('span');
-                                    dot.className = 'lrc-dot';
-                                    dotsWrap.appendChild(dot);
-                                }
-                                w.el = dotsWrap;
-                                div.appendChild(dotsWrap);
-                            } else {
-                                const s = document.createElement('span');
-                                s.className = 'lrc-word';
-                                s.textContent = t;
-                                w.el = s;
-                                div.appendChild(s);
-                            }
-                        }
-                        
-                        if (trailingSpace) div.appendChild(document.createTextNode(' '));
-                    });
-                    
-                    l.el = div; container.appendChild(div);
-                });
-                
-                const setManual = () => { 
-                    isUserScrolling = true; 
-                    clearTimeout(scrollTimeout); 
-                    scrollTimeout = setTimeout(() => { 
+                /* Re-attach user-scroll detector to the fresh scroller element */
+                const sc = document.getElementById('lyrics-scroller');
+                const onManual = () => {
+                    isUserScrolling = true;
+                    clearTimeout(scrollTimeout);
+                    scrollTimeout = setTimeout(() => {
                         isUserScrolling = false;
-                        if (activeLyricIndex !== -1 && parsedLyrics[activeLyricIndex]?.el) {
-                            const sc = document.getElementById('lyrics-scroller');
-                            springTarget = parsedLyrics[activeLyricIndex].el.offsetTop - sc.clientHeight * 0.42 + parsedLyrics[activeLyricIndex].el.clientHeight * 0.5;
-                            springVel *= 0.08; 
+                        /* Gently snap spring back to active line */
+                        if (activeLyricIndex >= 0 && parsedLyrics[activeLyricIndex]?.el) {
+                            const el = parsedLyrics[activeLyricIndex].el;
+                            springTarget = el.offsetTop - sc.clientHeight * 0.40 + el.clientHeight * 0.5;
+                            springVel   *= 0.06;
                         }
-                    }, 3000); 
+                    }, 2800);
                 };
-                
-                scroller.addEventListener('wheel', setManual, {passive: true});
-                scroller.addEventListener('touchmove', setManual, {passive: true});
-                
-            } catch(e) { container.innerHTML = "<div style='height:100%; display:flex; align-items:center; justify-content:center;'><p style='color:rgba(255,255,255,0.3); font-size:32px; font-weight:800;'>Lyrics Unavailable</p></div>"; }
+                sc.addEventListener('wheel',     onManual, { passive: true });
+                sc.addEventListener('touchmove', onManual, { passive: true });
+
+            } catch(e) {
+                showEmpty(container, 'Lyrics Unavailable', 'ph-x-circle');
+            }
         }
 
-        /* ================================================================
-           KARAOKE ENGINE — ZERO REFLOW
-           ================================================================ */
+
+        /* ═══════════════════════════════════════════════════════════
+           MODULE 4 · KARAOKE ENGINE (updateKaraoke)
+           Called every rAF from renderLoop() with sub-ms extrapolated
+           audio time + 120ms look-ahead for perceptual sync.
+
+           DESIGN:
+           • Binary search for active line → O(log n) instead of O(n)
+           • Only iterate ALL lines on line-change events
+           • Word fill: LERP with α=0.11 while sweeping (organic feel);
+             instant snap at 0 and 120 (no LERP on already-sung/future)
+           • DOM writes throttled: only when Δfill > 0.15%
+        ═══════════════════════════════════════════════════════════ */
+
+        /* Fast binary search for active line index */
+        function _findActiveLine(lines, cur) {
+            let lo = 0, hi = lines.length - 1, res = -1;
+            while (lo <= hi) {
+                const mid = (lo + hi) >> 1;
+                if (lines[mid].time <= cur) { res = mid; lo = mid + 1; }
+                else hi = mid - 1;
+            }
+            return res;
+        }
+
         function updateKaraoke(cur) {
             if (!parsedLyrics.length) return;
 
-            let nIdx = -1;
-            for (let i = 0; i < parsedLyrics.length; i++) {
-                if (cur >= parsedLyrics[i].time) nIdx = i;
-                else break;
-            }
+            const nIdx = _findActiveLine(parsedLyrics, cur);
 
+            /* ── Line-change event ──────────────────────────────── */
             if (nIdx !== activeLyricIndex) {
+
                 parsedLyrics.forEach((l, i) => {
                     if (!l.el) return;
+
                     if (i < nIdx) {
-                        if (l.el.className !== 'lrc-line passed') {
-                            l.el.className = 'lrc-line passed';
-                            l.words.forEach(w => { if (w.el && !w.el.classList.contains('lrc-dots')) { w.fill = 120; w.lastRenderedFill = 120; w.el.style.setProperty('--fill', '120%'); } });
+                        /* PAST — instant sweep all words to 120% */
+                        if (!l.el.classList.contains('is-past')) {
+                            l.el.classList.remove('is-active');
+                            l.el.classList.add('is-past');
+                            l.words.forEach(w => {
+                                if (w.el && !w.isDots) {
+                                    w.fill = 120; w.renderedFill = 120;
+                                    w.el.style.setProperty('--fill','120%');
+                                }
+                            });
                         }
                     } else if (i > nIdx) {
-                        if (l.el.className !== 'lrc-line') {
-                            l.el.className = 'lrc-line';
-                            l.words.forEach(w => { if (w.el && !w.el.classList.contains('lrc-dots')) { w.fill = 0; w.lastRenderedFill = 0; w.el.style.setProperty('--fill', '0%'); } });
+                        /* FUTURE — reset words to 0% */
+                        if (l.el.classList.contains('is-past') || l.el.classList.contains('is-active')) {
+                            l.el.classList.remove('is-past','is-active');
+                            l.words.forEach(w => {
+                                if (w.el && !w.isDots) {
+                                    w.fill = 0; w.renderedFill = -1;
+                                    w.el.style.setProperty('--fill','0%');
+                                }
+                            });
                         }
                     } else {
-                        l.el.className = 'lrc-line active';
+                        /* ACTIVE */
+                        l.el.classList.remove('is-past');
+                        l.el.classList.add('is-active');
+
+                        /* Trigger spring scroll to center this line */
                         if (!isUserScrolling) {
                             const sc = document.getElementById('lyrics-scroller');
-                            springTarget = l.el.offsetTop - sc.clientHeight * 0.42 + l.el.clientHeight * 0.5;
+                            springTarget = l.el.offsetTop
+                                - sc.clientHeight * 0.40
+                                + l.el.clientHeight * 0.5;
                         }
                     }
                 });
+
                 activeLyricIndex = nIdx;
             }
 
-            if (nIdx === -1) return;
-            parsedLyrics[nIdx].words.forEach(w => {
-                if (!w.el || w.el.classList.contains('lrc-dots')) return;
+            if (nIdx < 0) return;
 
-                let targetFill;
+            /* ── Per-word gradient sweep on active line ─────────── */
+            const line = parsedLyrics[nIdx];
+            line.words.forEach(w => {
+                if (!w.el || w.isDots) return;
+
+                let target;
                 if (cur >= w.time + w.dur) {
-                    targetFill = 120; // 120 asegura que el gradiente desbordó completamente la palabra
+                    target = 120;
                 } else if (cur >= w.time) {
-                    targetFill = w.dur > 0 ? ((cur - w.time) / w.dur) * 120 : 120;
-                    targetFill = Math.max(0, Math.min(targetFill, 120));
+                    /* Normalized progress 0→1, mapped to 0→120% */
+                    const prog = w.dur > 0 ? (cur - w.time) / w.dur : 1;
+                    target = Math.max(0, Math.min(prog * 120, 120));
                 } else {
-                    targetFill = 0;
+                    target = 0;
                 }
 
-                w.fill = targetFill;
+                /* LERP for organic sweep; instant snap for terminal values */
+                if (target === 120 || target === 0) {
+                    w.fill = target;
+                } else {
+                    /* α=0.11 → ~60fps: reaches 99% in ~2.8s  (smooth voice follow) */
+                    w.fill += (target - w.fill) * 0.11;
+                    if (Math.abs(w.fill - target) < 0.08) w.fill = target;
+                }
 
-                if (Math.abs(w.fill - w.lastRenderedFill) > 0.1 || w.fill === 120 || w.fill === 0) {
+                /* Throttle DOM write: skip if change < 0.15% */
+                if (Math.abs(w.fill - w.renderedFill) >= 0.15) {
                     w.el.style.setProperty('--fill', `${w.fill.toFixed(2)}%`);
-                    w.lastRenderedFill = w.fill;
+                    w.renderedFill = w.fill;
                 }
             });
         }
@@ -1705,10 +1933,11 @@
         }
 
         /* ================================================================
-           SPRING PHYSICS ENGINE
+           SPRING PHYSICS ENGINE — tuned for cinematic scroll
+           K=140 (softer), C=22 (less damping) → feels more like AM
            ================================================================ */
-        const SPRING_K  = 170;
-        const SPRING_C  = 26;
+        const SPRING_K  = 140;
+        const SPRING_C  = 22;
         const SPRING_M  = 1;
         let springPos    = 0;
         let springVel    = 0;
@@ -1759,8 +1988,8 @@
                 checkAutoMix();
 
                 if (isNPOpen) {
-                    // Anticipación visual de +150ms 
-                    updateKaraoke(cur + 0.150);
+                    // +120ms visual anticipation — lands highlight on the beat
+                    updateKaraoke(cur + 0.120);
 
                     // Motor físico de scroll vertical 
                     const dt = prevRafTime > 0 ? (rafTimestamp - prevRafTime) / 1000 : 0.016;
