@@ -1,3 +1,5 @@
+--- START OF FILE index.html ---
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -31,7 +33,7 @@
     --t-mid:         320ms;
     --t-slow:        600ms;
 
-    --crossfade-dur: 12s; /* duración del crossfade en segundos */
+    --crossfade-dur: 12s;
 
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
                  "Helvetica Neue", Arial, sans-serif;
@@ -45,13 +47,11 @@
   button { background: none; border: none; cursor: pointer; color: inherit; }
   img    { display: block; }
 
-  /* ── Motores de audio (ocultos) ── */
+  /* ── Motores de audio ── */
   #audioEngineA, #audioEngineB { display: none; }
 
   /* ══════════════════════════════════════════════
-     LAYOUT PRINCIPAL – alternamos clases:
-       layout-selection  → modo biblioteca
-       layout-fullscreen → modo inmersivo
+     LAYOUT PRINCIPAL
   ══════════════════════════════════════════════ */
   #app {
     position: relative;
@@ -75,14 +75,12 @@
     z-index: 10;
   }
 
-  /* Ocultamos la vista selección cuando estamos en fullscreen */
   #app.layout-fullscreen #view-selection {
     opacity: 0;
     transform: translateY(-30px);
     pointer-events: none;
   }
 
-  /* ── Barra de navegación superior ── */
   .nav-bar {
     display: flex;
     align-items: center;
@@ -117,7 +115,6 @@
   .nav-icon-btn:hover { background: var(--c-surface2); }
   .nav-icon-btn svg  { width: 20px; height: 20px; fill: none; stroke: var(--c-text); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 
-  /* ── Zona de scroll de la biblioteca ── */
   .library-scroll {
     flex: 1;
     overflow-y: auto;
@@ -133,7 +130,6 @@
     letter-spacing: -0.5px;
   }
 
-  /* ── Grid de portadas ── */
   .card-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -161,7 +157,6 @@
   .card-title  { font-size: 14px; font-weight: 600; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .card-artist { font-size: 12px; color: var(--c-text-dim); margin-top: 2px; }
 
-  /* ── Mini-Player (barra inferior) ── */
   .mini-player {
     display: flex;
     align-items: center;
@@ -188,7 +183,6 @@
   .mini-title  { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .mini-artist { font-size: 12px; color: var(--c-text-dim); margin-top: 2px; }
 
-  /* ── Controles del mini-player ── */
   .mini-controls {
     display: flex;
     align-items: center;
@@ -209,7 +203,6 @@
   .ctrl-btn:active { transform: scale(0.92); }
   .ctrl-btn svg { width: 20px; height: 20px; fill: var(--c-text); }
 
-  /* ── Visualizador de ondas animado ── */
   .wave-visualizer {
     display: flex;
     align-items: center;
@@ -238,7 +231,6 @@
 
   .wave-visualizer.paused .wave-bar { animation-play-state: paused; }
 
-  /* ── Botón pantalla completa ── */
   .btn-fullscreen {
     display: flex;
     align-items: center;
@@ -275,10 +267,9 @@
     pointer-events: all;
   }
 
-  /* ── Fondo: iframe de YouTube ── */
   #yt-backdrop {
     position: absolute;
-    inset: -10%;          /* desbordamos para evitar bordes negros al escalar */
+    inset: -10%;
     width: 120%;
     height: 120%;
     pointer-events: none;
@@ -291,7 +282,6 @@
     border: none;
   }
 
-  /* Capa de oscurecimiento sobre el video */
   .backdrop-overlay {
     position: absolute;
     inset: 0;
@@ -299,7 +289,6 @@
     z-index: 1;
   }
 
-  /* ── Contenido del modo fullscreen ── */
   .fs-content {
     position: absolute;
     inset: 0;
@@ -308,7 +297,6 @@
     flex-direction: column;
   }
 
-  /* Barra superior del modo fullscreen */
   .fs-topbar {
     display: flex;
     align-items: center;
@@ -332,7 +320,6 @@
   .btn-close-fs:hover { background: rgba(255,255,255,0.20); }
   .btn-close-fs svg  { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; }
 
-  /* ── Zona central de letras ── */
   .fs-lyrics-zone {
     flex: 1;
     display: flex;
@@ -342,19 +329,17 @@
     position: relative;
   }
 
-  /* Viewport de letras – no hace scroll, usamos transform */
   .lyrics-viewport {
     position: relative;
     width: min(680px, 90vw);
     height: 100%;
     overflow: hidden;
-    /* máscaras de desvanecimiento arriba/abajo */
     -webkit-mask-image: linear-gradient(
       to bottom,
       transparent 0%,
       black 18%,
       black 82%,
-      transparent 100%
+      transparent 100
     );
     mask-image: linear-gradient(
       to bottom,
@@ -365,23 +350,20 @@
     );
   }
 
-  /* Track que se desplaza con translateY */
   #lyrics-track {
     position: absolute;
     left: 0;
     right: 0;
-    top: 50%;          /* ancla inicial en el centro */
+    top: 50%;
     will-change: transform;
     transition: transform 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
 
-  /* ── Líneas individuales de letras ── */
   .lyric-line {
     text-align: center;
     padding: 14px 0;
-    cursor: default;
+    cursor: pointer;
     line-height: 1.35;
-    /* Estado INACTIVO */
     opacity: 0.30;
     filter: blur(var(--blur-lyric));
     transform: scale(1.0);
@@ -392,20 +374,17 @@
     will-change: transform, opacity, filter;
   }
 
-  /* Estado ACTIVO */
   .lyric-line.active {
     opacity: 1.0;
     filter: blur(0);
     transform: scale(1.06);
   }
 
-  /* Estado PASADO (ya cantado) */
   .lyric-line.past {
     opacity: 0.22;
     filter: blur(var(--blur-lyric));
   }
 
-  /* Tamaño de fuente de las letras */
   .lyric-line span {
     display: inline;
     font-size: clamp(22px, 3.2vw, 36px);
@@ -416,103 +395,92 @@
     will-change: color;
   }
 
-  /* Palabra activamente cantada → blanco brillante */
   .lyric-line span.word-lit { color: var(--c-active-lyric); }
 
-  /* Línea de silencio / pausa entre estrofas */
   .lyric-line.spacer { padding: 6px 0; min-height: 20px; }
 
-  /* ── Barra inferior del modo fullscreen ── */
+  /* ── Barra inferior compacta sin botones de transporte ── */
   .fs-bottom {
-    padding: 20px 28px 30px;
+    padding: 20px 28px 40px;
     display: flex;
     align-items: flex-end;
-    gap: 28px;
+    z-index: 2;
   }
 
-  /* Portada del álbum */
+  /* Tarjeta que unifica portada, textos e indicador de progreso */
+  .fs-media-card {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+    max-width: 420px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 20px;
+    border-radius: var(--radius-lg);
+    backdrop-filter: blur(var(--blur-glass));
+    -webkit-backdrop-filter: blur(var(--blur-glass));
+    border: 1px solid var(--c-border);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  }
+
+  .fs-main-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
   .fs-album-art {
-    width: 88px;
-    height: 88px;
-    border-radius: 14px;
+    width: 80px;
+    height: 80px;
+    border-radius: var(--radius-card);
     object-fit: cover;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.7);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
     flex-shrink: 0;
   }
 
-  /* Bloque de info de la canción */
-  .fs-song-info { flex: 1; min-width: 0; }
+  .fs-song-info {
+    flex: 1;
+    min-width: 0;
+  }
 
   .fs-song-title {
-    font-size: clamp(22px, 3vw, 34px);
+    font-size: 22px;
     font-weight: 800;
-    letter-spacing: -0.8px;
-    line-height: 1.1;
-    text-shadow: 0 2px 12px rgba(0,0,0,0.5);
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .fs-song-artist {
-    font-size: 16px;
-    color: rgba(255,255,255,0.6);
-    margin-top: 5px;
-    font-weight: 400;
+    font-size: 14px;
+    color: var(--c-text-dim);
+    margin-top: 4px;
   }
 
-  /* ── Controles de transporte fullscreen ── */
-  .fs-controls {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 10px;
-    flex-shrink: 0;
-  }
-
-  .fs-ctrl-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .fs-ctrl-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.10);
-    backdrop-filter: blur(10px);
-    transition: background var(--t-fast), transform var(--t-fast);
-  }
-
-  .fs-ctrl-btn:hover  { background: rgba(255,255,255,0.22); transform: scale(1.06); }
-  .fs-ctrl-btn:active { transform: scale(0.9); }
-  .fs-ctrl-btn svg    { width: 20px; height: 20px; fill: var(--c-text); }
-  .fs-ctrl-btn.play-pause svg { width: 22px; height: 22px; }
-
-  /* ── Barra de progreso ── */
   .progress-container {
     width: 100%;
   }
 
   .progress-bar-wrap {
     position: relative;
-    height: 4px;
-    border-radius: 2px;
-    background: rgba(255,255,255,0.20);
+    height: 5px;
+    border-radius: 3px;
+    background: rgba(255,255,255,0.15);
     cursor: pointer;
     overflow: hidden;
+    transition: height 0.1s ease;
   }
 
-  .progress-bar-wrap:hover { height: 6px; border-radius: 3px; }
+  .progress-bar-wrap:hover { height: 7px; }
 
   .progress-fill {
     position: absolute;
     left: 0; top: 0; bottom: 0;
-    background: #fff;
+    background: var(--c-accent);
     border-radius: inherit;
-    transition: width 250ms linear;
-    will-change: width;
+    width: 0%;
   }
 
   .progress-times {
@@ -523,53 +491,15 @@
     margin-top: 6px;
   }
 
-  /* ── Control de volumen ── */
-  .volume-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .volume-row svg { width: 16px; height: 16px; fill: rgba(255,255,255,0.5); }
-
-  input[type=range].vol-slider {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 90px;
-    height: 3px;
-    border-radius: 2px;
-    background: rgba(255,255,255,0.25);
-    outline: none;
-    cursor: pointer;
-  }
-
-  input[type=range].vol-slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    background: #fff;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.4);
-  }
-
-  /* ════════════
-     UTILIDADES
-  ════════════ */
   .hidden { display: none !important; }
 </style>
 </head>
 
 <body>
 
-<!-- ═══════════════════════════════════════════════════
-     MOTORES DE AUDIO (OCULTOS EN EL DOM)
-═══════════════════════════════════════════════════ -->
 <audio id="audioEngineA" preload="auto"></audio>
 <audio id="audioEngineB" preload="auto"></audio>
 
-<!-- ═══════════════════════════════════════════════════
-     APLICACIÓN PRINCIPAL
-═══════════════════════════════════════════════════ -->
 <div id="app" class="layout-selection">
 
   <!-- ════════════════════════════
@@ -577,26 +507,21 @@
   ════════════════════════════ -->
   <div id="view-selection">
 
-    <!-- Barra de navegación -->
     <nav class="nav-bar">
       <span class="nav-logo">Música</span>
       <div class="nav-icons">
-        <!-- Icono Home -->
         <button class="nav-icon-btn" title="Inicio" aria-label="Inicio">
           <svg viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H5a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>
         </button>
-        <!-- Icono Buscar -->
         <button class="nav-icon-btn" title="Buscar" aria-label="Buscar">
           <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="22" y2="22"/></svg>
         </button>
-        <!-- Icono Biblioteca -->
         <button class="nav-icon-btn" title="Biblioteca" aria-label="Biblioteca">
           <svg viewBox="0 0 24 24"><rect x="3" y="3" width="6" height="6" rx="1"/><rect x="3" y="13" width="6" height="8" rx="1"/><rect x="13" y="3" width="8" height="6" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg>
         </button>
       </div>
     </nav>
 
-    <!-- Grid de portadas -->
     <div class="library-scroll">
       <h2 class="library-title">Tu Música</h2>
       <div class="card-grid" id="card-grid">
@@ -619,26 +544,20 @@
         <div class="wave-bar"></div>
       </div>
       <div class="mini-controls">
-        <!-- Anterior -->
         <button class="ctrl-btn" id="btn-prev-mini" aria-label="Anterior">
           <svg viewBox="0 0 24 24"><polygon points="19,20 9,12 19,4"/><line x1="5" y1="4" x2="5" y2="20" stroke="currentColor" stroke-width="2"/></svg>
         </button>
-        <!-- Play/Pause -->
         <button class="ctrl-btn" id="btn-play-mini" aria-label="Reproducir">
-          <!-- Ícono Play (visible cuando está pausado) -->
           <svg id="icon-play-mini" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
-          <!-- Ícono Pause (oculto cuando está pausado) -->
           <svg id="icon-pause-mini" class="hidden" viewBox="0 0 24 24">
             <rect x="6"  y="4" width="4" height="16" rx="1"/>
             <rect x="14" y="4" width="4" height="16" rx="1"/>
           </svg>
         </button>
-        <!-- Siguiente -->
         <button class="ctrl-btn" id="btn-next-mini" aria-label="Siguiente">
           <svg viewBox="0 0 24 24"><polygon points="5,4 15,12 5,20"/><line x1="19" y1="4" x2="19" y2="20" stroke="currentColor" stroke-width="2"/></svg>
         </button>
       </div>
-      <!-- Botón Pantalla Completa -->
       <button class="btn-fullscreen" id="btn-open-fs" aria-label="Pantalla completa">
         <svg viewBox="0 0 24 24"><polyline points="15,3 21,3 21,9"/><polyline points="9,21 3,21 3,15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
         Pantalla Completa
@@ -653,11 +572,9 @@
   ════════════════════════════ -->
   <div id="view-fullscreen">
 
-    <!-- Fondo de video de YouTube -->
     <div id="yt-backdrop"></div>
     <div class="backdrop-overlay"></div>
 
-    <!-- Contenido principal -->
     <div class="fs-content">
 
       <!-- Barra superior -->
@@ -667,7 +584,7 @@
           Minimizar
         </button>
         <span style="font-size:13px;color:rgba(255,255,255,0.5);font-weight:500;">Reproduciendo ahora</span>
-        <div style="width:110px;"></div><!-- espaciador para centrar -->
+        <div style="width:110px;"></div>
       </div>
 
       <!-- Zona central: letras sincronizadas -->
@@ -679,27 +596,19 @@
         </div>
       </div>
 
-      <!-- Barra inferior: info + controles -->
+      <!-- Barra inferior: info + progreso sin botones extras -->
       <div class="fs-bottom">
-        <!-- Portada + Info -->
-        <img class="fs-album-art" id="fs-art" src="" alt="Portada" />
-        <div class="fs-song-info">
-          <div class="fs-song-title"  id="fs-title">–</div>
-          <div class="fs-song-artist" id="fs-artist">–</div>
-        </div>
-
-        <!-- Controles + Progreso -->
-        <div class="fs-controls">
-          <!-- Control de volumen -->
-          <div class="volume-row">
-            <svg viewBox="0 0 24 24" style="fill:none;stroke:rgba(255,255,255,0.5);stroke-width:2">
-              <polygon points="11,5 6,9 2,9 2,15 6,15 11,19"/>
-              <path d="M15.54,8.46a5,5,0,0,1,0,7.07"/>
-            </svg>
-            <input type="range" class="vol-slider" id="vol-slider" min="0" max="1" step="0.01" value="1" aria-label="Volumen" />
+        <div class="fs-media-card">
+          <!-- Portada + Info -->
+          <div class="fs-main-info">
+            <img class="fs-album-art" id="fs-art" src="" alt="Portada" />
+            <div class="fs-song-info">
+              <div class="fs-song-title"  id="fs-title">–</div>
+              <div class="fs-song-artist" id="fs-artist">–</div>
+            </div>
           </div>
 
-          <!-- Barra de progreso -->
+          <!-- Barra de progreso abajo de la portada, título y artista -->
           <div class="progress-container" id="progress-container">
             <div class="progress-bar-wrap" id="progress-wrap">
               <div class="progress-fill" id="progress-fill" style="width:0%"></div>
@@ -708,23 +617,6 @@
               <span id="time-current">0:00</span>
               <span id="time-total">0:00</span>
             </div>
-          </div>
-
-          <!-- Botones de transporte -->
-          <div class="fs-ctrl-row">
-            <button class="fs-ctrl-btn" id="btn-prev-fs" aria-label="Anterior">
-              <svg viewBox="0 0 24 24"><polygon points="19,20 9,12 19,4"/><line x1="5" y1="4" x2="5" y2="20" stroke="white" stroke-width="2"/></svg>
-            </button>
-            <button class="fs-ctrl-btn play-pause" id="btn-play-fs" aria-label="Reproducir/Pausar">
-              <svg id="icon-play-fs"  viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
-              <svg id="icon-pause-fs" viewBox="0 0 24 24" class="hidden">
-                <rect x="6"  y="4" width="4" height="16" rx="1"/>
-                <rect x="14" y="4" width="4" height="16" rx="1"/>
-              </svg>
-            </button>
-            <button class="fs-ctrl-btn" id="btn-next-fs" aria-label="Siguiente">
-              <svg viewBox="0 0 24 24"><polygon points="5,4 15,12 5,20"/><line x1="19" y1="4" x2="19" y2="20" stroke="white" stroke-width="2"/></svg>
-            </button>
           </div>
         </div>
       </div><!-- /fs-bottom -->
@@ -747,7 +639,7 @@
 "use strict";
 
 /* ╔═══════════════════════════════════════════════════╗
-   ║  1. MODELO DE DATOS – PLAYLIST                    ║
+   ║  1. MODELO DE DATOS – PLAYLIST (UNA SOLA CANCIÓN) ║
    ╚═══════════════════════════════════════════════════╝ */
 
 const PLAYLIST = [
@@ -758,90 +650,7 @@ const PLAYLIST = [
     album_art: "https://res.cloudinary.com/ddcbl694n/image/upload/v1779472989/YEYE_Yan_block_m6n1ee.jpg",
     audio_url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1779472988/YeYe_spotdown.org_sfs0oj.mp3",
     youtube_id: "PgGzjo3d_mg",
-    /* ── Letras TTML simuladas (timestamp en segundos, palabra a palabra) ── */
-    lyrics_ttml: `
-[0.00|0.00] ♪
-[14.50|14.50|14.80|15.10|15.40|15.70] Ye|Ye|Ye|Ye|Ye|Ye
-[17.20|17.20|17.60|18.00|18.40] Co|mo|sie|pre
-[19.80|19.80|20.20|20.60|21.00|21.40] Me|gus|ta|ver|te
-[22.80|22.80|23.20|23.60|24.00] bai|lar|así
-[25.50|25.50|25.90|26.30|26.70|27.10] Mue|ve|el|cuer|po
-[28.20|28.20|28.60|29.00|29.40] pa|ra|mí
-[30.80|30.80|31.20|31.60|32.00|32.40] Ye|Ye|Ye|Ye|Ye
-[33.60|33.60|34.00|34.40] Qué|bo|ni|ta
-[35.80|35.80|36.20|36.60|37.00|37.40] la|for|ma|en|que
-[38.50|38.50|38.90|39.30] son|ríes
-[40.20|40.20|40.60|41.00|41.40|41.80] me|vol|vés|lo|co
-[42.80|42.80|43.20|43.60] co|mo|tú
-[45.00|45.00|45.40|45.80|46.20|46.60] Ye|Ye|Ye|Ye|Ye|Ye
-[47.80|47.80|48.20|48.60|49.00] bai|la|ba|be
-[50.40|50.40|50.80|51.20|51.60|52.00] es|ta|no|che|es|pa|ra
-[52.80|52.80|53.20|53.60] los|dos
-[55.00|55.00|55.40|55.80|56.20|56.60] Na|die|más|que|tú
-[57.80|57.80|58.20|58.60|59.00|59.40] me|ha|ce|sen|tir
-[60.40|60.40|60.80|61.20] a|sí
-[62.80|62.80|63.20|63.60|64.00|64.40] Con|ti|go|ba|bé
-[65.60|65.60|66.00|66.40|66.80|67.20] la|vi|da|es|me|jor
-[68.20|68.20|68.60|69.00] ye|ye|ye
-[70.60|70.60|71.00|71.40|71.80|72.20] Tu|rit|mo|me|en|gan|cha
-[73.40|73.40|73.80|74.20|74.60] des|de|pri|mer|paso
-[75.80|75.80|76.20|76.60|77.00|77.40] y|a|ho|ra|no
-[78.20|78.20|78.60|79.00] me|suel|tas
-[80.40|80.40|80.80|81.20|81.60|82.00] Ye|Ye|Ye|Ye|Ye
-[83.20|83.20|83.60|84.00|84.40|84.80] mi|co|ra|zón|te|bus|ca
-[86.00|86.00|86.40|86.80|87.20] don|de|quie|ra
-[88.40|88.40|88.80|89.20|89.60|90.00] y|en|tu|son|ri|sa
-[91.20|91.20|91.60|92.00] me|pier|do
-[93.40|93.40|93.80|94.20|94.60|95.00] Ye|Ye|Ye|Ye|Ye|Ye
-[96.20|96.20|96.60|97.00|97.40] bai|la|ba|be
-[98.80|98.80|99.20|99.60|100.00|100.40] es|ta|no|che|es|pa|ra
-[101.20|101.20|101.60|102.00] los|dos
-[103.40|103.40|103.80|104.20|104.60|105.00] Na|die|más|que|tú
-[106.20|106.20|106.60|107.00|107.40|107.80] me|ha|ce|sen|tir
-[108.80|108.80|109.20|109.60] a|sí
-[110.80|110.80|111.20|111.60|112.00|112.40] Con|ti|go|ba|bé
-[113.40|113.40|113.80|114.20|114.60|115.00] la|vi|da|es|me|jor
-[116.00|116.00|116.40|116.80] ye|ye|ye
-[118.00|118.00|118.40|118.80|119.20|119.60] ♪ ♪ ♪
-[130.00|130.00|130.40|130.80|131.20|131.60] Ye|Ye|Ye|Ye|Ye|Ye
-[132.80|132.80|133.20|133.60|134.00] bai|la|ba|be
-[135.40|135.40|135.80|136.20|136.60|137.00] es|ta|no|che|es|pa|ra
-[138.20|138.20|138.60|139.00] los|dos
-[140.40|140.40|140.80|141.20|141.60|142.00] Na|die|más|que|tú
-[143.20|143.20|143.60|144.00|144.40|144.80] me|ha|ce|sen|tir
-[145.80|145.80|146.20|146.60] a|sí
-[148.00|148.00|148.40|148.80|149.20|149.60] Con|ti|go|ba|bé
-[150.80|150.80|151.20|151.60|152.00|152.40] la|vi|da|es|me|jor
-[153.40|153.40|153.80|154.20] ye|ye|ye
-`
-  },
-  {
-    id: 2,
-    title: "Noche Eterna",
-    artist: "Yan Block",
-    album_art: "https://res.cloudinary.com/ddcbl694n/image/upload/v1779472989/YEYE_Yan_block_m6n1ee.jpg",
-    audio_url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1779472988/YeYe_spotdown.org_sfs0oj.mp3",
-    youtube_id: "PgGzjo3d_mg",
-    lyrics_ttml: `
-[0.00|0.00] ♪
-[5.00|5.00|5.40|5.80|6.20] No|che|e|ter|na
-[7.50|7.50|7.90|8.30|8.70|9.10] bai|la|con|mi|go
-[10.50|10.50|10.90|11.30] has|ta|el|a|ma|ne|cer
-`
-  },
-  {
-    id: 3,
-    title: "Fuego Lento",
-    artist: "Yan Block",
-    album_art: "https://res.cloudinary.com/ddcbl694n/image/upload/v1779472989/YEYE_Yan_block_m6n1ee.jpg",
-    audio_url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1779472988/YeYe_spotdown.org_sfs0oj.mp3",
-    youtube_id: "PgGzjo3d_mg",
-    lyrics_ttml: `
-[0.00|0.00] ♪
-[4.00|4.00|4.40|4.80|5.20] Fue|go|len|to
-[6.50|6.50|6.90|7.30|7.70|8.10] ar|de|en|mi|pe|cho
-[9.50|9.50|9.90|10.30] so|lo|por|ti
-`
+    lyrics_url: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1779473062/YeYe_spotdown.org_eqsrsv.ttml"
   }
 ];
 
@@ -850,19 +659,19 @@ const PLAYLIST = [
    ╚═══════════════════════════════════════════════════╝ */
 
 const state = {
-  currentIndex:  0,           // índice en PLAYLIST
+  currentIndex:  0,
   isPlaying:     false,
   volume:        1.0,
-  activeEngine:  'A',         // 'A' o 'B'
-  crossfadeTimer: null,       // requestAnimationFrame handle
+  activeEngine:  'A',
+  crossfadeTimer: null,
   crossfadeActive: false,
-  crossfadeStart: null,       // timestamp de inicio del crossfade
-  ytPlayer: null,             // instancia del player de YouTube
+  crossfadeStart: null,
+  ytPlayer: null,
   ytReady: false,
-  parsedLyrics: [],           // líneas parseadas del TTML
-  activeLineIndex: -1,        // índice de la línea activa
-  rafLyrics: null,            // requestAnimationFrame para letras
-  rafProgress: null,          // requestAnimationFrame para progreso
+  parsedLyrics: [],
+  activeLineIndex: -1,
+  rafLyrics: null,
+  rafProgress: null,
 };
 
 /* ╔═══════════════════════════════════════════════════╗
@@ -891,24 +700,17 @@ const btnCloseFS    = document.getElementById('btn-close-fs');
 const fsArt         = document.getElementById('fs-art');
 const fsTitle       = document.getElementById('fs-title');
 const fsArtist      = document.getElementById('fs-artist');
-const btnPlayFS     = document.getElementById('btn-play-fs');
-const iconPlayFS    = document.getElementById('icon-play-fs');
-const iconPauseFS   = document.getElementById('icon-pause-fs');
-const btnPrevFS     = document.getElementById('btn-prev-fs');
-const btnNextFS     = document.getElementById('btn-next-fs');
 const lyricsTrack   = document.getElementById('lyrics-track');
 const progressWrap  = document.getElementById('progress-wrap');
 const progressFill  = document.getElementById('progress-fill');
 const timeCurrent   = document.getElementById('time-current');
 const timeTotal     = document.getElementById('time-total');
-const volSlider     = document.getElementById('vol-slider');
 const ytBackdrop    = document.getElementById('yt-backdrop');
 
 /* ╔═══════════════════════════════════════════════════╗
    ║  4. HELPERS                                        ║
    ╚═══════════════════════════════════════════════════╝ */
 
-/** Formatea segundos a m:ss */
 function fmtTime(s) {
   if (!isFinite(s) || isNaN(s)) return '0:00';
   const m = Math.floor(s / 60);
@@ -916,63 +718,96 @@ function fmtTime(s) {
   return `${m}:${sc.toString().padStart(2, '0')}`;
 }
 
-/** Devuelve el motor activo y el inactivo */
 function getEngines() {
   return state.activeEngine === 'A'
     ? { active: engineA, inactive: engineB }
     : { active: engineB, inactive: engineA };
 }
 
-/** Cambia el estado play/pause de los íconos */
 function syncPlayIcons(isPlaying) {
-  [iconPlayMini,  iconPauseMini ].forEach((el, i) => el.classList.toggle('hidden', isPlaying  ? i === 0 : i === 1));
-  [iconPlayFS,    iconPauseFS   ].forEach((el, i) => el.classList.toggle('hidden', isPlaying  ? i === 0 : i === 1));
+  [iconPlayMini, iconPauseMini].forEach((el, i) => el.classList.toggle('hidden', isPlaying ? i === 0 : i === 1));
 }
 
 /* ╔═══════════════════════════════════════════════════╗
-   ║  5. PARSER DE LETRAS (FORMATO TTML SIMULADO)       ║
-   ╚═══════════════════════════════════════════════════╝
-   Formato de cada línea:
-   [lineStart|word1Start|word2Start|...] palabra1|palabra2|...
+   ║  5. PARSER DE TIEMPOS Y LETRAS XML (TTML REAL)     ║
+   ╚═══════════════════════════════════════════════════╝ */
 
-   Si solo hay 2 tokens (lineStart|lineStart) o el texto contiene ♪
-   se trata como línea de pausa/silencio.
-*/
+function parseTimeToSeconds(timeStr) {
+  if (!timeStr) return 0;
+  let cleanStr = timeStr.trim().replace('s', '');
+  const parts = cleanStr.split(':');
+  
+  if (parts.length === 3) {
+    const hrs = parseFloat(parts[0]);
+    const mins = parseFloat(parts[1]);
+    const secs = parseFloat(parts[2]);
+    return hrs * 3600 + mins * 60 + secs;
+  } else if (parts.length === 2) {
+    const mins = parseFloat(parts[0]);
+    const secs = parseFloat(parts[1]);
+    return mins * 60 + secs;
+  } else {
+    return parseFloat(cleanStr);
+  }
+}
 
-function parseLyrics(ttml) {
+function getElementsResilient(xmlDoc, tagName) {
+  let els = xmlDoc.getElementsByTagName(tagName);
+  if (!els || els.length === 0) {
+    els = xmlDoc.getElementsByTagNameNS("*", tagName);
+  }
+  return els;
+}
+
+function parseTTML(xmlText) {
+  const parser = new DOMParser();
+  const xmlDoc = parser.parseFromString(xmlText, "text/xml");
   const lines = [];
-  const rawLines = ttml.trim().split('\n');
-
-  rawLines.forEach(raw => {
-    raw = raw.trim();
-    if (!raw) return;
-
-    // Extraer timestamps y texto
-    const match = raw.match(/^\[([^\]]+)\]\s*(.*)/);
-    if (!match) return;
-
-    const tsTokens  = match[1].split('|').map(Number);
-    const textPart  = match[2].trim();
-    const lineStart = tsTokens[0];
-
-    // Línea de silencio / pausa instrumental
-    if (!textPart || textPart === '♪' || textPart.startsWith('♪')) {
-      lines.push({ lineStart, words: [], isSpacer: true });
-      return;
+  
+  const pElements = getElementsResilient(xmlDoc, "p");
+  for (let i = 0; i < pElements.length; i++) {
+    const p = pElements[i];
+    const lineStart = parseTimeToSeconds(p.getAttribute("begin"));
+    const lineEnd = parseTimeToSeconds(p.getAttribute("end"));
+    
+    const words = [];
+    const spanElements = getElementsResilient(p, "span");
+    
+    if (spanElements.length > 0) {
+      for (let j = 0; j < spanElements.length; j++) {
+        const span = spanElements[j];
+        words.push({
+          text: span.textContent.trim(),
+          start: parseTimeToSeconds(span.getAttribute("begin")),
+          end: parseTimeToSeconds(span.getAttribute("end"))
+        });
+      }
+    } else {
+      // Fallback si no tiene spans
+      const text = p.textContent.trim();
+      const textWords = text.split(/\s+/);
+      const duration = lineEnd - lineStart;
+      const wordDuration = duration / Math.max(textWords.length, 1);
+      
+      textWords.forEach((wordText, index) => {
+        words.push({
+          text: wordText,
+          start: lineStart + index * wordDuration,
+          end: lineStart + (index + 1) * wordDuration
+        });
+      });
     }
-
-    const wordTexts  = textPart.split('|');
-    // tsTokens[0] = lineStart, tsTokens[1..] = tiempos de cada palabra
-    const wordTimes  = tsTokens.slice(1);
-
-    const words = wordTexts.map((w, i) => ({
-      text:  w,
-      start: wordTimes[i] !== undefined ? wordTimes[i] : lineStart,
-    }));
-
-    lines.push({ lineStart, words, isSpacer: false });
-  });
-
+    
+    const isSpacer = p.textContent.trim() === '♪' || p.textContent.trim() === '';
+    
+    lines.push({
+      lineStart: lineStart,
+      lineEnd: lineEnd,
+      words: words,
+      isSpacer: isSpacer,
+      text: p.textContent.trim()
+    });
+  }
   return lines;
 }
 
@@ -998,12 +833,20 @@ function injectLyrics(lines) {
         span.dataset.lineIndex = li;
         span.dataset.wordIndex = wi;
         div.appendChild(span);
-        // Espacio entre palabras (excepto el último)
         if (wi < line.words.length - 1) {
           div.appendChild(document.createTextNode(' '));
         }
       });
     }
+
+    // Permitir clic para navegar al tiempo exacto de esta frase
+    div.addEventListener('click', () => {
+      const { active } = getEngines();
+      active.currentTime = line.lineStart;
+      if (state.ytReady && state.ytPlayer) {
+        try { state.ytPlayer.seekTo(line.lineStart, true); } catch(e) {}
+      }
+    });
 
     lyricsTrack.appendChild(div);
   });
@@ -1035,9 +878,8 @@ function stopLyricsLoop() {
 
 function updateLyrics(t) {
   const lines = state.parsedLyrics;
-  if (!lines.length) return;
+  if (!lines || !lines.length) return;
 
-  // Encontrar la línea activa
   let activeIdx = -1;
   for (let i = lines.length - 1; i >= 0; i--) {
     if (t >= lines[i].lineStart) {
@@ -1048,7 +890,6 @@ function updateLyrics(t) {
 
   const lineEls = lyricsTrack.querySelectorAll('.lyric-line');
 
-  // Actualizar clases activo/pasado/futuro
   if (activeIdx !== state.activeLineIndex) {
     state.activeLineIndex = activeIdx;
 
@@ -1058,34 +899,30 @@ function updateLyrics(t) {
       else if (i === activeIdx) el.classList.add('active');
     });
 
-    // Desplazamiento vertical con translateY
     scrollToActiveLine(activeIdx, lineEls);
   }
 
-  // Iluminación de palabras (word-by-word)
   if (activeIdx >= 0 && !lines[activeIdx].isSpacer) {
     const activeEl  = lineEls[activeIdx];
-    const spans     = activeEl.querySelectorAll('span');
-    const words     = lines[activeIdx].words;
+    if (activeEl) {
+      const spans     = activeEl.querySelectorAll('span');
+      const words     = lines[activeIdx].words;
 
-    spans.forEach((span, wi) => {
-      const wordStart = words[wi] ? words[wi].start : Infinity;
-      span.classList.toggle('word-lit', t >= wordStart);
-    });
+      spans.forEach((span, wi) => {
+        const wordStart = words[wi] ? words[wi].start : Infinity;
+        span.classList.toggle('word-lit', t >= wordStart);
+      });
+    }
   }
 }
 
-/** Desplaza el lyrics-track para centrar la línea activa */
 function scrollToActiveLine(activeIdx, lineEls) {
   if (activeIdx < 0 || !lineEls[activeIdx]) return;
 
-  // offsetTop de la línea activa respecto al lyrics-track
   const activeEl   = lineEls[activeIdx];
   const offsetTop  = activeEl.offsetTop;
   const halfHeight = activeEl.offsetHeight / 2;
 
-  // El track inicia en top:50% del viewport (en CSS).
-  // Queremos que la línea activa quede centrada → trasladamos hacia arriba.
   const translateY = -(offsetTop + halfHeight);
   lyricsTrack.style.transform = `translateY(${translateY}px)`;
 }
@@ -1121,27 +958,17 @@ function stopProgressLoop() {
 }
 
 /* ╔═══════════════════════════════════════════════════╗
-   ║  9. MOTOR DUAL Y CROSSFADE DE 12 SEGUNDOS          ║
+   ║  9. MOTOR DUAL Y CROSSFADE                         ║
    ╚═══════════════════════════════════════════════════╝ */
 
-const CROSSFADE_DURATION = 12; // segundos
+const CROSSFADE_DURATION = 12;
 
-/**
- * Carga una canción en un motor de audio.
- * @param {HTMLAudioElement} engine
- * @param {Object} song
- */
 function loadSongInEngine(engine, song) {
   engine.src    = song.audio_url;
   engine.volume = 0;
   engine.load();
 }
 
-/**
- * Inicia el crossfade:
- * - El motor activo baja de 1 → 0 en CROSSFADE_DURATION segundos
- * - El motor inactivo (ya cargado con la siguiente canción) sube de 0 → 1
- */
 function startCrossfade() {
   if (state.crossfadeActive) return;
   state.crossfadeActive = true;
@@ -1149,7 +976,6 @@ function startCrossfade() {
 
   const { active, inactive } = getEngines();
 
-  // Preparar el motor inactivo
   inactive.volume = 0;
   inactive.play().catch(() => {});
 
@@ -1165,16 +991,13 @@ function startCrossfade() {
     if (progress < 1) {
       state.crossfadeTimer = requestAnimationFrame(fadeStep);
     } else {
-      // Crossfade completado: limpiar motor anterior
       active.pause();
       active.src = '';
       active.load();
 
-      // Intercambiar motores
       state.activeEngine = state.activeEngine === 'A' ? 'B' : 'A';
       state.crossfadeActive = false;
 
-      // Actualizar UI con la nueva canción
       updateUIForCurrentSong();
     }
   }
@@ -1182,10 +1005,6 @@ function startCrossfade() {
   state.crossfadeTimer = requestAnimationFrame(fadeStep);
 }
 
-/**
- * Monitorea el tiempo del motor activo para iniciar el crossfade
- * exactamente CROSSFADE_DURATION segundos antes del final.
- */
 function monitorCrossfade() {
   const { active } = getEngines();
 
@@ -1195,7 +1014,6 @@ function monitorCrossfade() {
     const remaining = active.duration - active.currentTime;
 
     if (isFinite(remaining) && remaining <= CROSSFADE_DURATION && remaining > 0) {
-      // Preparar la siguiente canción en el motor inactivo
       const nextIndex = (state.currentIndex + 1) % PLAYLIST.length;
       const nextSong  = PLAYLIST[nextIndex];
       const { inactive } = getEngines();
@@ -1206,12 +1024,10 @@ function monitorCrossfade() {
         startCrossfade();
       }, { once: true });
 
-      // Avanzar al siguiente índice
       state.currentIndex = nextIndex;
     }
   });
 
-  // Al terminar naturalmente (sin crossfade), pasar a la siguiente
   active.addEventListener('ended', function() {
     if (!state.crossfadeActive) {
       nextSong();
@@ -1223,16 +1039,13 @@ function monitorCrossfade() {
    ║  10. REPRODUCTOR PRINCIPAL                         ║
    ╚═══════════════════════════════════════════════════╝ */
 
-/** Carga y reproduce una canción por índice */
 function playSong(index) {
-  // Cancelar cualquier crossfade en curso
   if (state.crossfadeTimer) {
     cancelAnimationFrame(state.crossfadeTimer);
     state.crossfadeTimer = null;
   }
   state.crossfadeActive = false;
 
-  // Detener ambos motores
   engineA.pause(); engineA.src = ''; engineA.load();
   engineB.pause(); engineB.src = ''; engineB.load();
 
@@ -1261,40 +1074,43 @@ function playSong(index) {
   }, { once: true });
 }
 
-/** Actualiza todos los elementos visuales para la canción actual */
-function updateUIForCurrentSong() {
+async function updateUIForCurrentSong() {
   const song = PLAYLIST[state.currentIndex];
 
-  // Mini-player
   miniArt.src        = song.album_art;
   miniTitle.textContent   = song.title;
   miniArtist.textContent  = song.artist;
 
-  // Fullscreen
   fsArt.src           = song.album_art;
   fsTitle.textContent  = song.title;
   fsArtist.textContent = song.artist;
 
-  // Letras
-  state.parsedLyrics   = parseLyrics(song.lyrics_ttml);
-  state.activeLineIndex = -1;
-  injectLyrics(state.parsedLyrics);
-  lyricsTrack.style.transform = 'translateY(0)';
+  // Letras remotas mediante fetch
+  lyricsTrack.innerHTML = '<div class="lyric-line active">Cargando letras sincronizadas...</div>';
+  try {
+    const response = await fetch(song.lyrics_url);
+    if (!response.ok) throw new Error("Error en la descarga de letras");
+    const xmlText = await response.text();
+    state.parsedLyrics = parseTTML(xmlText);
+    state.activeLineIndex = -1;
+    injectLyrics(state.parsedLyrics);
+    lyricsTrack.style.transform = 'translateY(0)';
+  } catch (error) {
+    console.error("Error al cargar letras:", error);
+    lyricsTrack.innerHTML = '<div class="lyric-line active" style="color: var(--c-inactive-lyric)">Letras no disponibles.</div>';
+    state.parsedLyrics = [];
+  }
 
-  // Video de YouTube
   loadYouTubeVideo(song.youtube_id);
 }
 
-/** Siguiente canción */
 function nextSong() {
   const next = (state.currentIndex + 1) % PLAYLIST.length;
   playSong(next);
 }
 
-/** Canción anterior */
 function prevSong() {
   const { active } = getEngines();
-  // Si llevamos más de 3 segundos, reiniciamos; si no, vamos a la anterior
   if (active.currentTime > 3) {
     active.currentTime = 0;
   } else {
@@ -1303,7 +1119,6 @@ function prevSong() {
   }
 }
 
-/** Alterna play/pause */
 function togglePlay() {
   const { active } = getEngines();
 
@@ -1314,7 +1129,6 @@ function togglePlay() {
     waveViz.classList.add('paused');
     stopProgressLoop();
     stopLyricsLoop();
-    // Pausar video de YT
     if (state.ytReady && state.ytPlayer) {
       try { state.ytPlayer.pauseVideo(); } catch(e) {}
     }
@@ -1325,7 +1139,6 @@ function togglePlay() {
       waveViz.classList.remove('paused');
       startProgressLoop();
       startLyricsLoop();
-      // Reanudar video de YT
       if (state.ytReady && state.ytPlayer) {
         try { state.ytPlayer.playVideo(); } catch(e) {}
       }
@@ -1337,17 +1150,12 @@ function togglePlay() {
    ║  11. INTEGRACIÓN YOUTUBE IFRAME API                ║
    ╚═══════════════════════════════════════════════════╝ */
 
-/**
- * Callback global requerido por la API de YouTube.
- * Se llama automáticamente cuando la API está lista.
- */
 window.onYouTubeIframeAPIReady = function() {
   const song = PLAYLIST[state.currentIndex];
   createYTPlayer(song.youtube_id);
 };
 
 function createYTPlayer(videoId) {
-  // Creamos un div contenedor para el iframe
   const container = document.createElement('div');
   container.id = 'yt-player';
   ytBackdrop.appendChild(container);
@@ -1357,9 +1165,9 @@ function createYTPlayer(videoId) {
     playerVars: {
       autoplay:      1,
       controls:      0,
-      mute:          1,        // 100% silenciado
+      mute:          1,
       loop:          1,
-      playlist:      videoId,  // necesario para que loop funcione
+      playlist:      videoId,
       modestbranding:1,
       rel:           0,
       showinfo:      0,
@@ -1379,7 +1187,6 @@ function createYTPlayer(videoId) {
   });
 }
 
-/** Carga un nuevo video en el player de YT */
 function loadYouTubeVideo(videoId) {
   if (!state.ytReady || !state.ytPlayer) return;
   try {
@@ -1408,26 +1215,13 @@ progressWrap.addEventListener('click', function(e) {
 
   active.currentTime = newTime;
 
-  // Sincronizar el video de YouTube al mismo segundo
   if (state.ytReady && state.ytPlayer) {
     try { state.ytPlayer.seekTo(newTime, true); } catch(e) {}
   }
 });
 
 /* ╔═══════════════════════════════════════════════════╗
-   ║  13. CONTROL DE VOLUMEN                            ║
-   ╚═══════════════════════════════════════════════════╝ */
-
-volSlider.addEventListener('input', function() {
-  state.volume = parseFloat(this.value);
-  if (!state.crossfadeActive) {
-    const { active } = getEngines();
-    active.volume = state.volume;
-  }
-});
-
-/* ╔═══════════════════════════════════════════════════╗
-   ║  14. ALTERNANCIA ENTRE MODOS DE UI                 ║
+   ║  13. ALTERNANCIA ENTRE MODOS DE UI                 ║
    ╚═══════════════════════════════════════════════════╝ */
 
 btnOpenFS.addEventListener('click', function() {
@@ -1441,20 +1235,15 @@ btnCloseFS.addEventListener('click', function() {
 });
 
 /* ╔═══════════════════════════════════════════════════╗
-   ║  15. EVENTOS DE BOTONES                            ║
+   ║  14. EVENTOS DE BOTONES                            ║
    ╚═══════════════════════════════════════════════════╝ */
 
 btnPlayMini.addEventListener('click', togglePlay);
-btnPlayFS.addEventListener('click',   togglePlay);
-
 btnPrevMini.addEventListener('click', prevSong);
-btnPrevFS.addEventListener('click',   prevSong);
-
 btnNextMini.addEventListener('click', nextSong);
-btnNextFS.addEventListener('click',   nextSong);
 
 /* ╔═══════════════════════════════════════════════════╗
-   ║  16. GENERACIÓN DINÁMICA DEL CARD GRID             ║
+   ║  15. GENERACIÓN DINÁMICA DEL CARD GRID             ║
    ╚═══════════════════════════════════════════════════╝ */
 
 function buildCardGrid() {
@@ -1487,7 +1276,7 @@ function buildCardGrid() {
 }
 
 /* ╔═══════════════════════════════════════════════════╗
-   ║  17. ATAJO DE TECLADO (barra espaciadora)          ║
+   ║  16. ATAJO DE TECLADO (barra espaciadora)          ║
    ╚═══════════════════════════════════════════════════╝ */
 
 document.addEventListener('keydown', function(e) {
@@ -1498,15 +1287,17 @@ document.addEventListener('keydown', function(e) {
 });
 
 /* ╔═══════════════════════════════════════════════════╗
-   ║  18. INICIALIZACIÓN                                ║
+   ║  17. INICIALIZACIÓN                                ║
    ╚═══════════════════════════════════════════════════╝ */
 
 (function init() {
   buildCardGrid();
-  updateUIForCurrentSong();      // Setear portada/título en la UI vacía
-  syncPlayIcons(false);          // Estado inicial: pausado
+  updateUIForCurrentSong();
+  syncPlayIcons(false);
 })();
 
 </script>
 </body>
 </html>
+
+--- END OF FILE index.html ---
