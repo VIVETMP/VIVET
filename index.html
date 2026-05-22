@@ -11,25 +11,25 @@
 <style>
   /* ── Variables de diseño ── */
   :root {
-    --c-bg:          #000;
+    --c-bg:          #050507;
     --c-surface:     rgba(255,255,255,0.06);
-    --c-surface2:    rgba(255,255,255,0.10);
-    --c-border:      rgba(255,255,255,0.10);
+    --c-surface2:    rgba(255,255,255,0.12);
+    --c-border:      rgba(255,255,255,0.08);
     --c-text:        #fff;
     --c-text-dim:    rgba(255,255,255,0.45);
     --c-accent:      #fff;
     --c-active-lyric:#fff;
-    --c-inactive-lyric: rgba(255,255,255,0.30);
+    --c-inactive-lyric: rgba(255,255,255,0.25);
 
-    --radius-card:   14px;
-    --radius-lg:     20px;
+    --radius-card:   16px;
+    --radius-lg:     24px;
 
-    --blur-glass:    20px;
+    --blur-glass:    24px;
     --blur-lyric:    1px;
 
     --t-fast:        150ms;
-    --t-mid:         320ms;
-    --t-slow:        600ms;
+    --t-mid:         350ms;
+    --t-slow:        700ms;
 
     --crossfade-dur: 12s;
 
@@ -187,6 +187,20 @@
     gap: 8px;
   }
 
+  .ctrl-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    transition: background var(--t-fast), transform var(--t-fast);
+  }
+
+  .ctrl-btn:hover { background: var(--c-surface2); transform: scale(1.05); }
+  .ctrl-btn:active { transform: scale(0.92); }
+  .ctrl-btn svg { width: 20px; height: 20px; fill: var(--c-text); }
+
   .wave-visualizer {
     display: flex;
     align-items: center;
@@ -251,49 +265,65 @@
     pointer-events: all;
   }
 
-  #yt-backdrop {
-    position: absolute;
-    inset: -10%;
-    width: 120%;
-    height: 120%;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  #yt-backdrop iframe {
-    width: 100%;
-    height: 100%;
-    border: none;
-  }
-
-  .backdrop-overlay {
+  /* ── Fondo de Colores Fluidos Dinámicos ── */
+  #backdrop-blur-container {
     position: absolute;
     inset: 0;
-    background: rgba(0,0,0,0.58);
-    z-index: 1;
+    z-index: 0;
+    overflow: hidden;
+    background: #000;
+  }
+
+  #bg-blur-img {
+    position: absolute;
+    top: -30%;
+    left: -30%;
+    width: 160%;
+    height: 160%;
+    object-fit: cover;
+    filter: blur(80px) brightness(0.38) saturate(1.4);
+    transform-origin: center;
+    animation: fluidMotion 35s infinite alternate ease-in-out;
+    will-change: transform;
+  }
+
+  .bg-blur-overlay {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle, rgba(0,0,0,0) 0%, rgba(0,0,0,0.65) 100%), rgba(0,0,0,0.15);
+  }
+
+  @keyframes fluidMotion {
+    0% { transform: scale(1.0) rotate(0deg) translate(0, 0); }
+    50% { transform: scale(1.15) rotate(12deg) translate(-4%, 4%); }
+    100% { transform: scale(1.0) rotate(-12deg) translate(4%, -4%); }
   }
 
   .fs-content {
     position: absolute;
     inset: 0;
     z-index: 2;
-    display: block; /* Diseño libre basado en absolutos */
-    padding: 30px 40px;
+    display: grid;
+    grid-template-columns: 1fr 1.15fr;
+    grid-template-rows: auto 1fr;
+    padding: 40px 80px 60px;
     height: 100vh;
     box-sizing: border-box;
+    gap: 40px;
+    transition: grid-template-columns var(--t-slow) cubic-bezier(0.25, 1, 0.5, 1);
   }
 
-  /* Barra superior */
+  /* Cambio de columnas cuando se ocultan las letras */
+  #app.lyrics-hidden .fs-content {
+    grid-template-columns: 1fr 0fr;
+  }
+
   .fs-topbar {
-    position: absolute;
-    top: 30px;
-    left: 40px;
-    right: 40px;
+    grid-column: 1 / span 2;
     display: flex;
     align-items: center;
     justify-content: space-between;
     height: 50px;
-    z-index: 15;
   }
 
   .fs-topbar-actions {
@@ -307,7 +337,7 @@
     gap: 8px;
     padding: 8px 16px;
     border-radius: 20px;
-    background: rgba(255,255,255,0.10);
+    background: rgba(255,255,255,0.08);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     font-size: 13px;
@@ -315,55 +345,60 @@
     transition: background var(--t-fast);
   }
 
-  .btn-close-fs:hover { background: rgba(255,255,255,0.20); }
+  .btn-close-fs:hover { background: rgba(255,255,255,0.18); }
   .btn-close-fs svg  { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; }
 
-  /* ── Panel de Reproducción (Abajo a la Izquierda) ── */
-  .fs-media-card {
-    position: absolute;
-    bottom: 40px;
-    left: 40px;
+  /* ── Panel Izquierdo: Diseño de Apple Music ── */
+  .fs-left-panel {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    transition: transform var(--t-slow) cubic-bezier(0.25, 1, 0.5, 1);
+    will-change: transform;
+  }
+
+  /* Centra la portada de manera suave cuando se ocultan las letras */
+  #app.lyrics-hidden .fs-left-panel {
+    transform: translateX(11%);
+  }
+
+  .fs-art-container {
+    width: 100%;
+    max-width: 380px;
+    aspect-ratio: 1;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: 0 30px 65px rgba(0,0,0,0.7);
+    border: 1px solid var(--c-border);
+    margin-bottom: 28px;
+  }
+
+  .fs-album-art {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .fs-player-elements {
     display: flex;
     flex-direction: column;
     gap: 18px;
     width: 100%;
-    max-width: 440px;
-    background: rgba(20, 20, 20, 0.45);
-    backdrop-filter: blur(var(--blur-glass));
-    -webkit-backdrop-filter: blur(var(--blur-glass));
-    border: 1px solid var(--c-border);
-    padding: 24px;
-    border-radius: var(--radius-lg);
-    box-shadow: 0 20px 50px rgba(0,0,0,0.6);
-    z-index: 10;
-    transition: transform var(--t-mid) ease, opacity var(--t-mid) ease;
+    max-width: 380px;
   }
 
   .fs-main-info {
-    display: flex;
-    align-items: center;
-    gap: 18px;
+    text-align: center;
     width: 100%;
   }
 
-  .fs-album-art {
-    width: 80px;
-    height: 80px;
-    border-radius: var(--radius-card);
-    object-fit: cover;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-    flex-shrink: 0;
-  }
-
-  .fs-song-info {
-    flex: 1;
-    min-width: 0;
-  }
-
   .fs-song-title {
-    font-size: 22px;
+    font-size: clamp(22px, 2.5vw, 28px);
     font-weight: 800;
-    letter-spacing: -0.5px;
+    letter-spacing: -0.6px;
     line-height: 1.2;
     white-space: nowrap;
     overflow: hidden;
@@ -371,59 +406,61 @@
   }
 
   .fs-song-artist {
-    font-size: 15px;
+    font-size: 16px;
     color: var(--c-text-dim);
-    margin-top: 4px;
+    margin-top: 6px;
   }
 
-  /* Controles compactos inline */
-  .fs-controls-inline {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-shrink: 0;
-  }
-
-  .fs-inline-btn {
+  /* Controles de Transporte de Apple Music */
+  .fs-controls-centered {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 36px;
-    height: 36px;
+    gap: 20px;
+    width: 100%;
+    margin: 4px 0;
+  }
+
+  .fs-circle-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.08);
     border: 1px solid var(--c-border);
     transition: background var(--t-fast), transform var(--t-fast);
   }
 
-  .fs-inline-btn:hover {
+  .fs-circle-btn:hover {
     background: rgba(255, 255, 255, 0.18);
     transform: scale(1.05);
   }
 
-  .fs-inline-btn:active {
-    transform: scale(0.95);
+  .fs-circle-btn:active {
+    transform: scale(0.94);
   }
 
-  .fs-inline-btn svg {
-    width: 16px;
-    height: 16px;
+  .fs-circle-btn svg {
+    width: 18px;
+    height: 18px;
     fill: var(--c-text);
   }
 
-  .fs-inline-btn.play-pause-fs {
-    width: 44px;
-    height: 44px;
+  .fs-circle-btn.play-pause-fs {
+    width: 52px;
+    height: 52px;
     background: #fff;
   }
 
-  .fs-inline-btn.play-pause-fs svg {
+  .fs-circle-btn.play-pause-fs svg {
     fill: #000;
-    width: 18px;
-    height: 18px;
+    width: 22px;
+    height: 22px;
   }
 
-  .fs-inline-btn.play-pause-fs:hover {
+  .fs-circle-btn.play-pause-fs:hover {
     background: rgba(255, 255, 255, 0.9);
   }
 
@@ -435,7 +472,7 @@
     position: relative;
     height: 5px;
     border-radius: 3px;
-    background: rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.18);
     cursor: pointer;
     overflow: hidden;
     transition: height 0.1s ease;
@@ -459,24 +496,21 @@
     margin-top: 6px;
   }
 
-  /* ── Panel Derecho: Letras Sincronizadas "Sin Barreras" ── */
+  /* ── Panel Derecho: Letras Sincronizadas (Efecto de Desbordamiento Faded) ── */
   .fs-lyrics-zone {
-    position: absolute;
-    right: 40px;
-    top: 100px;
-    bottom: 40px;
-    width: min(540px, 48vw);
     display: flex;
     align-items: center;
     justify-content: flex-start;
     overflow: hidden;
+    height: 100%;
+    width: 100%;
     z-index: 5;
-    transition: transform var(--t-mid) cubic-bezier(0.25, 1, 0.5, 1), opacity var(--t-mid) ease;
+    transition: transform var(--t-slow) cubic-bezier(0.25, 1, 0.5, 1), opacity var(--t-slow) ease;
+    will-change: transform, opacity;
   }
 
-  /* Desvanecimiento por opacidad si están ocultas */
   #app.lyrics-hidden .fs-lyrics-zone {
-    transform: translateX(60px);
+    transform: translateX(80px);
     opacity: 0;
     pointer-events: none;
   }
@@ -484,21 +518,20 @@
   .lyrics-viewport {
     position: relative;
     width: 100%;
-    height: 90%;
+    height: 85%;
     overflow: hidden;
-    /* Difuminado suave en extremos superior/inferior estilo Apple Music */
     -webkit-mask-image: linear-gradient(
       to bottom,
       transparent 0%,
-      black 10%,
-      black 90%,
+      black 15%,
+      black 85%,
       transparent 100%
     );
     mask-image: linear-gradient(
       to bottom,
       transparent 0%,
-      black 10%,
-      black 90%,
+      black 15%,
+      black 85%,
       transparent 100%
     );
   }
@@ -509,15 +542,15 @@
     right: 0;
     top: 45%;
     will-change: transform;
-    transition: transform 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
 
   .lyric-line {
-    text-align: left; /* Alineado para lectura cómoda */
+    text-align: left;
     padding: 16px 0;
     cursor: pointer;
-    line-height: 1.4;
-    opacity: 0.30;
+    line-height: 1.45;
+    opacity: 0.28;
     filter: blur(var(--blur-lyric));
     transform: scale(1.0);
     transition:
@@ -534,21 +567,25 @@
   }
 
   .lyric-line.past {
-    opacity: 0.20;
+    opacity: 0.18;
     filter: blur(var(--blur-lyric));
   }
 
-  .lyric-line span {
-    display: inline;
-    font-size: clamp(20px, 2.8vw, 32px);
-    font-weight: 700;
-    letter-spacing: -0.3px;
+  /* Estilización de Relleno en cada Palabra (Word-by-word active glow) */
+  .lyric-word {
     color: var(--c-inactive-lyric);
-    transition: color 80ms linear;
-    will-change: color;
+    transition: color 260ms cubic-bezier(0.2, 0.8, 0.2, 1), transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    transform: scale(1);
+    display: inline-block;
+    will-change: color, transform;
+    margin-right: 0.32rem;
   }
 
-  .lyric-line span.word-lit { color: var(--c-active-lyric); }
+  .lyric-line.active .lyric-word.word-lit {
+    color: #ffffff;
+    transform: scale(1.03); /* Leve realce dinámico de la palabra */
+    text-shadow: 0 0 14px rgba(255, 255, 255, 0.5), 0 0 24px rgba(255, 255, 255, 0.25);
+  }
 
   .lyric-line.spacer { padding: 6px 0; min-height: 20px; }
 
@@ -562,20 +599,25 @@
       padding: 20px;
       overflow-y: auto;
     }
+    #app.lyrics-hidden .fs-left-panel {
+      transform: none;
+    }
     .fs-topbar {
-      position: relative;
-      top: 0; left: 0; right: 0;
       margin-bottom: 20px;
     }
-    .fs-media-card {
-      position: relative;
-      bottom: 0; left: 0;
+    .fs-left-panel {
+      padding-right: 0;
+      align-items: center;
+      gap: 20px;
+    }
+    .fs-art-container {
+      max-width: 180px;
+      margin-bottom: 0px;
+    }
+    .fs-player-elements {
       max-width: 100%;
-      margin-bottom: 20px;
     }
     .fs-lyrics-zone {
-      position: relative;
-      right: 0; top: 0; bottom: 0;
       width: 100%;
       height: 45vh;
     }
@@ -666,8 +708,11 @@
   ════════════════════════════ -->
   <div id="view-fullscreen">
 
-    <div id="yt-backdrop"></div>
-    <div class="backdrop-overlay"></div>
+    <!-- Fondo de Colores Fluidos Dinámicos de Portada -->
+    <div id="backdrop-blur-container">
+      <img id="bg-blur-img" src="" alt="Fondo Difuminado" />
+      <div class="bg-blur-overlay"></div>
+    </div>
 
     <div class="fs-content">
 
@@ -677,7 +722,7 @@
           <svg viewBox="0 0 24 24"><polyline points="4,14 10,14 10,20"/><polyline points="20,10 14,10 14,4"/><line x1="10" y1="14" x2="21" y2="3"/><line x1="3" y1="21" x2="14" y2="10"/></svg>
           Minimizar
         </button>
-        <span style="font-size:13px;color:rgba(255,255,255,0.5);font-weight:500;">Reproduciendo ahora</span>
+        <span style="font-size:13px;color:rgba(255,255,255,0.4);font-weight:600;letter-spacing: 0.5px;">REPRODUCIENDO AHORA</span>
         
         <!-- Acciones: Botón interactivo para alternar letras -->
         <div class="fs-topbar-actions">
@@ -688,46 +733,49 @@
         </div>
       </div>
 
-      <!-- Panel Inferior Izquierdo: Cohesiona Info + Progreso + Controles -->
-      <div class="fs-media-card">
-        <div class="fs-main-info">
+      <!-- Panel Izquierdo: Diseño Integral Apple Music -->
+      <div class="fs-left-panel">
+        <div class="fs-art-container">
           <img class="fs-album-art" id="fs-art" src="" alt="Portada" />
-          <div class="fs-song-info">
+        </div>
+        
+        <div class="fs-player-elements">
+          <div class="fs-main-info">
             <div class="fs-song-title"  id="fs-title">–</div>
             <div class="fs-song-artist" id="fs-artist">–</div>
           </div>
-          
-          <!-- Controles colocados al lado de la información de la canción -->
-          <div class="fs-controls-inline">
-            <button class="fs-inline-btn" id="btn-prev-fs" aria-label="Anterior">
+
+          <!-- Controles de Transporte de Apple Music -->
+          <div class="fs-controls-centered">
+            <button class="fs-circle-btn" id="btn-prev-fs" aria-label="Anterior">
               <svg viewBox="0 0 24 24"><polygon points="19,20 9,12 19,4"/><line x1="5" y1="4" x2="5" y2="20" stroke="white" stroke-width="2"/></svg>
             </button>
-            <button class="fs-inline-btn play-pause-fs" id="btn-play-fs" aria-label="Reproducir/Pausar">
+            <button class="fs-circle-btn play-pause-fs" id="btn-play-fs" aria-label="Reproducir/Pausar">
               <svg id="icon-play-fs" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
               <svg id="icon-pause-fs" class="hidden" viewBox="0 0 24 24">
                 <rect x="6"  y="4" width="4" height="16" rx="1"/>
                 <rect x="14" y="4" width="4" height="16" rx="1"/>
               </svg>
             </button>
-            <button class="fs-inline-btn" id="btn-next-fs" aria-label="Siguiente">
+            <button class="fs-circle-btn" id="btn-next-fs" aria-label="Siguiente">
               <svg viewBox="0 0 24 24"><polygon points="5,4 15,12 5,20"/><line x1="19" y1="4" x2="19" y2="20" stroke="white" stroke-width="2"/></svg>
             </button>
           </div>
-        </div>
 
-        <!-- Barra de progreso alineada en la base del módulo -->
-        <div class="progress-container" id="progress-container">
-          <div class="progress-bar-wrap" id="progress-wrap">
-            <div class="progress-fill" id="progress-fill" style="width:0%"></div>
-          </div>
-          <div class="progress-times">
-            <span id="time-current">0:00</span>
-            <span id="time-total">0:00</span>
+          <!-- Barra de progreso integrada en el bloque izquierdo -->
+          <div class="progress-container" id="progress-container">
+            <div class="progress-bar-wrap" id="progress-wrap">
+              <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+            </div>
+            <div class="progress-times">
+              <span id="time-current">0:00</span>
+              <span id="time-total">0:00</span>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Panel Derecho: letras flotantes libres sin barreras -->
+      <!-- Panel Derecho: Letras sincronizadas con máscara Apple -->
       <div class="fs-lyrics-zone">
         <div class="lyrics-viewport">
           <div id="lyrics-track">
@@ -740,12 +788,6 @@
   </div><!-- /view-fullscreen -->
 
 </div><!-- /#app -->
-
-
-<!-- ═══════════════════════════════════════════════════
-     API DE YOUTUBE IFRAME (carga asíncrona)
-═══════════════════════════════════════════════════ -->
-<script src="https://www.youtube.com/iframe_api"></script>
 
 <!-- ═══════════════════════════════════════════════════
      JAVASCRIPT PRINCIPAL
@@ -764,13 +806,12 @@ const PLAYLIST = [
     artist: "Yan Block",
     album_art: "https://res.cloudinary.com/ddcbl694n/image/upload/v1779472989/YEYE_Yan_block_m6n1ee.jpg",
     audio_url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1779472988/YeYe_spotdown.org_sfs0oj.mp3",
-    youtube_id: "PgGzjo3d_mg",
     lyrics_url: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1779473062/YeYe_spotdown.org_eqsrsv.ttml"
   }
 ];
 
-// Offset de compensación interna para mitigar latencias de carga de audio
-const SYSTEM_LATENCY_OFFSET = -0.15; // segundos
+// Offset de latencia de sincronización (elimina el "atrasado" percibido)
+const SYSTEM_LATENCY_OFFSET = -0.15; // en segundos
 
 /* ╔═══════════════════════════════════════════════════╗
    ║  2. ESTADO DE LA APLICACIÓN                       ║
@@ -784,8 +825,6 @@ const state = {
   crossfadeTimer: null,
   crossfadeActive: false,
   crossfadeStart: null,
-  ytPlayer: null,
-  ytReady: false,
   parsedLyrics: [],
   activeLineIndex: -1,
   rafLyrics: null,
@@ -818,6 +857,7 @@ const btnCloseFS     = document.getElementById('btn-close-fs');
 const btnToggleLyrics = document.getElementById('btn-toggle-lyrics');
 const lyricsToggleText = document.getElementById('lyrics-toggle-text');
 const fsArt          = document.getElementById('fs-art');
+const bgBlurImg      = document.getElementById('bg-blur-img');
 const fsTitle        = document.getElementById('fs-title');
 const fsArtist       = document.getElementById('fs-artist');
 const btnPlayFS      = document.getElementById('btn-play-fs');
@@ -830,7 +870,6 @@ const progressWrap   = document.getElementById('progress-wrap');
 const progressFill   = document.getElementById('progress-fill');
 const timeCurrent    = document.getElementById('time-current');
 const timeTotal      = document.getElementById('time-total');
-const ytBackdrop     = document.getElementById('yt-backdrop');
 
 /* ╔═══════════════════════════════════════════════════╗
    ║  4. HELPERS                                        ║
@@ -909,6 +948,7 @@ function parseTTML(xmlText) {
         });
       }
     } else {
+      // Fallback si no tiene spans
       const text = p.textContent.trim();
       const textWords = text.split(/\s+/);
       const duration = lineEnd - lineStart;
@@ -957,6 +997,7 @@ function injectLyrics(lines) {
         span.textContent = w.text;
         span.dataset.lineIndex = li;
         span.dataset.wordIndex = wi;
+        span.classList.add('lyric-word'); // Clase añadida para transiciones fluidas de Apple
         div.appendChild(span);
         if (wi < line.words.length - 1) {
           div.appendChild(document.createTextNode(' '));
@@ -967,9 +1008,6 @@ function injectLyrics(lines) {
     div.addEventListener('click', () => {
       const { active } = getEngines();
       active.currentTime = line.lineStart;
-      if (state.ytReady && state.ytPlayer) {
-        try { state.ytPlayer.seekTo(line.lineStart, true); } catch(e) {}
-      }
     });
 
     lyricsTrack.appendChild(div);
@@ -985,7 +1023,6 @@ function startLyricsLoop() {
 
   function tick() {
     const { active } = getEngines();
-    // Compensación automática de desfase
     const t = (active.currentTime || 0) + SYSTEM_LATENCY_OFFSET;
     updateLyrics(t);
     state.rafLyrics = requestAnimationFrame(tick);
@@ -1027,6 +1064,7 @@ function updateLyrics(t) {
     scrollToActiveLine(activeIdx, lineEls);
   }
 
+  // Resaltado fluido de palabras (filling effect)
   if (activeIdx >= 0 && !lines[activeIdx].isSpacer) {
     const activeEl  = lineEls[activeIdx];
     if (activeEl) {
@@ -1207,9 +1245,11 @@ async function updateUIForCurrentSong() {
   miniArtist.textContent  = song.artist;
 
   fsArt.src           = song.album_art;
+  bgBlurImg.src       = song.album_art; // Asigna portada al fondo difuminado dinámico
   fsTitle.textContent  = song.title;
   fsArtist.textContent = song.artist;
 
+  // Letras remotas mediante fetch
   lyricsTrack.innerHTML = '<div class="lyric-line active">Cargando letras sincronizadas...</div>';
   try {
     const response = await fetch(song.lyrics_url);
@@ -1224,8 +1264,6 @@ async function updateUIForCurrentSong() {
     lyricsTrack.innerHTML = '<div class="lyric-line active" style="color: var(--c-inactive-lyric)">Letras no disponibles.</div>';
     state.parsedLyrics = [];
   }
-
-  loadYouTubeVideo(song.youtube_id);
 }
 
 function nextSong() {
@@ -1253,9 +1291,6 @@ function togglePlay() {
     waveViz.classList.add('paused');
     stopProgressLoop();
     stopLyricsLoop();
-    if (state.ytReady && state.ytPlayer) {
-      try { state.ytPlayer.pauseVideo(); } catch(e) {}
-    }
   } else {
     active.play().then(() => {
       state.isPlaying = true;
@@ -1263,70 +1298,12 @@ function togglePlay() {
       waveViz.classList.remove('paused');
       startProgressLoop();
       startLyricsLoop();
-      if (state.ytReady && state.ytPlayer) {
-        try { state.ytPlayer.playVideo(); } catch(e) {}
-      }
     }).catch(console.warn);
   }
 }
 
 /* ╔═══════════════════════════════════════════════════╗
-   ║  11. INTEGRACIÓN YOUTUBE IFRAME API                ║
-   ╚═══════════════════════════════════════════════════╝ */
-
-window.onYouTubeIframeAPIReady = function() {
-  const song = PLAYLIST[state.currentIndex];
-  createYTPlayer(song.youtube_id);
-};
-
-function createYTPlayer(videoId) {
-  const container = document.createElement('div');
-  container.id = 'yt-player';
-  ytBackdrop.appendChild(container);
-
-  state.ytPlayer = new YT.Player('yt-player', {
-    videoId: videoId,
-    playerVars: {
-      autoplay:      1,
-      controls:      0,
-      mute:          1,
-      loop:          1,
-      playlist:      videoId,
-      modestbranding:1,
-      rel:           0,
-      showinfo:      0,
-      iv_load_policy:3,
-      disablekb:     1,
-      fs:            0,
-      playsinline:   1,
-    },
-    events: {
-      onReady: function(e) {
-        state.ytReady = true;
-        e.target.setVolume(0);
-        e.target.mute();
-        e.target.playVideo();
-      },
-    },
-  });
-}
-
-function loadYouTubeVideo(videoId) {
-  if (!state.ytReady || !state.ytPlayer) return;
-  try {
-    state.ytPlayer.loadVideoById({
-      videoId:        videoId,
-      suggestedQuality: 'hd720',
-    });
-    state.ytPlayer.mute();
-    state.ytPlayer.setVolume(0);
-  } catch(e) {
-    console.warn('YT loadVideoById error:', e);
-  }
-}
-
-/* ╔═══════════════════════════════════════════════════╗
-   ║  12. BARRA DE PROGRESO – SCRUBBING                 ║
+   ║  11. BARRA DE PROGRESO – SCRUBBING                 ║
    ╚═══════════════════════════════════════════════════╝ */
 
 progressWrap.addEventListener('click', function(e) {
@@ -1338,14 +1315,10 @@ progressWrap.addEventListener('click', function(e) {
   const newTime = pct * active.duration;
 
   active.currentTime = newTime;
-
-  if (state.ytReady && state.ytPlayer) {
-    try { state.ytPlayer.seekTo(newTime, true); } catch(e) {}
-  }
 });
 
 /* ╔═══════════════════════════════════════════════════╗
-   ║  13. ALTERNANCIA ENTRE MODOS DE UI                 ║
+   ║  12. ALTERNANCIA ENTRE MODOS DE UI                 ║
    ╚═══════════════════════════════════════════════════╝ */
 
 btnOpenFS.addEventListener('click', function() {
@@ -1358,14 +1331,14 @@ btnCloseFS.addEventListener('click', function() {
   app.classList.add('layout-selection');
 });
 
-// Acción para mostrar/ocultar letras de forma dinámica
+// Alternador dinámico para mostrar/ocultar letras estilo macOS
 btnToggleLyrics.addEventListener('click', function() {
   const isHidden = app.classList.toggle('lyrics-hidden');
   lyricsToggleText.textContent = isHidden ? 'Mostrar Letras' : 'Ocultar Letras';
 });
 
 /* ╔═══════════════════════════════════════════════════╗
-   ║  14. EVENTOS DE BOTONES                            ║
+   ║  13. EVENTOS DE BOTONES                            ║
    ╚═══════════════════════════════════════════════════╝ */
 
 btnPlayMini.addEventListener('click', togglePlay);
@@ -1378,7 +1351,7 @@ btnNextMini.addEventListener('click', nextSong);
 btnNextFS.addEventListener('click',   nextSong);
 
 /* ╔═══════════════════════════════════════════════════╗
-   ║  15. GENERACIÓN DINÁMICA DEL CARD GRID             ║
+   ║  14. GENERACIÓN DINÁMICA DEL CARD GRID             ║
    ╚═══════════════════════════════════════════════════╝ */
 
 function buildCardGrid() {
@@ -1411,7 +1384,7 @@ function buildCardGrid() {
 }
 
 /* ╔═══════════════════════════════════════════════════╗
-   ║  16. ATAJO DE TECLADO (barra espaciadora)          ║
+   ║  15. ATAJO DE TECLADO (barra espaciadora)          ║
    ╚═══════════════════════════════════════════════════╝ */
 
 document.addEventListener('keydown', function(e) {
@@ -1422,7 +1395,7 @@ document.addEventListener('keydown', function(e) {
 });
 
 /* ╔═══════════════════════════════════════════════════╗
-   ║  17. INICIALIZACIÓN                                ║
+   ║  16. INICIALIZACIÓN                                ║
    ╚═══════════════════════════════════════════════════╝ */
 
 (function init() {
