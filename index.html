@@ -1,5 +1,3 @@
---- START OF FILE index.html ---
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -289,19 +287,26 @@
     z-index: 1;
   }
 
+  /* Modificado a Grid para el efecto Split Screen */
   .fs-content {
     position: absolute;
     inset: 0;
     z-index: 2;
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    grid-template-rows: auto 1fr;
+    padding: 30px 60px 60px;
+    height: 100vh;
+    box-sizing: border-box;
+    gap: 40px;
   }
 
   .fs-topbar {
+    grid-column: 1 / span 2;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 18px 28px;
+    height: 50px;
   }
 
   .btn-close-fs {
@@ -320,122 +325,48 @@
   .btn-close-fs:hover { background: rgba(255,255,255,0.20); }
   .btn-close-fs svg  { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; }
 
-  .fs-lyrics-zone {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    position: relative;
-  }
-
-  .lyrics-viewport {
-    position: relative;
-    width: min(680px, 90vw);
-    height: 100%;
-    overflow: hidden;
-    -webkit-mask-image: linear-gradient(
-      to bottom,
-      transparent 0%,
-      black 18%,
-      black 82%,
-      transparent 100
-    );
-    mask-image: linear-gradient(
-      to bottom,
-      transparent 0%,
-      black 18%,
-      black 82%,
-      transparent 100%
-    );
-  }
-
-  #lyrics-track {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 50%;
-    will-change: transform;
-    transition: transform 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  }
-
-  .lyric-line {
-    text-align: center;
-    padding: 14px 0;
-    cursor: pointer;
-    line-height: 1.35;
-    opacity: 0.30;
-    filter: blur(var(--blur-lyric));
-    transform: scale(1.0);
-    transition:
-      opacity   var(--t-mid) ease,
-      filter    var(--t-mid) ease,
-      transform var(--t-mid) ease;
-    will-change: transform, opacity, filter;
-  }
-
-  .lyric-line.active {
-    opacity: 1.0;
-    filter: blur(0);
-    transform: scale(1.06);
-  }
-
-  .lyric-line.past {
-    opacity: 0.22;
-    filter: blur(var(--blur-lyric));
-  }
-
-  .lyric-line span {
-    display: inline;
-    font-size: clamp(22px, 3.2vw, 36px);
-    font-weight: 700;
-    letter-spacing: -0.3px;
-    color: var(--c-inactive-lyric);
-    transition: color 80ms linear;
-    will-change: color;
-  }
-
-  .lyric-line span.word-lit { color: var(--c-active-lyric); }
-
-  .lyric-line.spacer { padding: 6px 0; min-height: 20px; }
-
-  /* ── Barra inferior compacta sin botones de transporte ── */
-  .fs-bottom {
-    padding: 20px 28px 40px;
-    display: flex;
-    align-items: flex-end;
-    z-index: 2;
-  }
-
-  /* Tarjeta que unifica portada, textos e indicador de progreso */
-  .fs-media-card {
+  /* ── Panel Izquierdo: Tarjeta y Controles ── */
+  .fs-left-panel {
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    width: 100%;
-    max-width: 420px;
-    background: rgba(255, 255, 255, 0.05);
-    padding: 20px;
-    border-radius: var(--radius-lg);
-    backdrop-filter: blur(var(--blur-glass));
-    -webkit-backdrop-filter: blur(var(--blur-glass));
-    border: 1px solid var(--c-border);
-    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    justify-content: center;
+    align-items: flex-start;
+    height: 100%;
+    padding-right: 20px;
   }
 
-  .fs-main-info {
-    display: flex;
-    align-items: center;
-    gap: 16px;
+  .fs-art-container {
+    width: 100%;
+    max-width: 360px;
+    aspect-ratio: 1;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+    border: 1px solid var(--c-border);
+    margin-bottom: 24px;
   }
 
   .fs-album-art {
-    width: 80px;
-    height: 80px;
-    border-radius: var(--radius-card);
+    width: 100%;
+    height: 100%;
     object-fit: cover;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-    flex-shrink: 0;
+  }
+
+  .fs-media-card {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    max-width: 360px;
+  }
+
+  /* Modificado para soportar textos a la izquierda y botones alineados a la derecha */
+  .fs-main-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    width: 100%;
   }
 
   .fs-song-info {
@@ -444,7 +375,7 @@
   }
 
   .fs-song-title {
-    font-size: 22px;
+    font-size: clamp(20px, 2.5vw, 28px);
     font-weight: 800;
     letter-spacing: -0.5px;
     line-height: 1.2;
@@ -454,9 +385,60 @@
   }
 
   .fs-song-artist {
-    font-size: 14px;
+    font-size: 15px;
     color: var(--c-text-dim);
     margin-top: 4px;
+  }
+
+  /* Controles al lado del nombre */
+  .fs-controls-inline {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .fs-inline-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--c-border);
+    transition: background var(--t-fast), transform var(--t-fast);
+  }
+
+  .fs-inline-btn:hover {
+    background: rgba(255, 255, 255, 0.18);
+    transform: scale(1.05);
+  }
+
+  .fs-inline-btn:active {
+    transform: scale(0.95);
+  }
+
+  .fs-inline-btn svg {
+    width: 16px;
+    height: 16px;
+    fill: var(--c-text);
+  }
+
+  .fs-inline-btn.play-pause-fs {
+    width: 44px;
+    height: 44px;
+    background: #fff;
+  }
+
+  .fs-inline-btn.play-pause-fs svg {
+    fill: #000;
+    width: 18px;
+    height: 18px;
+  }
+
+  .fs-inline-btn.play-pause-fs:hover {
+    background: rgba(255, 255, 255, 0.9);
   }
 
   .progress-container {
@@ -491,7 +473,122 @@
     margin-top: 6px;
   }
 
+  /* ── Panel Derecho: Letras Sincronizadas (Split Screen) ── */
+  .fs-lyrics-zone {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    overflow: hidden;
+    height: 100%;
+    width: 100%;
+  }
+
+  .lyrics-viewport {
+    position: relative;
+    width: 100%;
+    height: 85%;
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      transparent 0%,
+      black 15%,
+      black 85%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0%,
+      black 15%,
+      black 85%,
+      transparent 100%
+    );
+  }
+
+  #lyrics-track {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 45%;
+    will-change: transform;
+    transition: transform 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .lyric-line {
+    text-align: left; /* Alineado a la izquierda para un estilo de lectura natural */
+    padding: 18px 0;
+    cursor: pointer;
+    line-height: 1.4;
+    opacity: 0.30;
+    filter: blur(var(--blur-lyric));
+    transform: scale(1.0);
+    transition:
+      opacity   var(--t-mid) ease,
+      filter    var(--t-mid) ease,
+      transform var(--t-mid) ease;
+    will-change: transform, opacity, filter;
+  }
+
+  .lyric-line.active {
+    opacity: 1.0;
+    filter: blur(0);
+    transform: scale(1.04);
+  }
+
+  .lyric-line.past {
+    opacity: 0.20;
+    filter: blur(var(--blur-lyric));
+  }
+
+  .lyric-line span {
+    display: inline;
+    font-size: clamp(20px, 3vw, 32px);
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    color: var(--c-inactive-lyric);
+    transition: color 80ms linear;
+    will-change: color;
+  }
+
+  .lyric-line span.word-lit { color: var(--c-active-lyric); }
+
+  .lyric-line.spacer { padding: 6px 0; min-height: 20px; }
+
   .hidden { display: none !important; }
+
+  /* Ajustes responsivos */
+  @media (max-width: 900px) {
+    .fs-content {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto auto 1fr;
+      padding: 20px;
+      gap: 20px;
+      overflow-y: auto;
+    }
+    .fs-topbar {
+      grid-column: 1;
+    }
+    .fs-left-panel {
+      padding-right: 0;
+      align-items: center;
+      gap: 20px;
+    }
+    .fs-art-container {
+      max-width: 200px;
+      margin-bottom: 0px;
+    }
+    .fs-media-card {
+      max-width: 100%;
+    }
+    .fs-lyrics-zone {
+      height: 40vh;
+    }
+    .lyric-line {
+      text-align: center;
+    }
+    #lyrics-track {
+      top: 40%;
+    }
+  }
 </style>
 </head>
 
@@ -587,24 +684,33 @@
         <div style="width:110px;"></div>
       </div>
 
-      <!-- Zona central: letras sincronizadas -->
-      <div class="fs-lyrics-zone">
-        <div class="lyrics-viewport">
-          <div id="lyrics-track">
-            <!-- Las líneas de letras se inyectan dinámicamente -->
-          </div>
+      <!-- Panel Izquierdo: Portada, Datos y Controles de Reproducción -->
+      <div class="fs-left-panel">
+        <div class="fs-art-container">
+          <img class="fs-album-art" id="fs-art" src="" alt="Portada" />
         </div>
-      </div>
-
-      <!-- Barra inferior: info + progreso sin botones extras -->
-      <div class="fs-bottom">
         <div class="fs-media-card">
-          <!-- Portada + Info -->
+          <!-- Portada + Info con controles de reproducción a un lado -->
           <div class="fs-main-info">
-            <img class="fs-album-art" id="fs-art" src="" alt="Portada" />
             <div class="fs-song-info">
               <div class="fs-song-title"  id="fs-title">–</div>
               <div class="fs-song-artist" id="fs-artist">–</div>
+            </div>
+            <!-- Controles agregados al lado del nombre de la canción -->
+            <div class="fs-controls-inline">
+              <button class="fs-inline-btn" id="btn-prev-fs" aria-label="Anterior">
+                <svg viewBox="0 0 24 24"><polygon points="19,20 9,12 19,4"/><line x1="5" y1="4" x2="5" y2="20" stroke="white" stroke-width="2"/></svg>
+              </button>
+              <button class="fs-inline-btn play-pause-fs" id="btn-play-fs" aria-label="Reproducir/Pausar">
+                <svg id="icon-play-fs" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+                <svg id="icon-pause-fs" class="hidden" viewBox="0 0 24 24">
+                  <rect x="6"  y="4" width="4" height="16" rx="1"/>
+                  <rect x="14" y="4" width="4" height="16" rx="1"/>
+                </svg>
+              </button>
+              <button class="fs-inline-btn" id="btn-next-fs" aria-label="Siguiente">
+                <svg viewBox="0 0 24 24"><polygon points="5,4 15,12 5,20"/><line x1="19" y1="4" x2="19" y2="20" stroke="white" stroke-width="2"/></svg>
+              </button>
             </div>
           </div>
 
@@ -619,7 +725,16 @@
             </div>
           </div>
         </div>
-      </div><!-- /fs-bottom -->
+      </div>
+
+      <!-- Panel Derecho: letras sincronizadas alineadas a la izquierda -->
+      <div class="fs-lyrics-zone">
+        <div class="lyrics-viewport">
+          <div id="lyrics-track">
+            <!-- Las líneas de letras se inyectan dinámicamente -->
+          </div>
+        </div>
+      </div>
 
     </div><!-- /fs-content -->
   </div><!-- /view-fullscreen -->
@@ -700,6 +815,11 @@ const btnCloseFS    = document.getElementById('btn-close-fs');
 const fsArt         = document.getElementById('fs-art');
 const fsTitle       = document.getElementById('fs-title');
 const fsArtist      = document.getElementById('fs-artist');
+const btnPlayFS     = document.getElementById('btn-play-fs');
+const iconPlayFS    = document.getElementById('icon-play-fs');
+const iconPauseFS   = document.getElementById('icon-pause-fs');
+const btnPrevFS     = document.getElementById('btn-prev-fs');
+const btnNextFS     = document.getElementById('btn-next-fs');
 const lyricsTrack   = document.getElementById('lyrics-track');
 const progressWrap  = document.getElementById('progress-wrap');
 const progressFill  = document.getElementById('progress-fill');
@@ -726,6 +846,7 @@ function getEngines() {
 
 function syncPlayIcons(isPlaying) {
   [iconPlayMini, iconPauseMini].forEach((el, i) => el.classList.toggle('hidden', isPlaying ? i === 0 : i === 1));
+  [iconPlayFS, iconPauseFS].forEach((el, i) => el.classList.toggle('hidden', isPlaying ? i === 0 : i === 1));
 }
 
 /* ╔═══════════════════════════════════════════════════╗
@@ -839,7 +960,6 @@ function injectLyrics(lines) {
       });
     }
 
-    // Permitir clic para navegar al tiempo exacto de esta frase
     div.addEventListener('click', () => {
       const { active } = getEngines();
       active.currentTime = line.lineStart;
@@ -1239,8 +1359,13 @@ btnCloseFS.addEventListener('click', function() {
    ╚═══════════════════════════════════════════════════╝ */
 
 btnPlayMini.addEventListener('click', togglePlay);
+btnPlayFS.addEventListener('click', togglePlay);
+
 btnPrevMini.addEventListener('click', prevSong);
+btnPrevFS.addEventListener('click', prevSong);
+
 btnNextMini.addEventListener('click', nextSong);
+btnNextFS.addEventListener('click', nextSong);
 
 /* ╔═══════════════════════════════════════════════════╗
    ║  15. GENERACIÓN DINÁMICA DEL CARD GRID             ║
@@ -1299,5 +1424,3 @@ document.addEventListener('keydown', function(e) {
 </script>
 </body>
 </html>
-
---- END OF FILE index.html ---
