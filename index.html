@@ -4,12 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Apple Music - Web Player</title>
-  <!-- Fuente del sistema elegante y moderna -->
+  <!-- Fuente del sistema -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   
   <style>
     :root {
-      --bg-primary: #08080a;
+      --bg-primary: #060608;
       --bg-card: rgba(28, 28, 30, 0.45);
       --apple-red: #fc3c44;
       --text-main: #ffffff;
@@ -35,7 +35,6 @@
       width: 100vw;
     }
 
-    /* CONTENEDOR PRINCIPAL */
     #app-container {
       position: relative;
       width: 100%;
@@ -57,7 +56,6 @@
       pointer-events: none;
     }
 
-    /* Se muestra el video solo en pantalla completa */
     body.layout-fullscreen #youtube-bg-container {
       opacity: 1;
     }
@@ -67,12 +65,12 @@
       top: 50%;
       left: 50%;
       width: 100vw;
-      height: 56.25vw; /* Proporción 16:9 */
+      height: 56.25vw;
       min-height: 100vh;
       min-width: 177.77vh;
-      transform: translate(-50%, -50%) scale(1.15); /* Escala para evitar bordes blancos por blur */
+      transform: translate(-50%, -50%) scale(1.15);
       pointer-events: none;
-      filter: brightness(0.25) saturate(1.3) blur(20px);
+      filter: brightness(0.22) saturate(1.3) blur(20px);
       will-change: filter, transform;
     }
 
@@ -99,7 +97,6 @@
       will-change: opacity, transform;
     }
 
-    /* Modo Selección Activo */
     body.layout-selection #home-screen {
       opacity: 1;
       transform: scale(1);
@@ -114,7 +111,6 @@
       pointer-events: none;
     }
 
-    /* Modo Pantalla Completa Activo */
     body.layout-fullscreen #home-screen {
       opacity: 0;
       transform: scale(0.95);
@@ -133,7 +129,7 @@
     #home-screen {
       display: flex;
       flex-direction: column;
-      padding-bottom: 90px; /* Margen para mini-reproductor */
+      padding-bottom: 90px;
       background: var(--bg-primary);
     }
 
@@ -249,10 +245,6 @@
       transition: transform 0.6s var(--transition-fluid);
     }
 
-    .song-card:hover .song-card-art {
-      transform: scale(1.04);
-    }
-
     .song-card-details {
       display: flex;
       flex-direction: column;
@@ -263,17 +255,11 @@
       font-size: 1rem;
       font-weight: 600;
       color: var(--text-main);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
     }
 
     .song-card-artist {
       font-size: 0.85rem;
       color: var(--text-muted);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
     }
 
     /* MINI-PLAYER */
@@ -323,17 +309,11 @@
       font-size: 0.95rem;
       font-weight: 600;
       color: var(--text-main);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
     }
 
     .mini-artist {
       font-size: 0.8rem;
       color: var(--text-muted);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
     }
 
     .mini-controls {
@@ -359,10 +339,6 @@
       background: rgba(255, 255, 255, 0.08);
     }
 
-    .control-btn:active {
-      transform: scale(0.95);
-    }
-
     .control-btn svg {
       width: 22px;
       height: 22px;
@@ -374,11 +350,6 @@
       color: #000000;
       width: 44px;
       height: 44px;
-      transition: background 0.2s, transform 0.1s;
-    }
-
-    .play-pause-btn:hover {
-      background: rgba(255, 255, 255, 0.9);
     }
 
     .mini-right {
@@ -409,7 +380,7 @@
       fill: currentColor;
     }
 
-    /* ONDA DE AUDIO ANIMADA */
+    /* ONDA DE AUDIO */
     .audio-wave {
       display: flex;
       align-items: flex-end;
@@ -442,7 +413,6 @@
       100% { transform: scaleY(1); }
     }
 
-    /* BARRA DE PROGRESO */
     .progress-bar-container {
       width: 100%;
       height: 4px;
@@ -537,13 +507,13 @@
       flex-direction: column;
       justify-content: center;
       align-items: flex-start;
-      gap: 2.5rem;
+      gap: 2rem;
       height: 100%;
     }
 
     .fs-art-container {
-      width: 340px;
-      height: 340px;
+      width: 320px;
+      height: 320px;
       border-radius: 16px;
       overflow: hidden;
       box-shadow: 0 25px 50px rgba(0,0,0,0.65);
@@ -563,14 +533,14 @@
     }
 
     .fs-title {
-      font-size: 2.6rem;
+      font-size: 2.5rem;
       font-weight: 800;
       line-height: 1.2;
       letter-spacing: -1px;
     }
 
     .fs-artist {
-      font-size: 1.3rem;
+      font-size: 1.35rem;
       color: var(--text-muted);
       font-weight: 500;
     }
@@ -591,7 +561,7 @@
 
     .fs-progress .progress-bar-fill {
       border-radius: 3px;
-      background: #ffffff; /* Progreso blanco en pantalla completa */
+      background: #ffffff;
     }
 
     .time-labels {
@@ -620,6 +590,86 @@
       height: 28px;
     }
 
+    /* NUEVOS AJUSTES DE CALIBRACIÓN Y CONFIGURACIÓN */
+    .settings-panel {
+      width: 100%;
+      max-width: 400px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .setting-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .setting-group label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .setting-group label span {
+      color: var(--apple-red);
+    }
+
+    .setting-group input[type="range"] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 2px;
+      outline: none;
+    }
+
+    .setting-group input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #ffffff;
+      cursor: pointer;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .input-row input[type="text"] {
+      flex: 1;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--glass-border);
+      border-radius: 6px;
+      padding: 0.4rem 0.6rem;
+      color: #fff;
+      font-size: 0.85rem;
+      outline: none;
+    }
+
+    .input-row button {
+      background: var(--apple-red);
+      border: none;
+      border-radius: 6px;
+      color: #fff;
+      padding: 0.4rem 0.8rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .input-row button:hover {
+      opacity: 0.9;
+    }
 
     /* Panel Derecho: Letras Sincronizadas */
     .fs-lyrics-panel {
@@ -635,7 +685,6 @@
       height: 80%;
       overflow: hidden;
       position: relative;
-      /* Mascarado para desvanecer bordes superior e inferior estilo Apple */
       -webkit-mask-image: linear-gradient(
         to bottom,
         transparent 0%,
@@ -653,11 +702,11 @@
     }
 
     #lyrics-scroller {
-      position: relative; /* Crítico para que offsetTop funcione correctamente */
+      position: relative;
       display: flex;
       flex-direction: column;
       gap: 2.2rem;
-      padding: 40% 0; /* Padding que permite centrar las primeras/últimas líneas */
+      padding: 40% 0;
       transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
       will-change: transform;
     }
@@ -666,7 +715,7 @@
       font-size: 2.1rem;
       font-weight: 700;
       line-height: 1.4;
-      color: rgba(255, 255, 255, 0.35);
+      color: rgba(255, 255, 255, 0.3);
       letter-spacing: -0.5px;
       transform-origin: left center;
       transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.5s ease, filter 0.5s ease;
@@ -675,7 +724,6 @@
       filter: blur(0.5px);
     }
 
-    /* Estado de Línea Activa */
     .lyric-line.active {
       color: #ffffff;
       opacity: 1;
@@ -689,10 +737,9 @@
       filter: blur(1px);
     }
 
-    /* Estado de Palabra dentro de la línea activa */
     .lyric-word {
-      color: rgba(255, 255, 255, 0.35);
-      transition: color 0.18s ease-out, text-shadow 0.18s ease-out;
+      color: rgba(255, 255, 255, 0.3);
+      transition: color 0.15s ease-out, text-shadow 0.15s ease-out;
       will-change: color, text-shadow;
       display: inline-block;
       margin-right: 0.35rem;
@@ -700,10 +747,9 @@
 
     .lyric-line.active .lyric-word.word-active {
       color: #ffffff;
-      text-shadow: 0 0 12px rgba(255, 255, 255, 0.6); /* Brillo sutil de resalte */
+      text-shadow: 0 0 12px rgba(255, 255, 255, 0.6);
     }
 
-    /* Scrollbars personalizadas */
     ::-webkit-scrollbar {
       width: 8px;
     }
@@ -714,11 +760,7 @@
       background: rgba(255, 255, 255, 0.15);
       border-radius: 4px;
     }
-    ::-webkit-scrollbar-thumb:hover {
-      background: rgba(255, 255, 255, 0.25);
-    }
 
-    /* --- RESPONSIVIDAD --- */
     @media (max-width: 900px) {
       #fullscreen-player-screen {
         grid-template-columns: 1fr;
@@ -747,7 +789,7 @@
         text-align: center;
       }
 
-      .fs-playback-controls {
+      .fs-playback-controls, .settings-panel {
         max-width: 100%;
       }
 
@@ -763,7 +805,6 @@
 </head>
 <body class="layout-selection">
 
-  <!-- Elementos de Audio de Respaldo Ocultos -->
   <div style="display: none;">
     <audio id="audioEngineA" crossorigin="anonymous"></audio>
     <audio id="audioEngineB" crossorigin="anonymous"></audio>
@@ -771,7 +812,7 @@
 
   <div id="app-container">
 
-    <!-- Reproductor de Video Silencioso de YouTube (Fondo) -->
+    <!-- REPRODUCTOR DE YOUTUBE PARA EL FONDO -->
     <div id="youtube-bg-container">
       <div id="youtube-bg-player"></div>
       <div id="youtube-overlay"></div>
@@ -781,7 +822,6 @@
     <div id="home-screen">
       <header class="top-nav">
         <div class="logo">
-          <!-- Icono SVG minimalista estilo Apple Music -->
           <svg viewBox="0 0 24 24">
             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15.5H9v-6h2v6zm4 0h-2V7h2v10.5z"/>
           </svg>
@@ -820,7 +860,7 @@
           <div class="mini-song-info">
             <img src="" alt="" class="mini-album-art" id="mini-album-art">
             <div class="mini-metadata">
-              <span class="mini-title" id="mini-title">Selecciona una canción</span>
+              <span class="mini-title" id="mini-title">Cargando canción...</span>
               <span class="mini-artist" id="mini-artist">-</span>
             </div>
           </div>
@@ -857,11 +897,10 @@
     <!-- MODO PANTALLA COMPLETA (INMERSIVO) -->
     <div id="fullscreen-player-screen">
       <button class="exit-fullscreen-btn" onclick="exitFullscreen()">
-        <!-- Icono de Cerrar / Minimizar -->
         <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
       </button>
 
-      <!-- Panel Izquierdo: Álbum y Controles -->
+      <!-- Panel Izquierdo: Álbum, Controles y Calibración -->
       <div class="fs-left-panel">
         <div class="fs-art-container">
           <img src="" alt="" class="fs-album-art" id="fs-album-art">
@@ -892,13 +931,28 @@
             </button>
           </div>
         </div>
+
+        <!-- PANEL DE CALIBRACIÓN Y CONFIGURACIÓN -->
+        <div class="settings-panel">
+          <div class="setting-group">
+            <label for="offset-slider">Calibración de Letras: <span id="offset-value">0.0s</span></label>
+            <input type="range" id="offset-slider" min="-2.0" max="2.0" step="0.1" value="0.0">
+          </div>
+          <div class="setting-group">
+            <label for="yt-id-input">ID de Video de YouTube (Fondo):</label>
+            <div class="input-row">
+              <input type="text" id="yt-id-input" value="dQw4w9WgXcQ" placeholder="Ej: dQw4w9WgXcQ">
+              <button onclick="updateYoutubeVideo()">Aplicar</button>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <!-- Panel Derecho: Letras dinámicas y centradas -->
+      <!-- Panel Derecho: Letras dinámicas -->
       <div class="fs-lyrics-panel">
         <div id="lyrics-container">
           <div id="lyrics-scroller">
-            <!-- Letras generadas e inyectadas dinámicamente -->
+            <!-- Cargando letras... -->
           </div>
         </div>
       </div>
@@ -907,7 +961,7 @@
   </div>
 
   <script>
-    // 1. MODELO DE DATOS
+    // 1. MODELO DE DATOS - Únicamente la canción del usuario
     const PLAYLIST = [
       {
         id: 1,
@@ -915,203 +969,12 @@
         artist: "Yan Block",
         album_art: "https://res.cloudinary.com/ddcbl694n/image/upload/v1779472989/YEYE_Yan_block_m6n1ee.jpg",
         audio_url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1779472988/YeYe_spotdown.org_sfs0oj.mp3",
-        youtube_id: "dQw4w9WgXcQ", // ID de YouTube (ej: Rick Astley como marcador por defecto)
-        lyrics_ttml: `<?xml version="1.0" encoding="utf-8"?>
-<tt xmlns="http://www.w3.org/ns/ttml">
-  <body>
-    <div>
-      <p begin="00:00:01.00" end="00:00:03.50">
-        <span begin="00:00:01.00" end="00:00:02.00">(WeOwnTheCity</span>
-        <span begin="00:00:02.00" end="00:00:03.50">Presents)</span>
-      </p>
-      <p begin="00:00:03.60" end="00:00:05.50">
-        <span begin="00:00:03.60" end="00:00:04.50">"YEYE"</span>
-        <span begin="00:00:04.50" end="00:00:05.50">YAN BLOCK</span>
-      </p>
-      <p begin="00:00:05.60" end="00:00:08.80">
-        <span begin="00:00:05.60" end="00:00:06.00">Tú</span>
-        <span begin="00:00:06.00" end="00:00:06.30">y</span>
-        <span begin="00:00:06.30" end="00:00:06.60">yo</span>
-        <span begin="00:00:06.60" end="00:00:07.10">nunca</span>
-        <span begin="00:00:07.10" end="00:00:07.40">nos</span>
-        <span begin="00:00:07.40" end="00:00:07.80">vamos</span>
-        <span begin="00:00:07.80" end="00:00:08.00">a</span>
-        <span begin="00:00:08.00" end="00:00:08.80">entender</span>
-      </p>
-      <p begin="00:00:08.90" end="00:00:11.80">
-        <span begin="00:00:08.90" end="00:00:09.50">Siempre</span>
-        <span begin="00:00:09.50" end="00:00:10.00">gano</span>
-        <span begin="00:00:10.00" end="00:00:10.30">y</span>
-        <span begin="00:00:10.30" end="00:00:10.60">no</span>
-        <span begin="00:00:10.60" end="00:00:10.90">me</span>
-        <span begin="00:00:10.90" end="00:00:11.30">gusta</span>
-        <span begin="00:00:11.30" end="00:00:11.80">perder</span>
-      </p>
-      <p begin="00:00:11.90" end="00:00:15.50">
-        <span begin="00:00:11.90" end="00:00:12.30">Si</span>
-        <span begin="00:00:12.30" end="00:00:12.60">yo</span>
-        <span begin="00:00:12.60" end="00:00:12.90">bajo</span>
-        <span begin="00:00:12.90" end="00:00:13.20">tú</span>
-        <span begin="00:00:13.20" end="00:00:13.60">subes</span>
-        <span begin="00:00:13.60" end="00:00:13.90">si</span>
-        <span begin="00:00:13.90" end="00:00:14.20">tú</span>
-        <span begin="00:00:14.20" end="00:00:14.60">subes</span>
-        <span begin="00:00:14.60" end="00:00:14.80">yo</span>
-        <span begin="00:00:14.80" end="00:00:15.10">le</span>
-        <span begin="00:00:15.10" end="00:00:15.50">bajo</span>
-      </p>
-      <p begin="00:00:15.60" end="00:00:20.50">
-        <span begin="00:00:15.60" end="00:00:15.90">y</span>
-        <span begin="00:00:15.90" end="00:00:16.20">al</span>
-        <span begin="00:00:16.20" end="00:00:16.60">final</span>
-        <span begin="00:00:16.60" end="00:00:17.30">siempre</span>
-        <span begin="00:00:17.30" end="00:00:17.80">nos</span>
-        <span begin="00:00:17.80" end="00:00:18.50">vamos</span>
-        <span begin="00:00:18.50" end="00:00:19.00">a</span>
-        <span begin="00:00:19.00" end="00:00:20.50">envolver</span>
-      </p>
-      <p begin="00:00:20.60" end="00:00:23.50">
-        <span begin="00:00:20.60" end="00:00:21.50">Yeah,</span>
-        <span begin="00:00:21.50" end="00:00:22.50">yeah,</span>
-        <span begin="00:00:22.50" end="00:00:23.50">yeah...</span>
-      </p>
-      <p begin="00:00:24.00" end="00:00:27.50">
-        <span begin="00:00:24.00" end="00:00:24.60">Tú</span>
-        <span begin="00:00:24.60" end="00:00:25.00">te</span>
-        <span begin="00:00:25.00" end="00:00:25.50">zafas</span>
-        <span begin="00:00:25.50" end="00:00:26.10">baby,</span>
-        <span begin="00:00:26.10" end="00:00:26.70">parece</span>
-        <span begin="00:00:26.70" end="00:00:27.50">trampa</span>
-      </p>
-      <p begin="00:00:27.60" end="00:00:29.80">
-        <span begin="00:00:27.60" end="00:00:28.40">Yeah,</span>
-        <span begin="00:00:28.40" end="00:00:29.20">yeah,</span>
-        <span begin="00:00:29.20" end="00:00:29.80">yeah...</span>
-      </p>
-      <p begin="00:00:30.00" end="00:00:32.80">
-        <span begin="00:00:30.00" end="00:00:30.40">A</span>
-        <span begin="00:00:30.40" end="00:00:30.80">ese</span>
-        <span begin="00:00:30.80" end="00:00:31.20">totito</span>
-        <span begin="00:00:31.20" end="00:00:31.60">quiero</span>
-        <span begin="00:00:31.60" end="00:00:32.00">dar</span>
-        <span begin="00:00:32.00" end="00:00:32.40">un</span>
-        <span begin="00:00:32.40" end="00:00:32.80">tropa</span>
-      </p>
-      <p begin="00:00:33.00" end="00:00:34.80">
-        <span begin="00:00:33.00" end="00:00:33.40">En</span>
-        <span begin="00:00:33.40" end="00:00:33.80">monopoly</span>
-        <span begin="00:00:33.80" end="00:00:34.20">tengo</span>
-        <span begin="00:00:34.20" end="00:00:34.50">el</span>
-        <span begin="00:00:34.50" end="00:00:34.80">proboard</span>
-      </p>
-      <p begin="00:00:35.00" end="00:00:37.80">
-        <span begin="00:00:35.00" end="00:00:35.40">Yo</span>
-        <span begin="00:00:35.40" end="00:00:35.70">te</span>
-        <span begin="00:00:35.70" end="00:00:36.20">choco</span>
-        <span begin="00:00:36.20" end="00:00:36.70">como</span>
-        <span begin="00:00:36.70" end="00:00:37.00">un</span>
-        <span begin="00:00:37.00" end="00:00:37.80">gokart</span>
-      </p>
-      <p begin="00:00:38.00" end="00:00:40.80">
-        <span begin="00:00:38.00" end="00:00:38.40">Tengo</span>
-        <span begin="00:00:38.40" end="00:00:38.80">el</span>
-        <span begin="00:00:38.80" end="00:00:39.30">pasto,</span>
-        <span begin="00:00:39.30" end="00:00:39.70">tú</span>
-        <span begin="00:00:39.70" end="00:00:40.10">las</span>
-        <span begin="00:00:40.10" end="00:00:40.80">hojas</span>
-      </p>
-      <p begin="00:41.00" end="00:43.80">
-        <span begin="00:41.00" end="00:41.40">No</span>
-        <span begin="00:41.40" end="00:41.80">te</span>
-        <span begin="00:41.80" end="00:42.20">vayas</span>
-        <span begin="00:42.20" end="00:42.60">a</span>
-        <span begin="00:42.60" end="00:42.80">ir</span>
-        <span begin="00:42.80" end="00:43.80">sola</span>
-      </p>
-      <p begin="00:00:44.00" end="00:00:46.00">
-        <span begin="00:00:44.00" end="00:00:44.40">Tú</span>
-        <span begin="00:00:44.40" end="00:00:44.80">estás</span>
-        <span begin="00:00:44.80" end="00:00:45.30">linda</span>
-        <span begin="00:00:45.30" end="00:00:45.60">y</span>
-        <span begin="00:00:45.60" end="00:00:46.00">tan...</span>
-      </p>
-    </div>
-  </body>
-</tt>`
-      },
-      {
-        id: 2,
-        title: "Sunset Serenade",
-        artist: "Horizonte Digital",
-        album_art: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=600&auto=format&fit=crop",
-        audio_url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-        youtube_id: "dQw4w9WgXcQ",
-        lyrics_ttml: `<?xml version="1.0" encoding="utf-8"?>
-<tt xmlns="http://www.w3.org/ns/ttml">
-  <body>
-    <div>
-      <p begin="00:00:02.00" end="00:00:05.50">
-        <span begin="00:00:02.00" end="00:00:03.00">Waiting</span>
-        <span begin="00:00:03.00" end="00:00:04.00">under</span>
-        <span begin="00:00:04.00" end="00:00:04.50">the</span>
-        <span begin="00:00:04.50" end="00:00:05.50">lights</span>
-      </p>
-      <p begin="00:00:06.00" end="00:00:09.50">
-        <span begin="00:00:06.00" end="00:00:07.00">Looking</span>
-        <span begin="00:00:07.00" end="00:00:07.50">for</span>
-        <span begin="00:00:07.50" end="00:00:08.00">a</span>
-        <span begin="00:00:08.00" end="00:00:08.50">place</span>
-        <span begin="00:00:08.50" end="00:00:09.00">to</span>
-        <span begin="00:00:09.00" end="00:00:09.50">shine</span>
-      </p>
-      <p begin="00:00:10.00" end="00:00:14.00">
-        <span begin="00:00:10.00" end="00:00:11.00">The</span>
-        <span begin="00:00:11.00" end="00:00:12.00">night</span>
-        <span begin="00:00:12.00" end="00:00:13.00">grows</span>
-        <span begin="00:00:13.00" end="00:00:14.00">beautiful</span>
-      </p>
-    </div>
-  </body>
-</tt>`
-      },
-      {
-        id: 3,
-        title: "Neon Dreams",
-        artist: "Retro Wave",
-        album_art: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=600&auto=format&fit=crop",
-        audio_url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
-        youtube_id: "dQw4w9WgXcQ",
-        lyrics_ttml: `<?xml version="1.0" encoding="utf-8"?>
-<tt xmlns="http://www.w3.org/ns/ttml">
-  <body>
-    <div>
-      <p begin="00:00:02.00" end="00:00:06.00">
-        <span begin="00:00:02.00" end="00:00:03.00">Thought</span>
-        <span begin="00:00:03.00" end="00:00:04.00">I</span>
-        <span begin="00:00:04.00" end="00:00:04.80">almost</span>
-        <span begin="00:00:04.80" end="00:00:05.30">lost</span>
-        <span begin="00:00:05.30" end="00:00:06.00">control</span>
-      </p>
-      <p begin="00:00:06.50" end="00:00:10.50">
-        <span begin="00:00:06.50" end="00:00:07.50">Fighting</span>
-        <span begin="00:00:07.50" end="00:00:08.50">for</span>
-        <span begin="00:00:08.50" end="00:00:09.00">my</span>
-        <span begin="00:00:09.00" end="00:00:09.50">sweet</span>
-        <span begin="00:00:09.50" end="00:00:10.50">escape</span>
-      </p>
-      <p begin="00:00:11.00" end="00:00:15.00">
-        <span begin="00:00:11.00" end="00:00:12.00">Running</span>
-        <span begin="00:00:12.00" end="00:00:13.00">through</span>
-        <span begin="00:00:13.00" end="00:00:14.00">the</span>
-        <span begin="00:00:14.00" end="00:00:15.00">valley</span>
-      </p>
-    </div>
-  </body>
-</tt>`
+        youtube_id: "dQw4w9WgXcQ", // ID editable de YouTube para el fondo (por defecto Rick Astley, cámbialo en la interfaz)
+        lyrics_url: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1779473062/YeYe_spotdown.org_eqsrsv.ttml"
       }
     ];
 
-    // 2. ARQUITECTURA DE AUDIO: MOTOR DUAL Y VARIABLES DE CONTROL
+    // Motores de audio duales ocultos
     const audioEngineA = document.getElementById('audioEngineA');
     const audioEngineB = document.getElementById('audioEngineB');
     
@@ -1121,19 +984,27 @@
     let currentSongIndex = 0;
     let isPlaying = false;
     let crossfadeTriggered = false;
-    const CROSSFADE_LIMIT = 12; // Duración del crossfade en segundos
+    const CROSSFADE_LIMIT = 12; // segundos
     
     let currentParsedLyrics = [];
     let youtubePlayer;
     let animationFrameId;
 
-    // Inicialización de la aplicación
+    // Configuración de calibración (Offset manual de desfase)
+    let lyricOffset = 0.0;
+    const offsetSlider = document.getElementById('offset-slider');
+    const offsetValueDisplay = document.getElementById('offset-value');
+
+    offsetSlider.addEventListener('input', (e) => {
+      lyricOffset = parseFloat(e.target.value);
+      offsetValueDisplay.textContent = (lyricOffset >= 0 ? "+" : "") + lyricOffset.toFixed(1) + "s";
+    });
+
     window.addEventListener('DOMContentLoaded', () => {
       initPlayer();
     });
 
     function initPlayer() {
-      // Poblar el Grid de Selección
       const grid = document.getElementById('songs-grid');
       grid.innerHTML = '';
       
@@ -1153,18 +1024,13 @@
         grid.appendChild(card);
       });
 
-      // Configurar barras de progreso para clics de rebobinado
       setupProgressBars();
-
-      // Cargar primera canción por defecto (sin autoplay para respetar políticas del navegador)
       loadSongState(0);
 
-      // Eventos para cuando termine la canción de manera normal si no hay crossfade activo
       audioEngineA.addEventListener('ended', onSongEnded);
       audioEngineB.addEventListener('ended', onSongEnded);
     }
 
-    // Configuración inicial de la canción seleccionada
     function loadSongState(index) {
       currentSongIndex = index;
       crossfadeTriggered = false;
@@ -1174,16 +1040,16 @@
       activeEngine.volume = 1.0;
       inactiveEngine.volume = 0.0;
       
+      document.getElementById('yt-id-input').value = song.youtube_id;
+      
       updateSongDetailsUI();
       loadLyricsForSong(song);
     }
 
-    // Carga y reproducción de una canción
     function playSong(index, seekTime = 0) {
       currentSongIndex = index;
       crossfadeTriggered = false;
       
-      // Detener procesos activos en ambos motores
       audioEngineA.pause();
       audioEngineB.pause();
       
@@ -1206,15 +1072,13 @@
           syncYouTubeVideo(song.youtube_id, seekTime);
         })
         .catch(err => {
-          console.log("Autoplay bloqueado o error al cargar audio: ", err);
+          console.log("Autoplay bloqueado temporalmente por el navegador: ", err);
         });
 
-      // Cancelar bucle previo y arrancar el loop de actualización de renderizado
       cancelAnimationFrame(animationFrameId);
       animationFrameId = requestAnimationFrame(updateAudioLoop);
     }
 
-    // Alternar entre reproducción y pausa
     function togglePlay() {
       if (isPlaying) {
         activeEngine.pause();
@@ -1260,8 +1124,8 @@
       }
     }
 
-    // Siguiente y Anterior canción
     function nextSong() {
+      // Al ser solo 1 canción, volverá a reproducirse en bucle
       const nextIndex = (currentSongIndex + 1) % PLAYLIST.length;
       playSong(nextIndex);
     }
@@ -1277,22 +1141,18 @@
       }
     }
 
-    // Actualiza metadatos e imágenes de los paneles
     function updateSongDetailsUI() {
       const song = PLAYLIST[currentSongIndex];
       
-      // Mini Player
       document.getElementById('mini-album-art').src = song.album_art;
       document.getElementById('mini-title').textContent = song.title;
       document.getElementById('mini-artist').textContent = song.artist;
       
-      // Fullscreen
       document.getElementById('fs-album-art').src = song.album_art;
       document.getElementById('fs-title').textContent = song.title;
       document.getElementById('fs-artist').textContent = song.artist;
     }
 
-    // Setup de clic sobre las barras de progreso
     function setupProgressBars() {
       const progressContainers = document.querySelectorAll('.progress-bar-container');
       progressContainers.forEach(container => {
@@ -1306,8 +1166,6 @@
           if (duration) {
             const targetTime = percentage * duration;
             
-            // Si el usuario adelanta/atrasa durante un crossfade activo, 
-            // cancelamos la transición para evitar desincronizaciones de volumen
             if (crossfadeTriggered) {
               cancelCrossfadeAndSeek(targetTime);
             } else {
@@ -1322,7 +1180,6 @@
       });
     }
 
-    // Cancelación segura de crossfade ante saltos temporales manuales
     function cancelCrossfadeAndSeek(targetTime) {
       crossfadeTriggered = false;
       inactiveEngine.pause();
@@ -1331,8 +1188,7 @@
       activeEngine.currentTime = targetTime;
     }
 
-
-    // 3. CORE DE AUDIO: LOOP DE COMPROBACIÓN Y CROSSFADE DE 12 SEGUNDOS
+    // 2. MOTOR DE COMPROBACIÓN Y TRANSICIÓN DE DJ (CROSSFADE)
     function updateAudioLoop() {
       if (!isPlaying) {
         animationFrameId = requestAnimationFrame(updateAudioLoop);
@@ -1342,38 +1198,34 @@
       const curTime = activeEngine.currentTime;
       const duration = activeEngine.duration;
 
-      // Evaluar si califica para iniciar crossfade (12 segundos antes del fin)
+      // Evaluar la aproximación de los últimos 12 segundos para arrancar crossfade
       if (duration && (duration > CROSSFADE_LIMIT * 2) && (curTime >= duration - CROSSFADE_LIMIT) && !crossfadeTriggered) {
         triggerCrossfade();
       }
 
-      // Procesamiento de volumen lineal durante los 12 segundos de crossfade
       if (crossfadeTriggered) {
         const elapsed = curTime - (duration - CROSSFADE_LIMIT);
         let progress = elapsed / CROSSFADE_LIMIT;
         
-        // Acotar rango de progresión [0.0 - 1.0]
         if (progress < 0) progress = 0;
         if (progress > 1) progress = 1;
         
         activeEngine.volume = 1 - progress;
         inactiveEngine.volume = progress;
 
-        // Si culmina el crossfade o el primer motor termina
         if (progress >= 1 || activeEngine.ended) {
           completeCrossfade();
         }
       }
 
-      // Actualizar UI de progreso y barra de tiempo
+      // Actualizar barras de estado de tiempo
       if (!crossfadeTriggered) {
         updateProgressUI(curTime, duration);
       } else {
-        // En pleno crossfade, mostrar el progreso del motor de entrada (inactiveEngine)
         updateProgressUI(inactiveEngine.currentTime, inactiveEngine.duration || duration);
       }
 
-      // Sincronizar letras en cada cuadro
+      // Sincronizar las líneas del visor
       updateLyricsSync();
 
       animationFrameId = requestAnimationFrame(updateAudioLoop);
@@ -1384,14 +1236,12 @@
       const nextIndex = (currentSongIndex + 1) % PLAYLIST.length;
       const nextSong = PLAYLIST[nextIndex];
 
-      // Configurar motor inactivo
       inactiveEngine.src = nextSong.audio_url;
       inactiveEngine.volume = 0.0;
       inactiveEngine.currentTime = 0;
 
       inactiveEngine.play()
         .then(() => {
-          // Cambiar instantáneamente el video de fondo dinámicamente, silenciado
           if (youtubePlayer && typeof youtubePlayer.loadVideoById === 'function') {
             youtubePlayer.loadVideoById({
               videoId: nextSong.youtube_id,
@@ -1405,12 +1255,9 @@
 
     function completeCrossfade() {
       crossfadeTriggered = false;
-      
-      // Detener y resetear el motor saliente
       activeEngine.pause();
       activeEngine.volume = 1.0;
 
-      // Intercambio de roles
       const temp = activeEngine;
       activeEngine = inactiveEngine;
       inactiveEngine = temp;
@@ -1440,21 +1287,20 @@
     }
 
 
-    // 4. PARSER E INYECCIÓN DE LETRAS SINCRONIZADAS (ESTILO APPLE MUSIC)
+    // 3. PARSER SENSORIAL Y CARGA DINÁMICA DE ARCHIVO TTML DESDE CLOUDINARY
     function parseTimeToSeconds(timeStr) {
       if (!timeStr) return 0;
-      const parts = timeStr.split(':');
+      let cleanStr = timeStr.trim().replace('s', '');
+      const parts = cleanStr.split(':');
+      let seconds = 0;
       if (parts.length === 3) {
-        const hrs = parseFloat(parts[0]);
-        const mins = parseFloat(parts[1]);
-        const secs = parseFloat(parts[2]);
-        return hrs * 3600 + mins * 60 + secs;
+        seconds = parseFloat(parts[0]) * 3600 + parseFloat(parts[1]) * 60 + parseFloat(parts[2]);
       } else if (parts.length === 2) {
-        const mins = parseFloat(parts[0]);
-        const secs = parseFloat(parts[1]);
-        return mins * 60 + secs;
+        seconds = parseFloat(parts[0]) * 60 + parseFloat(parts[1]);
+      } else {
+        seconds = parseFloat(cleanStr);
       }
-      return parseFloat(timeStr);
+      return seconds;
     }
 
     function parseTTML(ttmlText) {
@@ -1481,7 +1327,7 @@
             });
           }
         } else {
-          // Fallback en caso de que la línea no contenga etiquetas span internas
+          // Si no tiene spans internos de sílabas, autocalcular progresión uniforme
           const textWords = p.textContent.trim().split(/\s+/);
           const duration = lineEnd - lineBegin;
           const wordDuration = duration / Math.max(textWords.length, 1);
@@ -1504,9 +1350,21 @@
       return lines;
     }
 
-    function loadLyricsForSong(song) {
-      currentParsedLyrics = parseTTML(song.lyrics_ttml);
-      renderLyricsDOM();
+    // Petición HTTP directa al archivo que proporcionó el usuario para evitar el copiado estático
+    async function loadLyricsForSong(song) {
+      const scroller = document.getElementById('lyrics-scroller');
+      scroller.innerHTML = '<div style="color: var(--text-muted); font-size: 1.2rem; text-align: center; padding-top: 2rem;">Cargando letras desde Cloudinary...</div>';
+      
+      try {
+        const response = await fetch(song.lyrics_url);
+        if (!response.ok) throw new Error("No se pudo obtener las letras desde la nube");
+        const xmlText = await response.text();
+        currentParsedLyrics = parseTTML(xmlText);
+        renderLyricsDOM();
+      } catch (error) {
+        console.error("Error al obtener las letras:", error);
+        scroller.innerHTML = '<div style="color: var(--apple-red); font-size: 1rem; text-align: center; padding-top: 2rem;">No se pudieron cargar las letras. Verifica tu conexión de red o configuraciones CORS en el origen.</div>';
+      }
     }
 
     function renderLyricsDOM() {
@@ -1518,7 +1376,6 @@
         lineDiv.className = 'lyric-line inactive';
         lineDiv.dataset.index = index;
 
-        // Permitir que hacer clic en una frase busque y navegue a esa marca de tiempo
         lineDiv.addEventListener('click', () => {
           seekToTime(line.begin);
         });
@@ -1534,27 +1391,15 @@
       });
     }
 
-    function seekToTime(time) {
-      if (crossfadeTriggered) {
-        cancelCrossfadeAndSeek(time);
-      } else {
-        activeEngine.currentTime = time;
-      }
-      if (youtubePlayer && typeof youtubePlayer.seekTo === 'function') {
-        youtubePlayer.seekTo(time, true);
-      }
-      updateLyricsSync();
-    }
-
-    // Centrado suave vertical mediante transform: translateY() y Word-by-Word Highlight
+    // Visualización y realce aplicando el offset de desfase configurado
     function updateLyricsSync() {
-      const curTime = activeEngine.currentTime;
+      // Ajuste de desfase mediante calibrador manual en tiempo real
+      const curTime = activeEngine.currentTime + lyricOffset;
       const lines = currentParsedLyrics;
       if (!lines || lines.length === 0) return;
 
       let activeIndex = -1;
 
-      // Buscar línea activa en la marca de tiempo actual
       for (let i = 0; i < lines.length; i++) {
         if (curTime >= lines[i].begin && curTime <= lines[i].end) {
           activeIndex = i;
@@ -1562,7 +1407,6 @@
         }
       }
 
-      // Si no hay concordancia exacta, estimar la línea anterior más cercana
       if (activeIndex === -1) {
         for (let i = lines.length - 1; i >= 0; i--) {
           if (curTime >= lines[i].begin) {
@@ -1580,7 +1424,6 @@
           el.classList.add('active');
           el.classList.remove('inactive');
 
-          // Sincronizar iluminación suave palabra por palabra
           const wordElements = el.querySelectorAll('.lyric-word');
           const wordsData = lines[index].words;
           wordElements.forEach((wordEl, wIndex) => {
@@ -1596,15 +1439,13 @@
         } else {
           el.classList.remove('active');
           el.classList.add('inactive');
-          
-          // Resetear resaltado de palabras inactivas
           el.querySelectorAll('.lyric-word').forEach(wordEl => {
             wordEl.classList.remove('word-active');
           });
         }
       });
 
-      // Efecto de Scroll Elevable: Calculamos y centramos la línea activa en el contenedor
+      // Efecto de centrado dinámico (Scroll Elevable)
       if (activeIndex !== -1) {
         const activeEl = lineElements[activeIndex];
         const container = document.getElementById('lyrics-container');
@@ -1615,7 +1456,6 @@
           const activeOffsetTop = activeEl.offsetTop;
           const activeHeight = activeEl.clientHeight;
 
-          // Fórmula de centrado: TranslateY = (Mitad del Contenedor) - (Offset superior de la Línea) - (Mitad de la Línea)
           const targetY = (containerHeight / 2) - activeOffsetTop - (activeHeight / 2);
           scroller.style.transform = `translateY(${targetY}px)`;
         }
@@ -1628,11 +1468,9 @@
     }
 
 
-    // 5. NAVEGACIÓN DE INTERFAZ Y API IFRAME DE YOUTUBE
+    // 4. INTEGRACIÓN DINÁMICA DE LA API DE IFRAME DE YOUTUBE
     function enterFullscreen() {
       document.body.className = "layout-fullscreen";
-      
-      // Asegurarse de reanudar el video en sincronía si está sonando el reproductor
       if (isPlaying && youtubePlayer && typeof youtubePlayer.playVideo === 'function') {
         youtubePlayer.playVideo();
       }
@@ -1642,13 +1480,19 @@
       document.body.className = "layout-selection";
     }
 
-    // Carga asíncrona de la API de YouTube
+    function updateYoutubeVideo() {
+      const inputVal = document.getElementById('yt-id-input').value.trim();
+      if (inputVal) {
+        PLAYLIST[currentSongIndex].youtube_id = inputVal;
+        syncYouTubeVideo(inputVal, activeEngine.currentTime);
+      }
+    }
+
     const tag = document.createElement('script');
     tag.src = "https://www.youtube.com/iframe_api";
     const firstScriptTag = document.getElementsByTagName('script')[0];
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-    // callback global que dispara la API de YouTube al estar lista
     window.onYouTubeIframeAPIReady = function() {
       const song = PLAYLIST[currentSongIndex];
       youtubePlayer = new YT.Player('youtube-bg-player', {
@@ -1664,7 +1508,7 @@
           rel: 0,
           showinfo: 0,
           iv_load_policy: 3,
-          mute: 1, // 100% mutado
+          mute: 1,
           loop: 1,
           playlist: song.youtube_id
         },
@@ -1676,7 +1520,6 @@
             }
           },
           onStateChange: (event) => {
-            // Refuerzo de loop nativo ante eventos de término
             if (event.data === YT.PlayerState.ENDED) {
               event.target.playVideo();
             }
