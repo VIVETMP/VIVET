@@ -263,165 +263,90 @@
         .btn-fullscreen:hover { background: rgba(255,255,255,0.15); transform: scale(1.1); color: #fff; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
 
         /* ==================================================================
-           REDESIGNED FULLSCREEN NOW PLAYING OVERLAY (APPLE MUSIC CLONE)
+           FULLSCREEN NOW PLAYING (APPLE TV / DESKTOP REPLICA)
            ================================================================== */
         #np-fs {
             position: fixed; inset: 0; z-index: 100; transform: translateY(100%); opacity: 0; visibility: hidden;
             transition: transform 0.8s var(--ease-cinematic), opacity 0.5s; display: flex; flex-direction: column; 
             overflow: hidden; background: #000; font-family: var(--font-display);
-            width: 100vw; height: 100vh;
         }
         #np-fs.active { transform: translateY(0); opacity: 1; visibility: visible; }
 
-        /* 3. Fluid Blur Background & Noise Overlay */
-        .background-canvas {
-            position: absolute;
-            top: -10%;
-            left: -10%;
-            width: 120%;
-            height: 120%;
-            filter: blur(80px) saturate(180%);
-            z-index: 1;
-            background: radial-gradient(circle at 20% 30%, var(--accent-1), transparent 50%),
-                        radial-gradient(circle at 80% 70%, var(--accent-2), transparent 50%);
-            animation: liquidBg 20s ease infinite alternate;
-            transition: background 2.5s ease-in-out;
-        }
-        @keyframes liquidBg {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(5%, 5%) scale(1.1); }
-        }
-
-        /* Ambient Cover Art Blend Layer */
-        .np-bg-wrap { position: absolute; inset: 0; z-index: 2; pointer-events: none; width: 100%; height: 100%; }
+        .np-bg-wrap { position: fixed; inset: -15%; width: 130%; height: 130%; z-index: 0; pointer-events: none; }
         .np-bg-blur { 
             position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; 
-            filter: blur(120px) saturate(150%) brightness(0.5); opacity: 0; 
-            transition: opacity 2s ease-in-out; will-change: opacity;
+            filter: blur(140px) saturate(250%) brightness(0.6); opacity: 0; 
+            transition: opacity 2s ease-in-out; will-change: opacity, transform; 
+            animation: breatheBg 25s infinite alternate ease-in-out;
         }
-        .np-bg-blur.active { opacity: 0.22; } /* Blends on top of the fluid colors beautifully */
-        .np-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.6); z-index: 2; }
+        @keyframes breatheBg { 0% { transform: scale(1) translate(0, 0); } 100% { transform: scale(1.1) translate(-2%, 2%); } }
+        .np-bg-blur.active { opacity: 1; }
+        .np-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.55); z-index: 1; }
         .np-grain { position: absolute; inset: 0; z-index: 2; opacity: 0.04; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none;}
 
         /* Collapse Button */
-        .btn-collapse {
-            position: absolute; top: 40px; left: 40px; width: 44px; height: 44px;
-            background: transparent; border: none; cursor: pointer; z-index: 10;
-            display: flex; align-items: center; justify-content: center; font-size: 32px; 
-            color: rgba(255,255,255,0.5); transition: all 0.2s var(--ease-snappy); outline: none;
+        @media (min-width: 1025px) {
+            .btn-collapse {
+                position: absolute; top: 40px; left: 40px; width: 44px; height: 44px;
+                background: transparent; border: none; cursor: pointer; z-index: 10;
+                display: flex; align-items: center; justify-content: center; font-size: 32px; 
+                color: rgba(255,255,255,0.5); transition: all 0.2s var(--ease-snappy); outline: none;
+            }
+            .btn-collapse:hover { color: #fff; transform: scale(1.1); }
+            .btn-collapse i { display: block; }
+            .btn-collapse-mob { display: none; }
         }
-        .btn-collapse:hover { color: #fff; transform: scale(1.1); }
-        .btn-collapse-mob { display: none; }
 
-        /* 1. Structure & Positioning (Desktop 3-Column Grid Layout) */
+        /* Desktop 2-Column Layout */
         .np-layout { 
-            position: relative; z-index: 3; display: grid; 
-            grid-template-columns: 45% 10% 45%; 
-            width: 100%; height: 100%; 
-            padding: 64px; box-sizing: border-box;
-            align-items: center; justify-content: center;
+            position: relative; z-index: 3; display: flex; width: 100%; height: 100%; 
+            max-width: 1600px; padding: 0 8vw; gap: 8vw; margin: 0 auto; align-items: center; justify-content: center;
         }
         
-        /* Left Column (Left Pane): Composed of 2 elegant subcolumns */
         .np-left-pane {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-        .np-left-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 32px;
-            align-items: center;
+            flex: 0 0 clamp(320px, 35vw, 480px); display: flex; flex-direction: column; justify-content: center; gap: 24px; position: relative;
         }
 
-        /* 4. Artwork Subcolumn */
-        .np-artwork-col {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
         .np-art-wrap { 
             width: 100%; aspect-ratio: 1; border-radius: 12px; 
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4); 
+            box-shadow: 0 25px 60px rgba(0,0,0,0.5); 
             overflow: hidden; transition: transform 0.6s var(--ease-cinematic); 
             background: #111; cursor: pointer;
         }
         .np-art-wrap:hover { transform: scale(1.02); }
         .np-art { width: 100%; height: 100%; object-fit: cover; }
 
-        /* Metadata & Controls Subcolumn */
-        .np-meta-col {
-            display: flex;
-            flex-direction: column;
-            gap: 28px;
-            justify-content: center;
-            text-align: left;
-        }
-        .np-info-block { display: flex; flex-direction: column; width: 100%; }
-        
-        /* 2. Typography Specifications */
-        .np-track-title { 
-            font-size: 32px; font-weight: 700; letter-spacing: -0.5px; 
-            color: #FFFFFF; line-height: 1.2; 
-        }
-        .np-track-artist { 
-            font-size: 24px; font-weight: 500; 
-            color: rgba(255, 255, 255, 0.6); margin-top: 8px; 
-            line-height: 1.3;
-        }
+        .np-info-block { display: flex; flex-direction: column; gap: 16px; width: 100%; }
 
-        /* 4. Timeline (Scrubber) Specifications */
-        .np-scrubber-group { display: flex; flex-direction: column; gap: 8px; width: 100%; }
-        .np-time-row { display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.6); font-variant-numeric: tabular-nums; }
-        .np-scrubber-group .scrubber-bg { 
-            height: 4px; border-radius: 2px; background: rgba(255,255,255,0.2); 
-            cursor: pointer; position: relative; transition: height 0.2s ease;
-        }
+        .np-scrubber-group { display: flex; flex-direction: column; gap: 6px; width: 100%; }
+        .np-time-row { display: flex; justify-content: space-between; font-size: 11px; font-weight: 500; color: rgba(255,255,255,0.7); font-variant-numeric: tabular-nums; margin-bottom: 2px;}
+        .np-scrubber-group .scrubber-bg { height: 4px; border-radius: 2px; background: rgba(255,255,255,0.2); }
         .np-scrubber-group .scrubber-bg:hover { height: 6px; }
-        .np-scrubber-group .scrubber-fill { border-radius: 2px; box-shadow: none; transition: width 0.1s linear; height: 100%; background: #FFFFFF; position: relative; width: 0%; }
-        .np-scrubber-group .scrubber-fill::after { 
-            content: ''; position: absolute; right: -6px; top: 50%; transform: translateY(-50%) scale(0); 
-            width: 12px; height: 12px; background: #fff; border-radius: 50%; 
-            transition: transform 0.2s var(--ease-snappy); box-shadow: 0 2px 6px rgba(0,0,0,0.4); 
-        }
-        .np-scrubber-group .scrubber-bg:hover .scrubber-fill::after { transform: translateY(-50%) scale(1); }
+        .np-scrubber-group .scrubber-fill { border-radius: 2px; box-shadow: none; transition: width 0.1s linear;}
+        .np-scrubber-group .scrubber-fill::after { display: none; }
 
-        /* 4. Controls Buttons Specifications */
-        .np-controls-bar {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            margin-top: 8px;
-        }
-        .np-btn-symbol {
-            width: 44px; height: 44px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 26px; color: #FFFFFF; cursor: pointer;
-            transition: transform 0.2s var(--ease-snappy), opacity 0.2s;
-            opacity: 0.85;
-        }
-        .np-btn-symbol:hover {
-            opacity: 1; transform: scale(1.1);
-        }
-        .np-btn-symbol:active {
-            transform: scale(0.95);
-        }
+        .np-track-info-center { display: flex; flex-direction: column; gap: 4px; align-items: center; text-align: center; }
+        .np-track-title { font-size: 18px; font-weight: 700; color: #fff; letter-spacing: -0.01em;}
+        .np-track-artist { font-size: 16px; color: rgba(255,255,255,0.6); font-weight: 500; letter-spacing: -0.01em;}
 
-        /* Center Column Spacer (Aisolation Column) */
-        .np-center-spacer {
-            width: 100%;
-            height: 100%;
+        /* Controls visible only on hover on Desktop */
+        .hidden-controls { 
+            display: flex; justify-content: center; align-items: center; gap: 32px; 
+            opacity: 0; pointer-events: none; transition: opacity 0.3s ease; 
+            margin-top: 10px; position: absolute; bottom: -80px; width: 100%;
         }
+        .np-left-pane:hover .hidden-controls { opacity: 1; pointer-events: auto; }
+        
+        .np-main-controls i { cursor: pointer; transition: 0.2s; color: #fff; }
+        .np-main-controls i:hover { transform: scale(1.15); filter: drop-shadow(0 0 10px rgba(255,255,255,0.4));}
+        .np-main-controls i:active { transform: scale(0.95); }
 
-        /* Right Column: Immersive Lyrics Container & Mask */
+        /* Right Pane: Immersive Lyrics */
         .np-right-pane { 
-            width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; position: relative; 
-            mask-image: linear-gradient(to bottom, transparent 0%, #000 15%, #000 85%, transparent 100%);
-            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 15%, #000 85%, transparent 100%);
-            overflow: hidden;
+            flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: center; position: relative; 
+            max-width: 800px;
+            mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,1) 15%, rgba(0,0,0,1) 85%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,1) 15%, rgba(0,0,0,1) 85%, transparent 100%);
         }
         .lyrics-scroll-area {
             position: relative; height: 100%; overflow-y: auto; overflow-x: hidden; 
@@ -429,10 +354,45 @@
         }
         .lyrics-scroll-area::-webkit-scrollbar { display: none; }
 
-        /* Interactive Lyrics Showcase Specifications */
+        /* ============================================================
+           APPLE MUSIC 2026 — CINEMATIC LYRICS ENGINE CSS
+           
+           Architecture:
+             .lrc-line        — one paragraph / line container
+             .lrc-word        — per-word gradient-mask span
+             .lrc-dots        — instrumental 3-dot bounce row
+             .lrc-line.lrc-bg — background vocal (smaller, right)
+           
+           State classes written by JS:
+             .is-active   — currently singing line
+             .is-past     — line already sung
+             .is-future   — line not yet reached
+             (no class)   — default = future
+           ============================================================ */
+
+        /* ── Lyrics scroll container masks ──────────────────────── */
+        .np-right-pane {
+            mask-image: linear-gradient(
+                to bottom,
+                transparent 0%,
+                black 12%,
+                black 82%,
+                transparent 100%
+            );
+            -webkit-mask-image: linear-gradient(
+                to bottom,
+                transparent 0%,
+                black 12%,
+                black 82%,
+                transparent 100%
+            );
+        }
+
+        /* ── Base line ───────────────────────────────────────────── */
         .lrc-line {
+            /* Geometry */
             display: block;
-            margin-bottom: 32px;
+            margin-bottom: clamp(20px, 2.8vh, 38px);
             padding: 0;
             cursor: pointer;
             transform-origin: left center;
@@ -440,74 +400,100 @@
             white-space: normal;
             text-align: left;
 
+            /* Typography */
             font-family: var(--font-display);
-            font-size: 40px;
-            font-weight: 700;
-            line-height: 1.3;
-            letter-spacing: -1px;
+            font-size: clamp(28px, 3.2vw, 46px);
+            font-weight: 800;
+            line-height: 1.28;
+            letter-spacing: -0.025em;
 
-            /* Inactive Line Styles */
-            color: rgba(255, 255, 255, 0.3);
-            filter: blur(1px);
+            /* Default = future: dim + slight scale-down + blur */
+            opacity: 0.22;
+            filter: blur(1.8px);
+            transform: scale(0.965) translateZ(0);
+            color: #fff;
+
+            /* GPU layers */
             will-change: transform, opacity, filter;
-            transition: color 0.5s var(--ease-fluid), filter 0.5s var(--ease-fluid), transform 0.5s var(--ease-fluid);
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+
+            /* Smooth transitions for non-active→active changes */
+            transition:
+                opacity   0.52s cubic-bezier(0.25, 1, 0.5, 1),
+                filter    0.52s cubic-bezier(0.25, 1, 0.5, 1),
+                transform 0.52s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        /* Active Line Styles */
+        /* ── Active line ─────────────────────────────────────────── */
         .lrc-line.is-active {
-            color: #FFFFFF !important;
-            filter: drop-shadow(0 4px 12px rgba(0,0,0,0.1)) blur(0px) !important;
-            transform: scale(1.02) !important;
-        }
-
-        .lrc-line.is-past {
-            color: rgba(255, 255, 255, 0.3);
-            filter: blur(1px);
-            transform: scale(0.98);
-        }
-
-        /* Hover on Inactive Lines */
-        .lrc-line:hover:not(.is-active) {
-            color: rgba(255, 255, 255, 0.75) !important;
+            opacity: 1 !important;
             filter: blur(0px) !important;
-            transform: scale(1.01) !important;
+            transform: scale(1.0) translateZ(0) !important;
+            /* Very subtle text-glow — Apple uses this sparingly */
+            text-shadow: 0 0 40px rgba(255,255,255,0.08);
         }
 
-        /* Background vocals */
+        /* ── Past lines ─────────────────────────────────────────── */
+        .lrc-line.is-past {
+            opacity: 0.22;
+            filter: blur(1.8px);
+            transform: scale(0.965) translateZ(0);
+        }
+
+        /* ── Hover — allow user to read any line ────────────────── */
+        .lrc-line:hover:not(.is-active) {
+            opacity: 0.62 !important;
+            filter: blur(0px) !important;
+            transform: scale(0.985) translateZ(0) !important;
+            transition: opacity 0.18s ease, filter 0.18s ease, transform 0.18s ease;
+        }
+
+        /* ── Background vocal lines (ttm:agent v2 / bg) ─────────── */
         .lrc-line.lrc-bg {
-            font-size: 28px;
+            font-size: clamp(19px, 2.1vw, 30px);
+            font-weight: 700;
             text-align: right;
-            padding-left: 20%;
-            opacity: 0.25;
+            padding-left: 22%;
+            opacity: 0.18;
         }
         .lrc-line.lrc-bg.is-active {
-            opacity: 0.8 !important;
+            opacity: 0.72 !important;
         }
 
-        /* Word Sweep Karaoke System */
-        .lrc-line.is-active .lrc-word {
+        /* ── Per-word gradient mask (Apple "fill sweep") ─────────
+         *
+         *   --fill : 0% → 115%  (written each rAF by JS)
+         *
+         *   Lit zone   : rgba(255,255,255,1)    — fully bright
+         *   Edge zone  : 16% soft leading feather
+         *   Unlit zone : rgba(255,255,255,0.28) — matches inactive line
+         *
+         * ─────────────────────────────────────────────────────── */
+        .lrc-word {
             display: inline;
+            padding: 0;
+            margin: 0;
+            vertical-align: baseline;
+
             background: linear-gradient(
                 90deg,
                 rgba(255,255,255,1)    0%,
                 rgba(255,255,255,1)    calc(var(--fill, 0%) - 16%),
-                rgba(255,255,255,0.6)  calc(var(--fill, 0%) -  8%),
-                rgba(255,255,255,0.3)  var(--fill, 0%),
-                rgba(255,255,255,0.3)  100%
+                rgba(255,255,255,0.55) calc(var(--fill, 0%) -  8%),
+                rgba(255,255,255,0.28) var(--fill, 0%),
+                rgba(255,255,255,0.28) 100%
             );
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
+
+            /* Only background re-paints — no layout, no composite */
             will-change: background;
-        }
-        .lrc-line:not(.is-active) .lrc-word {
-            background: none;
-            -webkit-background-clip: initial;
-            background-clip: initial;
-            color: inherit;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* Instrumental dot indicator */
+        /* ── Instrumental / pause dots ─────────────────────────── */
         .lrc-dots {
             display: inline-flex;
             align-items: center;
@@ -522,12 +508,44 @@
             background: rgba(255,255,255,0.32);
             will-change: transform, background;
         }
+        /* Active dot bounce — staggered */
         .lrc-line.is-active .lrc-dot:nth-child(1) { animation: amDotBounce 1.15s 0.00s infinite ease-in-out; }
         .lrc-line.is-active .lrc-dot:nth-child(2) { animation: amDotBounce 1.15s 0.19s infinite ease-in-out; }
         .lrc-line.is-active .lrc-dot:nth-child(3) { animation: amDotBounce 1.15s 0.38s infinite ease-in-out; }
         @keyframes amDotBounce {
             0%,100% { transform: translateY(0) scale(1);     background: rgba(255,255,255,0.38); }
             42%      { transform: translateY(-7px) scale(1.3); background: rgba(255,255,255,0.92); }
+        }
+
+        /* ── "No lyrics" / loading placeholders ─────────────────── */
+        .lyrics-placeholder {
+            display: flex; align-items: center; justify-content: center;
+            height: 100%; width: 100%;
+            font-size: 28px; font-weight: 800; letter-spacing: -0.02em;
+            color: rgba(255,255,255,0.22);
+            text-align: center; padding: 0 32px;
+        }
+
+        /* ── Loading shimmer ─────────────────────────────────────── */
+        .lrc-shimmer {
+            height: 2.2em; border-radius: 8px;
+            background: linear-gradient(
+                90deg,
+                rgba(255,255,255,0.05) 0%,
+                rgba(255,255,255,0.10) 40%,
+                rgba(255,255,255,0.05) 80%
+            );
+            background-size: 300% 100%;
+            animation: shimmerSlide 1.6s infinite linear;
+            margin-bottom: clamp(20px, 2.8vh, 38px);
+        }
+        .lrc-shimmer:nth-child(2) { width: 72%; animation-delay: 0.2s; }
+        .lrc-shimmer:nth-child(3) { width: 88%; animation-delay: 0.4s; }
+        .lrc-shimmer:nth-child(4) { width: 60%; animation-delay: 0.6s; }
+        .lrc-shimmer:nth-child(5) { width: 80%; animation-delay: 0.1s; }
+        @keyframes shimmerSlide {
+            0%   { background-position: 100% 50%; }
+            100% { background-position:   0% 50%; }
         }
 
         /* ==================================================================
@@ -566,7 +584,7 @@
             .track-row { padding: 12px; gap: 16px; }
             .search-container { max-width: 100%; }
 
-            /* Fullscreen NP Mobile Overrides */
+            /* Fullscreen NP Mobile */
             #np-fs { overflow-y: auto; overflow-x: hidden; } 
             
             .btn-collapse { display: none; }
@@ -578,26 +596,22 @@
             }
             
             .np-layout { 
-                display: flex; flex-direction: column;
-                padding: 60px 8vw 40px; gap: 24px; 
+                flex-direction: column; padding: 60px 8vw 40px; gap: 32px; 
                 height: auto; min-height: 100vh; justify-content: flex-start;
             }
-            .np-left-pane { width: 100%; flex: none; align-items: center; }
-            .np-left-grid { grid-template-columns: 1fr; text-align: center; gap: 16px; }
+            .np-left-pane { max-width: 100%; width: 100%; gap: 24px; flex: none; align-items: center; }
             
-            .np-artwork-col { width: 100%; max-width: 300px; margin: 0 auto; }
-            .np-art-wrap { width: 100%; max-width: 300px; border-radius: 12px; }
+            .np-art-wrap { width: 100%; max-width: 360px; aspect-ratio: 1; border-radius: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
             
-            .np-meta-col { text-align: center; align-items: center; gap: 16px; }
-            .np-track-title { font-size: 24px; text-align: center; }
-            .np-track-artist { font-size: 18px; text-align: center; margin-top: 4px; }
+            .np-track-title { font-size: 22px; white-space: normal; line-height: 1.2; }
+            .np-track-artist { font-size: 18px; }
             
-            .np-controls-bar { justify-content: center; margin-top: 8px; }
+            /* En móvil los controles sí deben verse siempre */
+            .hidden-controls { position: relative; opacity: 1; pointer-events: auto; bottom: 0; margin-top: 0; gap: 40px;}
             
-            .np-center-spacer { display: none; }
-            .np-right-pane { width: 100%; max-width: 400px; flex: none; height: 50vh; position: relative; margin-top: 10px; }
+            .np-right-pane { width: 100%; max-width: 400px; flex: none; height: 70vh; position: relative; margin-top: 10px; }
             .lyrics-scroll-area { padding: 10vh 0 30vh 0; }
-            .lrc-line { font-size: 28px; margin-bottom: 24px; text-align: center; }
+            .lrc-line { font-size: 28px; margin-bottom: 24px; text-align: left; transform-origin: left center; }
         }
     </style>
 </head>
@@ -756,65 +770,48 @@
         </div>
     </div>
 
-    <!-- FULLSCREEN NOW PLAYING OVERLAY (REDESIGNED APPLE MUSIC INTERFACE) -->
+    <!-- FULLSCREEN NOW PLAYING OVERLAY (APPLE TV / MUSIC MAC REPLICA) -->
     <div id="np-fs">
-        <!-- 3. Fluid Blur Background & Noise Overlay -->
-        <div class="background-canvas" id="np-fluid-bg"></div>
         <div class="np-bg-wrap">
             <img src="" class="np-bg-blur active" id="np-bg-1" crossorigin="anonymous">
             <img src="" class="np-bg-blur" id="np-bg-2" crossorigin="anonymous">
+            <div class="np-overlay"></div>
+            <div class="np-grain"></div>
         </div>
-        <div class="np-overlay"></div>
-        <div class="np-grain"></div>
         
         <button class="btn-collapse" onclick="toggleNP()"><i class="ph ph-x"></i></button>
         <button class="btn-collapse-mob" onclick="toggleNP()"></button>
 
-        <!-- 1. Structure & Positioning (Desktop Grid Layout) -->
         <div class="np-layout">
-            <!-- Left Column (45%): Composed of 2 Subcolumns (Artwork / Meta & Controls) -->
+            <!-- Left Pane: Info & Scrubber -->
             <div class="np-left-pane">
-                <div class="np-left-grid">
-                    <!-- Artwork Subcolumn -->
-                    <div class="np-artwork-col">
-                        <div class="np-art-wrap" onclick="togglePlay()">
-                            <img src="" id="np-img-large" class="np-art" crossorigin="anonymous">
+                <div class="np-art-wrap" onclick="togglePlay()"><img src="" id="np-img-large" class="np-art" crossorigin="anonymous"></div>
+                
+                <div class="np-info-block">
+                    <div class="np-scrubber-group">
+                        <div class="np-time-row">
+                            <span id="time-curr-np">0:00</span>
+                            <span id="time-tot-np">-0:00</span>
                         </div>
+                        <div class="scrubber-bg" onclick="seek(event, this)"><div class="scrubber-fill" id="bar-fill-np"></div></div>
                     </div>
 
-                    <!-- Meta & Controls Subcolumn -->
-                    <div class="np-meta-col">
-                        <div class="np-info-block">
-                            <!-- 2. Typography Specs -->
-                            <h2 class="np-track-title" id="np-title-large">Not Playing</h2>
-                            <p class="np-track-artist" id="np-artist-large">VIVETMP</p>
-                        </div>
-                        
-                        <!-- 4. Timeline (Scrubber) Specifications -->
-                        <div class="np-scrubber-group">
-                            <div class="np-time-row">
-                                <span id="time-curr-np">0:00</span>
-                                <span id="time-tot-np">-0:00</span>
-                            </div>
-                            <div class="scrubber-bg" onclick="seek(event, this)">
-                                <div class="scrubber-fill" id="bar-fill-np"></div>
-                            </div>
-                        </div>
-
-                        <!-- 4. Buttons (Play, Back, Skip) Specs -->
-                        <div class="np-controls-bar">
-                            <div class="np-btn-symbol" onclick="prevSong()"><i class="ph-fill ph-skip-back"></i></div>
-                            <div class="np-btn-symbol" onclick="togglePlay()"><i class="ph-fill ph-play" id="icon-play-np"></i></div>
-                            <div class="np-btn-symbol" onclick="nextSong()"><i class="ph-fill ph-skip-forward"></i></div>
-                        </div>
+                    <div class="np-track-info-center">
+                        <h2 class="np-track-title"><span id="np-title-large">Not Playing</span></h2>
+                        <p class="np-track-artist" id="np-artist-large">VIVETMP</p>
                     </div>
+                </div>
+
+                <div class="np-main-controls hidden-controls">
+                    <i class="ph-bold ph-shuffle" style="font-size: 20px; color: rgba(255,255,255,0.5);"></i>
+                    <i class="ph-fill ph-skip-back" onclick="prevSong()" style="font-size: 38px;"></i>
+                    <i class="ph-fill ph-play" id="icon-play-np" onclick="togglePlay()" style="font-size: 48px;"></i>
+                    <i class="ph-fill ph-skip-forward" onclick="nextSong()" style="font-size: 38px;"></i>
+                    <i class="ph-bold ph-repeat" style="font-size: 20px; color: rgba(255,255,255,0.5);"></i>
                 </div>
             </div>
 
-            <!-- Central Column Spacer (10%) -->
-            <div class="np-center-spacer"></div>
-
-            <!-- Right Column (45%): Immersive Lyrics Showcase -->
+            <!-- Right Pane: Immersive Lyrics -->
             <div class="np-right-pane">
                 <div class="lyrics-scroll-area" id="lyrics-scroller">
                     <div id="lyrics-content"></div>
@@ -839,13 +836,13 @@
         const albumsData =[ { id: "primera-musa", title: "PRIMERA MUSA", artist: "Omar Courtz", cover: omarCourtzImg, year: "2024" } ];
 
         const cancionesData =[
-            // SERIO CON ESE Q
+            // SERIO CON ESE Q (Añadido/Actualizado el XML correcto aquí)
             { title: "SERIO CON ESE Q", artist: "Omar Courtz, Anuel AA", album: "primera-musa", trackNum: 16, url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776693194/SERIO_CON_ESE_Q_Omar_Courtz_Anuel_AA_ppqcxl.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1779111871/SERIO_CON_ESE_Q_spotdown.org_d6ynfj.ttml" },
 
             { title: "YeYe", artist: "Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1779472988/YeYe_spotdown.org_sfs0oj.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1779473062/YeYe_spotdown.org_eqsrsv.ttml" },
             { title: "666", artist: "Yan Block, Cris MJ, Panda Black", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1777064503/666_Yan_Block_Cris_MJ_Panda_Black_yphkaz.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776610355/666_dcyhlv.lrc" },
-            { title: "Qué Pasaría...", artist: "Rauw Alejandro, Bad Bunny", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776204387/Qué_Pasaría..._Rauw_Alejandro_Bad_Bunny_tuxday.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1778698748/Qué_Pasaría..._spotdown.org_s4rykk.ttml" },
-            { title: "Khé", artist: "Rauw Alejandro, Romeo Santos", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776204333/Khé_Rauw_Alejandro_Romeo_Santos_tkfssk.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776204782/Khé__-_Rauw_Alejandro_Romeo_Santos_dm0jsx.lrc" },
+            { title: "Qué Pasaría...", artist: "Rauw Alejandro, Bad Bunny", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776204387/Qu%C3%A9_Pasar%C3%ADa..._Rauw_Alejandro_Bad_Bunny_tuxday.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1778698748/Qu%C3%A9_Pasar%C3%ADa..._spotdown.org_s4rykk.ttml" },
+            { title: "Khé", artist: "Rauw Alejandro, Romeo Santos", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776204333/Kh%C3%A9_Rauw_Alejandro_Romeo_Santos_tkfssk.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776204782/Kh%C3%A9__-_Rauw_Alejandro_Romeo_Santos_dm0jsx.lrc" },
             { title: "Tiroteo - Remix", artist: "Marc Seguí, Rauw Alejandro, Pol Granch", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776204379/Tiroteo_-_Remix_Marc_Segu%C3%AD_Rauw_Alejandro_Pol_Granch_qpe93o.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776204785/Tiroteo_-_Remix_-_Marc_Segu%C3%AD_Rauw_Alejandro_Pol_Granch_prtn3b.lrc" },
             { title: "El Efecto", artist: "Rauw Alejandro, Chencho Corleone", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776204340/El_Efecto_Rauw_Alejandro_Chencho_Corleone_bn5caz.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776204782/El_Efecto_-_Rauw_Alejandro_Chencho_Corleone_hh5rkc.lrc" },
             { title: "Party", artist: "Bad Bunny, Rauw Alejandro", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776204378/Party_Bad_Bunny_Rauw_Alejandro_ocmojl.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776204782/Party_-_Bad_Bunny_Rauw_Alejandro_fbrtlx.lrc" },
@@ -895,7 +892,7 @@
             { title: "L a k e n o s h i", artist: "Omar Courtz", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776097543/L_a_k_e_n_o_s_h_i_Omar_Courtz_wmb0qn.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776098211/L_a_k_e_n_o_s_h_i_-_Omar_Courtz_q2fcak.lrc" },
             { title: "VAMOaCOCHI", artist: "Omar Courtz", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776097606/VAMOaCOCHI_Omar_Courtz_vz2ppa.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776098212/VAMOaCOCHI_-_Omar_Courtz_i4jvc9.lrc" },
 
-            // PRIMERA MUSA - ALBUM
+            // PRIMERA MUSA - ALBUM (Omar Courtz)
             { title: "I N T R O", artist: "Omar Courtz, Kendo Kaponi", album: "primera-musa", trackNum: 1, url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776693098/I_N_T_R_O_Omar_Courtz_Kendo_Kaponi_gkyvry.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776693067/I_N_T_R_O_-_Omar_Courtz_Kendo_Kaponi_kbyn9k.lrc" },
             { title: "G O D D E S S", artist: "Omar Courtz", album: "primera-musa", trackNum: 2, url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776693106/G_O_D_D_E_S_S_Omar_Courtz_qtpxgj.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776693067/G_O_D_D_E_S_S_-_Omar_Courtz_yyxjyw.lrc" },
             { title: "H E A V Y", artist: "Omar Courtz", album: "primera-musa", trackNum: 3, url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776693210/H_E_A_V_Y_Omar_Courtz_vwgtsw.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776693067/H_E_A_V_Y_-_Omar_Courtz_appopi.lrc" },
@@ -921,7 +918,7 @@
             { title: "Narcotics", artist: "Dei V, Bryant Myers", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776099845/Narcotics_Dei_V_Bryant_Myers_dhsfml.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1778085705/Narcotics_Dei_V_Bryant_Myers_nsywqu.lrc" },
             { title: "Toa", artist: "Dei V, De La Rose", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776099845/Toa_Dei_V_De_La_Rose_lsmwni.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776100288/Toa_with_De_La_Rose_-_Dei_V_De_La_Rose_icesv8.lrc" },
             
-            // CANCION CON LETRA TTML
+            // CANCION CON LETRA TTML ("Diabólica")
             { title: "Diabólica", artist: "Cris MJ, Dei V", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776099792/Diab%C3%B3lica_Cris_MJ_Dei_V_vcifcn.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1778588993/Diab%C3%B3lica_spotdown.org_1_nv5fn2.ttml" },
             
             { title: "FLIPA", artist: "JC Reyes, Dei V", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776099817/FLIPA_JC_Reyes_Dei_V_eijnff.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776100285/FLIPA_-_JC_Reyes_Dei_V_rruxjx.lrc" },
@@ -1446,6 +1443,7 @@
         function setVolumeLevel(vol) {
             if(vol < 0) vol = 0; if(vol > 1) vol = 1; globalVolume = vol;
             document.getElementById('vol-fill-desk').style.width = `${vol*100}%`;
+            document.getElementById('vol-fill-np').style.width = `${vol*100}%`;
             if(audioCtx && masterGain) masterGain.gain.linearRampToValueAtTime(vol, audioCtx.currentTime + 0.1); else activeAudio.volume = vol;
         }
 
@@ -1523,6 +1521,7 @@
                         if (node.nodeType === Node.TEXT_NODE) {
                             let val = node.nodeValue;
                             if(val) {
+                                // Mantiene la separacion física del DOM XML
                                 val = val.replace(/[\r\n\t]+/g, ' '); 
                                 if(val.trim() === '') {
                                     if(words.length > 0) words[words.length - 1].text += ' ';
@@ -1560,6 +1559,7 @@
                     }
                 }
 
+                // Autocalculate fallback durations for lines/words without explicitly defined ends
                 parsedLyrics.forEach((l, i) => {
                     let nTime = (i < parsedLyrics.length - 1) ? parsedLyrics[i+1].time : l.time + 8;
                     if(!l.dur || l.dur <= 0) l.dur = Math.max(0, nTime - l.time);
@@ -1586,6 +1586,7 @@
                         if (/^\s+/.test(t)) { leadingSpace = true; t = t.trimStart(); }
                         if (/\s+$/.test(t)) { trailingSpace = true; t = t.trimEnd(); }
                         
+                        // Inyectar espacios físicos (TEXT_NODE) fuera del spam con la mascara CSS
                         if (leadingSpace) div.appendChild(document.createTextNode(' '));
                         
                         if (t) {
@@ -1659,7 +1660,7 @@
                             l.words.forEach(w => { if (w.el && !w.el.classList.contains('lrc-dots')) { w.fill = 0; w.lastRenderedFill = 0; w.el.style.setProperty('--fill', '0%'); } });
                         }
                     } else {
-                        l.el.className = 'lrc-line is-active';
+                        l.el.className = 'lrc-line active';
                         if (!isUserScrolling) {
                             const sc = document.getElementById('lyrics-scroller');
                             springTarget = l.el.offsetTop - sc.clientHeight * 0.42 + l.el.clientHeight * 0.5;
@@ -1675,7 +1676,7 @@
 
                 let targetFill;
                 if (cur >= w.time + w.dur) {
-                    targetFill = 120; 
+                    targetFill = 120; // 120 asegura que el gradiente desbordó completamente la palabra
                 } else if (cur >= w.time) {
                     targetFill = w.dur > 0 ? ((cur - w.time) / w.dur) * 120 : 120;
                     targetFill = Math.max(0, Math.min(targetFill, 120));
@@ -1734,6 +1735,7 @@
             if (activeAudio.duration && !isNaN(activeAudio.duration)) {
                 const now = performance.now();
 
+                // Sub-milisegundo extrapolación (Adiós lag de <audio>)
                 let cur = activeAudio.currentTime;
                 if (cur !== lastAudioTime) {
                     lastAudioTime = cur;
@@ -1758,8 +1760,10 @@
                 checkAutoMix();
 
                 if (isNPOpen) {
+                    // Anticipación visual de +150ms 
                     updateKaraoke(cur + 0.150);
 
+                    // Motor físico de scroll vertical 
                     const dt = prevRafTime > 0 ? (rafTimestamp - prevRafTime) / 1000 : 0.016;
 
                     if (isUserScrolling) {
@@ -1831,6 +1835,7 @@
             
             setupGestures();
             document.getElementById('vol-fill-desk').style.width = `${globalVolume*100}%`;
+            document.getElementById('vol-fill-np').style.width = `${globalVolume*100}%`;
         }
 
         window.onload = init;
