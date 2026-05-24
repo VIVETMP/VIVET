@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -19,7 +18,7 @@
            PREMIUM DESIGN SYSTEM & VARIABLES
            ================================================================== */
         :root {
-            --bg-deep: #121212;
+            --bg-deep: #0a0a0c;
             --bg-surface: #0a0a0e;
             --bg-glass-heavy: rgba(15, 15, 20, 0.75);
             --bg-glass-light: rgba(255, 255, 255, 0.03);
@@ -34,12 +33,9 @@
             --shadow-float: 0 20px 40px rgba(0, 0, 0, 0.4);
             --shadow-glow: 0 0 40px var(--accent-glow);
             
-            /* Apple Music Brand Palette */
-            --accent-1: #FA2D48;
+            --accent-1: #FF2E93;
             --accent-2: #7F49B4;
-            --accent-glow: rgba(250, 45, 72, 0.3);
-            --accent-apple: #FA2D48;
-            --text-secondary-apple: #636366;
+            --accent-glow: rgba(255, 46, 147, 0.3);
             
             /* Apple Music Fonts Override */
             --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
@@ -76,35 +72,22 @@
             -moz-osx-font-smoothing: grayscale;
         }
 
-        /* Keyboard Accessibility indicator */
         *:focus-visible {
-            outline: 2px solid var(--accent-apple) !important;
+            outline: 2px solid var(--accent-1) !important;
             outline-offset: 4px !important;
         }
 
         /* ==================================================================
-           AMBIENT BACKGROUND
+           AMBIENT BACKGROUND (Solid Dark Color - No Orbs) [7]
            ================================================================== */
         #ambient-bg {
             position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
-            background: radial-gradient(circle at center, #111116 0%, var(--bg-deep) 100%);
+            background: var(--bg-deep);
         }
         .noise-overlay {
-            position: absolute; inset: 0; z-index: 2; opacity: 0.06; mix-blend-mode: color-dodge; pointer-events: none;
+            position: absolute; inset: 0; z-index: 2; opacity: 0.05; mix-blend-mode: color-dodge; pointer-events: none;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
-        .orb {
-            position: absolute; border-radius: 50%; filter: blur(140px); opacity: 0.25;
-            will-change: transform, background; mix-blend-mode: screen;
-            transition: background 2s var(--ease-fluid);
-        }
-        .orb-1 { top: -20%; left: -20%; width: 70vw; height: 70vw; background: var(--accent-1); animation: drift 30s infinite alternate var(--ease-fluid); }
-        .orb-2 { bottom: -20%; right: -20%; width: 80vw; height: 80vw; background: var(--accent-2); animation: drift2 35s infinite alternate-reverse var(--ease-fluid); }
-        .orb-3 { top: 20%; left: 40%; width: 50vw; height: 50vw; background: var(--accent-1); opacity: 0.15; animation: drift3 25s infinite alternate var(--ease-fluid); }
-        
-        @keyframes drift { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(15%, 20%) scale(1.1); } }
-        @keyframes drift2 { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(-20%, -15%) scale(1.05); } }
-        @keyframes drift3 { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(10%, -10%) scale(1.2); } }
 
         /* ==================================================================
            APP LAYOUT
@@ -272,263 +255,161 @@
         .btn-fullscreen:hover { background: rgba(255,255,255,0.15); transform: scale(1.1); color: #fff; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
 
         /* ==================================================================
-           REDESIGNED PIXEL-ACCURATE APPLE MUSIC FULLSCREEN OVERLAY
+           FULLSCREEN REPLICATED NOW PLAYING (IMAGE MATCHED CLONE)
            ================================================================== */
         #np-fs {
             position: fixed; inset: 0; z-index: 100; transform: translateY(100%); opacity: 0; visibility: hidden;
             transition: transform 0.8s var(--ease-cinematic), opacity 0.5s; display: flex; flex-direction: column; 
-            overflow: hidden; background: #121212; font-family: var(--font-display);
-            width: 100vw; height: 100vh;
+            overflow: hidden; background: #000; font-family: var(--font-display);
         }
         #np-fs.active { transform: translateY(0); opacity: 1; visibility: visible; }
 
-        /* 3. Fluid Blur Background & Noise Overlay [7] */
-        .background-canvas {
-            position: absolute;
-            top: -10%;
-            left: -10%;
-            width: 120%;
-            height: 120%;
-            filter: blur(80px) saturate(180%);
-            z-index: 1;
-            background: radial-gradient(circle at 20% 30%, var(--accent-1), transparent 50%),
-                        radial-gradient(circle at 80% 70%, var(--accent-2), transparent 50%);
-            animation: liquidBg 20s ease infinite alternate;
-            transition: background 2.5s ease-in-out;
-        }
-        @keyframes liquidBg {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(5%, 5%) scale(1.1); }
-        }
-
-        .np-bg-wrap { position: fixed; inset: -15%; width: 130%; height: 130%; z-index: 2; pointer-events: none; }
+        /* Stretched, blurred, saturated cover art background [7] */
+        .np-bg-wrap { position: absolute; inset: -10%; width: 120%; height: 120%; z-index: 0; pointer-events: none; overflow: hidden; }
         .np-bg-blur { 
             position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; 
-            filter: blur(140px) saturate(150%) brightness(0.4); opacity: 0; 
-            transition: opacity 2s ease-in-out; will-change: opacity;
+            filter: blur(100px) saturate(160%) brightness(0.35); opacity: 0; 
+            transition: opacity 1.8s ease-in-out; will-change: opacity;
         }
-        .np-bg-blur.active { opacity: 0.15; }
-        .np-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.65); z-index: 2; }
+        .np-bg-blur.active { opacity: 1; }
+        .np-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.45); z-index: 1; }
         .np-grain { position: absolute; inset: 0; z-index: 2; opacity: 0.04; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none;}
 
-        /* Collapse Button */
+        /* Close Button [7] */
         .btn-collapse {
-            position: absolute; top: 32px; left: calc(15% + 32px); width: auto; height: 44px;
-            background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.1); 
-            border-radius: 100px; padding: 0 20px; font-weight: 600; font-size: 14px;
-            cursor: pointer; z-index: 30;
-            display: flex; align-items: center; gap: 8px;
-            color: #FFFFFF; transition: all 0.2s var(--ease-snappy); outline: none;
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            position: absolute; top: 40px; left: 40px; width: 44px; height: 44px;
+            background: transparent; border: none; cursor: pointer; z-index: 10;
+            display: flex; align-items: center; justify-content: center; font-size: 32px; 
+            color: rgba(255,255,255,0.6); transition: all 0.2s var(--ease-snappy); outline: none;
         }
-        .btn-collapse:hover { color: #fff; transform: scale(1.05); background: rgba(255, 255, 255, 0.15); border-color: rgba(255, 255, 255, 0.25); }
+        .btn-collapse:hover { color: #fff; transform: scale(1.1); }
         .btn-collapse-mob { display: none; }
 
-        /* 1. Structure & Positioning (1920x1080 Grid Layout) [7] */
-        .np-layout-mockup {
-            position: relative; z-index: 5;
-            display: grid;
-            grid-template-columns: 15% 60% 25%;
-            grid-template-rows: 94% 6%;
-            width: 100vw; height: 100vh;
-            overflow: hidden; box-sizing: border-box;
+        /* Replicated Layout Split [7] */
+        .np-layout { 
+            position: relative; z-index: 3; display: grid; 
+            grid-template-columns: 48% 52%; 
+            width: 100%; height: 100%; 
+            max-width: 1600px; padding: 60px 8% 80px 8%; 
+            gap: 6%; margin: 0 auto; align-items: center; justify-content: center;
         }
-
-        /* 1. LEFT SIDEBAR (15% Width) [7] */
-        .np-sidebar-left {
-            grid-column: 1;
-            grid-row: 1 / 2;
-            background: rgba(18, 18, 18, 0.45);
-            backdrop-filter: blur(35px); -webkit-backdrop-filter: blur(35px);
-            border-right: 1px solid rgba(255, 255, 255, 0.05);
-            display: flex; flex-direction: column;
-            padding: 32px 24px; box-sizing: border-box;
-            z-index: 10;
-        }
-        .np-window-controls {
-            display: flex; gap: 8px; margin-bottom: 40px;
-        }
-        .np-window-controls .dot {
-            width: 12px; height: 12px; border-radius: 50%; display: inline-block;
-        }
-        .np-window-controls .dot.red { background: #FF5F56; }
-        .np-window-controls .dot.yellow { background: #FFBD2E; }
-        .np-window-controls .dot.green { background: #27C93F; }
-
-        .np-sidebar-brand {
-            font-size: 20px; font-weight: 800; color: #FFFFFF; display: flex; align-items: center; gap: 10px; margin-bottom: 32px;
-        }
-        .np-sidebar-brand i { color: var(--accent-apple); font-size: 24px; }
-
-        .np-sidebar-nav {
-            display: flex; flex-direction: column; gap: 8px; flex: 1;
-        }
-        .np-side-item {
-            display: flex; align-items: center; gap: 14px; padding: 12px 16px;
-            font-size: 14px; font-weight: 600; color: rgba(255, 255, 255, 0.55);
-            border-radius: 10px; cursor: pointer; transition: all 0.2s var(--ease-snappy);
-        }
-        .np-side-item i { font-size: 20px; }
-        .np-side-item:hover { color: #FFFFFF; background: rgba(255, 255, 255, 0.05); }
-        .np-side-item.active { color: #FFFFFF; background: rgba(255, 255, 255, 0.1); }
         
-        .np-sidebar-footer {
-            padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        .np-user-profile {
-            display: flex; align-items: center; gap: 12px;
-        }
-        .np-user-profile img {
-            width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .np-user-profile span {
-            font-size: 13px; font-weight: 600; color: #FFFFFF;
+        .np-left-pane {
+            display: flex; flex-direction: column; justify-content: center; gap: 24px; width: 100%; max-width: 460px;
         }
 
-        /* 1. CENTRAL AREA (60% Width) [7] */
-        .np-central-panel {
-            grid-column: 2;
-            grid-row: 1;
-            display: flex; flex-direction: column;
-            padding: 0 48px; box-sizing: border-box;
-            height: 100%;
-        }
-
-        /* 1. TOP BAR (8% Height) [7] */
-        .np-top-header {
-            height: 8%; min-height: 55px;
-            display: flex; align-items: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-            margin-bottom: 12px;
-        }
-        .np-header-search {
-            position: relative; display: flex; align-items: center; width: 100%; max-width: 320px;
-        }
-        .np-header-search i {
-            position: absolute; left: 14px; font-size: 16px; color: rgba(255, 255, 255, 0.4);
-        }
-        .np-header-search input {
-            width: 100%; background: rgba(255, 255, 255, 0.06); border: none; outline: none;
-            padding: 10px 14px 10px 42px; border-radius: 8px; font-size: 13px; font-family: inherit;
-            color: #FFFFFF; border: 1px solid transparent; transition: 0.2s;
-        }
-        .np-header-search input::placeholder { color: rgba(255, 255, 255, 0.3); }
-
-        /* Centered Stage Stage */
-        .np-stage {
-            flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            gap: 28px; padding-bottom: 32px;
-        }
-
-        /* 4. Artwork Subcolumn (Centered ~450px) [7] */
-        .np-artwork-container {
-            width: 100%; max-width: 450px; aspect-ratio: 1; display: flex; justify-content: center; align-items: center;
-        }
+        /* Large cover art with 12px radius [7] */
         .np-art-wrap { 
             width: 100%; aspect-ratio: 1; border-radius: 12px; 
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5); 
-            overflow: hidden; transition: transform 0.6s var(--ease-cinematic); 
-            background: #111; cursor: pointer;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4); 
+            overflow: hidden; cursor: pointer; transition: transform 0.3s ease;
         }
-        .np-art-wrap:hover { transform: scale(1.02); }
+        .np-art-wrap:hover { transform: scale(1.01); }
         .np-art { width: 100%; height: 100%; object-fit: cover; }
 
-        /* 2. Metadata Typography Specs [7] */
-        .np-track-meta {
-            text-align: center; width: 100%; max-width: 500px;
+        /* Left-aligned metadata container with actions [7] */
+        .np-meta-container {
+            display: flex; align-items: center; justify-content: space-between; width: 100%; margin-top: 4px;
+        }
+        .np-track-details {
+            display: flex; flex-direction: column; gap: 4px; overflow: hidden; text-align: left; flex: 1;
         }
         .np-track-title { 
-            font-size: 32px; font-weight: 700; letter-spacing: -0.5px; 
-            color: #FFFFFF; line-height: 1.2; 
+            font-size: 26px; font-weight: 700; color: #FFFFFF; letter-spacing: -0.5px;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
         .np-track-artist { 
-            font-size: 24px; font-weight: 500; 
-            color: rgba(255, 255, 255, 0.6); margin-top: 8px; 
-            line-height: 1.3;
+            font-size: 18px; font-weight: 500; color: rgba(255, 255, 255, 0.6);
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
+        .np-meta-actions {
+            display: flex; gap: 12px; align-items: center; margin-left: 16px;
+        }
+        .np-meta-btn {
+            background: rgba(255, 255, 255, 0.08); border: none; color: #FFFFFF;
+            width: 38px; height: 38px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; font-size: 20px;
+            cursor: pointer; transition: background 0.2s, transform 0.2s;
+        }
+        .np-meta-btn:hover { background: rgba(255, 255, 255, 0.15); transform: scale(1.05); }
+        .np-meta-btn:active { transform: scale(0.95); }
 
-        /* 4. Scrubber & Timeline Specifications [7] */
-        .np-scrubber-group { display: flex; flex-direction: column; gap: 8px; width: 100%; max-width: 500px; }
-        .np-time-row { display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.6); font-variant-numeric: tabular-nums; }
+        /* Timeline / Scrubber styled above controls [7] */
+        .np-scrubber-group { display: flex; flex-direction: column; gap: 8px; width: 100%; margin-top: 4px; }
         .np-scrubber-group .scrubber-bg { 
-            height: 4px; border-radius: 2px; background: rgba(255,255,255,0.2); 
-            cursor: pointer; position: relative; transition: height 0.2s ease;
+            height: 4px; border-radius: 2px; background: rgba(255, 255, 255, 0.25); 
+            cursor: pointer; position: relative; transition: height 0.2s;
         }
         .np-scrubber-group .scrubber-bg:hover { height: 6px; }
-        .np-scrubber-group .scrubber-fill { border-radius: 2px; box-shadow: none; transition: width 0.1s linear; height: 100%; background: #FFFFFF; position: relative; width: 0%; }
+        .np-scrubber-group .scrubber-fill { height: 100%; background: #FFFFFF; border-radius: 2px; width: 0%; position: relative; }
         .np-scrubber-group .scrubber-fill::after { 
-            content: ''; position: absolute; right: -6px; top: 50%; transform: translateY(-50%) scale(0); 
-            width: 12px; height: 12px; background: #fff; border-radius: 50%; 
-            transition: transform 0.2s var(--ease-snappy); box-shadow: 0 2px 6px rgba(0,0,0,0.4); 
+            content: ''; position: absolute; right: -5px; top: 50%; transform: translateY(-50%) scale(1);
+            width: 10px; height: 10px; background: #FFFFFF; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
-        .np-scrubber-group .scrubber-bg:hover .scrubber-fill::after { transform: translateY(-50%) scale(1); }
+        .np-time-row { display: flex; justify-content: space-between; font-size: 11px; font-weight: 500; color: rgba(255, 255, 255, 0.5); font-variant-numeric: tabular-nums; }
 
-        /* 4. Controls Buttons Specifications [7] */
-        .np-controls-bar {
-            display: flex; align-items: center; gap: 24px;
+        /* Replicated Playback Controls row [7] */
+        .np-controls-row {
+            display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 0 12px; margin-top: 8px;
         }
-        .np-btn-symbol {
-            width: 44px; height: 44px; border-radius: 50%; border: none; background: transparent;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 24px; color: #FFFFFF; cursor: pointer;
-            transition: transform 0.2s var(--ease-snappy), background 0.2s;
+        .np-control-icon {
+            background: transparent; border: none; color: #FFFFFF; font-size: 24px; cursor: pointer;
+            opacity: 0.75; transition: transform 0.2s, opacity 0.2s, color 0.2s;
+            display: flex; align-items: center; justify-content: center; width: 44px; height: 44px;
         }
-        .np-btn-symbol:hover { background: rgba(255, 255, 255, 0.08); }
-        .np-btn-symbol:active { transform: scale(0.95); }
-        .np-btn-symbol.np-btn-main {
-            background: #FFFFFF; color: #121212; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        }
-        .np-btn-symbol.np-btn-main:hover { background: rgba(255, 255, 255, 0.9); transform: scale(1.05); }
+        .np-control-icon:hover { opacity: 1; transform: scale(1.1); }
+        .np-control-icon:active { transform: scale(0.95); }
+        .np-control-icon.np-play-btn { font-size: 42px; opacity: 1; }
+        .np-control-icon.active-toggle { color: var(--accent-1); opacity: 1; }
 
-        /* 1. RIGHT PANEL (25% Width): Synced Lyrics Panel [7] */
-        .np-right-lyrics-panel {
-            grid-column: 3;
-            grid-row: 1 / 2;
-            position: relative; display: flex; flex-direction: column;
-            border-left: 1px solid rgba(255, 255, 255, 0.05);
-            background: rgba(18, 18, 18, 0.25);
-            backdrop-filter: blur(35px); -webkit-backdrop-filter: blur(35px);
-            z-index: 9; overflow: hidden; box-sizing: border-box;
-            mask-image: linear-gradient(to bottom, transparent 0%, #000 15%, #000 85%, transparent 100%);
-            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 15%, #000 85%, transparent 100%);
+        /* Replicated Volume Row [7] */
+        .np-volume-row {
+            display: flex; align-items: center; gap: 16px; width: 100%; margin-top: 12px; color: rgba(255, 255, 255, 0.6);
+        }
+        .np-volume-row i { font-size: 20px; }
+        .np-volume-row .vol-slider { flex: 1; height: 4px; background: rgba(255, 255, 255, 0.25); border-radius: 2px; cursor: pointer; position: relative; transition: height 0.2s; }
+        .np-volume-row .vol-slider:hover { height: 6px; }
+        .np-volume-row .vol-fill { height: 100%; background: #FFFFFF; border-radius: 2px; width: 75%; position: relative; }
+        .np-volume-row .vol-fill::after {
+            content: ''; position: absolute; right: -5px; top: 50%; transform: translateY(-50%);
+            width: 10px; height: 10px; background: #FFFFFF; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
-        /* Ambient Vibrancy Behind Current Line [7] */
-        .lyrics-vibrancy-vessel {
-            position: absolute; inset: 0; pointer-events: none; z-index: 1;
-            background: radial-gradient(circle at center, rgba(250, 45, 72, 0.14) 0%, transparent 65%);
-            mix-blend-mode: screen; opacity: 0.8; will-change: transform;
+        /* Right Pane: Immersive Synced Lyrics Panel [7] */
+        .np-right-pane { 
+            display: flex; flex-direction: column; justify-content: center; position: relative; width: 100%; height: 100%;
+            mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,1) 15%, rgba(0,0,0,1) 85%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,1) 15%, rgba(0,0,0,1) 85%, transparent 100%);
         }
-
         .lyrics-scroll-area {
             position: relative; height: 100%; overflow-y: auto; overflow-x: hidden; 
-            padding: 40vh 32px 50vh 32px; margin: 0; scroll-behavior: auto; z-index: 2;
+            padding: 35vh 0 45vh 0; margin: 0; scroll-behavior: auto;
         }
         .lyrics-scroll-area::-webkit-scrollbar { display: none; }
 
-        /* Sync Lyrics Typography & Contrast [7] */
+        /* Replicated Synced Lyric Line Styles [7] */
         .lrc-line {
             display: block; margin-bottom: 32px; padding: 0; cursor: pointer;
             transform-origin: left center; word-wrap: break-word; white-space: normal; text-align: left;
-            font-family: var(--font-display); font-size: 24px; font-weight: 700; line-height: 1.4; letter-spacing: -0.5px;
-            color: var(--text-secondary-apple); filter: blur(1px); will-change: transform, opacity, filter;
-            transition: color 0.4s var(--ease-fluid), filter 0.4s var(--ease-fluid), transform 0.4s var(--ease-fluid);
+            font-family: var(--font-display); font-size: clamp(28px, 3vw, 38px); font-weight: 800; line-height: 1.35; letter-spacing: -0.02em;
+            color: rgba(255, 255, 255, 0.3); filter: blur(1px); will-change: transform, opacity, filter;
+            transition: color 0.5s var(--ease-fluid), filter 0.5s var(--ease-fluid), transform 0.5s var(--ease-fluid);
         }
         .lrc-line.is-active {
             color: #FFFFFF !important;
-            filter: drop-shadow(0 4px 12px rgba(0,0,0,0.15)) blur(0px) !important;
-            transform: scale(1.03) !important;
+            filter: blur(0px) drop-shadow(0 4px 16px rgba(0,0,0,0.2)) !important;
+            transform: scale(1.02) !important;
         }
         .lrc-line.is-past {
-            color: var(--text-secondary-apple); filter: blur(1px); transform: scale(0.98);
+            color: rgba(255, 255, 255, 0.25); filter: blur(1.5px); transform: scale(0.98);
         }
         .lrc-line:hover:not(.is-active) {
-            color: rgba(255, 255, 255, 0.75) !important;
+            color: rgba(255, 255, 255, 0.7) !important;
             filter: blur(0px) !important;
-            transform: scale(1.01) !important;
+            transform: scale(1.0) !important;
         }
 
-        /* ── Word-for-Word Highlight Karaoke styling [7] ── */
+        /* Word-for-Word Swipe Animation [7] */
         .lrc-line.is-active .lrc-word {
             display: inline;
             background: linear-gradient(
@@ -536,63 +417,36 @@
                 #FFFFFF 0%,
                 #FFFFFF calc(var(--fill, 0%) - 16%),
                 rgba(255, 255, 255, 0.6) calc(var(--fill, 0%) - 8%),
-                #636366 var(--fill, 0%),
-                #636366 100%
+                rgba(255, 255, 255, 0.35) var(--fill, 0%),
+                rgba(255, 255, 255, 0.35) 100%
             );
             -webkit-background-clip: text; background-clip: text; color: transparent;
-            will-change: background; -webkit-font-smoothing: antialiased;
+            will-change: background;
         }
         .lrc-line:not(.is-active) .lrc-word {
             background: none; -webkit-background-clip: initial; background-clip: initial; color: inherit;
         }
 
-        /* 1. FIXED BOTTOM MINI-PLAYER (6% Height) [7] */
-        .np-fixed-mini-player {
-            grid-column: 1 / 4;
-            grid-row: 2;
-            height: 100%;
-            background: rgba(18, 18, 18, 0.9);
-            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 0 32px; box-sizing: border-box; z-index: 15;
+        /* Instrumental Pause dots */
+        .lrc-dots { display: inline-flex; align-items: center; gap: 11px; height: 1.1em; vertical-align: middle; }
+        .lrc-dot { display: inline-block; width: 11px; height: 11px; border-radius: 50%; background: rgba(255,255,255,0.32); will-change: transform, background; }
+        .lrc-line.is-active .lrc-dot:nth-child(1) { animation: amDotBounce 1.15s 0.00s infinite ease-in-out; }
+        .lrc-line.is-active .lrc-dot:nth-child(2) { animation: amDotBounce 1.15s 0.19s infinite ease-in-out; }
+        .lrc-line.is-active .lrc-dot:nth-child(3) { animation: amDotBounce 1.15s 0.38s infinite ease-in-out; }
+        @keyframes amDotBounce {
+            0%,100% { transform: translateY(0) scale(1); background: rgba(255,255,255,0.38); }
+            42%      { transform: translateY(-7px) scale(1.3); background: rgba(255,255,255,0.92); }
         }
-        .np-mini-left {
-            display: flex; align-items: center; gap: 14px; width: 30%;
+
+        /* Bottom-right speech-bubble toggle button [7] */
+        .np-bottom-bar-right { position: absolute; bottom: 40px; right: 40px; z-index: 10; }
+        .np-lyrics-toggle-btn {
+            background: transparent; border: none; color: rgba(255, 255, 255, 0.7); font-size: 24px; cursor: pointer; transition: color 0.2s, transform 0.2s;
         }
-        .np-mini-left img {
-            width: 44px; height: 44px; border-radius: 6px; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-        }
-        .np-mini-meta {
-            display: flex; flex-direction: column; gap: 2px; overflow: hidden;
-        }
-        .np-mini-title {
-            font-size: 14px; font-weight: 700; color: #FFFFFF; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        }
-        .np-mini-artist {
-            font-size: 12px; font-weight: 500; color: rgba(255, 255, 255, 0.6); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        }
-        .np-mini-center {
-            display: flex; align-items: center; gap: 24px; justify-content: center; width: 40%;
-        }
-        .np-mini-btn {
-            background: transparent; border: none; color: rgba(255, 255, 255, 0.7); font-size: 20px; cursor: pointer; transition: 0.2s;
-            width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%;
-        }
-        .np-mini-btn:hover { color: #FFFFFF; background: rgba(255, 255, 255, 0.08); }
-        .np-mini-btn.play-pause {
-            background: #FFFFFF; color: #121212; font-size: 16px; width: 36px; height: 36px;
-        }
-        .np-mini-btn.play-pause:hover { background: rgba(255, 255, 255, 0.9); }
-        
-        .np-mini-right {
-            display: flex; align-items: center; justify-content: flex-end; gap: 12px; width: 30%; color: rgba(255, 255, 255, 0.7);
-        }
-        .np-mini-right .vol-slider { width: 100px; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; cursor: pointer; position: relative; }
-        .np-mini-right .vol-fill { width: 75%; height: 100%; background: #fff; border-radius: 2px; }
+        .np-lyrics-toggle-btn:hover { color: #FFFFFF; transform: scale(1.1); }
 
         /* ==================================================================
-           MOBILE RESPONSIVE Overrides
+           MOBILE RESPONSIVE
            ================================================================== */
         .mobile-nav { display: none; }
         
@@ -627,12 +481,10 @@
             .track-row { padding: 12px; gap: 16px; }
             .search-container { max-width: 100%; }
 
-            /* Fullscreen NP Mobile */
+            /* Fullscreen NP Mobile Layout [7] */
             #np-fs { overflow-y: auto; overflow-x: hidden; } 
             
-            .btn-collapse {
-                top: 20px; left: 20px; font-size: 12px; padding: 0 14px; height: 36px;
-            }
+            .btn-collapse { top: 20px; left: 20px; }
             .btn-collapse-mob { 
                 position: absolute; top: 16px; left: 50%; transform: translateX(-50%);
                 width: 48px; height: 6px; border-radius: 3px;
@@ -640,42 +492,27 @@
                 display: block; transition: 0.3s;
             }
             
-            .np-layout-mockup { 
-                display: flex; flex-direction: column;
-                padding: 64px 24px 24px 24px; gap: 16px; 
+            .np-layout { 
+                grid-template-columns: 1fr; padding: 80px 24px 40px 24px; gap: 32px; 
                 height: auto; min-height: 100vh; justify-content: flex-start;
-                overflow-y: auto;
             }
-            .np-sidebar-left { display: none; }
-            .np-central-panel { width: 100%; padding: 0; flex: none; align-items: center; }
+            .np-left-pane { max-width: 320px; margin: 0 auto; gap: 16px; }
+            .np-art-wrap { width: 100%; max-width: 320px; aspect-ratio: 1; border-radius: 12px; }
+            .np-track-title { font-size: 22px; white-space: normal; line-height: 1.2; }
+            .np-track-artist { font-size: 16px; }
             
-            .np-artwork-container { width: 100%; max-width: 280px; aspect-ratio: 1; margin: 0 auto; }
-            
-            .np-track-title { font-size: 24px; white-space: normal; line-height: 1.2; }
-            .np-track-artist { font-size: 18px; }
-            
-            .np-right-lyrics-panel { 
-                width: 100%; height: 50vh; border-left: none; border-top: 1px solid rgba(255, 255, 255, 0.05); 
-                background: transparent; backdrop-filter: none; flex-shrink: 0; margin-top: 24px;
-            }
-            .lyrics-scroll-area { padding: 10vh 16px 30vh 16px; }
-            .lrc-line { font-size: 22px; margin-bottom: 24px; text-align: center; }
-
-            .np-fixed-mini-player {
-                position: sticky; bottom: 0; width: 100%; flex-shrink: 0; height: 65px;
-                background: rgba(18, 18, 18, 0.95);
-            }
+            .np-right-pane { width: 100%; max-width: 400px; flex: none; height: 50vh; position: relative; margin-top: 16px; }
+            .lyrics-scroll-area { padding: 10vh 0 30vh 0; }
+            .lrc-line { font-size: 24px; margin-bottom: 24px; text-align: left; transform-origin: left center; }
+            .np-bottom-bar-right { bottom: 20px; right: 20px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- AMBIENT BACKGROUND -->
+    <!-- AMBIENT BACKGROUND (1 Single Solid Color) [7] -->
     <div id="ambient-bg">
         <div class="noise-overlay"></div>
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-        <div class="orb orb-3"></div>
     </div>
 
     <!-- MAIN APP SHELL -->
@@ -823,122 +660,71 @@
         </div>
     </div>
 
-    <!-- REDESIGNED FULLSCREEN NOW PLAYING OVERLAY (PIXEL-ACCURATE DESKTOP REPLICA) -->
+    <!-- FULLSCREEN REPLICATED NOW PLAYING OVERLAY [7] -->
     <div id="np-fs">
-        <!-- 3. Fluid Blur Background & Noise Overlay [7] -->
-        <div class="background-canvas" id="np-fluid-bg"></div>
         <div class="np-bg-wrap">
             <img src="" class="np-bg-blur active" id="np-bg-1" crossorigin="anonymous">
             <img src="" class="np-bg-blur" id="np-bg-2" crossorigin="anonymous">
+            <div class="np-overlay"></div>
+            <div class="np-grain"></div>
         </div>
-        <div class="np-overlay"></div>
-        <div class="np-grain"></div>
         
-        <button class="btn-collapse" onclick="toggleNP()"><i class="ph ph-arrow-left"></i> Volver</button>
+        <button class="btn-collapse" onclick="toggleNP()"><i class="ph ph-x"></i></button>
         <button class="btn-collapse-mob" onclick="toggleNP()"></button>
 
-        <!-- 1. Structure & Positioning (Desktop Grid layout) [7] -->
-        <div class="np-layout-mockup">
-            
-            <!-- 1. LEFT SIDEBAR (15% Width) [7] -->
-            <aside class="np-sidebar-left" aria-label="Navegación de biblioteca">
-                <div class="np-window-controls">
-                    <span class="dot red"></span>
-                    <span class="dot yellow"></span>
-                    <span class="dot green"></span>
-                </div>
-                <div class="np-sidebar-brand">
-                    <i class="ph-fill ph-waveform"></i> Music
-                </div>
-                <nav class="np-sidebar-nav">
-                    <div class="np-side-item active" tabindex="0"><i class="ph ph-play-circle"></i> Escucha ahora</div>
-                    <div class="np-side-item" tabindex="0"><i class="ph ph-sparkles"></i> Para ti</div>
-                    <div class="np-side-item" tabindex="0"><i class="ph ph-compass"></i> Explorar</div>
-                    <div class="np-side-item" tabindex="0"><i class="ph ph-broadcast"></i> Radio</div>
-                    <div class="np-side-item" tabindex="0"><i class="ph ph-books"></i> Biblioteca</div>
-                </nav>
-                <div class="np-sidebar-footer">
-                    <div class="np-user-profile">
-                        <img src="https://res.cloudinary.com/ddcbl694n/image/upload/v1776007400/Yan_Block_u0inwd.jpg" alt="Perfil">
-                        <span>Usuario Premium</span>
-                    </div>
-                </div>
-            </aside>
-
-            <!-- 1. CENTRAL AREA (60% Width) [7] -->
-            <main class="np-central-panel">
-                <!-- 1. TOP BAR (8% Height) [7] -->
-                <header class="np-top-header">
-                    <div class="np-header-search">
-                        <i class="ph ph-magnifying-glass"></i>
-                        <input type="text" placeholder="Buscar en biblioteca..." disabled>
-                    </div>
-                </header>
-
-                <!-- Central Main Player -->
-                <section class="np-stage">
-                    <div class="np-artwork-container">
-                        <div class="np-art-wrap" onclick="togglePlay()">
-                            <img src="" id="np-img-large" class="np-art" crossorigin="anonymous" alt="Arte del álbum">
-                        </div>
-                    </div>
-
-                    <!-- 2. Typography metadata [7] -->
-                    <div class="np-track-meta">
-                        <h1 class="np-track-title" id="np-title-large">Not Playing</h1>
+        <div class="np-layout">
+            <!-- Left Pane: Info, Scrubber & Controls (Image Matched Layout) [7] -->
+            <div class="np-left-pane">
+                <div class="np-art-wrap" onclick="togglePlay()"><img src="" id="np-img-large" class="np-art" crossorigin="anonymous"></div>
+                
+                <!-- Left aligned title and info with Favorite / Context Menu Buttons [7] -->
+                <div class="np-meta-container">
+                    <div class="np-track-details">
+                        <h2 class="np-track-title" id="np-title-large">Not Playing</h2>
                         <p class="np-track-artist" id="np-artist-large">VIVETMP</p>
                     </div>
-
-                    <!-- 4. Timeline (Scrubber) Specifications [7] -->
-                    <div class="np-scrubber-group">
-                        <div class="scrubber-bg" onclick="seek(event, this)">
-                            <div class="scrubber-fill" id="bar-fill-np"></div>
-                        </div>
-                        <div class="np-time-row">
-                            <span id="time-curr-np">0:00</span>
-                            <span id="time-tot-np">-0:00</span>
-                        </div>
+                    <div class="np-meta-actions">
+                        <button class="np-meta-btn" aria-label="Favorito"><i class="ph ph-star"></i></button>
+                        <button class="np-meta-btn" aria-label="Más opciones"><i class="ph ph-dots-three"></i></button>
                     </div>
+                </div>
 
-                    <!-- 4. Controls Buttons (Play, Back, Skip) [7] -->
-                    <div class="np-controls-bar">
-                        <button class="np-btn-symbol" onclick="prevSong()" aria-label="Canción anterior"><i class="ph-fill ph-skip-back"></i></button>
-                        <button class="np-btn-symbol np-btn-main" onclick="togglePlay()" aria-label="Reproducir o pausar"><i class="ph-fill ph-play" id="icon-play-np"></i></button>
-                        <button class="np-btn-symbol" onclick="nextSong()" aria-label="Siguiente canción"><i class="ph-fill ph-skip-forward"></i></button>
+                <!-- Scrubber above controls [7] -->
+                <div class="np-scrubber-group">
+                    <div class="scrubber-bg" onclick="seek(event, this)"><div class="scrubber-fill" id="bar-fill-np"></div></div>
+                    <div class="np-time-row">
+                        <span id="time-curr-np">0:00</span>
+                        <span id="time-tot-np">-0:00</span>
                     </div>
-                </section>
-            </main>
+                </div>
 
-            <!-- 1. RIGHT PANEL (25% Width): Synced Lyrics with Vibrancy Overlay [7] -->
-            <aside class="np-right-lyrics-panel" aria-label="Letras de canción">
-                <div class="lyrics-vibrancy-vessel"></div>
+                <!-- Clean controls row with large Play button [7] -->
+                <div class="np-controls-row">
+                    <button class="np-control-icon" aria-label="Aleatorio"><i class="ph-bold ph-shuffle"></i></button>
+                    <button class="np-control-icon" onclick="prevSong()" aria-label="Anterior"><i class="ph-fill ph-skip-back"></i></button>
+                    <button class="np-control-icon np-play-btn" onclick="togglePlay()" aria-label="Reproducir/Pausar"><i class="ph-fill ph-play" id="icon-play-np"></i></button>
+                    <button class="np-control-icon" onclick="nextSong()" aria-label="Siguiente"><i class="ph-fill ph-skip-forward"></i></button>
+                    <button class="np-control-icon" aria-label="Repetir"><i class="ph-bold ph-repeat"></i></button>
+                </div>
+
+                <!-- Volume simple control row [7] -->
+                <div class="np-volume-row">
+                    <i class="ph-fill ph-speaker-simple-low"></i>
+                    <div class="vol-slider" onclick="changeVolume(event, this)"><div class="vol-fill" id="vol-fill-np"></div></div>
+                </div>
+            </div>
+
+            <!-- Right Pane: Immersive Synced Lyrics [7] -->
+            <div class="np-right-pane">
                 <div class="lyrics-scroll-area" id="lyrics-scroller">
                     <div id="lyrics-content"></div>
                 </div>
-            </aside>
-            
-            <!-- 1. FIXED BOTTOM MINI-PLAYER (6% Height) [7] -->
-            <footer class="np-fixed-mini-player">
-                <div class="np-mini-left">
-                    <img src="" id="np-mini-thumb" class="cover-song-0" style="width: 44px; height: 44px; border-radius: 6px; object-fit: cover;" alt="">
-                    <div class="np-mini-meta">
-                        <div class="np-mini-title" id="np-mini-title-text">Not Playing</div>
-                        <div class="np-mini-artist" id="np-mini-artist-text">VIVETMP</div>
-                    </div>
-                </div>
-                <div class="np-mini-center">
-                    <button class="np-mini-btn" onclick="prevSong()"><i class="ph ph-caret-double-left"></i></button>
-                    <button class="np-mini-btn play-pause" onclick="togglePlay()"><i class="ph ph-play" id="icon-play-np-mini"></i></button>
-                    <button class="np-mini-btn" onclick="nextSong()"><i class="ph ph-caret-double-right"></i></button>
-                </div>
-                <div class="np-mini-right">
-                    <i class="ph ph-speaker-high"></i>
-                    <div class="vol-slider" onclick="changeVolume(event, this)">
-                        <div class="vol-fill" id="vol-fill-np-mini" style="width: 75%;"></div>
-                    </div>
-                </div>
-            </footer>
+            </div>
+        </div>
 
+        <!-- Replicated lyrics option button [7] -->
+        <div class="np-bottom-bar-right">
+            <button class="np-lyrics-toggle-btn" aria-label="Letras"><i class="ph-fill ph-chats-teardrop"></i></button>
         </div>
     </div>
 
@@ -988,7 +774,7 @@
             { title: "111", artist: "Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007415/111_Yan_Block_h3poua.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1777683795/111_Yan_Block_q5mjlj.lrc" },
             { title: "Religión", artist: "Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211878/Religi%C3%B3n_Yan_Block_txwxle.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1779477555/Religi%C3%B3n_spotdown.org_qxjbe4.ttml" },
             { title: "NEVER 2 LATE", artist: "ROA, Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1779286195/NEVER_2_LATE_spotdown.org_q4d49l.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1779285937/NEVER_2_LATE_spotdown.org_yfxljb.ttml" },
-            { title: "EXPRESSO MARTINI", artist: "Rauw Alejandro, Marconi Impara, Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007397/EXPRESSO_MARTINI_Rauw_Alejandro_Marconi_Impara_Yan_Block_ac5x3j.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1777684858/EXPRESSO_MARTINI_Rauw_Alejandro_Marconi_Impara_Yan_Block_buwbmz.lrc" },
+            { title: "EXPRESSO MARTINI", artist: "Rauw Alejandro, Marconi Impara, Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007397/EXPRESSO_MARTINI_Rauw_Ale[7]jandro_Marconi_Impara_Yan_Block_ac5x3j.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1777684858/EXPRESSO_MARTINI_Rauw_Alejandro_Marconi_Impara_Yan_Block_buwbmz.lrc" },
             { title: "Juguete", artist: "Yan Block, NTG, SAIKO, SHB", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211824/Juguete_Yan_Block_NTG_SAIKO_SHB_wysyo0.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212480/Juguete_-_Yan_Block_NTG_SAIKO_SHB_aqm31e.lrc" },
             { title: "Epica", artist: "Caleb Calloway, iZaak, Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211915/Epica_Caleb_Calloway_iZaak_Yan_Block_b7aepf.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212477/Epica_ilc4zb.lrc" },
             { title: "Media Hora", artist: "Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211838/Media_Hora_Yan_Block_bcvcu9.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1777816947/Media_Hora_Yan_Block_sapswf.lrc" },
@@ -1188,9 +974,9 @@
                     document.documentElement.style.setProperty('--accent-2', `rgb(${Math.min(255, r+30)}, ${Math.max(0, g-40)}, ${Math.min(255, b+40)})`);
                     document.documentElement.style.setProperty('--accent-glow', `rgba(${r}, ${g}, ${b}, 0.5)`);
                 } else {
-                    document.documentElement.style.setProperty('--accent-1', '#FA2D48');
+                    document.documentElement.style.setProperty('--accent-1', '#FF2E93');
                     document.documentElement.style.setProperty('--accent-2', '#7F49B4');
-                    document.documentElement.style.setProperty('--accent-glow', 'rgba(250, 45, 72, 0.4)');
+                    document.documentElement.style.setProperty('--accent-glow', 'rgba(255, 46, 147, 0.4)');
                 }
             } catch (e) {}
         }
@@ -1535,9 +1321,10 @@
             document.getElementById('np-title-large').innerText = song.title;
             document.getElementById('np-artist-large').innerText = `${song.artist} — ${albumName}`;
             
-            // Sync mini player metadata [7]
+            // Replicated Bottom Mini player metadata updates [7]
             document.getElementById('np-mini-title-text').innerText = song.title;
             document.getElementById('np-mini-artist-text').innerText = song.artist;
+            document.getElementById('np-mini-thumb').src = song.cover || imageArtistUrl;
             
             fetchLyrics(song.lrc);
         }
@@ -1558,7 +1345,7 @@
             document.getElementById('icon-play-mob').className = icon;
             document.getElementById('icon-play-desk').className = icon;
             document.getElementById('icon-play-np').className = icon;
-            document.getElementById('icon-play-np-mini').className = playing ? "ph ph-pause" : "ph ph-play";
+            document.getElementById('icon-play-np-mini').className = playing ? "ph-fill ph-pause" : "ph-fill ph-play";
         }
 
         function seek(e, el) { if(!activeAudio.duration) return; const r = el.getBoundingClientRect(); activeAudio.currentTime = ((e.clientX - r.left) / r.width) * activeAudio.duration; }
@@ -1705,9 +1492,7 @@
                 
                 parsedLyrics.forEach(l => {
                     const div = document.createElement('div'); div.className = 'lrc-line';
-                    div.setAttribute('tabindex', '0');
                     div.onclick = () => { activeAudio.currentTime = l.time; activeAudio.play(); setPlayIcon(true); };
-                    div.onkeydown = (ev) => { if(ev.key === 'Enter') { activeAudio.currentTime = l.time; activeAudio.play(); setPlayIcon(true); } };
                     
                     l.words.forEach(w => {
                         let t = w.text;
@@ -1905,13 +1690,6 @@
                         stepSpring(dt);
                         const sc = document.getElementById('lyrics-scroller');
                         if (Math.abs(sc.scrollTop - springPos) > 0.3) sc.scrollTop = springPos;
-                    }
-
-                    // 1. Sutil Parallax Scroll en Fondo de Letras [7]
-                    const scroller = document.getElementById('lyrics-scroller');
-                    const vibrancyBg = document.querySelector('.lyrics-vibrancy-vessel');
-                    if (vibrancyBg && scroller) {
-                        vibrancyBg.style.transform = `translateY(${-scroller.scrollTop * 0.12}px)`;
                     }
                 }
             }
