@@ -4,49 +4,473 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Velvet Player</title>
-    <link rel="stylesheet" href="style.css">
-    <!-- Iconos de Phosphor Icons (similares a los de Apple) -->
+    
+    <!-- Iconos Phosphor -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        :root {
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.55);
+            --bg-glass: rgba(0, 0, 0, 0.2);
+            --track-color: rgba(255, 255, 255, 0.2);
+            --progress-color: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: #111;
+            color: var(--text-primary);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Efecto de cristal multicapa */
+        .background-blur {
+            position: absolute;
+            top: -15%; left: -15%; right: -15%; bottom: -15%;
+            background-image: url('https://4nemxki6k8.ucarecd.net/a2435185-eada-4f17-9a8b-41889c40fbe3/pieza.jpg');
+            background-size: cover;
+            background-position: center;
+            filter: blur(100px) saturate(200%);
+            z-index: -2;
+            transform: translateZ(0); /* Aceleración por hardware */
+        }
+
+        .background-overlay {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.6) 100%);
+            z-index: -1;
+        }
+
+        .player-container {
+            display: flex;
+            gap: 80px;
+            width: 95%;
+            max-width: 1400px;
+            height: 85vh;
+            padding: 40px;
+            background: var(--bg-glass);
+            border-radius: 32px;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+        }
+
+        /* Sección Izquierda: Reproductor */
+        .now-playing {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            max-width: 480px;
+        }
+
+        .artwork-wrapper {
+            width: 100%;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+            margin-bottom: 30px;
+        }
+
+        .artwork-wrapper img {
+            width: 100%;
+            aspect-ratio: 1/1;
+            object-fit: cover;
+            transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+            display: block;
+        }
+
+        .artwork-wrapper img:not(.playing) {
+            transform: scale(0.92);
+        }
+
+        .track-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .track-info h1 {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            margin-bottom: 6px;
+        }
+
+        .track-info h2 {
+            font-size: 20px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        /* Barras de progreso y volumen */
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            background: var(--track-color);
+            border-radius: 8px;
+            outline: none;
+            cursor: pointer;
+            transition: height 0.2s;
+        }
+
+        input[type="range"]:hover {
+            height: 8px;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 0;
+            height: 0;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            transition: width 0.2s, height 0.2s;
+        }
+
+        input[type="range"]:hover::-webkit-slider-thumb {
+            width: 16px;
+            height: 16px;
+        }
+
+        .time-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 10px;
+            font-weight: 600;
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* Controles */
+        .controls-main {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 32px;
+            cursor: pointer;
+            transition: opacity 0.2s, transform 0.1s;
+        }
+
+        .icon-btn.secondary {
+            font-size: 24px;
+            color: var(--text-secondary);
+        }
+
+        .icon-btn:active, .play-btn:active {
+            transform: scale(0.85);
+        }
+
+        .play-btn {
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 56px;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+        .volume-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 40px;
+            color: var(--text-secondary);
+            font-size: 20px;
+        }
+
+        /* Sección Derecha: Letras */
+        .lyrics-container {
+            flex: 1.2;
+            position: relative;
+            mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
+        }
+
+        .lyrics-scroll {
+            height: 100%;
+            overflow-y: auto;
+            padding: 40vh 40px;
+            scroll-behavior: smooth;
+        }
+
+        .lyrics-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .lyric-line {
+            font-size: 36px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.25);
+            margin-bottom: 28px;
+            transition: color 0.5s ease, transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.5s ease;
+            transform-origin: left center;
+            cursor: pointer;
+            filter: blur(2px);
+            line-height: 1.3;
+        }
+
+        .lyric-line:hover {
+            color: rgba(255, 255, 255, 0.6);
+            filter: blur(0px);
+        }
+
+        .lyric-line.active {
+            color: #fff;
+            transform: scale(1.08);
+            filter: blur(0px);
+        }
+
+        @media (max-width: 900px) {
+            .player-container {
+                flex-direction: column;
+                height: 100vh;
+                overflow-y: auto;
+                border-radius: 0;
+            }
+            .lyrics-container {
+                min-height: 50vh;
+            }
+        }
+    </style>
 </head>
 <body>
-    <!-- Fondo desenfocado -->
+
+    <!-- Fondo dinámico esmerilado -->
     <div class="background-blur" id="bgBlur"></div>
+    <div class="background-overlay"></div>
 
     <main class="player-container">
-        <!-- Sección del Reproductor -->
+        <!-- Reproductor -->
         <section class="now-playing">
-            <div class="artwork-container">
+            <div class="artwork-wrapper">
                 <img id="artwork" src="https://4nemxki6k8.ucarecd.net/a2435185-eada-4f17-9a8b-41889c40fbe3/pieza.jpg" alt="Portada">
             </div>
             
-            <div class="track-info">
-                <h1 id="trackTitle">Pieza Exhibicion</h1>
-                <h2 id="trackArtist">Luar La L, ROA & Blessd</h2>
+            <div class="track-header">
+                <div class="track-info">
+                    <h1 id="trackTitle">Pieza Exhibicion</h1>
+                    <h2 id="trackArtist">Luar La L, ROA & Blessd</h2>
+                </div>
+                <button class="icon-btn"><i class="ph ph-dots-three-circle"></i></button>
             </div>
 
             <div class="progress-container">
-                <input type="range" id="progressBar" value="0" min="0" max="100">
+                <input type="range" id="progressBar" value="0" min="0" max="100" step="0.1">
                 <div class="time-info">
                     <span id="currentTime">0:00</span>
                     <span id="duration">-:--</span>
                 </div>
             </div>
 
-            <div class="controls">
-                <button id="prevBtn"><i class="ph-fill ph-skip-back"></i></button>
+            <div class="controls-main">
+                <button class="icon-btn secondary"><i class="ph ph-shuffle"></i></button>
+                <button id="prevBtn" class="icon-btn"><i class="ph-fill ph-skip-back"></i></button>
                 <button id="playPauseBtn" class="play-btn"><i class="ph-fill ph-play"></i></button>
-                <button id="nextBtn"><i class="ph-fill ph-skip-forward"></i></button>
+                <button id="nextBtn" class="icon-btn"><i class="ph-fill ph-skip-forward"></i></button>
+                <button class="icon-btn secondary"><i class="ph ph-repeat"></i></button>
+            </div>
+
+            <div class="volume-container">
+                <i class="ph-fill ph-speaker-low"></i>
+                <input type="range" id="volumeBar" value="100" min="0" max="100">
+                <i class="ph-fill ph-speaker-high"></i>
             </div>
         </section>
 
-        <!-- Sección de Letras Sincronizadas -->
+        <!-- Letras -->
         <section class="lyrics-container">
             <div id="lyricsContent" class="lyrics-scroll">
-                <!-- Los lyrics se inyectarán aquí dinámicamente -->
+                <!-- Letras inyectadas dinámicamente -->
             </div>
         </section>
     </main>
 
-    <script src="app.js"></script>
+    <script>
+        // Configuración de Velvet Player
+        const CROSSFADE_DURATION = 12; // 12 segundos de crossfade configurados
+        const audioUrl = "https://4nemxki6k8.ucarecd.net/cc7f990d-914f-4836-b185-01d6bca0cc14/PiezaExhibicin_spotdownorg.mp3";
+        const ttmlUrl = "https://4nemxki6k8.ucarecd.net/491cff52-7f8e-4971-acaa-c9f64d014686/PiezaExhibicin_spotdownorg.ttml";
+
+        const audio = new Audio(audioUrl);
+        let lyricsData = [];
+        let isCrossfading = false;
+
+        // Elementos del DOM
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        const progressBar = document.getElementById('progressBar');
+        const volumeBar = document.getElementById('volumeBar');
+        const currentTimeEl = document.getElementById('currentTime');
+        const durationEl = document.getElementById('duration');
+        const artwork = document.getElementById('artwork');
+        const lyricsContent = document.getElementById('lyricsContent');
+
+        // 1. Lógica de Audio y Crossfade
+        function togglePlay() {
+            if (audio.paused) {
+                audio.play();
+                playPauseBtn.innerHTML = '<i class="ph-fill ph-pause"></i>';
+                artwork.classList.add('playing');
+            } else {
+                audio.pause();
+                playPauseBtn.innerHTML = '<i class="ph-fill ph-play"></i>';
+                artwork.classList.remove('playing');
+            }
+        }
+
+        // Actualizar barra de progreso con gradiente
+        function updateProgressBar(element, percentage) {
+            element.value = percentage;
+            element.style.background = `linear-gradient(to right, #fff ${percentage}%, rgba(255,255,255,0.2) ${percentage}%)`;
+        }
+
+        // Formatear segundos a M:SS
+        function formatTime(seconds) {
+            if (isNaN(seconds)) return "0:00";
+            const min = Math.floor(seconds / 60);
+            const sec = Math.floor(seconds % 60);
+            return `${min}:${sec.toString().padStart(2, '0')}`;
+        }
+
+        // Motor de Crossfade (Fade out al final de la pista)
+        function handleCrossfade(currentTime, duration) {
+            const timeLeft = duration - currentTime;
+            
+            // Si entramos en los últimos 12 segundos
+            if (timeLeft <= CROSSFADE_DURATION && timeLeft > 0) {
+                isCrossfading = true;
+                const fadeMultiplier = timeLeft / CROSSFADE_DURATION;
+                const baseVolume = volumeBar.value / 100;
+                audio.volume = Math.max(0, baseVolume * fadeMultiplier);
+            } else if (isCrossfading && timeLeft > CROSSFADE_DURATION) {
+                isCrossfading = false;
+                audio.volume = volumeBar.value / 100;
+            }
+        }
+
+        // 2. Procesamiento de TTML (Letras)
+        function parseTTMLTime(timeStr) {
+            if (!timeStr) return 0;
+            const parts = timeStr.split(':');
+            if (parts.length === 3) return parseFloat(parts[0]) * 3600 + parseFloat(parts[1]) * 60 + parseFloat(parts[2]);
+            if (parts.length === 2) return parseFloat(parts[0]) * 60 + parseFloat(parts[1]);
+            return parseFloat(timeStr); 
+        }
+
+        async function fetchLyrics() {
+            try {
+                const response = await fetch(ttmlUrl);
+                const text = await response.text();
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(text, "text/xml");
+                const pTags = xmlDoc.getElementsByTagName("p");
+
+                lyricsContent.innerHTML = "";
+                lyricsData = Array.from(pTags).map((p, index) => {
+                    const begin = parseTTMLTime(p.getAttribute("begin"));
+                    const textContent = p.textContent.trim();
+                    
+                    if (textContent) {
+                        const pElement = document.createElement("p");
+                        pElement.className = "lyric-line";
+                        pElement.id = `lyric-${index}`;
+                        pElement.innerText = textContent;
+                        
+                        // Salto de tiempo al hacer clic en la letra
+                        pElement.addEventListener("click", () => {
+                            audio.currentTime = begin;
+                            if(audio.paused) togglePlay();
+                        });
+
+                        lyricsContent.appendChild(pElement);
+                        return { time: begin, index: index, element: pElement };
+                    }
+                    return null;
+                }).filter(item => item !== null);
+
+            } catch (error) {
+                console.error("Error al cargar TTML:", error);
+            }
+        }
+
+        // 3. Sincronización y Renderizado
+        function updateLyrics(currentTime) {
+            let activeIndex = -1;
+            for (let i = 0; i < lyricsData.length; i++) {
+                // Margen de 0.3s para anticipar el cambio visual
+                if (currentTime + 0.3 >= lyricsData[i].time) activeIndex = i;
+                else break;
+            }
+
+            if (activeIndex !== -1) {
+                const activeItem = lyricsData[activeIndex];
+                if (!activeItem.element.classList.contains('active')) {
+                    document.querySelectorAll('.lyric-line.active').forEach(el => el.classList.remove('active'));
+                    activeItem.element.classList.add('active');
+                    
+                    // Scroll suave calculando el centro
+                    activeItem.element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+        }
+
+        // 4. Listeners de Eventos
+        playPauseBtn.addEventListener('click', togglePlay);
+
+        audio.addEventListener('loadedmetadata', () => {
+            durationEl.innerText = formatTime(audio.duration);
+        });
+
+        audio.addEventListener('timeupdate', () => {
+            const progress = (audio.currentTime / audio.duration) * 100;
+            updateProgressBar(progressBar, progress);
+            currentTimeEl.innerText = formatTime(audio.currentTime);
+            
+            updateLyrics(audio.currentTime);
+            handleCrossfade(audio.currentTime, audio.duration);
+        });
+
+        // Control de progreso manual
+        progressBar.addEventListener('input', (e) => {
+            const seekTime = (e.target.value / 100) * audio.duration;
+            audio.currentTime = seekTime;
+            updateProgressBar(progressBar, e.target.value);
+        });
+
+        // Control de volumen manual
+        volumeBar.addEventListener('input', (e) => {
+            const vol = e.target.value / 100;
+            audio.volume = vol;
+            updateProgressBar(volumeBar, e.target.value);
+            isCrossfading = false; // Cancelar crossfade visual si se toca el volumen
+        });
+
+        // Inicialización
+        updateProgressBar(volumeBar, 100);
+        fetchLyrics();
+    </script>
+
 </body>
 </html>
