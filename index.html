@@ -14,7 +14,6 @@
             --text-secondary: rgba(255, 255, 255, 0.55);
             --bg-glass: rgba(0, 0, 0, 0.2);
             --track-color: rgba(255, 255, 255, 0.2);
-            --progress-color: #ffffff;
         }
 
         * {
@@ -26,7 +25,7 @@
         }
 
         body {
-            background-color: #111;
+            background-color: #050505;
             color: var(--text-primary);
             height: 100vh;
             overflow: hidden;
@@ -38,80 +37,83 @@
         /* Efecto de cristal multicapa */
         .background-blur {
             position: absolute;
-            top: -15%; left: -15%; right: -15%; bottom: -15%;
+            top: -20%; left: -20%; right: -20%; bottom: -20%;
             background-image: url('https://4nemxki6k8.ucarecd.net/a2435185-eada-4f17-9a8b-41889c40fbe3/pieza.jpg');
             background-size: cover;
             background-position: center;
-            filter: blur(100px) saturate(200%);
+            filter: blur(120px) saturate(250%) brightness(0.6);
             z-index: -2;
-            transform: translateZ(0); /* Aceleración por hardware */
+            transform: translateZ(0); 
+            animation: pulseBg 15s infinite alternate ease-in-out;
+        }
+
+        @keyframes pulseBg {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.05); }
         }
 
         .background-overlay {
             position: absolute;
             inset: 0;
-            background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.6) 100%);
+            background: radial-gradient(circle at 30% 50%, transparent 0%, rgba(0,0,0,0.8) 100%);
             z-index: -1;
         }
 
         .player-container {
             display: flex;
-            gap: 80px;
+            gap: 60px;
             width: 95%;
             max-width: 1400px;
-            height: 85vh;
-            padding: 40px;
+            height: 88vh;
+            padding: 50px;
             background: var(--bg-glass);
-            border-radius: 32px;
-            box-shadow: 0 40px 80px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
-            backdrop-filter: blur(40px);
-            -webkit-backdrop-filter: blur(40px);
+            border-radius: 40px;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1);
+            backdrop-filter: blur(50px);
+            -webkit-backdrop-filter: blur(50px);
         }
 
-        /* Sección Izquierda: Reproductor */
+        /* --- SECCIÓN IZQUIERDA: REPRODUCTOR --- */
         .now-playing {
             flex: 1;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            max-width: 480px;
+            max-width: 450px;
         }
 
         .artwork-wrapper {
             width: 100%;
-            border-radius: 20px;
+            border-radius: 24px;
             overflow: hidden;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
-            margin-bottom: 30px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 40px rgba(255,255,255,0.1);
+            margin-bottom: 35px;
+            position: relative;
         }
 
         .artwork-wrapper img {
             width: 100%;
             aspect-ratio: 1/1;
             object-fit: cover;
-            transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+            transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
             display: block;
         }
 
         .artwork-wrapper img:not(.playing) {
-            transform: scale(0.92);
-        }
-
-        .track-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            transform: scale(0.9);
+            filter: brightness(0.7);
         }
 
         .track-info h1 {
-            font-size: 28px;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-            margin-bottom: 6px;
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 8px;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.5);
         }
 
         .track-info h2 {
-            font-size: 20px;
+            font-size: 22px;
             font-weight: 500;
             color: var(--text-secondary);
         }
@@ -126,11 +128,10 @@
             outline: none;
             cursor: pointer;
             transition: height 0.2s;
+            margin-top: 30px;
         }
 
-        input[type="range"]:hover {
-            height: 8px;
-        }
+        input[type="range"]:hover { height: 8px; }
 
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
@@ -138,21 +139,21 @@
             height: 0;
             background: #fff;
             border-radius: 50%;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            box-shadow: 0 0 15px rgba(255,255,255,0.8);
             transition: width 0.2s, height 0.2s;
         }
 
         input[type="range"]:hover::-webkit-slider-thumb {
-            width: 16px;
-            height: 16px;
+            width: 18px;
+            height: 18px;
         }
 
         .time-info {
             display: flex;
             justify-content: space-between;
-            font-size: 13px;
+            font-size: 14px;
             color: var(--text-secondary);
-            margin-top: 10px;
+            margin-top: 12px;
             font-weight: 600;
             font-variant-numeric: tabular-nums;
         }
@@ -162,7 +163,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-top: 20px;
+            margin-top: 30px;
         }
 
         .icon-btn {
@@ -171,94 +172,122 @@
             color: var(--text-primary);
             font-size: 32px;
             cursor: pointer;
-            transition: opacity 0.2s, transform 0.1s;
+            transition: all 0.2s;
         }
 
         .icon-btn.secondary {
-            font-size: 24px;
+            font-size: 26px;
             color: var(--text-secondary);
         }
 
-        .icon-btn:active, .play-btn:active {
-            transform: scale(0.85);
-        }
+        .icon-btn:hover { color: #fff; transform: scale(1.1); }
+        .icon-btn:active, .play-btn:active { transform: scale(0.85); }
 
         .play-btn {
-            background: none;
-            border: none;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
             color: var(--text-primary);
-            font-size: 56px;
-            cursor: pointer;
-            transition: transform 0.1s;
-        }
-
-        .volume-container {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
-            gap: 15px;
-            margin-top: 40px;
-            color: var(--text-secondary);
-            font-size: 20px;
+            justify-content: center;
+            font-size: 40px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
 
-        /* Sección Derecha: Letras */
+        .play-btn:hover {
+            background: rgba(255,255,255,0.2);
+            transform: scale(1.05);
+        }
+
+        /* --- SECCIÓN DERECHA: LETRAS ÚNICAS --- */
         .lyrics-container {
-            flex: 1.2;
+            flex: 1.5;
             position: relative;
-            mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
-            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
+            /* Máscara más fuerte para difuminar los bordes superior e inferior */
+            mask-image: linear-gradient(to bottom, transparent 0%, black 25%, black 75%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 25%, black 75%, transparent 100%);
         }
 
         .lyrics-scroll {
             height: 100%;
             overflow-y: auto;
-            padding: 40vh 40px;
+            padding: 45vh 60px; /* Mucho padding para centrar siempre la línea */
             scroll-behavior: smooth;
+            perspective: 1200px; /* Profundidad 3D para las letras */
         }
 
-        .lyrics-scroll::-webkit-scrollbar {
-            display: none;
-        }
+        .lyrics-scroll::-webkit-scrollbar { display: none; }
 
         .lyric-line {
-            font-size: 36px;
-            font-weight: 700;
-            color: rgba(255, 255, 255, 0.25);
-            margin-bottom: 28px;
-            transition: color 0.5s ease, transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.5s ease;
+            position: relative;
+            font-size: 42px;
+            font-weight: 800;
+            color: rgba(255, 255, 255, 0.15);
+            margin-bottom: 40px;
+            /* Físicas de rebote (bounce) para la transición */
+            transition: all 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             transform-origin: left center;
             cursor: pointer;
-            filter: blur(2px);
-            line-height: 1.3;
+            
+            /* Estado inactivo: difuminado, pequeño e inclinado hacia atrás */
+            filter: blur(5px);
+            transform: scale(0.8) rotateX(25deg);
+            line-height: 1.2;
+            letter-spacing: -1px;
         }
 
         .lyric-line:hover {
-            color: rgba(255, 255, 255, 0.6);
-            filter: blur(0px);
+            color: rgba(255, 255, 255, 0.4);
+            filter: blur(2px);
+            transform: scale(0.9) rotateX(10deg);
         }
 
+        /* --- ESTADO ACTIVO (MAGIA VISUAL) --- */
         .lyric-line.active {
-            color: #fff;
-            transform: scale(1.08);
+            color: #ffffff;
+            /* Escala, se endereza y se mueve hacia la derecha */
+            transform: scale(1.15) rotateX(0deg) translateX(25px);
             filter: blur(0px);
+            text-shadow: 0 0 40px rgba(255, 255, 255, 0.5); /* Resplandor */
         }
 
-        @media (max-width: 900px) {
-            .player-container {
-                flex-direction: column;
-                height: 100vh;
-                overflow-y: auto;
-                border-radius: 0;
-            }
-            .lyrics-container {
-                min-height: 50vh;
-            }
+        /* Indicador visual luminoso para la línea activa */
+        .lyric-line::before {
+            content: '';
+            position: absolute;
+            left: -35px;
+            top: 15%;
+            height: 70%;
+            width: 6px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 15px #fff;
+            opacity: 0;
+            transform: scaleY(0);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .lyric-line.active::before {
+            opacity: 1;
+            transform: scaleY(1);
+        }
+
+        @media (max-width: 1000px) {
+            .player-container { flex-direction: column; height: 100vh; overflow-y: auto; border-radius: 0; padding: 30px; gap: 40px;}
+            .lyrics-container { min-height: 60vh; }
+            .lyric-line { font-size: 32px; }
+            .lyric-line.active { transform: scale(1.1) rotateX(0deg) translateX(15px); }
         }
     </style>
 </head>
 <body>
 
-    <!-- Fondo dinámico esmerilado -->
     <div class="background-blur" id="bgBlur"></div>
     <div class="background-overlay"></div>
 
@@ -269,12 +298,9 @@
                 <img id="artwork" src="https://4nemxki6k8.ucarecd.net/a2435185-eada-4f17-9a8b-41889c40fbe3/pieza.jpg" alt="Portada">
             </div>
             
-            <div class="track-header">
-                <div class="track-info">
-                    <h1 id="trackTitle">Pieza Exhibicion</h1>
-                    <h2 id="trackArtist">Luar La L, ROA & Blessd</h2>
-                </div>
-                <button class="icon-btn"><i class="ph ph-dots-three-circle"></i></button>
+            <div class="track-info">
+                <h1 id="trackTitle">Pieza Exhibicion</h1>
+                <h2 id="trackArtist">Luar La L, ROA & Blessd</h2>
             </div>
 
             <div class="progress-container">
@@ -292,25 +318,19 @@
                 <button id="nextBtn" class="icon-btn"><i class="ph-fill ph-skip-forward"></i></button>
                 <button class="icon-btn secondary"><i class="ph ph-repeat"></i></button>
             </div>
-
-            <div class="volume-container">
-                <i class="ph-fill ph-speaker-low"></i>
-                <input type="range" id="volumeBar" value="100" min="0" max="100">
-                <i class="ph-fill ph-speaker-high"></i>
-            </div>
         </section>
 
-        <!-- Letras -->
+        <!-- Letras Únicas -->
         <section class="lyrics-container">
             <div id="lyricsContent" class="lyrics-scroll">
-                <!-- Letras inyectadas dinámicamente -->
+                <!-- Letras inyectadas -->
             </div>
         </section>
     </main>
 
     <script>
-        // Configuración de Velvet Player
-        const CROSSFADE_DURATION = 12; // 12 segundos de crossfade configurados
+        // Configuración Velvet Player
+        const CROSSFADE_DURATION = 12; 
         const audioUrl = "https://4nemxki6k8.ucarecd.net/cc7f990d-914f-4836-b185-01d6bca0cc14/PiezaExhibicin_spotdownorg.mp3";
         const ttmlUrl = "https://4nemxki6k8.ucarecd.net/491cff52-7f8e-4971-acaa-c9f64d014686/PiezaExhibicin_spotdownorg.ttml";
 
@@ -318,16 +338,13 @@
         let lyricsData = [];
         let isCrossfading = false;
 
-        // Elementos del DOM
         const playPauseBtn = document.getElementById('playPauseBtn');
         const progressBar = document.getElementById('progressBar');
-        const volumeBar = document.getElementById('volumeBar');
         const currentTimeEl = document.getElementById('currentTime');
         const durationEl = document.getElementById('duration');
         const artwork = document.getElementById('artwork');
         const lyricsContent = document.getElementById('lyricsContent');
 
-        // 1. Lógica de Audio y Crossfade
         function togglePlay() {
             if (audio.paused) {
                 audio.play();
@@ -340,13 +357,11 @@
             }
         }
 
-        // Actualizar barra de progreso con gradiente
         function updateProgressBar(element, percentage) {
             element.value = percentage;
             element.style.background = `linear-gradient(to right, #fff ${percentage}%, rgba(255,255,255,0.2) ${percentage}%)`;
         }
 
-        // Formatear segundos a M:SS
         function formatTime(seconds) {
             if (isNaN(seconds)) return "0:00";
             const min = Math.floor(seconds / 60);
@@ -354,23 +369,18 @@
             return `${min}:${sec.toString().padStart(2, '0')}`;
         }
 
-        // Motor de Crossfade (Fade out al final de la pista)
         function handleCrossfade(currentTime, duration) {
             const timeLeft = duration - currentTime;
-            
-            // Si entramos en los últimos 12 segundos
             if (timeLeft <= CROSSFADE_DURATION && timeLeft > 0) {
                 isCrossfading = true;
                 const fadeMultiplier = timeLeft / CROSSFADE_DURATION;
-                const baseVolume = volumeBar.value / 100;
-                audio.volume = Math.max(0, baseVolume * fadeMultiplier);
+                audio.volume = Math.max(0, 1 * fadeMultiplier);
             } else if (isCrossfading && timeLeft > CROSSFADE_DURATION) {
                 isCrossfading = false;
-                audio.volume = volumeBar.value / 100;
+                audio.volume = 1;
             }
         }
 
-        // 2. Procesamiento de TTML (Letras)
         function parseTTMLTime(timeStr) {
             if (!timeStr) return 0;
             const parts = timeStr.split(':');
@@ -398,7 +408,6 @@
                         pElement.id = `lyric-${index}`;
                         pElement.innerText = textContent;
                         
-                        // Salto de tiempo al hacer clic en la letra
                         pElement.addEventListener("click", () => {
                             audio.currentTime = begin;
                             if(audio.paused) togglePlay();
@@ -415,11 +424,9 @@
             }
         }
 
-        // 3. Sincronización y Renderizado
         function updateLyrics(currentTime) {
             let activeIndex = -1;
             for (let i = 0; i < lyricsData.length; i++) {
-                // Margen de 0.3s para anticipar el cambio visual
                 if (currentTime + 0.3 >= lyricsData[i].time) activeIndex = i;
                 else break;
             }
@@ -430,13 +437,12 @@
                     document.querySelectorAll('.lyric-line.active').forEach(el => el.classList.remove('active'));
                     activeItem.element.classList.add('active');
                     
-                    // Scroll suave calculando el centro
+                    // Asegura que la línea siempre quede exactamente en el centro de la vista
                     activeItem.element.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }
             }
         }
 
-        // 4. Listeners de Eventos
         playPauseBtn.addEventListener('click', togglePlay);
 
         audio.addEventListener('loadedmetadata', () => {
@@ -452,25 +458,13 @@
             handleCrossfade(audio.currentTime, audio.duration);
         });
 
-        // Control de progreso manual
         progressBar.addEventListener('input', (e) => {
             const seekTime = (e.target.value / 100) * audio.duration;
             audio.currentTime = seekTime;
             updateProgressBar(progressBar, e.target.value);
         });
 
-        // Control de volumen manual
-        volumeBar.addEventListener('input', (e) => {
-            const vol = e.target.value / 100;
-            audio.volume = vol;
-            updateProgressBar(volumeBar, e.target.value);
-            isCrossfading = false; // Cancelar crossfade visual si se toca el volumen
-        });
-
-        // Inicialización
-        updateProgressBar(volumeBar, 100);
         fetchLyrics();
     </script>
-
 </body>
 </html>
