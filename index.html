@@ -75,24 +75,19 @@
            ================================================================== */
         #ambient-bg {
             position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
-            background: radial-gradient(circle at center, #111116 0%, var(--bg-deep) 100%);
+            background: var(--bg-deep);
         }
         .noise-overlay {
             position: absolute; inset: 0; z-index: 2; opacity: 0.06; mix-blend-mode: color-dodge; pointer-events: none;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
-        .orb {
-            position: absolute; border-radius: 50%; filter: blur(140px); opacity: 0.25;
-            will-change: transform, background; mix-blend-mode: screen;
-            transition: background 2s var(--ease-fluid);
+        #fluid-canvas {
+            position: absolute; inset: 0; width: 100%; height: 100%;
+            filter: blur(80px) saturate(180%);
+            opacity: 0.8;
+            pointer-events: none;
+            z-index: 1;
         }
-        .orb-1 { top: -20%; left: -20%; width: 70vw; height: 70vw; background: var(--accent-1); animation: drift 30s infinite alternate var(--ease-fluid); }
-        .orb-2 { bottom: -20%; right: -20%; width: 80vw; height: 80vw; background: var(--accent-2); animation: drift2 35s infinite alternate-reverse var(--ease-fluid); }
-        .orb-3 { top: 20%; left: 40%; width: 50vw; height: 50vw; background: var(--accent-1); opacity: 0.15; animation: drift3 25s infinite alternate var(--ease-fluid); }
-        
-        @keyframes drift { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(15%, 20%) scale(1.1); } }
-        @keyframes drift2 { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(-20%, -15%) scale(1.05); } }
-        @keyframes drift3 { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(10%, -10%) scale(1.2); } }
 
         /* ==================================================================
            APP LAYOUT
@@ -269,16 +264,15 @@
         }
         #np-fs.active { transform: translateY(0); opacity: 1; visibility: visible; }
 
-        .np-bg-wrap { position: fixed; inset: -15%; width: 130%; height: 130%; z-index: 0; pointer-events: none; }
-        .np-bg-blur { 
-            position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; 
-            filter: blur(140px) saturate(250%) brightness(0.6); opacity: 0; 
-            transition: opacity 2s ease-in-out; will-change: opacity, transform; 
-            animation: breatheBg 25s infinite alternate ease-in-out;
+        .np-bg-wrap { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+        #fluid-canvas-np {
+            position: absolute; inset: 0; width: 100%; height: 100%;
+            filter: blur(100px) saturate(200%);
+            opacity: 0.85;
+            pointer-events: none;
+            z-index: 0;
         }
-        @keyframes breatheBg { 0% { transform: scale(1) translate(0, 0); } 100% { transform: scale(1.1) translate(-2%, 2%); } }
-        .np-bg-blur.active { opacity: 1; }
-        .np-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.55); z-index: 1; }
+        .np-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.65); z-index: 1; }
         .np-grain { position: absolute; inset: 0; z-index: 2; opacity: 0.04; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none;}
 
         /* Collapse Button */
@@ -353,13 +347,9 @@
 
         /* ============================================================
            SPRING-PHYSICS LYRICS ENGINE — CSS LAYER
-           All transforms/opacity driven by JS spring integrator.
-           CSS transitions are DISABLED on lrc-line to prevent
-           mechanical ease-in-out fighting the spring engine.
            ============================================================ */
 
         .lrc-line {
-            /* Geometry */
             font-size: clamp(28px, 3.6vw, 52px);
             font-weight: 700;
             line-height: 1.42;
@@ -370,34 +360,23 @@
             white-space: normal;
             color: #fff;
             text-align: left;
-
-            /* Spring engine writes transform/opacity directly via style API
-               — NO CSS transition here so spring physics governs entirely */
             transform-origin: left center;
             will-change: transform, opacity, filter;
-
-            /* Initial state — JS will override immediately on first frame */
             opacity: 0.32;
             transform: scale(0.95) translateZ(0);
             filter: blur(0px);
         }
 
-        /* Hover nudge — overridden by spring when active */
         .lrc-line:not(.active):hover {
             opacity: 0.72 !important;
         }
 
-        /* ── WORD TOKEN: Gradient-Clip Sweep Mask ── */
+        /* WORD TOKEN */
         .lrc-word {
             display: inline;
             padding: 0;
             margin: 0;
             vertical-align: baseline;
-
-            /* --word-progress: 0.0 → 1.0, injected every rAF by JS
-               Gradient paint: leading-edge soft blur of ~14% width
-               so characters blend fluidly into the lit state.
-               Background-size > 100% lets us clip a hard stop at left. */
             background: linear-gradient(90deg,
                 rgba(255,255,255,1)   0%,
                 rgba(255,255,255,1)   calc(var(--wp, 0%) - 14%),
@@ -408,13 +387,9 @@
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-
-            /* GPU-composited paint — no layout reflows */
             will-change: background;
         }
 
-        /* Fully-sung word snaps to full-bright in a single class toggle
-           so the GPU does not need to recalculate the gradient each frame */
         .lrc-word.sung {
             background: rgba(255,255,255,1);
             -webkit-background-clip: text;
@@ -422,7 +397,6 @@
             color: transparent;
         }
 
-        /* Idle (future) word */
         .lrc-word.idle {
             background: rgba(255,255,255,0.22);
             -webkit-background-clip: text;
@@ -488,7 +462,6 @@
             .np-track-title { font-size: 22px; white-space: normal; line-height: 1.2; }
             .np-track-artist { font-size: 18px; }
             
-            /* En móvil los controles sí deben verse siempre */
             .hidden-controls { position: relative; opacity: 1; pointer-events: auto; bottom: 0; margin-top: 0; gap: 40px;}
             
             .np-right-pane { width: 100%; max-width: 400px; flex: none; height: 70vh; position: relative; margin-top: 10px; }
@@ -499,12 +472,10 @@
 </head>
 <body>
 
-    <!-- AMBIENT BACKGROUND -->
+    <!-- AMBIENT CANVAS BACKGROUND -->
     <div id="ambient-bg">
         <div class="noise-overlay"></div>
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-        <div class="orb orb-3"></div>
+        <canvas id="fluid-canvas"></canvas>
     </div>
 
     <!-- MAIN APP SHELL -->
@@ -576,7 +547,7 @@
                         <span class="hero-label">Album</span>
                         <h1 class="hero-title" id="det-album-title">Title</h1>
                         <h2 class="hero-subtitle" id="det-album-artist">Artist</h2>
-                        <div class="hero-stats" id="det-album-info">2024 • 0 Songs</div>
+                        <div class="hero-stats" id="det-album-info">2026 • 0 Songs</div>
                         <div class="hero-actions"><button class="btn-primary" onclick="playCurrentAlbum()"><i class="ph-fill ph-play"></i> Play Album</button></div>
                     </div>
                 </div>
@@ -621,10 +592,10 @@
             <div class="progress-mini-wrapper"><div class="progress-mini-fill" id="bar-fill-mini"></div></div>
             
             <div class="player-info" onclick="toggleNP()">
-                <img src="https://res.cloudinary.com/ddcbl694n/image/upload/v1776007400/Yan_Block_u0inwd.jpg" id="player-img" class="player-img" crossorigin="anonymous">
+                <img src="https://4nemxki6k8.ucarecd.net/257a4eab-8b91-4b27-93df-436a8c1acd5b/LOVE.png" id="player-img" class="player-img" crossorigin="anonymous">
                 <div class="player-meta">
-                    <div class="player-title"><span id="player-title">Not Playing</span> <div class="ai-badge" id="badge-pill">Mix</div></div>
-                    <div class="player-artist" id="player-artist">VIVETMP</div>
+                    <div class="player-title"><span id="player-title">LOVE</span> <div class="ai-badge" id="badge-pill">Mix</div></div>
+                    <div class="player-artist" id="player-artist">Clarent</div>
                 </div>
             </div>
 
@@ -656,8 +627,7 @@
     <!-- FULLSCREEN NOW PLAYING OVERLAY (APPLE TV / MUSIC MAC REPLICA) -->
     <div id="np-fs">
         <div class="np-bg-wrap">
-            <img src="" class="np-bg-blur active" id="np-bg-1" crossorigin="anonymous">
-            <img src="" class="np-bg-blur" id="np-bg-2" crossorigin="anonymous">
+            <canvas id="fluid-canvas-np"></canvas>
             <div class="np-overlay"></div>
             <div class="np-grain"></div>
         </div>
@@ -668,7 +638,7 @@
         <div class="np-layout">
             <!-- Left Pane: Info & Scrubber -->
             <div class="np-left-pane">
-                <div class="np-art-wrap" onclick="togglePlay()"><img src="" id="np-img-large" class="np-art" crossorigin="anonymous"></div>
+                <div class="np-art-wrap" onclick="togglePlay()"><img src="https://4nemxki6k8.ucarecd.net/257a4eab-8b91-4b27-93df-436a8c1acd5b/LOVE.png" id="np-img-large" class="np-art" crossorigin="anonymous"></div>
                 
                 <div class="np-info-block">
                     <div class="np-scrubber-group">
@@ -680,8 +650,8 @@
                     </div>
 
                     <div class="np-track-info-center">
-                        <h2 class="np-track-title"><span id="np-title-large">Not Playing</span></h2>
-                        <p class="np-track-artist" id="np-artist-large">VIVETMP</p>
+                        <h2 class="np-track-title"><span id="np-title-large">LOVE</span></h2>
+                        <p class="np-track-artist" id="np-artist-large">Clarent — LOVE (Single)</p>
                     </div>
                 </div>
 
@@ -710,126 +680,34 @@
         /* ==================================================================
            DATA
            ================================================================== */
-        const imageArtistUrl = "https://res.cloudinary.com/ddcbl694n/image/upload/v1776007400/Yan_Block_u0inwd.jpg";
-        const omarCourtzImg = "https://res.cloudinary.com/ddcbl694n/image/upload/v1776097822/Omar_Courtz_k4ozll.jpg";
-        const deiVImg = "https://res.cloudinary.com/ddcbl694n/image/upload/v1776099774/Dei_V_yv1pop.jpg";
-        const roaImg = "https://res.cloudinary.com/ddcbl694n/image/upload/v1776106835/ROA_slzaj5.jpg";
-        const rauwImg = "https://res.cloudinary.com/ddcbl694n/image/upload/v1776204344/Rauw_Alejandro_c8vjwi.jpg";
+        const coverImgUrl = "https://4nemxki6k8.ucarecd.net/257a4eab-8b91-4b27-93df-436a8c1acd5b/LOVE.png";
 
-        const albumsData =[ { id: "primera-musa", title: "PRIMERA MUSA", artist: "Omar Courtz", cover: omarCourtzImg, year: "2024" } ];
-
-        const cancionesData =[
-            { title: "666", artist: "Yan Block, Cris MJ, Panda Black", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1777064503/666_Yan_Block_Cris_MJ_Panda_Black_yphkaz.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776610355/666_dcyhlv.lrc" },
-            { title: "Qué Pasaría...", artist: "Rauw Alejandro, Bad Bunny", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776204387/Qu%C3%A9_Pasar%C3%ADa..._Rauw_Alejandro_Bad_Bunny_tuxday.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1778698748/Qu%C3%A9_Pasar%C3%ADa..._spotdown.org_s4rykk.ttml" },
-            { title: "Khé", artist: "Rauw Alejandro, Romeo Santos", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776204333/Kh%C3%A9_Rauw_Alejandro_Romeo_Santos_tkfssk.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776204782/Kh%C3%A9__-_Rauw_Alejandro_Romeo_Santos_dm0jsx.lrc" },
-            { title: "Tiroteo - Remix", artist: "Marc Seguí, Rauw Alejandro, Pol Granch", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776204379/Tiroteo_-_Remix_Marc_Segu%C3%AD_Rauw_Alejandro_Pol_Granch_qpe93o.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776204785/Tiroteo_-_Remix_-_Marc_Segu%C3%AD_Rauw_Alejandro_Pol_Granch_prtn3b.lrc" },
-            { title: "El Efecto", artist: "Rauw Alejandro, Chencho Corleone", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776204340/El_Efecto_Rauw_Alejandro_Chencho_Corleone_bn5caz.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776204782/El_Efecto_-_Rauw_Alejandro_Chencho_Corleone_hh5rkc.lrc" },
-            { title: "Party", artist: "Bad Bunny, Rauw Alejandro", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776204378/Party_Bad_Bunny_Rauw_Alejandro_ocmojl.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776204782/Party_-_Bad_Bunny_Rauw_Alejandro_fbrtlx.lrc" },
-            { title: "Todo De Ti", artist: "Rauw Alejandro", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776204392/Todo_De_Ti_Rauw_Alejandro_huqpqj.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776204786/Todo_De_Ti_-_Rauw_Alejandro_b9tn2v.lrc" },
-            { title: "Aquel Nap ZzZz", artist: "Rauw Alejandro", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776204373/Aquel_Nap_ZzZz_Rauw_Alejandro_kfevyv.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1777919506/Aquel_Nap_ZzZz_Rauw_Alejandro_acala4.lrc" },
-            { title: "Santa", artist: "Rvssian, Rauw Alejandro, Ayra Starr", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776204367/Santa_Rvssian_Rauw_Alejandro_Ayra_Starr_x4iral.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776204785/Santa_-_Rvssian_Rauw_Alejandro_Ayra_Starr_gonrgx.lrc" },
-            { title: "BESO", artist: "ROSALÍA, Rauw Alejandro", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776204341/BESO_ROSAL%C3%8DA_Rauw_Alejandro_xwwmtz.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776204781/BESO_-_ROSAL%C3%8DA_Rauw_Alejandro_qhcbiw.lrc" },
-            { title: "Tú Con Él", artist: "Rauw Alejandro", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776204415/T%C3%BA_Con_%C3%89l_Rauw_Alejandro_oswchd.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776204786/T%C3%BA_Con_%C3%89l_-_Rauw_Alejandro_wvzfbu.lrc" },
-            { title: "PIN", artist: "TORRRES, Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211833/PIN_TORRRES_Yan_Block_khikhb.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1777064283/PIN_TORRRES_Yan_Block_ecs22j.lrc" },
-            { title: "Mascara - Remix", artist: "Mvchoo23, K John, Hades66, Yan Block, Juhn", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211880/Mascara_-_Remix_Mvchoo23_K_John_Hades66_Yan_Block_Juhn_zywu63.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212481/Mascara_-_Remix_-_Mvchoo23_K_John_Hades66_Yan_Block_Juhn_clb4f7.lrc" },
-            { title: "VICIO MÍO", artist: "De La Rose, Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211806/VICIO_M%C3%8DO_De_La_Rose_Yan_Block_xp4sgm.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212493/VICIO_M%C3%8DO_-_De_La_Rose_Yan_Block_tt9qsl.lrc" },
-            { title: "444 - REMIX", artist: "Yan Block, De La Rose, Hades66, Ñengo Flow", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007452/444_-_REMIX_Yan_Block_De_La_Rose_Hades66_%C3%91engo_Flow_lshzau.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1778031638/444_-_REMIX_Yan_Block_De_La_Rose_Hades66_%C3%91engo_Flow_namzav.lrc" },
-            { title: "TALENTO", artist: "Yan Block, Panda Black", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007391/TALENTO_Yan_Block_Panda_Black_r4ugu2.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009576/TALENTO_s4qtf2.lrc" },
-            { title: "En Tus Sueños", artist: "Arcángel, Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211916/En_Tus_Sue%C3%B1os_Arc%C3%A1ngel_Yan_Block_g0qdo5.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212476/En_Tus_Sue%C3%B1os_-_Arc%C3%A1ngel_Yan_Block_xyfoah.lrc" },
-            { title: "YOGURCITO REMIX", artist: "Blessd, Anuel AA, Yan Block, Luar La L, Kris R., ROA", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007457/YOGURCITO_REMIX_Blessd_Anuel_AA_Yan_Block_Luar_La_L_Kris_R._ROA_ocxlgl.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1777583964/YOGURCITO_REMIX_Blessd_Anuel_AA_Yan_Block_Luar_La_L_Kris_R._ROA_1_fngard.lrc" },
-            { title: "SUERTE", artist: "Yan Block, RaiNao, Slow Jamz", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211775/SUERTE_Yan_Block_RaiNao_Slow_Jamz_zxqcge.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1777570930/SUERTE_Yan_Block_RaiNao_Slow_Jamz_1_zqfe7m.lrc" },
-            { title: "Te Colaboro - Remix", artist: "Brray, Feid, De La Rose, Yan Block, NTG", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211918/Te_Colaboro_-_Remix_Brray_Feid_De_La_Rose_Yan_Block_NTG_gemijz.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212491/Te_Colaboro_-_Remix_-_Brray_Feid_De_La_Rose_Yan_Block_NTG_mvifxs.lrc" },
-            { title: "5/3", artist: "Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211912/5_3_Yan_Block_xpbqo6.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1778697669/5_3_spotdown.org_1_wx43mr.ttml" },
-            { title: "SECUESTRO", artist: "Slayter, Yan Block, NTG", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007396/SECUESTRO_Slayter_Yan_Block_NTG_bqszzh.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776009576/SECUESTRO_m4absd.lrc" },
-            { title: "piña", artist: "Slayter, Yan Block, SOMBRA PR", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211874/pi%C3%B1a_Slayter_Yan_Block_SOMBRA_PR_muapp2.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212487/pi%C3%B1a_-_Slayter_Yan_Block_SOMBRA_PR_myh5kb.lrc" },
-            { title: "111", artist: "Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007415/111_Yan_Block_h3poua.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1777683795/111_Yan_Block_q5mjlj.lrc" },
-            { title: "Religión", artist: "Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211878/Religi%C3%B3n_Yan_Block_txwxle.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1777815839/Religi%C3%B3n_Yan_Block_m1prnn.lrc" },
-            { title: "NEVER 2 LATE", artist: "ROA, Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211844/NEVER_2_LATE_ROA_Yan_Block_jwdqma.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1778698045/NEVER_2_LATE_spotdown.org_3_bhdxyz.ttml" },
-            { title: "EXPRESSO MARTINI", artist: "Rauw Alejandro, Marconi Impara, Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007397/EXPRESSO_MARTINI_Rauw_Alejandro_Marconi_Impara_Yan_Block_ac5x3j.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1777684858/EXPRESSO_MARTINI_Rauw_Alejandro_Marconi_Impara_Yan_Block_buwbmz.lrc" },
-            { title: "Juguete", artist: "Yan Block, NTG, SAIKO, SHB", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211824/Juguete_Yan_Block_NTG_SAIKO_SHB_wysyo0.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212480/Juguete_-_Yan_Block_NTG_SAIKO_SHB_aqm31e.lrc" },
-            { title: "Epica", artist: "Caleb Calloway, iZaak, Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211915/Epica_Caleb_Calloway_iZaak_Yan_Block_b7aepf.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212477/Epica_ilc4zb.lrc" },
-            { title: "Media Hora", artist: "Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211838/Media_Hora_Yan_Block_bcvcu9.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1777816947/Media_Hora_Yan_Block_sapswf.lrc" },
-            { title: "3 Doritos", artist: "Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211784/3_Doritos_Yan_Block_lprati.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1777572465/3_Doritos_Yan_Block_vkhgxz.lrc" },
-            { title: "YO SE", artist: "Yan Block, TORRRES", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007440/YO_SE_Yan_Block_TORRRES_i8ianx.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1777920665/YO_SE_Yan_Block_TORRRES_vcuke1.lrc" },
-            { title: "WYA REMIX RED", artist: "J Abdiel, De La Rose, Yan Block, iZaak, Jay Wheeler", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007447/WYA_REMIX_RED_J_Abdiel_De_La_Rose_Yan_Block_iZaak_Jay_Wheeler_mvfmrz.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1777905183/WYA_REMIX_RED_J_Abdiel_De_La_Rose_Yan_Block_iZaak_Jay_Wheeler_x6lzou.lrc" },
-            { title: "444", artist: "Yan Block, Panda Black", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007376/444_Yan_Block_Panda_Black_upxnup.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1778634106/444_spotdown.org_j5u10v.ttml" },
-            { title: "18", artist: "Yan Block, Young Martino", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211873/18_Yan_Block_Young_Martino_wp84u6.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212471/18_-_Yan_Block_Young_Martino_ytasjo.lrc" },
-            { title: "GPS", artist: "Yan Block, Young Martino", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211911/GPS_Yan_Block_Young_Martino_cqookv.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212478/GPS_-_Yan_Block_Young_Martino_t793sb.lrc" },
-            { title: "333", artist: "Cris MJ, Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211860/333_Cris_MJ_Yan_Block_tinx2k.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1777569728/333_Cris_MJ_Yan_Block_1_ojvs8h.lrc" },
-            { title: "Mastercard", artist: "Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211838/Mastercard_Yan_Block_qy7pvf.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212482/Mastercard_-_Yan_Block_r1mbs1.lrc" },
-            { title: "VACILE", artist: "Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776007402/VACILE_Yan_Block_ytkcf9.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1778032419/VACILE_Yan_Block_rppl09.lrc" },
-            { title: "Block Freestyle", artist: "Yan Block, Hydro", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211792/Block_Freestyle_Yan_Block_Hydro_ijzutz.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212475/Block_Freestyle_-_Yan_Block_Hydro_ufftwk.lrc" },
-            { title: "IDGAF", artist: "Yan Block", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776211796/IDGAF_Yan_Block_vpoynl.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776212479/IDGAF_-_Yan_Block_qr2mqq.lrc" },
-            
-            // Omar Courtz & Dei V 
-            { title: "VeLDÁ", artist: "Bad Bunny, Omar Courtz, Dei V", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776097613/VeLD%C3%81_Bad_Bunny_Omar_Courtz_Dei_V_ipgd2p.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1777580506/VeLD%C3%81_Bad_Bunny_Omar_Courtz_Dei_V_mxlsbi.lrc" },
-            { title: "KOKO", artist: "Omar Courtz", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776097542/KOKO_Omar_Courtz_cgt5ev.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776098211/KOKO_-_Omar_Courtz_ncbgux.lrc" },
-            { title: "FOREVER TU GANTEL", artist: "Omar Courtz, Ñengo Flow", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776097535/FOREVER_TU_GANTEL__Omar_Courtz_%C3%91engo_Flow_xpvpsr.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776098211/FOREVER_TU_GANTEL_-_Omar_Courtz_%C3%91engo_Flow_ra06wk.lrc" },
-            { title: "POR SI MAÑANA NO ESTOY", artist: "Omar Courtz", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776097537/POR_SI_MA%C3%91ANA_NO_ESTOY_Omar_Courtz_tp2gce.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776098211/POR_SI_MA%C3%91ANA_NO_ESTOY_-_Omar_Courtz_dwmxn4.lrc" },
-            { title: "WO OH OH", artist: "Omar Courtz, ROA", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776097616/WO_OH_OH_Omar_Courtz_ROA_jx6uf0.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1777394915/WO_OH_OH_Omar_Courtz_ROA_oyutfi.lrc" },
-            { title: "SI ESTÁS CON ALGUIEN", artist: "Omar Courtz", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776097583/SI_EST%C3%81S_CON_ALGUIEN_Omar_Courtz_edgtiv.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1777575551/SI_EST%C3%81S_CON_ALGUIEN_Omar_Courtz_pnfyfa.lrc" },
-            { title: "L a k e n o s h i", artist: "Omar Courtz", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776097543/L_a_k_e_n_o_s_h_i_Omar_Courtz_wmb0qn.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776098211/L_a_k_e_n_o_s_h_i_-_Omar_Courtz_q2fcak.lrc" },
-            { title: "VAMOaCOCHI", artist: "Omar Courtz", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776097606/VAMOaCOCHI_Omar_Courtz_vz2ppa.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776098212/VAMOaCOCHI_-_Omar_Courtz_i4jvc9.lrc" },
-
-            // PRIMERA MUSA - ALBUM (Omar Courtz)
-            { title: "I N T R O", artist: "Omar Courtz, Kendo Kaponi", album: "primera-musa", trackNum: 1, url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776693098/I_N_T_R_O_Omar_Courtz_Kendo_Kaponi_gkyvry.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776693067/I_N_T_R_O_-_Omar_Courtz_Kendo_Kaponi_kbyn9k.lrc" },
-            { title: "G O D D E S S", artist: "Omar Courtz", album: "primera-musa", trackNum: 2, url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776693106/G_O_D_D_E_S_S_Omar_Courtz_qtpxgj.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776693067/G_O_D_D_E_S_S_-_Omar_Courtz_yyxjyw.lrc" },
-            { title: "H E A V Y", artist: "Omar Courtz", album: "primera-musa", trackNum: 3, url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776693210/H_E_A_V_Y_Omar_Courtz_vwgtsw.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776693067/H_E_A_V_Y_-_Omar_Courtz_appopi.lrc" },
-            { title: "P I E N S O E N S E X X X O", artist: "Omar Courtz", album: "primera-musa", trackNum: 4, url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776693149/P_I_E_N_S_O_E_N_S_E_X_X_X_O_Omar_Courtz_s2iypv.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776693067/P_I_E_N_S_O_E_N_S_E_X_X_X_O_-_Omar_Courtz_m23dhy.lrc" },
-            { title: "UNA NOTi", artist: "Omar Courtz", album: "primera-musa", trackNum: 5, url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776693115/UNA_NOTi_Omar_Courtz_iivygm.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776693073/UNA_NOTi_-_Omar_Courtz_hryxbi.lrc" },
-            { title: "M U S A E L E V Á", artist: "Omar Courtz", album: "primera-musa", trackNum: 6, url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776693188/M_U_S_A_E_L_E_V_%C3%81_Omar_Courtz_ayylli.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776693067/M_U_S_A_E_L_E_V_%C3%81_-_Omar_Courtz_hwmllu.lrc" },
-            { title: "DRIPPEO KBRON", artist: "Omar Courtz, Dei V", album: "primera-musa", trackNum: 7, url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776693206/DRIPPEO_KBRON_Omar_Courtz_Dei_V_t3djch.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776693067/DRIPPEO_KBRON_-_Omar_Courtz_Dei_V_cizlno.lrc" },
-            { title: "P I E N S A S E N M I", artist: "Omar Courtz, Luar La L", album: "primera-musa", trackNum: 8, url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776693195/P_I_E_N_S_A_S_E_N_M_I_Omar_Courtz_Luar_La_L_fp8ucs.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776693067/P_I_E_N_S_A_S_E_N_M_I_-_Omar_Courtz_Luar_La_L_wqufgg.lrc" },
-            { title: "P o l v o s Q u e N o S e O l v i d a n", artist: "Omar Courtz", album: "primera-musa", trackNum: 9, url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776693122/_P_o_l_v_o_s_Q_u_e_N_o_S_e_O_l_v_i_d_a_n_Omar_Courtz_gzplpb.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776693073/_P_o_l_v_o_s_Q_u_e_N_o_S_e_O_l_v_i_d_a_n_-_Omar_Courtz_vylibf.lrc" },
-            { title: "I N T E R L U D I O", artist: "Omar Courtz", album: "primera-musa", trackNum: 10, url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776693120/I_N_T_E_R_L_U_D_I_O_Omar_Courtz_lieibn.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776693067/I_N_T_E_R_L_U_D_I_O_-_Omar_Courtz_cecwdv.lrc" },
-            { title: "2 K 1 6", artist: "Omar Courtz, Bryant Myers", album: "primera-musa", trackNum: 11, url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776693212/2_K_1_6_Omar_Courtz_Bryant_Myers_izobq3.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776693067/2_K_1_6_-_Omar_Courtz_Bryant_Myers_oubfgy.lrc" },
-            { title: "S I T E G U S T A N L A S G A T A S", artist: "Omar Courtz", album: "primera-musa", trackNum: 12, url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776693108/S_I_T_E_G_U_S_T_A_N_L_A_S_G_A_T_A_S_Omar_Courtz_mg1xmu.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776693068/S_I_T_E_G_U_S_T_A_N_L_A_S_G_A_T_A_S_-_Omar_Courtz_s5ge8n.lrc" },
-            { title: "A L O C A - T", artist: "Omar Courtz", album: "primera-musa", trackNum: 13, url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776693181/A_L_O_C_A_-_T_Omar_Courtz_f4fddv.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776693067/A_L_O_C_A_-_T_-_Omar_Courtz_b8j4te.lrc" },
-            { title: "S E X P L A Y L I S T 1", artist: "Omar Courtz, Rauw Alejandro", album: "primera-musa", trackNum: 14, url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776693201/S_E_X_P_L_A_Y_L_I_S_T_1_Omar_Courtz_Rauw_Alejandro_w6wlyg.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776693068/S_E_X_P_L_A_Y_L_I_S_T_1_-_Omar_Courtz_Rauw_Alejandro_z6eqw0.lrc" },
-            { title: "Q U E V A S H A C E R H O Y", artist: "Omar Courtz, De La Rose", album: "primera-musa", trackNum: 15, url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776693152/Q_U_E_V_A_S_H_A_C_E_R_H_O_Y_Omar_Courtz_De_La_Rose_nhvsmi.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1778705537/Q_U_E_V_A_S_H_A_C_E_R_H_O_Y___spotdown.org_1_x4cksg.ttml" },
-            { title: "SERIO CON ESE Q", artist: "Omar Courtz, Anuel AA", album: "primera-musa", trackNum: 16, url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776693194/SERIO_CON_ESE_Q_Omar_Courtz_Anuel_AA_ppqcxl.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1778774100/SERIO_CON_ESE_Q_spotdown.org_1_bgordq.ttml" },
-            { title: "LUCES DE COLORES", artist: "Omar Courtz", album: "primera-musa", trackNum: 17, url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776693141/_LUCES_DE_COLORES_Omar_Courtz_lmhp7d.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776693073/_LUCES_DE_COLORES_-_Omar_Courtz_hha0wl.lrc" },
-
-            // Dei V 
-            { title: "$UELTA GATITA $UELTA", artist: "Omar Courtz, Dei V, Clarent, Tito El Bambino", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776099825/UELTA_GATITA_UELTA_Omar_Courtz_Dei_V_Clarent_Tito_El_Bambino_iljz1v.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1778086903/UELTA_GATITA_UELTA_Omar_Courtz_Dei_V_Clarent_Tito_El_Bambino_fxpcxk.lrc" },
-            { title: "Dame La Verde", artist: "Luar La L, Dei V", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776099816/Dame_La_Verde_Luar_La_L_Dei_V_sfmjtl.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1777325808/Dame_La_Verde_Luar_La_L_Dei_V_iyellt.lrc" },
-            { title: "TE CAPIE", artist: "Dei V", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776099843/TE_CAPIE_Dei_V_fbn2oi.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776100287/Te_Capie_-_Dei_V_fmr8l6.lrc" },
-            { title: "TU$$I", artist: "YOVNGCHIMI, Dei V", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776099834/TU_I_YOVNGCHIMI_Dei_V_jldeg7.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1778675325/TU_I_with_Dei_V__spotdown.org_imp5do.ttml" },
-            { title: "Narcotics", artist: "Dei V, Bryant Myers", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776099845/Narcotics_Dei_V_Bryant_Myers_dhsfml.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1778085705/Narcotics_Dei_V_Bryant_Myers_nsywqu.lrc" },
-            { title: "Toa", artist: "Dei V, De La Rose", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776099845/Toa_Dei_V_De_La_Rose_lsmwni.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776100288/Toa_with_De_La_Rose_-_Dei_V_De_La_Rose_icesv8.lrc" },
-            
-            // CANCION CON LETRA TTML ("Diabólica")
-            { title: "Diabólica", artist: "Cris MJ, Dei V", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776099792/Diab%C3%B3lica_Cris_MJ_Dei_V_vcifcn.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1778588993/Diab%C3%B3lica_spotdown.org_1_nv5fn2.ttml" },
-            
-            { title: "FLIPA", artist: "JC Reyes, Dei V", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776099817/FLIPA_JC_Reyes_Dei_V_eijnff.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776100285/FLIPA_-_JC_Reyes_Dei_V_rruxjx.lrc" },
-            { title: "Duro Ma", artist: "Bryant Myers, Dei V, SAIKO", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776099837/Duro_Ma_Bryant_Myers_Dei_V_SAIKO_hjpzc6.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776100282/Duro_Ma_-_Bryant_Myers_Dei_V_SAIKO_y0uegy.lrc" },
-
-            // ROA
-            { title: "ME GUSTAS CC", artist: "ROA", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776106828/ME_GUSTAS_CC_ROA_yswplu.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776107157/ME_GUSTAS_CC_-_ROA_qhajjh.lrc" },
-            { title: "ETA - RMX", artist: "ROA, De La Rose, Luar La L, Yan Block, Omar Courtz", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776106904/ETA_-_RMX_ROA_De_La_Rose_Luar_La_L_Yan_Block_Omar_Courtz_dxp8eb.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1776107156/ETA_-_RMX_-_ROA_De_La_Rose_Luar_La_L_Yan_Block_Omar_Courtz_vauxdo.lrc" },
-            { title: "FANTASÍA", artist: "ROA", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776106831/FANTAS%C3%8DA_ROA_nmlho5.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1778613850/FANTAS%C3%8DA_spotdown.org_nu49lq.ttml" },
-            { title: "PPC", artist: "ROA, Hades66", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776106883/PPC_ROA_Hades66_nd3bcm.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1778591865/PPC_spotdown.org_lb26or.ttml" },
-            { title: "TATE QUIETA", artist: "ROA, CDobleta", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776106896/TATE_QUIETA_ROA_CDobleta_nnb2ei.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1777306897/TATE_QUIETA_ROA_CDobleta_1_ftfhpm.lrc" },
-            { title: "Falsas Promesas Remix", artist: "Midnvght, ROA, Mora, Eladio Carrion, Clarent, Finesse", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776106856/Falsas_Promesas_Remix_Midnvght_ROA_Mora_Eladio_Carrion_Clarent_Finesse_nbxewu.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1777323972/Falsas_Promesas_Remix_Midnvght_ROA_Mora_Eladio_Carrion_Clarent_Finesse_1_x8lut0.lrc" },
-            { title: "PASIÓN Y SEXO", artist: "Kris R., ROA", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776106845/PASI%C3%93N_Y_SEXO_Kris_R._ROA_kgtazm.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1778590325/PASI%C3%93N_Y_SEXO_spotdown.org_mxlcy8.ttml" },
-            { title: "Pieza Exhibición", artist: "Luar La L, ROA, Blessd", url: "https://res.cloudinary.com/ddcbl694n/video/upload/v1776106886/Pieza_Exhibici%C3%B3n_Luar_La_L_ROA_Blessd_ptt1ly.mp3", lrc: "https://res.cloudinary.com/ddcbl694n/raw/upload/v1777574058/Pieza_Exhibici%C3%B3n_Luar_La_L_ROA_Blessd_yesedd.lrc" }
+        const albumsData = [ 
+            { id: "love-single", title: "LOVE", artist: "Clarent", cover: coverImgUrl, year: "2026" } 
         ];
 
-        const artistsData =[
-            { name: "Rauw Alejandro", img: rauwImg },
-            { name: "Yan Block", img: imageArtistUrl },
-            { name: "Omar Courtz", img: omarCourtzImg },
-            { name: "Dei V", img: deiVImg },
-            { name: "ROA", img: roaImg }
+        const cancionesData = [
+            { 
+                title: "LOVE", 
+                artist: "Clarent", 
+                url: "https://4nemxki6k8.ucarecd.net/e153e07f-fd5b-4046-ac32-e20e0234e8b3/LOVE_spotdownorg.mp3", 
+                lrc: "https://4nemxki6k8.ucarecd.net/eade5559-7e95-4a7c-8e81-1094b52e3915/LOVE_spotdownorg.ttml",
+                cover: coverImgUrl,
+                album: "love-single",
+                trackNum: 1,
+                coverLoaded: true
+            }
+        ];
+
+        const artistsData = [
+            { name: "Clarent", img: coverImgUrl }
         ];
 
         /* ==================================================================
            CORE STATE & AUDIO ENGINE
            ================================================================== */
-        let currentPlayingIndex = -1;
+        let currentPlayingIndex = 0;
         let isNPOpen = false;
-        let activeBgIndex = 1;
-        let currentAlbumOpen = null;
 
         let audio1 = new Audio(); audio1.crossOrigin = "anonymous";
         let audio2 = new Audio(); audio2.crossOrigin = "anonymous";
@@ -903,6 +781,99 @@
         function haptic() { if (navigator.vibrate) navigator.vibrate(10); }
 
         /* ==================================================================
+           LIQUID FLUID BACKROUND ENGINE
+           ================================================================== */
+        let fluidCanvas, fluidCtx;
+        let npFluidCanvas, npFluidCtx;
+        let blobs = [];
+
+        function initFluidBackground() {
+            fluidCanvas = document.getElementById('fluid-canvas');
+            fluidCtx = fluidCanvas.getContext('2d');
+            
+            npFluidCanvas = document.getElementById('fluid-canvas-np');
+            npFluidCtx = npFluidCanvas.getContext('2d');
+            
+            resizeFluidCanvas();
+            window.addEventListener('resize', resizeFluidCanvas);
+
+            // Blobs configurados para simular un fluido de lava/líquido muy viscoso y elegante
+            blobs = [
+                { x: 0, y: 0, vx: 0.15, vy: 0.12, targetRadius: 0.45, t: 0 },
+                { x: 0, y: 0, vx: -0.11, vy: 0.18, targetRadius: 0.55, t: Math.PI / 2 },
+                { x: 0, y: 0, vx: 0.08, vy: -0.15, targetRadius: 0.4, t: Math.PI },
+                { x: 0, y: 0, vx: -0.18, vy: -0.11, targetRadius: 0.5, t: Math.PI * 1.5 }
+            ];
+
+            // Coordenadas aleatorias de inicio
+            blobs.forEach((b, idx) => {
+                b.x = Math.random() * (window.innerWidth / 4);
+                b.y = Math.random() * (window.innerHeight / 4);
+            });
+
+            animateFluid();
+        }
+
+        function resizeFluidCanvas() {
+            const w = window.innerWidth / 4; // Menor resolución para mejorar rendimiento físico con blur
+            const h = window.innerHeight / 4;
+            
+            if (fluidCanvas) { fluidCanvas.width = w; fluidCanvas.height = h; }
+            if (npFluidCanvas) { npFluidCanvas.width = w; npFluidCanvas.height = h; }
+        }
+
+        function animateFluid() {
+            if (fluidCanvas && fluidCtx) {
+                drawFluid(fluidCanvas, fluidCtx);
+            }
+            if (isNPOpen && npFluidCanvas && npFluidCtx) {
+                drawFluid(npFluidCanvas, npFluidCtx);
+            }
+            requestAnimationFrame(animateFluid);
+        }
+
+        function drawFluid(canvas, ctx) {
+            // El color base oscuro de fondo se asienta sobre trails acumulativos para emular viscosidad líquida
+            ctx.fillStyle = 'rgba(5, 5, 7, 0.08)'; 
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            const w = canvas.width;
+            const h = canvas.height;
+
+            const c1 = getComputedStyle(document.documentElement).getPropertyValue('--accent-1').trim() || '#FF2E93';
+            const c2 = getComputedStyle(document.documentElement).getPropertyValue('--accent-2').trim() || '#7F49B4';
+            const c3 = getComputedStyle(document.documentElement).getPropertyValue('--accent-glow').trim() || 'rgba(255, 46, 147, 0.3)';
+
+            blobs.forEach((b, idx) => {
+                b.t += 0.0025; // Velocidad de flujo extremadamente elegante y pausada
+
+                // Movimiento dinámico orgánico de Lissajous
+                let targetX = (w / 2) + Math.sin(b.t + idx * 8) * (w * 0.35);
+                let targetY = (h / 2) + Math.cos(b.t * 0.9 + idx * 4) * (h * 0.35);
+
+                // Lerp suave hacia las coordenadas del objetivo
+                b.x += (targetX - b.x) * 0.04;
+                b.y += (targetY - b.y) * 0.04;
+
+                const rad = Math.min(w, h) * (b.targetRadius + Math.sin(b.t * 1.2) * 0.12);
+
+                let color = c1;
+                if (idx === 1) color = c2;
+                if (idx === 2) color = c3;
+                if (idx === 3) color = `rgba(${parseInt(c1.match(/\d+/g)?.[0] || 255)}, ${parseInt(c1.match(/\d+/g)?.[1] || 46)}, ${parseInt(c1.match(/\d+/g)?.[2] || 147)}, 0.45)`;
+
+                const grad = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, rad);
+                grad.addColorStop(0, color);
+                grad.addColorStop(1, 'rgba(0,0,0,0)');
+
+                ctx.beginPath();
+                ctx.arc(b.x, b.y, rad, 0, Math.PI * 2);
+                ctx.fillStyle = grad;
+                ctx.fill();
+            });
+        }
+
+        /* ==================================================================
            BACKGROUND COLOR EXTRACTION & COVERS
            ================================================================== */
         function updateCovers(imgUrl) {
@@ -911,17 +882,6 @@
             
             if (!lg.complete) lg.addEventListener('load', () => extractColor(lg), { once: true });
             else extractColor(lg);
-
-            const bg1 = document.getElementById('np-bg-1');
-            const bg2 = document.getElementById('np-bg-2');
-            
-            if (activeBgIndex === 1) {
-                bg2.src = imgUrl;
-                bg2.onload = () => { bg2.classList.add('active'); bg1.classList.remove('active'); activeBgIndex = 2; };
-            } else {
-                bg1.src = imgUrl;
-                bg1.onload = () => { bg1.classList.add('active'); bg2.classList.remove('active'); activeBgIndex = 1; };
-            }
         }
 
         function extractColor(img) {
@@ -931,19 +891,30 @@
                 cvs.width = 50; cvs.height = 50;
                 ctx.drawImage(img, 0, 0, 50, 50);
                 const d = ctx.getImageData(0, 0, 50, 50).data;
-                let r=0, g=0, b=0, c=0;
                 
-                for(let i=0; i<d.length; i+=16) {
-                    if((d[i]>15 && d[i]<240) || (d[i+1]>15 && d[i+1]<240) || (d[i+2]>15 && d[i+2]<240)) {
-                        r += d[i]; g += d[i+1]; b += d[i+2]; c++;
-                    }
+                let r1=0, g1=0, b1=0, c1=0;
+                let r2=0, g2=0, b2=0, c2=0;
+                
+                // Dividimos la muestra para extraer matices distintos (primario y secundario de la portada)
+                for(let i=0; i < d.length / 2; i+=16) {
+                    r1 += d[i]; g1 += d[i+1]; b1 += d[i+2]; c1++;
+                }
+                for(let i=d.length / 2; i < d.length; i+=16) {
+                    r2 += d[i]; g2 += d[i+1]; b2 += d[i+2]; c2++;
                 }
                 
-                if (c > 0) {
-                    r = Math.floor(r/c); g = Math.floor(g/c); b = Math.floor(b/c);
-                    document.documentElement.style.setProperty('--accent-1', `rgb(${r}, ${g}, ${b})`);
-                    document.documentElement.style.setProperty('--accent-2', `rgb(${Math.min(255, r+30)}, ${Math.max(0, g-40)}, ${Math.min(255, b+40)})`);
-                    document.documentElement.style.setProperty('--accent-glow', `rgba(${r}, ${g}, ${b}, 0.5)`);
+                if (c1 > 0 && c2 > 0) {
+                    r1 = Math.min(255, Math.floor(r1/c1) + 20); // Ligero realce de luminancia para el fluido
+                    g1 = Math.floor(g1/c1); 
+                    b1 = Math.floor(b1/c1);
+                    
+                    r2 = Math.floor(r2/c2); 
+                    g2 = Math.floor(g2/c2); 
+                    b2 = Math.min(255, Math.floor(b2/c2) + 15);
+                    
+                    document.documentElement.style.setProperty('--accent-1', `rgb(${r1}, ${g1}, ${b1})`);
+                    document.documentElement.style.setProperty('--accent-2', `rgb(${r2}, ${g2}, ${b2})`);
+                    document.documentElement.style.setProperty('--accent-glow', `rgba(${r1}, ${g1}, ${b1}, 0.5)`);
                 } else {
                     document.documentElement.style.setProperty('--accent-1', '#FF2E93');
                     document.documentElement.style.setProperty('--accent-2', '#7F49B4');
@@ -953,48 +924,17 @@
         }
 
         async function processCoverQueue() {
-            for (let i = 0; i < cancionesData.length; i++) {
-                const song = cancionesData[i];
-                if (!song.coverLoaded && !song.coverLoading) {
-                    await new Promise(resolve => {
-                        song.coverLoading = true;
-                        jsmediatags.read(song.url, {
-                            onSuccess: (t) => {
-                                if (t.tags && t.tags.picture) {
-                                    let b64 = "";
-                                    for (let j=0; j<t.tags.picture.data.length; j++) b64 += String.fromCharCode(t.tags.picture.data[j]);
-                                    const imgUrl = `data:${t.tags.picture.format};base64,${window.btoa(b64)}`;
-                                    song.cover = imgUrl; song.coverLoaded = true;
-                                    document.querySelectorAll(`.cover-song-${i}`).forEach(img => img.src = imgUrl);
-                                    if(currentPlayingIndex === i) updateCovers(imgUrl);
-                                    if(song.album && currentAlbumOpen === song.album && song.trackNum === 1) document.getElementById('det-album-img').src = imgUrl;
-                                } else song.coverLoaded = true;
-                                setTimeout(resolve, 150);
-                            },
-                            onError: () => { song.coverLoaded = true; setTimeout(resolve, 150); }
-                        });
-                    });
-                }
-            }
+            updateCovers(cancionesData[0].cover);
         }
 
         function loadSongCover(song, i) {
-            if (song.coverLoaded || song.coverLoading) return;
-            song.coverLoading = true;
-            jsmediatags.read(song.url, {
-                onSuccess: (t) => {
-                    if (t.tags && t.tags.picture) {
-                        let b64 = "";
-                        for (let j=0; j<t.tags.picture.data.length; j++) b64 += String.fromCharCode(t.tags.picture.data[j]);
-                        const imgUrl = `data:${t.tags.picture.format};base64,${window.btoa(b64)}`;
-                        song.cover = imgUrl; song.coverLoaded = true;
-                        document.querySelectorAll(`.cover-song-${i}`).forEach(img => img.src = imgUrl);
-                        if(currentPlayingIndex === i) updateCovers(imgUrl);
-                        if(song.album && currentAlbumOpen === song.album && song.trackNum === 1) document.getElementById('det-album-img').src = imgUrl;
-                    } else song.coverLoaded = true;
-                },
-                onError: () => { song.coverLoaded = true; }
-            });
+            song.coverLoaded = true;
+            document.querySelectorAll(`.cover-song-${i}`).forEach(img => img.src = song.cover);
+            if(currentPlayingIndex === i) updateCovers(song.cover);
+            if(song.album && song.trackNum === 1) {
+                const detImg = document.getElementById('det-album-img');
+                if (detImg) detImg.src = song.cover;
+            }
         }
 
         /* ==================================================================
@@ -1039,66 +979,13 @@
         }
 
         function getBestNextTrack(currIdx) {
-            const curr = cancionesData[currIdx];
-            if(curr.album) {
-                const nxt = cancionesData.findIndex(s => s.album === curr.album && s.trackNum === curr.trackNum + 1);
-                if(nxt !== -1) return nxt;
-            }
-            return (currIdx + 1) % cancionesData.length;
+            return 0; // Solo hay 1 canción
         }
 
         function startAutoMix() {
-            isCrossfading = true; ensureAudioContext();
-            fadingDeck = activeDeck; fadingAudio = activeAudio;
-            activeAudio = (activeAudio === audio1) ? audio2 : audio1;
-            activeDeck = (activeDeck === deck1) ? deck2 : deck1;
-            
-            let nextIdx = getBestNextTrack(currentPlayingIndex);
-            recentHistory.push(currentPlayingIndex);
-            if(recentHistory.length > 5) recentHistory.shift();
-            
-            let mixType = Math.random() > 0.5 ? "filterRise" : "smoothBlend";
-            let dur = 6 + (Math.random() - 0.5);
-            
-            showAutoMixBadge();
-            triggerUIForSong(nextIdx);
-            
-            activeAudio.src = cancionesData[nextIdx].url;
-            activeAudio.play().then(() => {
-                applyTransitionFX(mixType, dur);
-            }).catch(e=>{});
-            
-            setTimeout(() => {
-                if (isCrossfading && fadingAudio) {
-                    fadingAudio.pause(); fadingAudio.src = ""; isCrossfading = false;
-                    hideAutoMixBadge();
-                }
-            }, dur * 1000);
+            // Re-ejecuta la única canción existente
+            playSong(0);
         }
-
-        function applyTransitionFX(type, dur) {
-            const now = audioCtx.currentTime;
-            resetDeckFX(activeDeck);
-            activeDeck.deckGain.gain.setValueAtTime(0.001, now);
-            
-            if (type === "filterRise") {
-                fadingDeck.highpass.frequency.setValueAtTime(0, now);
-                fadingDeck.highpass.frequency.exponentialRampToValueAtTime(10000, now + dur);
-                fadingDeck.deckGain.gain.setValueAtTime(1, now);
-                fadingDeck.deckGain.gain.linearRampToValueAtTime(0.001, now + dur);
-                
-                activeDeck.lowpass.frequency.setValueAtTime(400, now);
-                activeDeck.lowpass.frequency.exponentialRampToValueAtTime(22000, now + dur);
-                activeDeck.deckGain.gain.linearRampToValueAtTime(1, now + dur);
-            } else {
-                fadingDeck.deckGain.gain.setValueAtTime(1, now);
-                fadingDeck.deckGain.gain.exponentialRampToValueAtTime(0.001, now + dur);
-                activeDeck.deckGain.gain.linearRampToValueAtTime(1, now + dur);
-            }
-        }
-
-        function showAutoMixBadge() { document.querySelectorAll('.ai-badge').forEach(b => b.classList.add('active')); }
-        function hideAutoMixBadge() { document.querySelectorAll('.ai-badge').forEach(b => b.classList.remove('active')); }
 
         /* ==================================================================
            UI RENDERING & NAVIGATION
@@ -1145,9 +1032,8 @@
 
                 let badge = '';
                 if (type === 'song') {
-                    if(!item.cover) item.cover = imageArtistUrl;
+                    if(!item.cover) item.cover = coverImgUrl;
                     if(currentPlayingIndex === realIndex) badge = `<div class="card-badge playing">PLAYING</div>`;
-                    else if(index < 2 && !containerId.includes('search')) badge = `<div class="card-badge">NEW</div>`;
                 }
 
                 card.innerHTML = `
@@ -1170,7 +1056,6 @@
 
         function openAlbumDetail(albumId) {
             const album = albumsData.find(a => a.id === albumId); if(!album) return;
-            currentAlbumOpen = albumId;
             document.getElementById('det-album-title').innerText = album.title;
             document.getElementById('det-album-artist').innerText = album.artist;
             document.getElementById('det-album-img').src = album.cover;
@@ -1202,9 +1087,7 @@
         }
 
         function playCurrentAlbum() {
-            if(!currentAlbumOpen) return;
-            const idx = cancionesData.findIndex(s => s.album === currentAlbumOpen && s.trackNum === 1);
-            if(idx !== -1) playSong(idx);
+            playSong(0);
         }
 
         function openArtistDetail(name, img) {
@@ -1221,16 +1104,9 @@
                 document.getElementById('title-artist-albums').style.display = 'none'; document.getElementById('grid-artist-albums').style.display = 'none';
             }
 
-            let top10 = songs.slice(0, 10), latest = songs.filter(s => !s.album).slice(0, 1), singles = songs.filter(s => !s.album).slice(1);
-            if (name === "Yan Block") {
-                latest =[songs.find(s => s.title === "666")];
-                const top10Titles =["YOGURCITO REMIX", "WYA REMIX RED", "444 - REMIX", "TALENTO", "EXPRESSO MARTINI", "111", "VACILE", "SECUESTRO", "YO SE", "444"];
-                top10 = songs.filter(s => top10Titles.includes(s.title)); singles = songs.filter(s => s.title !== "666");
-            }
-            
-            renderGrid(top10, 'grid-artist-top', 'song');
-            renderGrid(latest, 'grid-artist-latest', 'song');
-            renderGrid(singles, 'grid-artist-singles', 'song');
+            renderGrid(songs, 'grid-artist-top', 'song');
+            renderGrid(songs, 'grid-artist-latest', 'song');
+            renderGrid([], 'grid-artist-singles', 'song');
 
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
             document.getElementById('view-artist-detail').classList.add('active');
@@ -1263,12 +1139,8 @@
            ================================================================== */
         function playSong(idx) {
             ensureAudioContext(); haptic();
-            if(isCrossfading && fadingAudio) { fadingAudio.pause(); fadingAudio.src = ""; fadingAudio = null; isCrossfading = false; hideAutoMixBadge(); }
+            if(isCrossfading && fadingAudio) { fadingAudio.pause(); fadingAudio.src = ""; fadingAudio = null; isCrossfading = false; }
             activeAudio.pause();
-            
-            if(currentPlayingIndex !== -1 && !recentHistory.includes(currentPlayingIndex)) {
-                recentHistory.push(currentPlayingIndex); if(recentHistory.length > 5) recentHistory.shift();
-            }
             
             resetDeckFX(activeDeck); triggerUIForSong(idx);
             
@@ -1283,14 +1155,12 @@
             document.querySelectorAll(`.track-row-${idx}`).forEach(el => el.classList.add('active'));
             
             currentPlayingIndex = idx; activeLyricIndex = -1; const song = cancionesData[idx];
-            updateCovers(song.cover || imageArtistUrl);
+            updateCovers(song.cover);
             
-            const albumName = song.album ? (albumsData.find(a => a.id === song.album)?.title || "Single") : "Single";
-
             document.getElementById('player-title').innerText = song.title;
             document.getElementById('player-artist').innerText = song.artist;
             document.getElementById('np-title-large').innerText = song.title;
-            document.getElementById('np-artist-large').innerText = `${song.artist} — ${albumName}`;
+            document.getElementById('np-artist-large').innerText = `${song.artist} — Single`;
             
             fetchLyrics(song.lrc);
         }
@@ -1303,8 +1173,8 @@
             else { activeAudio.pause(); setPlayIcon(false); }
         }
 
-        function nextSong() { haptic(); playSong((currentPlayingIndex + 1) % cancionesData.length); }
-        function prevSong() { haptic(); playSong((currentPlayingIndex - 1 + cancionesData.length) % cancionesData.length); }
+        function nextSong() { haptic(); playSong(0); }
+        function prevSong() { haptic(); playSong(0); }
         
         function setPlayIcon(playing) {
             const icon = playing ? "ph-fill ph-pause" : "ph-fill ph-play";
@@ -1323,56 +1193,45 @@
         function setVolumeLevel(vol) {
             if(vol < 0) vol = 0; if(vol > 1) vol = 1; globalVolume = vol;
             document.getElementById('vol-fill-desk').style.width = `${vol*100}%`;
-            document.getElementById('vol-fill-np').style.width = `${vol*100}%`;
             if(audioCtx && masterGain) masterGain.gain.linearRampToValueAtTime(vol, audioCtx.currentTime + 0.1); else activeAudio.volume = vol;
         }
 
         function toggleNP() {
             haptic(); isNPOpen = !isNPOpen;
             const np = document.getElementById('np-fs'); const app = document.getElementById('app-wrapper');
-            if (isNPOpen) { np.classList.add('active'); app.classList.add('scaled'); } 
-            else { np.classList.remove('active'); app.classList.remove('scaled'); }
+            if (isNPOpen) { 
+                np.classList.add('active'); 
+                app.classList.add('scaled'); 
+                resizeFluidCanvas(); 
+            } 
+            else { 
+                np.classList.remove('active'); 
+                app.classList.remove('scaled'); 
+            }
         }
 
         /* ==================================================================
            LYRICS ENGINE — SPRING-PHYSICS + SUB-MS TIMING
            ================================================================== */
-
-        /* ── Parsed lyrics store ── */
         let parsedLyrics = [];
         let activeLyricIndex = -1;
 
-        /* ── Sub-millisecond timing state ──
-           We anchor to audioCtx.currentTime (hardware clock) and
-           extrapolate with performance.now() between audio callbacks.
-           This eliminates the ~250ms jitter of the native timeupdate event. */
-        let _anchorAudioTime = 0;       // last known audio position (seconds)
-        let _anchorPerfTime  = 0;       // performance.now() at that anchor
-        let _lastRawTime     = -1;      // detect real audio time changes
+        let _anchorAudioTime = 0;       
+        let _anchorPerfTime  = 0;       
+        let _lastRawTime     = -1;      
 
-        /* ── Spring-physics scroll engine ──
-           Each lrc-line has its own spring integrator so that all
-           lines can animate simultaneously (active zooms in, others
-           damp out) without fighting a single shared lerp. */
+        const SPRING_K   = 170;   
+        const SPRING_D   = 26;    
+        const SPRING_M   = 1;     
+        const SPRING_DT  = 1/120; 
 
-        // Spring profile: Stiffness=170, Damping=26, Mass=1
-        const SPRING_K   = 170;   // N/m  — how strongly it pulls to target
-        const SPRING_D   = 26;    // Ns/m — viscous friction
-        const SPRING_M   = 1;     // kg   — mass (normalised to 1)
-        const SPRING_DT  = 1/120; // fixed physics timestep (120 fps safe)
-
-        /* Per-line spring state — allocated when DOM is built */
         let linePhysics = [];
-
-        /* ── Scroll spring (single integrator for the scroller) ── */
         let scrollSpring = { pos: 0, vel: 0, target: 0 };
 
-        /* ── User-scroll detection & re-engagement ── */
         let isUserScrolling  = false;
         let scrollTimeout    = null;
-        const USER_SCROLL_GRACE = 3000; // ms before auto-scroll re-engages
+        const USER_SCROLL_GRACE = 3000; 
 
-        /* ── Timing accumulator for fixed-step physics ── */
         let _physicsAccum = 0;
         let _lastRafTime  = 0;
 
@@ -1501,11 +1360,10 @@
 
                 container.innerHTML = ""; if(!parsedLyrics.length) throw new Error();
                 
-                /* Allocate per-line spring state */
                 linePhysics = parsedLyrics.map(() => ({
-                    scalePos: 0.95, scaleVel: 0,   // target: 1.0 when active, 0.95 inactive
-                    opacPos:  0.32, opacVel:  0,   // target: 1.0 active, 0.32 inactive
-                    blurPos:  0.8,  blurVel:  0,   // target: 0 active, 0.8 inactive
+                    scalePos: 0.95, scaleVel: 0,   
+                    opacPos:  0.32, opacVel:  0,   
+                    blurPos:  0.8,  blurVel:  0,   
                 }));
 
                 parsedLyrics.forEach((l, lineIdx) => {
@@ -1535,25 +1393,21 @@
                     
                     l.el = div; container.appendChild(div);
 
-                    /* Apply initial spring state to DOM immediately */
                     const sp = linePhysics[lineIdx];
                     div.style.opacity   = sp.opacPos;
                     div.style.transform = `scale(${sp.scalePos}) translateZ(0)`;
                     div.style.filter    = `blur(${sp.blurPos}px)`;
                 });
                 
-                /* Reset scroll spring to top */
                 scrollSpring = { pos: 0, vel: 0, target: 0 };
                 const sc = document.getElementById('lyrics-scroller');
                 sc.scrollTop = 0;
 
-                /* User-scroll listeners — detach spring for grace period */
                 const setManual = () => { 
                     isUserScrolling = true; 
                     clearTimeout(scrollTimeout); 
                     scrollTimeout = setTimeout(() => { isUserScrolling = false; }, USER_SCROLL_GRACE); 
                 };
-                /* Remove old listeners before adding new ones */
                 sc.removeEventListener('wheel',     setManual);
                 sc.removeEventListener('touchmove', setManual);
                 sc.addEventListener('wheel',     setManual, {passive: true});
@@ -1562,11 +1416,6 @@
             } catch(e) { container.innerHTML = "<div style='height:100%; display:flex; align-items:center; justify-content:center;'><p style='color:rgba(255,255,255,0.3); font-size:32px; font-weight:800;'>Lyrics Unavailable</p></div>"; }
         }
 
-        /* ================================================================
-           SPRING INTEGRATOR — single-step semi-implicit Euler
-           Advances one SPRING_DT tick for a 1-D spring/mass/damper.
-           Returns { pos, vel }
-           ================================================================ */
         function springStep(pos, vel, target) {
             const force = -SPRING_K * (pos - target) - SPRING_D * vel;
             const acc   = force / SPRING_M;
@@ -1575,7 +1424,6 @@
             return { pos: newPos, vel: newVel };
         }
 
-        /* Advance all per-line spring integrators by `dt` seconds */
         function tickLinePhysics(dt, activeIdx) {
             if(!parsedLyrics.length || !linePhysics.length) return;
             _physicsAccum += dt;
@@ -1584,11 +1432,11 @@
                 for(let i = 0; i < linePhysics.length; i++) {
                     const sp = linePhysics[i];
                     const isActive = (i === activeIdx);
-                    // Targets
+                    
                     const tScale = isActive ? 1.08 : 0.95;
                     const tOpac  = isActive ? 1.0  : (i < activeIdx ? 0.28 : 0.32);
                     const tBlur  = isActive ? 0.0  : (i < activeIdx ? 0.6  : 0.7);
-                    // Integrate
+                    
                     let r;
                     r = springStep(sp.scalePos, sp.scaleVel, tScale);
                     sp.scalePos = r.pos; sp.scaleVel = r.vel;
@@ -1600,7 +1448,6 @@
             }
         }
 
-        /* Apply computed spring values to DOM — NO style reads, write-only */
         function flushLinePhysics() {
             for(let i = 0; i < linePhysics.length; i++) {
                 const el = parsedLyrics[i]?.el;
@@ -1612,24 +1459,16 @@
             }
         }
 
-        /* ================================================================
-           updateKaraoke — called every rAF with sub-ms interpolated time
-           cur: seconds (float, extrapolated from AudioContext clock)
-           dt:  frame delta in seconds
-           ================================================================ */
         function updateKaraoke(cur, dt) {
             if(!parsedLyrics.length) return;
             
-            /* ── 1. Find active line index ── */
             let nIdx = -1;
             for(let i = 0; i < parsedLyrics.length; i++) {
                 if(cur >= parsedLyrics[i].time) nIdx = i;
                 else break;
             }
 
-            /* ── 2. Line changed → update class names & target scroll ── */
             if(nIdx !== activeLyricIndex) {
-                /* Reset classes for all lines so CSS hover works */
                 parsedLyrics.forEach((l, i) => {
                     if(!l.el) return;
                     l.el.className = i < nIdx  ? 'lrc-line passed'
@@ -1638,7 +1477,6 @@
                 });
                 activeLyricIndex = nIdx;
 
-                /* Update scroll spring target */
                 if(nIdx >= 0 && !isUserScrolling) {
                     const sc = document.getElementById('lyrics-scroller');
                     const el = parsedLyrics[nIdx].el;
@@ -1647,13 +1485,9 @@
                 }
             }
 
-            /* ── 3. Advance spring physics ── */
             tickLinePhysics(dt, nIdx);
-
-            /* ── 4. Flush spring values to DOM ── */
             flushLinePhysics();
 
-            /* ── 5. Advance scroll spring (separate integrator) ── */
             if(!isUserScrolling && nIdx >= 0) {
                 const sc = document.getElementById('lyrics-scroller');
                 let sr = springStep(scrollSpring.pos, scrollSpring.vel, scrollSpring.target);
@@ -1662,25 +1496,18 @@
                 sc.scrollTop = scrollSpring.pos;
             }
 
-            /* ── 6. Word-by-word gradient-clip sweep ── */
             if(nIdx < 0) return;
             const line = parsedLyrics[nIdx];
 
-            /* Also repaint one line ahead so first word of next line
-               does not flicker on the transition frame */
-            const paintLines = nIdx < parsedLyrics.length - 1
-                ? [nIdx, nIdx + 1]
-                : [nIdx];
+            const paintLines = nIdx < parsedLyrics.length - 1 ? [nIdx, nIdx + 1] : [nIdx];
 
             for(const li of paintLines) {
                 const ln = parsedLyrics[li];
                 ln.words.forEach(w => {
                     if(!w.el) return;
 
-                    /* Compute raw progress for this word */
                     let raw;
                     if(cur >= w.time + w.dur) {
-                        /* Fully sung — snap to .sung class, clear custom prop */
                         if(!w._sung) {
                             w._sung = true;
                             w.el.style.removeProperty('--wp');
@@ -1690,9 +1517,7 @@
                     } else if(cur >= w.time) {
                         raw = w.dur > 0 ? (cur - w.time) / w.dur : 1;
                     } else {
-                        /* Future word */
                         if(w._sung) {
-                            /* Seek backwards — reset */
                             w._sung = false;
                             w.el.className = 'lrc-word idle';
                             w.el.style.removeProperty('--wp');
@@ -1700,10 +1525,6 @@
                         return;
                     }
 
-                    /* Word is active — set gradient CSS custom property.
-                       --wp drives the background linear-gradient in CSS.
-                       Multiply by 115% so the sweep fully exits the glyph
-                       before the word is flagged as "sung". */
                     w._sung = false;
                     w.el.className = 'lrc-word';
                     const wp = Math.min(115, raw * 115);
@@ -1711,7 +1532,6 @@
                 });
             }
 
-            /* Mark passed lines — all words fully painted */
             for(let i = 0; i < nIdx; i++) {
                 parsedLyrics[i].words.forEach(w => {
                     if(!w.el || w._sung) return;
@@ -1721,7 +1541,6 @@
                 });
             }
 
-            /* Reset future lines (handles seek-back) */
             for(let i = nIdx + 1; i < parsedLyrics.length; i++) {
                 parsedLyrics[i].words.forEach(w => {
                     if(!w.el || !w._sung) return;
@@ -1748,7 +1567,6 @@
             if(activeAudio.duration && !isNaN(activeAudio.duration)) {
                 let cur = activeAudio.currentTime; 
                 
-                // Extrapolación robusta de 60fps que previene saltos hacia atrás
                 const now = performance.now();
                 if (cur !== lastAudioTime) { 
                     lastAudioTime = cur; 
@@ -1774,16 +1592,14 @@
                 checkAutoMix();
                 
                 if(isNPOpen) { 
-                    // Anticipación visual de 100ms para contrarrestar el LERP y que golpee al mismo tiempo que la voz
                     const visualTime = cur + 0.1;
-                    updateKaraoke(visualTime); 
+                    updateKaraoke(visualTime, 1/60); 
 
                     const sc = document.getElementById('lyrics-scroller');
                     if (isUserScrolling) { currentScrollY = sc.scrollTop; } 
                     else {
                         const scrollDiff = targetScrollY - currentScrollY;
                         if (Math.abs(scrollDiff) > 0.5) {
-                            // Fricción bajada a 0.05 para deslizamiento vertical perfecto y suave
                             currentScrollY += scrollDiff * 0.05;
                             sc.scrollTop = currentScrollY;
                         }
@@ -1831,9 +1647,11 @@
            INITIALIZATION
            ================================================================== */
         function init() {
-            renderGrid(cancionesData.filter(s => !s.album), 'grid-songs', 'song');
+            renderGrid(cancionesData, 'grid-songs', 'song');
             renderGrid(albumsData, 'grid-albums', 'album');
             renderGrid(artistsData, 'grid-artists', 'artist');
+            
+            initFluidBackground();
             
             document.getElementById('search-input').addEventListener('input', handleSearch);
             document.body.addEventListener('click', ensureAudioContext, { once: true });
@@ -1847,7 +1665,9 @@
             
             setupGestures();
             document.getElementById('vol-fill-desk').style.width = `${globalVolume*100}%`;
-            document.getElementById('vol-fill-np').style.width = `${globalVolume*100}%`;
+            
+            // Cargar por defecto la primera canción
+            triggerUIForSong(0);
         }
 
         window.onload = init;
