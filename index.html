@@ -141,7 +141,7 @@
             width: min(44vw, 680px);
             aspect-ratio: 16/9;
             height: auto;
-            z-index: 110; /* Elevado por encima del Now Playing, pero debajo de controles */
+            z-index: 110; 
             border: 8px solid #141416;
             border-radius: 16px;
             box-shadow: 0 30px 100px rgba(0,0,0,0.9), 0 0 80px var(--accent-glow);
@@ -149,7 +149,20 @@
             pointer-events: auto;
         }
 
-        /* Floating TV HUD capsule (Inspired by input_file_0.png bottom-left music overlay) */
+        /* State 3: Fullscreen Video Mode (Clean backdrop, HUD visible) */
+        #video-stage.fullscreen-video {
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 105; 
+            filter: blur(0) brightness(1.0) saturate(100%);
+            border-radius: 0;
+            border: 0 solid transparent;
+            box-shadow: none;
+            pointer-events: auto;
+        }
+
+        /* Floating TV HUD capsule (Inspired by input_file_0.png bottom-left cover banner) */
         .tv-hud {
             position: absolute;
             bottom: 16px;
@@ -170,7 +183,8 @@
             transform: translateY(10px);
             transition: all 0.6s var(--ease-cinematic);
         }
-        #video-stage.maximized .tv-hud {
+        #video-stage.maximized .tv-hud,
+        #video-stage.fullscreen-video .tv-hud {
             opacity: 1;
             transform: translateY(0);
             pointer-events: auto;
@@ -260,11 +274,6 @@
         .view-section { display: none; flex-direction: column; width: 100%; max-width: 1400px; margin: 0 auto; }
         .view-section.active { display: flex; animation: viewEnter 0.7s var(--ease-snappy) forwards; }
         @keyframes viewEnter { 0% { opacity: 0; transform: translateY(30px) scale(0.98); filter: blur(10px); } 100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); } }
-
-        .page-header { margin-bottom: 56px; position: relative; }
-        .page-header h1 { font-family: var(--font-display); font-size: 64px; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 12px; line-height: 1.1; background: linear-gradient(to right, #ffffff, #a0a0a0); -webkit-background-clip: text; color: transparent; }
-        .page-header p { font-size: 18px; color: var(--text-secondary); font-weight: 500; letter-spacing: -0.01em; }
-        .section-title { font-family: var(--font-display); font-size: 28px; font-weight: 700; letter-spacing: -0.02em; margin: 56px 0 32px; display: flex; align-items: center; justify-content: space-between; }
 
         .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 32px; width: 100%; }
         
@@ -377,14 +386,43 @@
         }
         #np-fs.active { transform: translateY(0); opacity: 1; visibility: visible; }
 
+        .np-bg-wrap { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+        #fluid-canvas-np {
+            position: absolute; inset: 0; width: 100%; height: 100%;
+            filter: blur(80px) saturate(240%);
+            opacity: 0.95;
+            pointer-events: none;
+            z-index: 0;
+            transform: scale(1.25); 
+        }
+        .np-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.65); z-index: 1; }
+        .np-grain { position: absolute; inset: 0; z-index: 2; opacity: 0.04; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none;}
+
+        .btn-lyrics-toggle {
+            position: absolute; top: 40px; right: 40px; height: 44px;
+            padding: 0 20px;
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 100px;
+            cursor: pointer; z-index: 120;
+            display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600;
+            color: rgba(255,255,255,0.7); transition: all 0.3s var(--ease-snappy); outline: none;
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+        }
+        .btn-lyrics-toggle:hover { color: #fff; transform: scale(1.05); background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.2); }
+        .btn-lyrics-toggle.active {
+            background: var(--accent-1); border-color: var(--accent-1); color: #fff;
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
         .np-layout { 
             position: relative; z-index: 3; display: flex; width: 100%; height: 100%; 
             max-width: 1600px; padding: 0 4vw; gap: 4vw; margin: 0 auto; align-items: center; justify-content: center;
+            transition: all 0.6s var(--ease-cinematic);
         }
         
         .np-left-pane {
             flex: 0 0 45%; display: flex; flex-direction: column; justify-content: flex-end; gap: 24px; position: relative;
             height: 100%; padding-bottom: 80px;
+            transition: all 0.6s var(--ease-cinematic);
         }
 
         /* Widescreen TV placeholder box to preserve layout grid */
@@ -393,6 +431,7 @@
             aspect-ratio: 16/9;
             background: transparent;
             margin-bottom: 24px;
+            transition: all 0.6s var(--ease-cinematic);
         }
 
         .np-info-block { display: flex; flex-direction: column; gap: 16px; width: 100%; }
@@ -418,6 +457,7 @@
             max-width: 700px;
             mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,1) 15%, rgba(0,0,0,1) 85%, transparent 100%);
             -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,1) 15%, rgba(0,0,0,1) 85%, transparent 100%);
+            transition: all 0.6s var(--ease-cinematic);
         }
         .lyrics-scroll-area {
             position: relative; height: 100%; overflow-y: auto; overflow-x: hidden; 
@@ -425,63 +465,30 @@
         }
         .lyrics-scroll-area::-webkit-scrollbar { display: none; }
 
-        /* ============================================================
-           SPRING-PHYSICS LYRICS ENGINE — CSS LAYER
-           ============================================================ */
-
-        .lrc-line {
-            font-size: clamp(28px, 3.6vw, 52px);
-            font-weight: 700;
-            line-height: 1.42;
-            letter-spacing: -0.01em;
-            margin-bottom: 28px;
-            cursor: pointer;
-            word-wrap: break-word;
-            white-space: normal;
-            color: #fff;
-            text-align: left;
-            transform-origin: left center;
-            will-change: transform, opacity, filter;
-            opacity: 0.32;
-            transform: scale(0.95) translateZ(0);
-            filter: blur(0px);
+        /* ==================================================================
+           LYRICS TOGGLE ADAPTIVE CLASSES
+           ================================================================== */
+        #np-fs.no-lyrics .np-right-pane {
+            opacity: 0;
+            pointer-events: none;
+            transform: translateX(40px);
         }
-
-        .lrc-line:not(.active):hover {
-            opacity: 0.72 !important;
+        #np-fs.no-lyrics .np-left-pane {
+            flex: 0 0 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            align-items: center;
+            justify-content: flex-end;
+            padding-bottom: 60px;
+            z-index: 120;
+            pointer-events: none;
         }
-
-        /* WORD TOKEN */
-        .lrc-word {
-            display: inline;
-            padding: 0;
-            margin: 0;
-            vertical-align: baseline;
-            background: linear-gradient(90deg,
-                rgba(255,255,255,1)   0%,
-                rgba(255,255,255,1)   calc(var(--wp, 0%) - 14%),
-                rgba(255,255,255,0.55) calc(var(--wp, 0%) - 2%),
-                rgba(255,255,255,0.22) var(--wp, 0%),
-                rgba(255,255,255,0.22) 100%
-            );
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            will-change: background;
+        #np-fs.no-lyrics .np-left-pane .np-info-block,
+        #np-fs.no-lyrics .np-left-pane .np-main-controls {
+            pointer-events: auto; /* Permite clicks solo en los controles */
         }
-
-        .lrc-word.sung {
-            background: rgba(255,255,255,1);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
-        .lrc-word.idle {
-            background: rgba(255,255,255,0.22);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
+        #np-fs.no-lyrics .tv-placeholder-box {
+            display: none;
         }
 
         /* ==================================================================
@@ -533,6 +540,9 @@
                 background: rgba(255,255,255,0.4); border: none; cursor: pointer; z-index: 10;
                 display: block; transition: 0.3s;
             }
+            .btn-lyrics-toggle {
+                top: 24px; right: 24px; height: 38px; padding: 0 12px; font-size: 12px;
+            }
             
             .np-layout { 
                 flex-direction: column; padding: 52% 8vw 40px; gap: 32px; 
@@ -541,12 +551,16 @@
             .np-left-pane { max-width: 100%; width: 100%; gap: 16px; flex: none; align-items: center; padding-bottom: 0; }
             
             .tv-placeholder-box {
-                display: none; /* Ocultamos el marcador en móvil ya que el TV se posiciona de forma fija arriba */
+                display: none; 
             }
             
             .np-right-pane { width: 100%; max-width: 400px; flex: none; height: 50vh; position: relative; margin-top: 10px; }
             .lyrics-scroll-area { padding: 10vh 0 30vh 0; }
             .lrc-line { font-size: 30px; margin-bottom: 22px; }
+
+            #np-fs.no-lyrics .np-layout {
+                padding-top: 50vh;
+            }
         }
     </style>
 </head>
@@ -657,8 +671,9 @@
         </main>
     </div>
 
-    <!-- SHARED VIDEO STAGE CONTAINER -->
+    <!-- CINEMATIC VIDEO DISPLAYSTAGE -->
     <div id="video-stage" class="minimized">
+        <!-- Background loop videos (kept fully muted for synchronization safety) -->
         <video id="web-video-1" crossorigin="anonymous" playsinline loop muted></video>
         <video id="web-video-2" crossorigin="anonymous" playsinline loop muted></video>
         
@@ -671,6 +686,10 @@
             </div>
         </div>
     </div>
+
+    <!-- HIDDEN AUDIO ELEMENTS (Saves data & maintains high-fidelity audio streams) -->
+    <audio id="web-audio-1" crossorigin="anonymous"></audio>
+    <audio id="web-audio-2" crossorigin="anonymous"></audio>
 
     <!-- MOBILE BOTTOM NAV -->
     <nav class="mobile-nav">
@@ -726,12 +745,18 @@
         </div>
         
         <button class="btn-collapse" onclick="toggleNP()"><i class="ph ph-x"></i></button>
+        
+        <!-- Lyrics toggle button -->
+        <button class="btn-lyrics-toggle active" onclick="toggleLyricsMode()">
+            <i class="ph-fill ph-microphone-stage" id="lyrics-toggle-icon"></i>
+            <span id="lyrics-toggle-text">Lyrics</span>
+        </button>
+
         <button class="btn-collapse-mob" onclick="toggleNP()"></button>
 
         <div class="np-layout">
-            <!-- Left Pane: Info, TV screen and Main Scrubber/Controls -->
+            <!-- Left Pane: Info, TV screen spacing and Main Scrubber/Controls -->
             <div class="np-left-pane">
-                <!-- TV Placeholder Box holds spacing for fixed element -->
                 <div class="tv-placeholder-box"></div>
                 
                 <div class="np-info-block">
@@ -743,7 +768,6 @@
                         <div class="scrubber-bg" onclick="seek(event, this)"><div class="scrubber-fill" id="bar-fill-np"></div></div>
                     </div>
 
-                    <!-- Hidden text fields so we don't duplicate title/artist visually from the TV HUD -->
                     <div class="np-track-info-center" style="display:none;">
                         <h2 class="np-track-title"><span id="np-title-large">Not Playing</span></h2>
                         <p class="np-track-artist" id="np-artist-large">Clarent</p>
@@ -818,9 +842,11 @@
            ================================================================== */
         let currentPlayingIndex = 0;
         let isNPOpen = false;
+        let lyricsModeActive = true;
 
+        let audio1, audio2;
         let video1, video2;
-        let activeAudio, fadingAudio, isCrossfading = false, mixTimingHumanized = 0;
+        let activeAudio, activeVideo, fadingAudio, isCrossfading = false, mixTimingHumanized = 0;
         let audioCtx, masterGain, masterCompressor, analyser, deck1, deck2, activeDeck, fadingDeck;
         let globalVolume = 0.75;
         let lastAudioTime = 0;
@@ -852,8 +878,8 @@
             masterGain.connect(analyser);
             analyser.connect(audioCtx.destination);
             
-            deck1 = createDeck(video1);
-            deck2 = createDeck(video2);
+            deck1 = createDeck(audio1);
+            deck2 = createDeck(audio2);
             activeDeck = deck1;
         }
 
@@ -986,8 +1012,10 @@
         function startAutoMix() {
             isCrossfading = true; ensureAudioContext();
             fadingDeck = activeDeck; fadingAudio = activeAudio;
+            let fadingVideo = activeVideo;
             
-            activeAudio = (activeAudio === video1) ? video2 : video1;
+            activeAudio = (activeAudio === audio1) ? audio2 : audio1;
+            activeVideo = (activeVideo === video1) ? video2 : video1;
             activeDeck = (activeDeck === deck1) ? deck2 : deck1;
             
             let nextIdx = getBestNextTrack(currentPlayingIndex);
@@ -1001,17 +1029,24 @@
             
             video1.classList.remove('active-video');
             video2.classList.remove('active-video');
-            activeAudio.classList.add('active-video');
+            activeVideo.classList.add('active-video');
             
-            activeAudio.src = cancionesData[nextIdx].videoUrl;
+            activeAudio.src = cancionesData[nextIdx].url;
             activeAudio.load();
+
+            activeVideo.src = cancionesData[nextIdx].videoUrl;
+            activeVideo.load();
+            
             activeAudio.play().then(() => {
+                activeVideo.play().catch(e=>{});
                 applyTransitionFX(mixType, dur);
             }).catch(e=>{});
             
             setTimeout(() => {
                 if (isCrossfading && fadingAudio) {
-                    fadingAudio.pause(); fadingAudio.src = ""; isCrossfading = false;
+                    fadingAudio.pause(); fadingAudio.src = ""; 
+                    if (fadingVideo) fadingVideo.pause();
+                    isCrossfading = false;
                 }
             }, dur * 1000);
         }
@@ -1180,6 +1215,7 @@
             ensureAudioContext(); haptic();
             if(isCrossfading && fadingAudio) { fadingAudio.pause(); fadingAudio.src = ""; fadingAudio = null; isCrossfading = false; }
             activeAudio.pause();
+            activeVideo.pause();
             
             resetDeckFX(activeDeck); triggerUIForSong(idx);
             
@@ -1187,11 +1223,22 @@
             
             video1.classList.remove('active-video');
             video2.classList.remove('active-video');
-            activeAudio.classList.add('active-video');
+            activeVideo.classList.add('active-video');
             
-            activeAudio.src = song.videoUrl;
+            // Carga de la pista de audio principal (Alta Fidelidad)
+            activeAudio.src = song.url;
             activeAudio.load();
-            activeAudio.play().catch(e=>{}); setPlayIcon(true);
+
+            // Carga del video de fondo
+            activeVideo.src = song.videoUrl;
+            activeVideo.load();
+            
+            // Inicio de reproducción sincronizado
+            activeAudio.play().then(() => {
+                activeVideo.play().catch(e=>{});
+            }).catch(e=>{});
+            
+            setPlayIcon(true);
         }
 
         function triggerUIForSong(idx) {
@@ -1218,8 +1265,16 @@
             ensureAudioContext(); haptic();
             if (!activeAudio.src) return playSong(0);
             
-            if (activeAudio.paused) { activeAudio.play(); setPlayIcon(true); } 
-            else { activeAudio.pause(); setPlayIcon(false); }
+            if (activeAudio.paused) { 
+                activeAudio.play(); 
+                activeVideo.play().catch(e=>{});
+                setPlayIcon(true); 
+            } 
+            else { 
+                activeAudio.pause(); 
+                activeVideo.pause();
+                setPlayIcon(false); 
+            }
         }
 
         function nextSong() { haptic(); playSong((currentPlayingIndex + 1) % cancionesData.length); }
@@ -1250,18 +1305,64 @@
             const np = document.getElementById('np-fs'); 
             const app = document.getElementById('app-wrapper');
             const stage = document.getElementById('video-stage');
+            const btn = document.querySelector('.btn-lyrics-toggle');
             
             if (isNPOpen) { 
                 np.classList.add('active'); 
                 app.classList.add('scaled'); 
-                stage.classList.remove('minimized');
-                stage.classList.add('maximized');
+                
+                if (lyricsModeActive) {
+                    np.classList.remove('no-lyrics');
+                    btn.classList.add('active');
+                    stage.className = 'maximized';
+                } else {
+                    np.classList.add('no-lyrics');
+                    btn.classList.remove('active');
+                    stage.className = 'fullscreen-video';
+                }
             } 
             else { 
                 np.classList.remove('active'); 
                 app.classList.remove('scaled'); 
-                stage.classList.remove('maximized');
-                stage.classList.add('minimized');
+                stage.className = 'minimized';
+            }
+        }
+
+        function toggleLyricsMode() {
+            haptic();
+            lyricsModeActive = !lyricsModeActive;
+            const npFs = document.getElementById('np-fs');
+            const stage = document.getElementById('video-stage');
+            const btn = document.querySelector('.btn-lyrics-toggle');
+            
+            if (lyricsModeActive) {
+                npFs.classList.remove('no-lyrics');
+                btn.classList.add('active');
+                if (isNPOpen) {
+                    stage.className = 'maximized';
+                }
+            } else {
+                npFs.classList.add('no-lyrics');
+                btn.classList.remove('active');
+                if (isNPOpen) {
+                    stage.className = 'fullscreen-video';
+                }
+            }
+        }
+
+        // Bucle de sincronización precisa para corregir desfases de carga entre video y audio
+        function syncVideoWithAudio() {
+            if (!activeAudio || !activeVideo) return;
+            
+            if (activeAudio.paused && !activeVideo.paused) {
+                activeVideo.pause();
+            } else if (!activeAudio.paused && activeVideo.paused) {
+                activeVideo.play().catch(e => {});
+            }
+            
+            const diff = Math.abs(activeAudio.currentTime - activeVideo.currentTime);
+            if (diff > 0.15 && !activeAudio.seeking) {
+                activeVideo.currentTime = activeAudio.currentTime;
             }
         }
 
@@ -1609,7 +1710,7 @@
         function fmt(s) { return `${Math.floor(s/60)}:${Math.floor(s%60).toString().padStart(2,'0')}`; }
 
         function checkAutoMix() {
-            if(activeAudio.duration && !isNaN(activeAudio.duration)) {
+            if(activeAudio && activeAudio.duration && !isNaN(activeAudio.duration)) {
                 const rem = activeAudio.duration - activeAudio.currentTime;
                 const anal = trackAnalysis[cancionesData[currentPlayingIndex]?.url];
                 let out = anal && anal.outroDuration ? anal.outroDuration : 8;
@@ -1645,6 +1746,9 @@
                 document.getElementById('time-tot-np').innerText = "-" + fmt(dur-cur);
                 
                 checkAutoMix();
+                
+                // Mantiene el video alineado al audio en tiempo real
+                syncVideoWithAudio();
                 
                 if(isNPOpen) { 
                     const visualTime = cur + 0.1;
@@ -1702,9 +1806,13 @@
            INITIALIZATION
            ================================================================== */
         function init() {
+            audio1 = document.getElementById('web-audio-1');
+            audio2 = document.getElementById('web-audio-2');
             video1 = document.getElementById('web-video-1');
             video2 = document.getElementById('web-video-2');
-            activeAudio = video1;
+            
+            activeAudio = audio1;
+            activeVideo = video1;
 
             renderGrid(cancionesData, 'grid-songs', 'song');
             renderGrid(albumsData, 'grid-albums', 'album');
