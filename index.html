@@ -94,7 +94,7 @@
             opacity: 0.95;
             pointer-events: none;
             z-index: 1;
-            transform: scale(1.25); /* Oculta bordes transparentes debido al desenfoque */
+            transform: scale(1.2); /* Corrige bordes transparentes debido al desenfoque */
         }
 
         /* ==================================================================
@@ -796,13 +796,15 @@
         function haptic() { if (navigator.vibrate) navigator.vibrate(10); }
 
         /* ==================================================================
-           LIQUID FLUID BACKGROUND ENGINE — INSPIRED BY SPICY LYRICS
+           LIQUID FLUID BACKGROUND ENGINE — AUDIO-REACTIVE SPICY LYRICS Rebuild
            ================================================================== */
         let fluidCanvas, fluidCtx;
         let npFluidCanvas, npFluidCtx;
         let blobs = [];
         
-        // Imagen de portada activa para renderizado directo en canvas
+        let audioIntensity = 0;
+        let bassIntensity = 0;
+        
         let currentCoverImage = new Image();
         currentCoverImage.crossOrigin = "anonymous";
         currentCoverImage.src = cancionesData[0].cover;
@@ -855,6 +857,30 @@
             if (npFluidCanvas) { npFluidCanvas.width = w; npFluidCanvas.height = h; }
         }
 
+        function updateAudioReactiveMetrics() {
+            if (!analyser) return;
+            const bufferLength = analyser.frequencyBinCount;
+            const dataArray = new Uint8Array(bufferLength);
+            analyser.getByteFrequencyData(dataArray);
+
+            // Filtro de frecuencias graves (bins iniciales, ej. bombos y subgraves)
+            let bassSum = 0;
+            const bassBins = Math.min(6, bufferLength);
+            for (let i = 0; i < bassBins; i++) {
+                bassSum += dataArray[i];
+            }
+            const targetBass = bassSum / (bassBins * 255); 
+            bassIntensity += (targetBass - bassIntensity) * 0.1; // Suavizado para fluidez orgánica
+
+            // Intensidad general de volumen
+            let totalSum = 0;
+            for (let i = 0; i < bufferLength; i++) {
+                totalSum += dataArray[i];
+            }
+            const targetIntensity = totalSum / (bufferLength * 255);
+            audioIntensity += (targetIntensity - audioIntensity) * 0.1;
+        }
+
         function animateFluid() {
             if (fluidCanvas && fluidCtx) {
                 drawFluid(fluidCanvas, fluidCtx);
@@ -870,7 +896,6 @@
             const h = canvas.height;
 
             if (!currentCoverImage.complete || currentCoverImage.naturalWidth === 0) {
-                // Fallback si la imagen está cargando
                 const c1 = globalPalette[3] || {r: 20, g: 10, b: 30}; 
                 const c2 = globalPalette[0] || {r: 255, g: 46, b: 147}; 
                 let fallbackGrad = ctx.createLinearGradient(0, 0, w, h);
@@ -881,43 +906,53 @@
                 return;
             }
 
-            // 1. Dibujamos la portada estirada de fondo con baja opacidad (smear/trail)
-            ctx.globalAlpha = 0.05;
+            updateAudioReactiveMetrics();
+
+            // Desvanecimiento líquido con retención de estela influenciado por la intensidad del volumen
+            const smearAlpha = 0.03 + (audioIntensity * 0.03);
+            ctx.globalAlpha = smearAlpha;
             ctx.drawImage(currentCoverImage, -w * 0.1, -h * 0.1, w * 1.2, h * 1.2);
             ctx.globalAlpha = 1.0; // Reset
 
-            // 2. Dibujamos los fluidos deformadores recortando y rotando áreas de la misma portada
             blobs.forEach((b, idx) => {
-                b.t += 0.0006; 
+                // Aceleración de la física de fluidos en respuesta a los graves
+                const speedMultiplier = 1.0 + bassIntensity * 2.2; 
+                b.t += 0.0006 * speedMultiplier; 
 
                 let noiseX = trigNoise(b.t, idx * 5, idx * 3);
                 let noiseY = trigNoise(b.t * 0.9, idx * 2 + 1, idx * 7 + 3);
                 let scaleNoise = trigNoise(b.t * 1.4, idx * 1.5, idx * 2.2);
 
-                let targetX = (w / 2) + noiseX * (w * 0.7);
-                let targetY = (h / 2) + noiseY * (h * 0.7);
+                // Expansión espacial estimulada por el volumen general de la canción
+                const driftFactor = 0.7 + audioIntensity * 0.3;
+                let targetX = (w / 2) + noiseX * (w * driftFactor);
+                let targetY = (h / 2) + noiseY * (h * driftFactor);
 
                 b.x += (targetX - b.x) * 0.02;
                 b.y += (targetY - b.y) * 0.02;
 
-                const rad = Math.max(w, h) * (b.targetRadius + scaleNoise * 0.25);
+                // Modulación audiorreactiva sobre el tamaño de los orbes
+                const pulseFactor = 1.0 + bassIntensity * 0.3;
+                const rad = Math.max(w, h) * (b.targetRadius + scaleNoise * 0.25) * pulseFactor;
 
                 ctx.save();
                 
-                // Generamos la máscara del círculo del fluido
                 ctx.beginPath();
                 ctx.arc(b.x, b.y, rad, 0, Math.PI * 2);
                 ctx.clip();
 
-                // Trasladamos y rotamos de forma asíncrona para generar la distorsión orgánica
                 ctx.translate(b.x, b.y);
-                ctx.rotate(b.t * 0.08 * (idx % 2 === 0 ? 1 : -1)); 
                 
-                // Ampliamos significativamente el arte de portada para aislar/distorsionar sus matices
-                const imgW = rad * 2.8;
-                const imgH = rad * 2.8;
+                // Rotaciones moduladas según la actividad musical de la pista
+                const rotationSpeed = 0.08 + audioIntensity * 0.15;
+                ctx.rotate(b.t * rotationSpeed * (idx % 2 === 0 ? 1 : -1)); 
                 
-                ctx.globalAlpha = 0.75; 
+                // Efecto de distorsión elástica con zoom dinámico reactivo
+                const zoomPulse = 2.8 + audioIntensity * 0.4;
+                const imgW = rad * zoomPulse;
+                const imgH = rad * zoomPulse;
+                
+                ctx.globalAlpha = 0.75 + audioIntensity * 0.15; 
                 ctx.drawImage(currentCoverImage, -imgW / 2, -imgH / 2, imgW, imgH);
                 
                 ctx.restore();
@@ -1201,7 +1236,6 @@
             currentPlayingIndex = idx; activeLyricIndex = -1; const song = cancionesData[idx];
             updateCovers(song.cover);
             
-            // Actualiza la imagen de portada activa del motor de distorsión
             currentCoverImage.src = song.cover;
             
             document.getElementById('player-title').innerText = song.title;
