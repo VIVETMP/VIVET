@@ -351,36 +351,83 @@
         }
         .lyrics-scroll-area::-webkit-scrollbar { display: none; }
 
-        .lrc-line {
-            font-size: clamp(32px, 4vw, 56px); 
-            font-weight: 700; 
-            line-height: 1.4; 
-            letter-spacing: -0.01em; 
-            margin-bottom: 32px; 
-            cursor: pointer;
-            transition: all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
-            opacity: 0.3; /* Gris difuminado base */
-            transform: scale(0.98); transform-origin: left center;
-            word-wrap: break-word; white-space: normal; 
-            color: #fff; text-align: left;
-        }
-        .lrc-line.active { opacity: 1; transform: scale(1); filter: drop-shadow(0 4px 15px rgba(0,0,0,0.3)); }
-        .lrc-line.passed { opacity: 0.3; transform: scale(0.98); }
-        .lrc-line:hover { opacity: 0.8 !important; transform: scale(1) !important; }
+        /* ============================================================
+           SPRING-PHYSICS LYRICS ENGINE — CSS LAYER
+           All transforms/opacity driven by JS spring integrator.
+           CSS transitions are DISABLED on lrc-line to prevent
+           mechanical ease-in-out fighting the spring engine.
+           ============================================================ */
 
+        .lrc-line {
+            /* Geometry */
+            font-size: clamp(28px, 3.6vw, 52px);
+            font-weight: 700;
+            line-height: 1.42;
+            letter-spacing: -0.01em;
+            margin-bottom: 28px;
+            cursor: pointer;
+            word-wrap: break-word;
+            white-space: normal;
+            color: #fff;
+            text-align: left;
+
+            /* Spring engine writes transform/opacity directly via style API
+               — NO CSS transition here so spring physics governs entirely */
+            transform-origin: left center;
+            will-change: transform, opacity, filter;
+
+            /* Initial state — JS will override immediately on first frame */
+            opacity: 0.32;
+            transform: scale(0.95) translateZ(0);
+            filter: blur(0px);
+        }
+
+        /* Hover nudge — overridden by spring when active */
+        .lrc-line:not(.active):hover {
+            opacity: 0.72 !important;
+        }
+
+        /* ── WORD TOKEN: Gradient-Clip Sweep Mask ── */
         .lrc-word {
-            display: inline; padding: 0; margin: 0; vertical-align: baseline;
-            /* LUZ DIFUMINADA AL 15% HACIA ATRÁS */
+            display: inline;
+            padding: 0;
+            margin: 0;
+            vertical-align: baseline;
+
+            /* --word-progress: 0.0 → 1.0, injected every rAF by JS
+               Gradient paint: leading-edge soft blur of ~14% width
+               so characters blend fluidly into the lit state.
+               Background-size > 100% lets us clip a hard stop at left. */
             background: linear-gradient(90deg,
-                rgba(255, 255, 255, 1) 0%,
-                rgba(255, 255, 255, 1) calc(var(--fill, 0%) - 15%),
-                rgba(255, 255, 255, 0.3) var(--fill, 0%),
-                rgba(255, 255, 255, 0.3) 100%
+                rgba(255,255,255,1)   0%,
+                rgba(255,255,255,1)   calc(var(--wp, 0%) - 14%),
+                rgba(255,255,255,0.55) calc(var(--wp, 0%) - 2%),
+                rgba(255,255,255,0.22) var(--wp, 0%),
+                rgba(255,255,255,0.22) 100%
             );
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            will-change: background-position;
+
+            /* GPU-composited paint — no layout reflows */
+            will-change: background;
+        }
+
+        /* Fully-sung word snaps to full-bright in a single class toggle
+           so the GPU does not need to recalculate the gradient each frame */
+        .lrc-word.sung {
+            background: rgba(255,255,255,1);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        /* Idle (future) word */
+        .lrc-word.idle {
+            background: rgba(255,255,255,0.22);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
 
         /* ==================================================================
@@ -446,7 +493,7 @@
             
             .np-right-pane { width: 100%; max-width: 400px; flex: none; height: 70vh; position: relative; margin-top: 10px; }
             .lyrics-scroll-area { padding: 10vh 0 30vh 0; }
-            .lrc-line { font-size: 32px; margin-bottom: 24px; }
+            .lrc-line { font-size: 30px; margin-bottom: 22px; }
         }
     </style>
 </head>
@@ -1288,15 +1335,46 @@
         }
 
         /* ==================================================================
-           LYRICS ENGINE (HYBRID LRC / TTML PARSER)
+           LYRICS ENGINE — SPRING-PHYSICS + SUB-MS TIMING
            ================================================================== */
-        let parsedLyrics =[];
+
+        /* ── Parsed lyrics store ── */
+        let parsedLyrics = [];
         let activeLyricIndex = -1;
-        
-        let isUserScrolling = false;
-        let scrollTimeout;
-        let targetScrollY = 0;
-        let currentScrollY = 0;
+
+        /* ── Sub-millisecond timing state ──
+           We anchor to audioCtx.currentTime (hardware clock) and
+           extrapolate with performance.now() between audio callbacks.
+           This eliminates the ~250ms jitter of the native timeupdate event. */
+        let _anchorAudioTime = 0;       // last known audio position (seconds)
+        let _anchorPerfTime  = 0;       // performance.now() at that anchor
+        let _lastRawTime     = -1;      // detect real audio time changes
+
+        /* ── Spring-physics scroll engine ──
+           Each lrc-line has its own spring integrator so that all
+           lines can animate simultaneously (active zooms in, others
+           damp out) without fighting a single shared lerp. */
+
+        // Spring profile: Stiffness=170, Damping=26, Mass=1
+        const SPRING_K   = 170;   // N/m  — how strongly it pulls to target
+        const SPRING_D   = 26;    // Ns/m — viscous friction
+        const SPRING_M   = 1;     // kg   — mass (normalised to 1)
+        const SPRING_DT  = 1/120; // fixed physics timestep (120 fps safe)
+
+        /* Per-line spring state — allocated when DOM is built */
+        let linePhysics = [];
+
+        /* ── Scroll spring (single integrator for the scroller) ── */
+        let scrollSpring = { pos: 0, vel: 0, target: 0 };
+
+        /* ── User-scroll detection & re-engagement ── */
+        let isUserScrolling  = false;
+        let scrollTimeout    = null;
+        const USER_SCROLL_GRACE = 3000; // ms before auto-scroll re-engages
+
+        /* ── Timing accumulator for fixed-step physics ── */
+        let _physicsAccum = 0;
+        let _lastRafTime  = 0;
 
         function parseTTMLTime(str) {
             if(!str) return 0;
@@ -1423,7 +1501,14 @@
 
                 container.innerHTML = ""; if(!parsedLyrics.length) throw new Error();
                 
-                parsedLyrics.forEach(l => {
+                /* Allocate per-line spring state */
+                linePhysics = parsedLyrics.map(() => ({
+                    scalePos: 0.95, scaleVel: 0,   // target: 1.0 when active, 0.95 inactive
+                    opacPos:  0.32, opacVel:  0,   // target: 1.0 active, 0.32 inactive
+                    blurPos:  0.8,  blurVel:  0,   // target: 0 active, 0.8 inactive
+                }));
+
+                parsedLyrics.forEach((l, lineIdx) => {
                     const div = document.createElement('div'); div.className = 'lrc-line';
                     div.onclick = () => { activeAudio.currentTime = l.time; activeAudio.play(); setPlayIcon(true); };
                     
@@ -1432,20 +1517,14 @@
                         let leadingSpace = false;
                         let trailingSpace = false;
                         
-                        if (/^\s+/.test(t)) {
-                            leadingSpace = true;
-                            t = t.trimStart();
-                        }
-                        if (/\s+$/.test(t)) {
-                            trailingSpace = true;
-                            t = t.trimEnd();
-                        }
+                        if (/^\s+/.test(t)) { leadingSpace = true;  t = t.trimStart(); }
+                        if (/\s+$/.test(t)) { trailingSpace = true; t = t.trimEnd(); }
                         
                         if(leadingSpace) div.appendChild(document.createTextNode(" "));
                         
                         if(t) { 
                             const s = document.createElement('span'); 
-                            s.className = 'lrc-word'; 
+                            s.className = 'lrc-word idle'; 
                             s.textContent = t; 
                             w.el = s; 
                             div.appendChild(s); 
@@ -1455,73 +1534,200 @@
                     });
                     
                     l.el = div; container.appendChild(div);
+
+                    /* Apply initial spring state to DOM immediately */
+                    const sp = linePhysics[lineIdx];
+                    div.style.opacity   = sp.opacPos;
+                    div.style.transform = `scale(${sp.scalePos}) translateZ(0)`;
+                    div.style.filter    = `blur(${sp.blurPos}px)`;
                 });
                 
+                /* Reset scroll spring to top */
+                scrollSpring = { pos: 0, vel: 0, target: 0 };
+                const sc = document.getElementById('lyrics-scroller');
+                sc.scrollTop = 0;
+
+                /* User-scroll listeners — detach spring for grace period */
                 const setManual = () => { 
                     isUserScrolling = true; 
                     clearTimeout(scrollTimeout); 
-                    scrollTimeout = setTimeout(() => { isUserScrolling = false; }, 4000); 
+                    scrollTimeout = setTimeout(() => { isUserScrolling = false; }, USER_SCROLL_GRACE); 
                 };
-                
-                scroller.addEventListener('wheel', setManual, {passive: true});
-                scroller.addEventListener('touchmove', setManual, {passive: true});
+                /* Remove old listeners before adding new ones */
+                sc.removeEventListener('wheel',     setManual);
+                sc.removeEventListener('touchmove', setManual);
+                sc.addEventListener('wheel',     setManual, {passive: true});
+                sc.addEventListener('touchmove', setManual, {passive: true});
                 
             } catch(e) { container.innerHTML = "<div style='height:100%; display:flex; align-items:center; justify-content:center;'><p style='color:rgba(255,255,255,0.3); font-size:32px; font-weight:800;'>Lyrics Unavailable</p></div>"; }
         }
 
-        function updateKaraoke(cur) {
+        /* ================================================================
+           SPRING INTEGRATOR — single-step semi-implicit Euler
+           Advances one SPRING_DT tick for a 1-D spring/mass/damper.
+           Returns { pos, vel }
+           ================================================================ */
+        function springStep(pos, vel, target) {
+            const force = -SPRING_K * (pos - target) - SPRING_D * vel;
+            const acc   = force / SPRING_M;
+            const newVel = vel + acc * SPRING_DT;
+            const newPos = pos + newVel * SPRING_DT;
+            return { pos: newPos, vel: newVel };
+        }
+
+        /* Advance all per-line spring integrators by `dt` seconds */
+        function tickLinePhysics(dt, activeIdx) {
+            if(!parsedLyrics.length || !linePhysics.length) return;
+            _physicsAccum += dt;
+            while(_physicsAccum >= SPRING_DT) {
+                _physicsAccum -= SPRING_DT;
+                for(let i = 0; i < linePhysics.length; i++) {
+                    const sp = linePhysics[i];
+                    const isActive = (i === activeIdx);
+                    // Targets
+                    const tScale = isActive ? 1.08 : 0.95;
+                    const tOpac  = isActive ? 1.0  : (i < activeIdx ? 0.28 : 0.32);
+                    const tBlur  = isActive ? 0.0  : (i < activeIdx ? 0.6  : 0.7);
+                    // Integrate
+                    let r;
+                    r = springStep(sp.scalePos, sp.scaleVel, tScale);
+                    sp.scalePos = r.pos; sp.scaleVel = r.vel;
+                    r = springStep(sp.opacPos, sp.opacVel, tOpac);
+                    sp.opacPos = r.pos; sp.opacVel = r.vel;
+                    r = springStep(sp.blurPos, sp.blurVel, tBlur);
+                    sp.blurPos = r.pos; sp.blurVel = r.vel;
+                }
+            }
+        }
+
+        /* Apply computed spring values to DOM — NO style reads, write-only */
+        function flushLinePhysics() {
+            for(let i = 0; i < linePhysics.length; i++) {
+                const el = parsedLyrics[i]?.el;
+                if(!el) continue;
+                const sp = linePhysics[i];
+                el.style.opacity   = sp.opacPos.toFixed(4);
+                el.style.transform = `scale(${sp.scalePos.toFixed(5)}) translateZ(0)`;
+                el.style.filter    = `blur(${Math.max(0, sp.blurPos).toFixed(3)}px)`;
+            }
+        }
+
+        /* ================================================================
+           updateKaraoke — called every rAF with sub-ms interpolated time
+           cur: seconds (float, extrapolated from AudioContext clock)
+           dt:  frame delta in seconds
+           ================================================================ */
+        function updateKaraoke(cur, dt) {
             if(!parsedLyrics.length) return;
             
+            /* ── 1. Find active line index ── */
             let nIdx = -1;
-            for(let i=0; i<parsedLyrics.length; i++) { if(cur >= parsedLyrics[i].time) nIdx = i; else break; }
-            
+            for(let i = 0; i < parsedLyrics.length; i++) {
+                if(cur >= parsedLyrics[i].time) nIdx = i;
+                else break;
+            }
+
+            /* ── 2. Line changed → update class names & target scroll ── */
             if(nIdx !== activeLyricIndex) {
+                /* Reset classes for all lines so CSS hover works */
                 parsedLyrics.forEach((l, i) => {
                     if(!l.el) return;
-                    if(i < nIdx) {
-                        l.el.className = 'lrc-line passed';
-                        l.words.forEach(w => { 
-                            if(w.el) { w.fill = 115; w.lastRenderedFill = 115; w.el.style.setProperty('--fill', '115%'); } 
-                        });
-                    } else if(i > nIdx) {
-                        l.el.className = 'lrc-line';
-                        l.words.forEach(w => { 
-                            if(w.el) { w.fill = 0; w.lastRenderedFill = 0; w.el.style.setProperty('--fill', '0%'); } 
-                        });
-                    } else {
-                        l.el.className = 'lrc-line active';
-                        if(!isUserScrolling) {
-                            const sc = document.getElementById('lyrics-scroller');
-                            targetScrollY = l.el.offsetTop - (sc.clientHeight * 0.4) + (l.el.clientHeight / 2);
-                        }
-                    }
+                    l.el.className = i < nIdx  ? 'lrc-line passed'
+                                   : i === nIdx ? 'lrc-line active'
+                                   :              'lrc-line';
                 });
                 activeLyricIndex = nIdx;
+
+                /* Update scroll spring target */
+                if(nIdx >= 0 && !isUserScrolling) {
+                    const sc = document.getElementById('lyrics-scroller');
+                    const el = parsedLyrics[nIdx].el;
+                    const newTarget = el.offsetTop - (sc.clientHeight * 0.4) + (el.clientHeight / 2);
+                    scrollSpring.target = Math.max(0, newTarget);
+                }
             }
-            
-            if(nIdx !== -1) {
-                parsedLyrics[nIdx].words.forEach(w => {
+
+            /* ── 3. Advance spring physics ── */
+            tickLinePhysics(dt, nIdx);
+
+            /* ── 4. Flush spring values to DOM ── */
+            flushLinePhysics();
+
+            /* ── 5. Advance scroll spring (separate integrator) ── */
+            if(!isUserScrolling && nIdx >= 0) {
+                const sc = document.getElementById('lyrics-scroller');
+                let sr = springStep(scrollSpring.pos, scrollSpring.vel, scrollSpring.target);
+                scrollSpring.pos = sr.pos;
+                scrollSpring.vel = sr.vel;
+                sc.scrollTop = scrollSpring.pos;
+            }
+
+            /* ── 6. Word-by-word gradient-clip sweep ── */
+            if(nIdx < 0) return;
+            const line = parsedLyrics[nIdx];
+
+            /* Also repaint one line ahead so first word of next line
+               does not flicker on the transition frame */
+            const paintLines = nIdx < parsedLyrics.length - 1
+                ? [nIdx, nIdx + 1]
+                : [nIdx];
+
+            for(const li of paintLines) {
+                const ln = parsedLyrics[li];
+                ln.words.forEach(w => {
                     if(!w.el) return;
-                    
-                    let targetFill = 0;
+
+                    /* Compute raw progress for this word */
+                    let raw;
                     if(cur >= w.time + w.dur) {
-                        targetFill = 115;
+                        /* Fully sung — snap to .sung class, clear custom prop */
+                        if(!w._sung) {
+                            w._sung = true;
+                            w.el.style.removeProperty('--wp');
+                            w.el.className = 'lrc-word sung';
+                        }
+                        return;
                     } else if(cur >= w.time) {
-                        targetFill = w.dur > 0 ? ((cur - w.time) / w.dur) * 115 : 115;
-                        targetFill = Math.max(0, Math.min(targetFill, 115));
+                        raw = w.dur > 0 ? (cur - w.time) / w.dur : 1;
                     } else {
-                        targetFill = 0;
+                        /* Future word */
+                        if(w._sung) {
+                            /* Seek backwards — reset */
+                            w._sung = false;
+                            w.el.className = 'lrc-word idle';
+                            w.el.style.removeProperty('--wp');
+                        }
+                        return;
                     }
 
-                    // LERP de 60fps ultra suave para evitar que la luz tiemble o salte
-                    w.fill += (targetFill - w.fill) * 0.15;
-                    
-                    if(Math.abs(w.fill - targetFill) < 0.1) w.fill = targetFill;
+                    /* Word is active — set gradient CSS custom property.
+                       --wp drives the background linear-gradient in CSS.
+                       Multiply by 115% so the sweep fully exits the glyph
+                       before the word is flagged as "sung". */
+                    w._sung = false;
+                    w.el.className = 'lrc-word';
+                    const wp = Math.min(115, raw * 115);
+                    w.el.style.setProperty('--wp', `${wp.toFixed(2)}%`);
+                });
+            }
 
-                    if(Math.abs(w.fill - w.lastRenderedFill) > 0.1 || w.fill === 115 || w.fill === 0) {
-                        w.el.style.setProperty('--fill', `${w.fill.toFixed(1)}%`);
-                        w.lastRenderedFill = w.fill;
-                    }
+            /* Mark passed lines — all words fully painted */
+            for(let i = 0; i < nIdx; i++) {
+                parsedLyrics[i].words.forEach(w => {
+                    if(!w.el || w._sung) return;
+                    w._sung = true;
+                    w.el.style.removeProperty('--wp');
+                    w.el.className = 'lrc-word sung';
+                });
+            }
+
+            /* Reset future lines (handles seek-back) */
+            for(let i = nIdx + 1; i < parsedLyrics.length; i++) {
+                parsedLyrics[i].words.forEach(w => {
+                    if(!w.el || !w._sung) return;
+                    w._sung = false;
+                    w.el.style.removeProperty('--wp');
+                    w.el.className = 'lrc-word idle';
                 });
             }
         }
