@@ -90,11 +90,10 @@
         }
         #fluid-canvas {
             position: absolute; inset: 0; width: 100%; height: 100%;
-            filter: blur(80px) saturate(220%);
-            opacity: 0.95;
+            filter: blur(0px);
+            opacity: 1;
             pointer-events: none;
             z-index: 1;
-            transform: scale(1.25); /* Oculta bordes transparentes debido al desenfoque */
         }
 
         /* ==================================================================
@@ -268,11 +267,10 @@
         .np-bg-wrap { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
         #fluid-canvas-np {
             position: absolute; inset: 0; width: 100%; height: 100%;
-            filter: blur(80px) saturate(240%);
-            opacity: 0.95;
+            filter: blur(0px);
+            opacity: 1;
             pointer-events: none;
             z-index: 0;
-            transform: scale(1.25); /* Elimina bandas y bordes del desenfoque */
         }
         .np-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.65); z-index: 1; }
         .np-grain { position: absolute; inset: 0; z-index: 2; opacity: 0.04; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none;}
@@ -311,12 +309,30 @@
 
         .np-info-block { display: flex; flex-direction: column; gap: 16px; width: 100%; }
 
-        .np-scrubber-group { display: flex; flex-direction: column; gap: 6px; width: 100%; }
+        .np-scrubber-group { display: flex; flex-direction: column; gap: 8px; width: 100%; }
         .np-time-row { display: flex; justify-content: space-between; font-size: 11px; font-weight: 500; color: rgba(255,255,255,0.7); font-variant-numeric: tabular-nums; margin-bottom: 2px;}
-        .np-scrubber-group .scrubber-bg { height: 4px; border-radius: 2px; background: rgba(255,255,255,0.2); }
-        .np-scrubber-group .scrubber-bg:hover { height: 6px; }
-        .np-scrubber-group .scrubber-fill { border-radius: 2px; box-shadow: none; transition: width 0.1s linear;}
-        .np-scrubber-group .scrubber-fill::after { display: none; }
+        
+        /* ─── Premium NP Progress Bar ─── */
+        .np-scrubber-group .scrubber-bg { 
+            height: 5px; border-radius: 100px; background: rgba(255,255,255,0.15);
+            cursor: pointer; position: relative; overflow: visible;
+            transition: height 0.25s ease;
+        }
+        .np-scrubber-group .scrubber-bg:hover { height: 8px; }
+        .np-scrubber-group .scrubber-fill { 
+            height: 100%; border-radius: 100px; 
+            background: linear-gradient(90deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.75) 100%);
+            transition: width 0.1s linear; position: relative;
+            box-shadow: 0 0 8px rgba(255,255,255,0.4);
+        }
+        .np-scrubber-group .scrubber-fill::after { 
+            content: ''; position: absolute; right: -6px; top: 50%; 
+            transform: translateY(-50%) scale(0); 
+            width: 14px; height: 14px; background: #fff; border-radius: 50%; 
+            transition: transform 0.2s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+        }
+        .np-scrubber-group .scrubber-bg:hover .scrubber-fill::after { transform: translateY(-50%) scale(1); }
 
         .np-track-info-center { display: flex; flex-direction: column; gap: 4px; align-items: center; text-align: center; }
         .np-track-title { font-size: 18px; font-weight: 700; color: #fff; letter-spacing: -0.01em;}
@@ -338,12 +354,12 @@
         .np-right-pane { 
             flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: center; position: relative; 
             max-width: 800px;
-            mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,1) 15%, rgba(0,0,0,1) 85%, transparent 100%);
-            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,1) 15%, rgba(0,0,0,1) 85%, transparent 100%);
+            mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,1) 12%, rgba(0,0,0,1) 88%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,1) 12%, rgba(0,0,0,1) 88%, transparent 100%);
         }
         .lyrics-scroll-area {
             position: relative; height: 100%; overflow-y: auto; overflow-x: hidden; 
-            padding: 40vh 0 50vh 0; margin: 0; scroll-behavior: smooth;
+            padding: 42vh 48px 52vh 4px; margin: 0; scroll-behavior: smooth;
         }
         .lyrics-scroll-area::-webkit-scrollbar { display: none; }
 
@@ -467,7 +483,7 @@
             .hidden-controls { position: relative; opacity: 1; pointer-events: auto; bottom: 0; margin-top: 0; gap: 40px;}
             
             .np-right-pane { width: 100%; max-width: 400px; flex: none; height: 70vh; position: relative; margin-top: 10px; }
-            .lyrics-scroll-area { padding: 10vh 0 30vh 0; }
+            .lyrics-scroll-area { padding: 10vh 32px 30vh 4px; }
             .lrc-line { font-size: 30px; margin-bottom: 22px; }
         }
     </style>
@@ -477,7 +493,7 @@
     <!-- AMBIENT CANVAS BACKGROUND -->
     <div id="ambient-bg">
         <div class="noise-overlay"></div>
-        <canvas id="fluid-canvas"></canvas>
+        <canvas id="fluid-canvas" style="filter: blur(70px) saturate(180%); transform: scale(1.15);"></canvas>
     </div>
 
     <!-- MAIN APP SHELL -->
@@ -629,7 +645,7 @@
     <!-- FULLSCREEN NOW PLAYING OVERLAY (APPLE TV / MUSIC MAC REPLICA) -->
     <div id="np-fs">
         <div class="np-bg-wrap">
-            <canvas id="fluid-canvas-np"></canvas>
+            <canvas id="fluid-canvas-np" style="filter: blur(80px) saturate(220%); transform: scale(1.15);"></canvas>
             <div class="np-overlay"></div>
             <div class="np-grain"></div>
         </div>
@@ -796,132 +812,178 @@
         function haptic() { if (navigator.vibrate) navigator.vibrate(10); }
 
         /* ==================================================================
-           LIQUID FLUID BACKGROUND ENGINE — INSPIRED BY SPICY LYRICS
+           KAWARP-STYLE DYNAMIC BACKGROUND ENGINE — SPICY LYRICS INSPIRED
+           Multi-layer color mesh with audio reactivity
            ================================================================== */
         let fluidCanvas, fluidCtx;
         let npFluidCanvas, npFluidCtx;
-        let blobs = [];
-        
-        // Imagen de portada activa para renderizado directo en canvas
+
+        // Current cover image for color sampling
         let currentCoverImage = new Image();
         currentCoverImage.crossOrigin = "anonymous";
         currentCoverImage.src = cancionesData[0].cover;
-        
+
+        // Extracted palette (OKLCH-style perceptual colors)
         let globalPalette = [
-            {r: 255, g: 46, b: 147},
-            {r: 127, g: 73, b: 180},
-            {r: 255, g: 110, b: 180},
-            {r: 80, g: 40, b: 120},
-            {r: 255, g: 80, b: 80}
+            {r:255,g:46,b:147},
+            {r:127,g:73,b:180},
+            {r:255,g:110,b:80},
+            {r:60,g:30,b:100},
+            {r:200,g:60,b:200}
         ];
 
-        function trigNoise(t, offset1, offset2) {
-            return Math.sin(t * 0.7 + offset1) * 0.4 + 
-                   Math.cos(t * 1.3 + offset2) * 0.35 + 
-                   Math.sin(t * 0.3 + offset1 * 2) * 0.25;
+        // Control points for the mesh — each floats independently
+        const MESH_POINTS = 8;
+        let meshNodes = [];
+
+        // Audio energy for reactivity
+        let bgEnergy = 0;
+        let bgEnergySmooth = 0;
+
+        function initMeshNodes() {
+            meshNodes = [];
+            for (let i = 0; i < MESH_POINTS; i++) {
+                meshNodes.push({
+                    // Normalised position [0,1]
+                    x: Math.random(), y: Math.random(),
+                    vx: (Math.random() - 0.5) * 0.0004,
+                    vy: (Math.random() - 0.5) * 0.0004,
+                    // Phase offsets for Lissajous drift
+                    phX: Math.random() * Math.PI * 2,
+                    phY: Math.random() * Math.PI * 2,
+                    freqX: 0.12 + Math.random() * 0.18,
+                    freqY: 0.10 + Math.random() * 0.16,
+                    ampX: 0.28 + Math.random() * 0.22,
+                    ampY: 0.28 + Math.random() * 0.22,
+                    // Color index into palette (can be fractional → interpolated)
+                    colorIdx: i % globalPalette.length,
+                    radius: 0.55 + Math.random() * 0.35,
+                    t: Math.random() * 100,
+                });
+            }
         }
 
         function initFluidBackground() {
-            fluidCanvas = document.getElementById('fluid-canvas');
-            fluidCtx = fluidCanvas.getContext('2d');
-            
-            npFluidCanvas = document.getElementById('fluid-canvas-np');
-            npFluidCtx = npFluidCanvas.getContext('2d');
+            fluidCanvas    = document.getElementById('fluid-canvas');
+            fluidCtx       = fluidCanvas.getContext('2d');
+            npFluidCanvas  = document.getElementById('fluid-canvas-np');
+            npFluidCtx     = npFluidCanvas.getContext('2d');
             
             resizeFluidCanvas();
             window.addEventListener('resize', resizeFluidCanvas);
-
-            blobs = [
-                { x: 0, y: 0, targetRadius: 2.2, t: 0, type: 'primary' },
-                { x: 0, y: 0, targetRadius: 2.5, t: Math.PI / 2, type: 'secondary' },
-                { x: 0, y: 0, targetRadius: 2.0, t: Math.PI, type: 'glow' },
-                { x: 0, y: 0, targetRadius: 2.1, t: Math.PI * 1.5, type: 'blend' },
-                { x: 0, y: 0, targetRadius: 1.5, t: Math.PI * 0.5, type: 'highlight' }
-            ];
-
-            blobs.forEach((b, idx) => {
-                b.x = Math.random() * (window.innerWidth / 4);
-                b.y = Math.random() * (window.innerHeight / 4);
-            });
-
-            animateFluid();
+            initMeshNodes();
+            requestAnimationFrame(fluidTick);
         }
 
         function resizeFluidCanvas() {
-            const w = window.innerWidth / 4; 
-            const h = window.innerHeight / 4;
-            
-            if (fluidCanvas) { fluidCanvas.width = w; fluidCanvas.height = h; }
-            if (npFluidCanvas) { npFluidCanvas.width = w; npFluidCanvas.height = h; }
+            // Render at ½ resolution — CSS blur will cover it
+            const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+            const W = Math.ceil(window.innerWidth  * 0.5);
+            const H = Math.ceil(window.innerHeight * 0.5);
+            if (fluidCanvas)   { fluidCanvas.width   = W; fluidCanvas.height   = H; }
+            if (npFluidCanvas) { npFluidCanvas.width = W; npFluidCanvas.height = H; }
         }
 
-        function animateFluid() {
-            if (fluidCanvas && fluidCtx) {
-                drawFluid(fluidCanvas, fluidCtx);
-            }
-            if (isNPOpen && npFluidCanvas && npFluidCtx) {
-                drawFluid(npFluidCanvas, npFluidCtx);
-            }
-            requestAnimationFrame(animateFluid);
+        // Sample audio energy from analyser
+        function sampleBgEnergy() {
+            if (!analyser) return 0;
+            const buf = new Uint8Array(analyser.frequencyBinCount);
+            analyser.getByteFrequencyData(buf);
+            let sum = 0;
+            for (let i = 0; i < buf.length; i++) sum += buf[i];
+            return sum / (buf.length * 255);
         }
 
-        function drawFluid(canvas, ctx) {
-            const w = canvas.width;
-            const h = canvas.height;
+        let _fluidLast = 0;
+        function fluidTick(ts) {
+            const dt = Math.min((ts - _fluidLast) / 1000, 0.05);
+            _fluidLast = ts;
 
-            if (!currentCoverImage.complete || currentCoverImage.naturalWidth === 0) {
-                // Fallback si la imagen está cargando
-                const c1 = globalPalette[3] || {r: 20, g: 10, b: 30}; 
-                const c2 = globalPalette[0] || {r: 255, g: 46, b: 147}; 
-                let fallbackGrad = ctx.createLinearGradient(0, 0, w, h);
-                fallbackGrad.addColorStop(0, `rgb(${c1.r}, ${c1.g}, ${c1.b})`);
-                fallbackGrad.addColorStop(1, `rgb(${c2.r}, ${c2.g}, ${c2.b})`);
-                ctx.fillStyle = fallbackGrad;
-                ctx.fillRect(0, 0, w, h);
-                return;
+            bgEnergy = sampleBgEnergy();
+            bgEnergySmooth += (bgEnergy - bgEnergySmooth) * 0.08;
+
+            // Advance all nodes
+            const energyBoost = 1 + bgEnergySmooth * 2.5;
+            for (const n of meshNodes) {
+                n.t += dt * energyBoost;
+                n.x = 0.5 + Math.sin(n.t * n.freqX + n.phX) * n.ampX;
+                n.y = 0.5 + Math.cos(n.t * n.freqY + n.phY) * n.ampY;
             }
 
-            // 1. Dibujamos la portada estirada de fondo con baja opacidad (smear/trail)
-            ctx.globalAlpha = 0.05;
-            ctx.drawImage(currentCoverImage, -w * 0.1, -h * 0.1, w * 1.2, h * 1.2);
-            ctx.globalAlpha = 1.0; // Reset
+            drawMeshBg(fluidCanvas, fluidCtx);
+            if (isNPOpen) drawMeshBg(npFluidCanvas, npFluidCtx);
 
-            // 2. Dibujamos los fluidos deformadores recortando y rotando áreas de la misma portada
-            blobs.forEach((b, idx) => {
-                b.t += 0.0006; 
+            requestAnimationFrame(fluidTick);
+        }
 
-                let noiseX = trigNoise(b.t, idx * 5, idx * 3);
-                let noiseY = trigNoise(b.t * 0.9, idx * 2 + 1, idx * 7 + 3);
-                let scaleNoise = trigNoise(b.t * 1.4, idx * 1.5, idx * 2.2);
+        function lerpColor(a, b, t) {
+            return {
+                r: a.r + (b.r - a.r) * t,
+                g: a.g + (b.g - a.g) * t,
+                b: a.b + (b.b - a.b) * t,
+            };
+        }
 
-                let targetX = (w / 2) + noiseX * (w * 0.7);
-                let targetY = (h / 2) + noiseY * (h * 0.7);
+        function drawMeshBg(canvas, ctx) {
+            if (!canvas || !ctx) return;
+            const W = canvas.width, H = canvas.height;
 
-                b.x += (targetX - b.x) * 0.02;
-                b.y += (targetY - b.y) * 0.02;
+            // Dark base
+            ctx.fillStyle = '#050507';
+            ctx.fillRect(0, 0, W, H);
 
-                const rad = Math.max(w, h) * (b.targetRadius + scaleNoise * 0.25);
+            // Layer 1 — large, slow atmospheric blobs from palette
+            for (let i = 0; i < meshNodes.length; i++) {
+                const n  = meshNodes[i];
+                const c1 = globalPalette[n.colorIdx % globalPalette.length];
+                const c2 = globalPalette[(n.colorIdx + 1) % globalPalette.length];
+                const cf = lerpColor(c1, c2, (Math.sin(n.t * 0.3) + 1) * 0.5);
 
-                ctx.save();
-                
-                // Generamos la máscara del círculo del fluido
-                ctx.beginPath();
-                ctx.arc(b.x, b.y, rad, 0, Math.PI * 2);
-                ctx.clip();
+                const cx = n.x * W;
+                const cy = n.y * H;
+                const r  = n.radius * Math.max(W, H) * (0.9 + bgEnergySmooth * 0.4);
 
-                // Trasladamos y rotamos de forma asíncrona para generar la distorsión orgánica
-                ctx.translate(b.x, b.y);
-                ctx.rotate(b.t * 0.08 * (idx % 2 === 0 ? 1 : -1)); 
-                
-                // Ampliamos significativamente el arte de portada para aislar/distorsionar sus matices
-                const imgW = rad * 2.8;
-                const imgH = rad * 2.8;
-                
-                ctx.globalAlpha = 0.75; 
-                ctx.drawImage(currentCoverImage, -imgW / 2, -imgH / 2, imgW, imgH);
-                
-                ctx.restore();
-            });
+                const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+                const alpha = (0.38 + bgEnergySmooth * 0.18).toFixed(3);
+                g.addColorStop(0,   `rgba(${Math.round(cf.r)},${Math.round(cf.g)},${Math.round(cf.b)},${alpha})`);
+                g.addColorStop(0.5, `rgba(${Math.round(cf.r*0.7)},${Math.round(cf.g*0.7)},${Math.round(cf.b*0.8)},0.12)`);
+                g.addColorStop(1,   `rgba(0,0,0,0)`);
+
+                ctx.globalCompositeOperation = 'screen';
+                ctx.fillStyle = g;
+                ctx.fillRect(0, 0, W, H);
+            }
+
+            // Layer 2 — cover image smear (Spicy Lyrics signature move)
+            if (currentCoverImage.complete && currentCoverImage.naturalWidth > 0) {
+                ctx.globalCompositeOperation = 'soft-light';
+                ctx.globalAlpha = 0.22 + bgEnergySmooth * 0.12;
+                // Draw 4 rotated, offset copies for organic spread
+                for (let k = 0; k < 4; k++) {
+                    const angle = (k * Math.PI * 0.5) + meshNodes[k].t * 0.04;
+                    const ox = Math.sin(meshNodes[k].t * 0.07) * W * 0.15;
+                    const oy = Math.cos(meshNodes[k].t * 0.09) * H * 0.15;
+                    ctx.save();
+                    ctx.translate(W * 0.5 + ox, H * 0.5 + oy);
+                    ctx.rotate(angle);
+                    const sz = Math.max(W, H) * (1.4 + bgEnergySmooth * 0.3);
+                    ctx.drawImage(currentCoverImage, -sz * 0.5, -sz * 0.5, sz, sz);
+                    ctx.restore();
+                }
+                ctx.globalAlpha = 1;
+            }
+
+            // Layer 3 — deep vignette to ground the scene
+            ctx.globalCompositeOperation = 'multiply';
+            const vign = ctx.createRadialGradient(W*0.5, H*0.5, H*0.1, W*0.5, H*0.5, H*0.9);
+            vign.addColorStop(0,   'rgba(255,255,255,1)');
+            vign.addColorStop(0.6, 'rgba(180,160,200,0.9)');
+            vign.addColorStop(1,   'rgba(10,5,20,0.85)');
+            ctx.fillStyle = vign;
+            ctx.fillRect(0, 0, W, H);
+
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.globalAlpha = 1;
         }
 
         /* ==================================================================
@@ -965,6 +1027,10 @@
                 document.documentElement.style.setProperty('--accent-glow', `rgba(${colors[0].r}, ${colors[0].g}, ${colors[0].b}, 0.5)`); 
 
                 globalPalette = colors;
+                // Re-assign mesh node colors with new palette
+                if (meshNodes.length) {
+                    meshNodes.forEach((n, i) => { n.colorIdx = i % colors.length; });
+                }
             } catch (e) {}
         }
 
@@ -1203,6 +1269,7 @@
             
             // Actualiza la imagen de portada activa del motor de distorsión
             currentCoverImage.src = song.cover;
+            currentCoverImage.onload = () => { initMeshNodes(); };
             
             document.getElementById('player-title').innerText = song.title;
             document.getElementById('player-artist').innerText = song.artist;
