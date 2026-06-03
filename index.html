@@ -2164,6 +2164,22 @@
             document.body.addEventListener('click', ensureAudioContext, { once: true });
             document.body.addEventListener('touchstart', ensureAudioContext, { once: true });
 
+            // Explicitly force looping at the very end of the video duration for mobile/Safari compatibility
+            const playerVideo = document.getElementById('player-video');
+            const npVideo = document.getElementById('np-video-large');
+            if (playerVideo) {
+                playerVideo.addEventListener('ended', function() {
+                    this.currentTime = 0;
+                    this.play().catch(e => {});
+                });
+            }
+            if (npVideo) {
+                npVideo.addEventListener('ended', function() {
+                    this.currentTime = 0;
+                    this.play().catch(e => {});
+                });
+            }
+
             requestAnimationFrame(renderLoop);
             
             analysisQueue =[...cancionesData];
