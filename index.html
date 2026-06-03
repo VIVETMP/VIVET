@@ -88,15 +88,14 @@
             position: absolute; inset: 0; z-index: 2; opacity: 0.045; mix-blend-mode: overlay; pointer-events: none;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
-        /* Apple Music 2026 / Spicy-Lyrics fluid background */
+        /* Spicy-style: canvas renders blobs then CSS blur+saturate makes it fluid */
         #fluid-canvas {
-            position: absolute; inset: -15%; width: 130%; height: 130%;
-            filter: blur(0px) saturate(180%) brightness(0.88);
+            position: absolute; inset: -8%; width: 116%; height: 116%;
+            filter: blur(70px) saturate(200%) brightness(0.9);
             opacity: 1;
             pointer-events: none;
             z-index: 1;
-            will-change: transform, filter;
-            transform: translateZ(0);
+            will-change: filter;
         }
 
         /* ==================================================================
@@ -269,13 +268,12 @@
 
         .np-bg-wrap { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
         #fluid-canvas-np {
-            position: absolute; inset: -15%; width: 130%; height: 130%;
-            filter: blur(0px) saturate(200%) brightness(0.82);
+            position: absolute; inset: -8%; width: 116%; height: 116%;
+            filter: blur(80px) saturate(220%) brightness(0.85);
             opacity: 1;
             pointer-events: none;
             z-index: 0;
-            will-change: transform, filter;
-            transform: translateZ(0);
+            will-change: filter;
         }
         .np-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.55); z-index: 1; }
         .np-grain { position: absolute; inset: 0; z-index: 2; opacity: 0.035; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none;}
@@ -906,14 +904,6 @@
            ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
            ================================================================== */
 
-        /* ==================================================================
-           APPLE MUSIC 2026 / SPICY-LYRICS FLUID BACKGROUND ENGINE
-           ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-           Renders blobs onto a low-res canvas, then applies a heavy SVG
-           turbulence warp + CSS blur+saturate to produce living-liquid
-           color fields that match the album cover 100%.
-           ================================================================== */
-
         let fluidCanvas, fluidCtx;
         let npFluidCanvas, npFluidCtx;
         let extractCanvas = null;
@@ -923,7 +913,7 @@
         let targetPalette = null;
         let paletteProgress = 1.0;
         let paletteLerpStart = 0;
-        const PALETTE_LERP_DURATION = 1800; // slower, more cinematic crossfade
+        const PALETTE_LERP_DURATION = 900;
 
         const DEFAULT_PALETTE = [
             { r: 255, g: 46,  b: 147 },
@@ -945,54 +935,12 @@
             lastHeight: 0
         };
 
-        /* ── SVG filter injected once for warp/turbulence ── */
-        function injectSVGFilter() {
-            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-            svg.setAttribute('width', '0');
-            svg.setAttribute('height', '0');
-            svg.style.cssText = 'position:absolute;overflow:hidden;width:0;height:0;';
-            svg.innerHTML = `
-              <defs>
-                <filter id="fluid-warp" color-interpolation-filters="sRGB" x="-20%" y="-20%" width="140%" height="140%">
-                  <feTurbulence type="turbulence" baseFrequency="0.012 0.009" numOctaves="4" seed="2" result="noise">
-                    <animate attributeName="baseFrequency" values="0.012 0.009;0.009 0.013;0.013 0.008;0.012 0.009" dur="18s" repeatCount="indefinite"/>
-                  </feTurbulence>
-                  <feDisplacementMap in="SourceGraphic" in2="noise" scale="160" xChannelSelector="R" yChannelSelector="G" result="warped"/>
-                  <feGaussianBlur in="warped" stdDeviation="32" result="blurred"/>
-                  <feComponentTransfer in="blurred" result="saturated">
-                    <feFuncR type="linear" slope="1.18" intercept="-0.09"/>
-                    <feFuncG type="linear" slope="1.12" intercept="-0.06"/>
-                    <feFuncB type="linear" slope="1.22" intercept="-0.11"/>
-                  </feComponentTransfer>
-                </filter>
-                <filter id="fluid-warp-np" color-interpolation-filters="sRGB" x="-20%" y="-20%" width="140%" height="140%">
-                  <feTurbulence type="turbulence" baseFrequency="0.010 0.008" numOctaves="5" seed="7" result="noise">
-                    <animate attributeName="baseFrequency" values="0.010 0.008;0.007 0.012;0.012 0.007;0.010 0.008" dur="22s" repeatCount="indefinite"/>
-                  </feTurbulence>
-                  <feDisplacementMap in="SourceGraphic" in2="noise" scale="220" xChannelSelector="R" yChannelSelector="G" result="warped"/>
-                  <feGaussianBlur in="warped" stdDeviation="40" result="blurred"/>
-                  <feComponentTransfer in="blurred" result="saturated">
-                    <feFuncR type="linear" slope="1.22" intercept="-0.11"/>
-                    <feFuncG type="linear" slope="1.14" intercept="-0.07"/>
-                    <feFuncB type="linear" slope="1.28" intercept="-0.14"/>
-                  </feComponentTransfer>
-                </filter>
-              </defs>`;
-            document.body.appendChild(svg);
-        }
-
         function initFluidBackground() {
-            injectSVGFilter();
-
             fluidCanvas = document.getElementById('fluid-canvas');
             fluidCtx = fluidCanvas.getContext('2d');
 
             npFluidCanvas = document.getElementById('fluid-canvas-np');
             npFluidCtx = npFluidCanvas.getContext('2d');
-
-            /* Apply the SVG warp filter via CSS on top of CSS blur */
-            fluidCanvas.style.filter = 'url(#fluid-warp) saturate(190%) brightness(0.88)';
-            npFluidCanvas.style.filter = 'url(#fluid-warp-np) saturate(210%) brightness(0.82)';
 
             extractCanvas = document.createElement('canvas');
             extractCanvas.width = 96;
@@ -1002,32 +950,28 @@
             resizeFluidCanvas();
             window.addEventListener('resize', resizeFluidCanvas);
 
-            /* 14 blobs — more overlap = more liquid mixing */
-            BG_STATE.blobs = Array.from({ length: 14 }, (_, i) => ({
-                x: 0.1 + Math.random() * 0.8,
-                y: 0.1 + Math.random() * 0.8,
+            BG_STATE.blobs = Array.from({ length: 7 }, (_, i) => ({
+                x: 0.15 + Math.random() * 0.7,
+                y: 0.15 + Math.random() * 0.7,
                 t: Math.random() * Math.PI * 2,
-                speed: 0.00010 + (i % 5) * 0.000028,
-                radMul: 0.38 + (i % 5) * 0.095,
+                speed: 0.00014 + i * 0.00003,
+                radMul: 0.42 + (i % 4) * 0.11,
                 colorIdx: i % 6,
-                ax: 0.18 + (i % 4) * 0.065,
-                ay: 0.16 + ((i + 1) % 4) * 0.055,
-                fx: 0.72 + (i % 5) * 0.14,
-                fy: 0.65 + ((i + 2) % 5) * 0.13,
-                px: i * 0.64,
-                py: i * 0.97,
-                wobble: 0.014 + (i % 6) * 0.003,
-                /* extra: each blob has its own slow rotation phase */
-                rotPhase: Math.random() * Math.PI * 2,
-                rotSpeed: 0.000018 + Math.random() * 0.000012
+                ax: 0.16 + (i % 3) * 0.08,
+                ay: 0.14 + ((i + 1) % 3) * 0.08,
+                fx: 0.9 + (i % 4) * 0.18,
+                fy: 0.8 + ((i + 2) % 4) * 0.16,
+                px: i * 0.7,
+                py: i * 1.1,
+                wobble: 0.012 + (i % 5) * 0.004
             }));
 
-            BG_STATE.sparks = Array.from({ length: 48 }, () => ({
+            BG_STATE.sparks = Array.from({ length: 36 }, () => ({
                 x: Math.random(),
                 y: Math.random(),
-                vx: (Math.random() - 0.5) * 0.00010,
-                vy: (Math.random() - 0.5) * 0.00010,
-                size: 0.6 + Math.random() * 1.6,
+                vx: (Math.random() - 0.5) * 0.00012,
+                vy: (Math.random() - 0.5) * 0.00012,
+                size: 0.8 + Math.random() * 1.8,
                 phase: Math.random() * Math.PI * 2
             }));
 
@@ -1036,8 +980,7 @@
         }
 
         function resizeFluidCanvas() {
-            /* Render at 1/3 native res — the warp+blur hides the pixelation entirely */
-            const scale = 3;
+            const scale = 4;
             const w = Math.ceil(window.innerWidth / scale);
             const h = Math.ceil(window.innerHeight / scale);
 
@@ -1102,71 +1045,47 @@
             if (!img || !img.complete || img.naturalWidth === 0) return null;
 
             try {
-                const SIZE = 128;
-                if (extractCanvas.width !== SIZE) { extractCanvas.width = SIZE; extractCanvas.height = SIZE; }
-                extractCtx.clearRect(0, 0, SIZE, SIZE);
-                extractCtx.drawImage(img, 0, 0, SIZE, SIZE);
+                extractCtx.clearRect(0, 0, extractCanvas.width, extractCanvas.height);
+                extractCtx.drawImage(img, 0, 0, extractCanvas.width, extractCanvas.height);
 
-                /* Dense 8×8 grid = 64 samples across the whole cover */
-                const step = SIZE / 8;
-                const raw = [];
-                for (let row = 0; row < 8; row++) {
-                    for (let col = 0; col < 8; col++) {
-                        const x = Math.floor(col * step + step * 0.5);
-                        const y = Math.floor(row * step + step * 0.5);
-                        const d = extractCtx.getImageData(x, y, 3, 3).data;
-                        let r = 0, g = 0, b = 0, n = 0;
-                        for (let i = 0; i < d.length; i += 4) { r += d[i]; g += d[i+1]; b += d[i+2]; n++; }
-                        if (n > 0) raw.push({ r: r/n, g: g/n, b: b/n });
+                const samples = [
+                    [8, 8], [48, 8], [88, 8],
+                    [8, 48], [48, 48], [88, 48],
+                    [8, 88], [48, 88], [88, 88],
+                    [24, 24], [72, 24], [48, 72]
+                ];
+
+                const colors = [];
+                for (const [x, y] of samples) {
+                    const data = extractCtx.getImageData(x, y, 4, 4).data;
+                    let r = 0, g = 0, b = 0, n = 0;
+                    for (let i = 0; i < data.length; i += 4) {
+                        r += data[i];
+                        g += data[i + 1];
+                        b += data[i + 2];
+                        n++;
                     }
+                    const boosted = boostSaturation(Math.round(r / n), Math.round(g / n), Math.round(b / n), 1.38);
+                    const brightness = (boosted.r * 299 + boosted.g * 587 + boosted.b * 114) / 1000;
+                    if (brightness > 16 && brightness < 244) colors.push(boosted);
                 }
 
-                /* Boost saturation aggressively (1.55×) like spicy-lyrics */
-                const boosted = raw.map(c => boostSaturation(
-                    Math.round(c.r), Math.round(c.g), Math.round(c.b), 1.55
-                ));
+                if (!colors.length) return null;
 
-                /* Filter extremes */
-                const filtered = boosted.filter(c => {
-                    const lum = (c.r * 299 + c.g * 587 + c.b * 114) / 1000;
-                    return lum > 18 && lum < 238;
-                });
-
-                if (!filtered.length) return null;
-
-                /* K-means-ish: pick 6 maximally-spread colors */
-                /* Seed with the most saturated sample */
-                const satOf = c => {
-                    const max = Math.max(c.r,c.g,c.b)/255, min = Math.min(c.r,c.g,c.b)/255;
-                    const l = (max+min)/2;
-                    return max === min ? 0 : (max-min) / (l>0.5 ? (2-max-min) : (max+min));
-                };
-                filtered.sort((a,b) => satOf(b) - satOf(a));
-
-                const chosen = [filtered[0]];
-                while (chosen.length < 6 && chosen.length < filtered.length) {
-                    let bestC = null, bestDist = -1;
-                    for (const c of filtered) {
-                        const minD = chosen.reduce((m, x) => {
-                            const dr=c.r-x.r, dg=c.g-x.g, db=c.b-x.b;
-                            return Math.min(m, dr*dr+dg*dg+db*db);
-                        }, Infinity);
-                        if (minD > bestDist) { bestDist = minD; bestC = c; }
-                    }
-                    /* Require colors to be distinct enough */
-                    if (bestDist < 400) break;
-                    chosen.push(bestC);
+                const deduped = [];
+                for (const c of colors) {
+                    const exists = deduped.some(d => {
+                        const dr = d.r - c.r;
+                        const dg = d.g - c.g;
+                        const db = d.b - c.b;
+                        return (dr * dr + dg * dg + db * db) < 900;
+                    });
+                    if (!exists) deduped.push(c);
+                    if (deduped.length >= 6) break;
                 }
 
-                /* Round and pad to exactly 6 */
-                const result = chosen.map(c => ({
-                    r: Math.round(c.r),
-                    g: Math.round(c.g),
-                    b: Math.round(c.b)
-                }));
-                while (result.length < 6) result.push({ ...result[result.length - 1] });
-
-                return result;
+                while (deduped.length < 6) deduped.push({ ...deduped[deduped.length - 1] });
+                return deduped.slice(0, 6);
             } catch (e) {
                 return null;
             }
@@ -1263,156 +1182,103 @@
             const palette = (activePalette && activePalette.length) ? activePalette : globalPalette;
             const e = BG_STATE.audioEnergy;
 
-            /* ── Base: deep black ── */
             ctx.globalCompositeOperation = 'source-over';
             ctx.clearRect(0, 0, W, H);
             ctx.fillStyle = '#050507';
             ctx.fillRect(0, 0, W, H);
 
             const maxDim = Math.max(W, H);
-            const beat   = 0.55 + e.beat  * 1.1;
-            const total  = 0.50 + e.total * 0.9;
+            const beat = 0.5 + e.beat * 0.9;
+            const total = 0.45 + e.total * 0.75;
 
-            /* ── Layer 1: full-canvas gradient wash from palette ── */
-            /* Uses all 6 palette colors in a sweeping diagonal gradient */
-            const gw = ctx.createLinearGradient(
-                W * (0.0 + Math.sin(now * 0.000055) * 0.12),
-                H * (0.0 + Math.cos(now * 0.000041) * 0.10),
-                W * (1.0 + Math.sin(now * 0.000038 + 1.2) * 0.12),
-                H * (1.0 + Math.cos(now * 0.000031 + 0.8) * 0.10)
-            );
-            const p = palette;
-            gw.addColorStop(0.00, `rgba(${p[0].r},${p[0].g},${p[0].b},0.82)`);
-            gw.addColorStop(0.22, `rgba(${p[1].r},${p[1].g},${p[1].b},0.60)`);
-            gw.addColorStop(0.44, `rgba(${p[2].r},${p[2].g},${p[2].b},0.50)`);
-            gw.addColorStop(0.66, `rgba(${p[3].r},${p[3].g},${p[3].b},0.44)`);
-            gw.addColorStop(0.82, `rgba(${p[4].r},${p[4].g},${p[4].b},0.38)`);
-            gw.addColorStop(1.00, `rgba(${p[5].r},${p[5].g},${p[5].b},0.30)`);
-            ctx.globalCompositeOperation = 'screen';
-            ctx.fillStyle = gw;
-            ctx.fillRect(0, 0, W, H);
-
-            /* ── Layer 2: animated radial centre glow ── */
             const c0 = palette[0] || DEFAULT_PALETTE[0];
-            const c1 = palette[1] || palette[0];
-            const c2 = palette[2] || palette[1];
+            const c1 = palette[1] || palette[0] || DEFAULT_PALETTE[1];
+            const c2 = palette[2] || palette[1] || DEFAULT_PALETTE[2];
+
             const bg = ctx.createRadialGradient(
-                W * (0.5 + Math.sin(now * 0.000062) * 0.08),
-                H * (0.5 + Math.cos(now * 0.000053) * 0.07),
-                maxDim * 0.02,
-                W * 0.5, H * 0.5,
-                maxDim * (isNP ? 1.1 : 1.25)
+                W * (0.52 + Math.sin(now * 0.00008) * 0.02),
+                H * (0.48 + Math.cos(now * 0.00007) * 0.02),
+                maxDim * 0.04,
+                W * 0.5,
+                H * 0.5,
+                maxDim * (isNP ? 1.05 : 1.15)
             );
-            bg.addColorStop(0,    `rgba(${c0.r},${c0.g},${c0.b},${0.38 + e.low * 0.24})`);
-            bg.addColorStop(0.35, `rgba(${c1.r},${c1.g},${c1.b},${0.26 + e.mid * 0.18})`);
-            bg.addColorStop(0.68, `rgba(${c2.r},${c2.g},${c2.b},${0.14 + e.high * 0.12})`);
-            bg.addColorStop(1,    'rgba(0,0,0,0)');
+            bg.addColorStop(0, `rgba(${c0.r},${c0.g},${c0.b},${0.24 + e.low * 0.16})`);
+            bg.addColorStop(0.38, `rgba(${c1.r},${c1.g},${c1.b},${0.16 + e.mid * 0.10})`);
+            bg.addColorStop(0.72, `rgba(${c2.r},${c2.g},${c2.b},${0.08 + e.high * 0.08})`);
+            bg.addColorStop(1, 'rgba(0,0,0,0)');
             ctx.globalCompositeOperation = 'screen';
             ctx.fillStyle = bg;
             ctx.fillRect(0, 0, W, H);
 
-            /* ── Layer 3: 14 organic blobs ── */
             BG_STATE.blobs.forEach((b, i) => {
-                b.t += b.speed * (1 + e.low * 2.2 + e.total * 0.8);
+                b.t += b.speed * (1 + e.low * 1.8 + e.total * 0.6);
 
                 const waveX = Math.sin(b.t * b.fx + b.px);
                 const waveY = Math.sin(b.t * b.fy + b.py);
-                const drift = Math.sin(now * 0.000013 + i * 1.7);
-                const rot   = Math.sin(now * b.rotSpeed + b.rotPhase) * 0.06;
+                const drift = Math.sin(now * 0.00011 + i);
 
                 const nx = 0.5
                     + b.ax * waveX
-                    + Math.sin(now * 0.000028 + i * 1.3) * b.wobble
-                    + drift * 0.012
-                    + rot * 0.5;
+                    + Math.sin(now * 0.000035 + i * 1.4) * b.wobble
+                    + drift * 0.01;
                 const ny = 0.5
                     + b.ay * waveY
-                    + Math.cos(now * 0.000025 + i * 1.05) * b.wobble
-                    - drift * 0.009
-                    + rot * 0.4;
+                    + Math.cos(now * 0.000031 + i * 1.1) * b.wobble
+                    - drift * 0.008;
 
-                b.x += (nx - b.x) * 0.018;
-                b.y += (ny - b.y) * 0.018;
+                b.x += (nx - b.x) * 0.022;
+                b.y += (ny - b.y) * 0.022;
 
-                const cx  = b.x * W;
-                const cy  = b.y * H;
-                const rad = maxDim * (b.radMul * (0.88 + beat * 0.22 + i * 0.008));
+                const cx = b.x * W;
+                const cy = b.y * H;
+                const rad = maxDim * (b.radMul * (0.9 + beat * 0.18 + i * 0.01));
 
-                const col      = palette[(b.colorIdx + i) % palette.length] || palette[0];
-                const colNext  = palette[(b.colorIdx + i + 1) % palette.length] || palette[0];
-                const mixT     = 0.5 + 0.5 * Math.sin(now * 0.000071 + i);
-                const mr = Math.round(col.r + (colNext.r - col.r) * mixT);
-                const mg = Math.round(col.g + (colNext.g - col.g) * mixT);
-                const mb = Math.round(col.b + (colNext.b - col.b) * mixT);
+                const col = palette[(b.colorIdx + i) % palette.length] || palette[0];
+                const alphaBoost = isNP ? 1.0 : 0.92;
 
-                const alphaBoost = isNP ? 1.08 : 0.95;
-
-                /* Primary radial blob */
                 const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, rad);
-                g.addColorStop(0,    `rgba(${mr},${mg},${mb},${1.05 * alphaBoost})`);
-                g.addColorStop(0.18, `rgba(${mr},${mg},${mb},${0.82 * alphaBoost})`);
-                g.addColorStop(0.45, `rgba(${mr},${mg},${mb},${0.35 * alphaBoost})`);
-                g.addColorStop(0.72, `rgba(${mr},${mg},${mb},${0.12 * alphaBoost})`);
-                g.addColorStop(1,    `rgba(${mr},${mg},${mb},0)`);
+                g.addColorStop(0, `rgba(${col.r},${col.g},${col.b},${0.95 * alphaBoost})`);
+                g.addColorStop(0.22, `rgba(${col.r},${col.g},${col.b},${0.72 * alphaBoost})`);
+                g.addColorStop(0.52, `rgba(${col.r},${col.g},${col.b},${0.25 * alphaBoost})`);
+                g.addColorStop(1, `rgba(${col.r},${col.g},${col.b},0)`);
 
-                ctx.globalCompositeOperation = i % 3 === 0 ? 'screen' : i % 3 === 1 ? 'lighter' : 'screen';
+                ctx.globalCompositeOperation = i % 2 === 0 ? 'screen' : 'lighter';
                 ctx.fillStyle = g;
                 ctx.fillRect(0, 0, W, H);
 
-                /* Secondary: small bright highlight offset */
-                const hx  = cx + Math.sin(b.t * 1.6 + i) * rad * 0.10;
-                const hy  = cy + Math.cos(b.t * 1.3 + i) * rad * 0.08;
-                const hrad = rad * 0.40;
-                const h2 = ctx.createRadialGradient(hx, hy, 0, hx, hy, hrad);
-                h2.addColorStop(0, `rgba(255,255,255,${0.08 + e.high * 0.12})`);
-                h2.addColorStop(1, 'rgba(255,255,255,0)');
+                const gx = cx + Math.sin(b.t * 1.4 + i) * rad * 0.08;
+                const gy = cy + Math.cos(b.t * 1.2 + i) * rad * 0.06;
+                const h = ctx.createRadialGradient(gx, gy, 0, gx, gy, rad * 0.55);
+                h.addColorStop(0, `rgba(255,255,255,${0.05 + e.high * 0.08})`);
+                h.addColorStop(1, 'rgba(255,255,255,0)');
                 ctx.globalCompositeOperation = 'screen';
-                ctx.fillStyle = h2;
+                ctx.fillStyle = h;
                 ctx.fillRect(0, 0, W, H);
-
-                /* Tertiary: complementary hue echo at opposite position */
-                if (i % 2 === 0) {
-                    const ex  = (1 - b.x) * W;
-                    const ey  = (1 - b.y) * H;
-                    const ec  = palette[(b.colorIdx + 3) % palette.length] || palette[0];
-                    const eg  = ctx.createRadialGradient(ex, ey, 0, ex, ey, rad * 0.65);
-                    eg.addColorStop(0,   `rgba(${ec.r},${ec.g},${ec.b},${0.28 * alphaBoost})`);
-                    eg.addColorStop(0.55, `rgba(${ec.r},${ec.g},${ec.b},${0.06 * alphaBoost})`);
-                    eg.addColorStop(1,   `rgba(${ec.r},${ec.g},${ec.b},0)`);
-                    ctx.globalCompositeOperation = 'screen';
-                    ctx.fillStyle = eg;
-                    ctx.fillRect(0, 0, W, H);
-                }
             });
 
-            /* ── Layer 4: floating dust sparks ── */
             ctx.globalCompositeOperation = 'screen';
             for (const s of BG_STATE.sparks) {
                 s.x = (s.x + s.vx + 1) % 1;
                 s.y = (s.y + s.vy + 1) % 1;
-                const pulse = 0.4 + 0.6 * Math.sin(now * 0.0018 + s.phase);
-                const sz    = (s.size + e.high * 2.0) * (isNP ? 0.75 : 1);
-                ctx.fillStyle = `rgba(255,255,255,${0.025 + pulse * 0.065 + e.high * 0.06})`;
+                const pulse = 0.45 + 0.55 * Math.sin(now * 0.0015 + s.phase);
+                const size = (s.size + e.high * 1.5) * (isNP ? 0.8 : 1);
+                ctx.fillStyle = `rgba(255,255,255,${0.02 + pulse * 0.05 + e.high * 0.05})`;
                 ctx.beginPath();
-                ctx.arc(s.x * W, s.y * H, sz, 0, Math.PI * 2);
+                ctx.arc(s.x * W, s.y * H, size, 0, Math.PI * 2);
                 ctx.fill();
             }
 
-            /* ── Layer 5: edge vignette ── */
-            const vignette = ctx.createRadialGradient(
-                W * 0.5, H * 0.5, Math.min(W, H) * 0.14,
-                W * 0.5, H * 0.5, Math.max(W, H) * 0.82
-            );
+            const vignette = ctx.createRadialGradient(W * 0.5, H * 0.5, Math.min(W, H) * 0.18, W * 0.5, H * 0.5, Math.max(W, H) * 0.78);
             vignette.addColorStop(0, 'rgba(0,0,0,0)');
-            vignette.addColorStop(1, `rgba(0,0,0,${isNP ? 0.32 : 0.28})`);
+            vignette.addColorStop(1, `rgba(0,0,0,${isNP ? 0.28 : 0.24})`);
             ctx.globalCompositeOperation = 'source-over';
             ctx.fillStyle = vignette;
             ctx.fillRect(0, 0, W, H);
 
-            /* ── Layer 6: beat flash ── */
-            const flash = Math.max(0, (e.beat - 0.20) * 0.95);
-            if (flash > 0.008) {
-                ctx.fillStyle = `rgba(255,255,255,${flash * (isNP ? 0.042 : 0.030)})`;
+            const flash = Math.max(0, (e.beat - 0.22) * 0.8);
+            if (flash > 0.01) {
+                ctx.fillStyle = `rgba(255,255,255,${flash * (isNP ? 0.035 : 0.025)})`;
                 ctx.fillRect(0, 0, W, H);
             }
         }
