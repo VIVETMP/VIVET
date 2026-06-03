@@ -733,7 +733,7 @@
 
                     <div class="np-track-info-center">
                         <h2 class="np-track-title"><span id="np-title-large">Problema</span></h2>
-                        <p class="np-track-artist" id="np-artist-large">Dei V & Luar La L — Problema (Underwater)</p>
+                        <p class="np-track-artist" id="np-artist-large">Dei V & Luar La L — Underwater</p>
                     </div>
                 </div>
 
@@ -764,9 +764,11 @@
            ================================================================== */
         const coverImgUrl = "https://4nemxki6k8.ucarecd.net/0455c685-6df4-4dca-ba77-16d7bf4135d6/PROBLEMAA.jpg";
         const sideBitchCoverUrl = "https://4nemxki6k8.ucarecd.net/edfb8894-b9a0-4a53-8287-4bb004257b3a/SIDEBITHC.jpg";
+        const telefonoNuevoCoverUrl = "https://4nemxki6k8.ucarecd.net/573e5b7a-8f8a-478a-9f0f-ce6ee63896ba/TELEFONONUEVO.png";
 
         const albumsData = [ 
-            { id: "Problema-Underwater", title: "Problema", artist: "Dei V & Luar La L", cover: coverImgUrl, year: "2026" },
+            { id: "Underwater", title: "Underwater", artist: "Dei V", cover: coverImgUrl, year: "2024" },
+            { id: "nadie-sabe-album", title: "nadie sabe lo que va a pasar mañana", artist: "Bad Bunny", cover: telefonoNuevoCoverUrl, year: "2023" },
             { id: "side-bitch-single", title: "Side Bitch", artist: "Luar La L", cover: sideBitchCoverUrl, year: "2026" }
         ];
 
@@ -790,12 +792,23 @@
                 album: "side-bitch-single",
                 trackNum: 1,
                 coverLoaded: true
+            },
+            {
+                title: "TELÉFONO NUEVO",
+                artist: "Bad Bunny & Luar La L",
+                url: "https://4nemxki6k8.ucarecd.net/d311e759-9126-42d6-9edc-840928b84e36/TELEFONONUEVO_spotdownorg.mp3",
+                lrc: "https://4nemxki6k8.ucarecd.net/720ba62e-1b37-48c2-8dbc-6cf178df747b/TELEFONONUEVO_spotdownorg.ttml",
+                cover: telefonoNuevoCoverUrl,
+                album: "nadie-sabe-album",
+                trackNum: 1,
+                coverLoaded: true
             }
         ];
 
         const artistsData = [
-            { name: "Clarent", img: coverImgUrl },
-            { name: "Luar La L", img: sideBitchCoverUrl }
+            { name: "Dei V", img: coverImgUrl },
+            { name: "Luar La L", img: sideBitchCoverUrl },
+            { name: "Bad Bunny", img: telefonoNuevoCoverUrl }
         ];
 
         /* ==================================================================
@@ -878,13 +891,6 @@
         /* ==================================================================
            SPICY LYRICS-STYLE DYNAMIC BACKGROUND ENGINE
            ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-           Goal: match the extension's fluid, color-driven ambience as close
-           as possible using the same core ideas:
-           • album-art palette extraction
-           • low-res canvas rendering + aggressive CSS blur
-           • multiple organic blobs with independent motion
-           • smooth palette crossfades
-           • subtle audio-reactive pulsing for life
            ================================================================== */
 
         let fluidCanvas, fluidCtx;
@@ -933,7 +939,6 @@
             resizeFluidCanvas();
             window.addEventListener('resize', resizeFluidCanvas);
 
-            // 7 blobs feels closer to the modern extension vibe than a simple 3-blob wash.
             BG_STATE.blobs = Array.from({ length: 7 }, (_, i) => ({
                 x: 0.15 + Math.random() * 0.7,
                 y: 0.15 + Math.random() * 0.7,
@@ -950,7 +955,6 @@
                 wobble: 0.012 + (i % 5) * 0.004
             }));
 
-            // Tiny spark layer for the occasional glittery feeling.
             BG_STATE.sparks = Array.from({ length: 36 }, () => ({
                 x: Math.random(),
                 y: Math.random(),
@@ -965,7 +969,7 @@
         }
 
         function resizeFluidCanvas() {
-            const scale = 4; // render at 1/4 resolution for the blur to do the heavy lifting
+            const scale = 4;
             const w = Math.ceil(window.innerWidth / scale);
             const h = Math.ceil(window.innerHeight / scale);
 
@@ -1167,7 +1171,6 @@
             const palette = (activePalette && activePalette.length) ? activePalette : globalPalette;
             const e = BG_STATE.audioEnergy;
 
-            // Dark base with a hint of the current dominant colors
             ctx.globalCompositeOperation = 'source-over';
             ctx.clearRect(0, 0, W, H);
             ctx.fillStyle = '#050507';
@@ -1177,7 +1180,6 @@
             const beat = 0.5 + e.beat * 0.9;
             const total = 0.45 + e.total * 0.75;
 
-            // Big atmospheric wash
             const c0 = palette[0] || DEFAULT_PALETTE[0];
             const c1 = palette[1] || palette[0] || DEFAULT_PALETTE[1];
             const c2 = palette[2] || palette[1] || DEFAULT_PALETTE[2];
@@ -1198,7 +1200,6 @@
             ctx.fillStyle = bg;
             ctx.fillRect(0, 0, W, H);
 
-            // Fluid blobs
             BG_STATE.blobs.forEach((b, i) => {
                 b.t += b.speed * (1 + e.low * 1.8 + e.total * 0.6);
 
@@ -1235,7 +1236,6 @@
                 ctx.fillStyle = g;
                 ctx.fillRect(0, 0, W, H);
 
-                // Slight secondary halo offsets make it feel more "liquid" and less static.
                 const gx = cx + Math.sin(b.t * 1.4 + i) * rad * 0.08;
                 const gy = cy + Math.cos(b.t * 1.2 + i) * rad * 0.06;
                 const h = ctx.createRadialGradient(gx, gy, 0, gx, gy, rad * 0.55);
@@ -1246,7 +1246,6 @@
                 ctx.fillRect(0, 0, W, H);
             });
 
-            // Spark layer: tiny moving points that gently twinkle with the music.
             ctx.globalCompositeOperation = 'screen';
             for (const s of BG_STATE.sparks) {
                 s.x = (s.x + s.vx + 1) % 1;
@@ -1259,7 +1258,6 @@
                 ctx.fill();
             }
 
-            // Vignette and settle back to source-over.
             const vignette = ctx.createRadialGradient(W * 0.5, H * 0.5, Math.min(W, H) * 0.18, W * 0.5, H * 0.5, Math.max(W, H) * 0.78);
             vignette.addColorStop(0, 'rgba(0,0,0,0)');
             vignette.addColorStop(1, `rgba(0,0,0,${isNP ? 0.28 : 0.24})`);
@@ -1267,7 +1265,6 @@
             ctx.fillStyle = vignette;
             ctx.fillRect(0, 0, W, H);
 
-            // Tiny beat flash to give it that alive feeling.
             const flash = Math.max(0, (e.beat - 0.22) * 0.8);
             if (flash > 0.01) {
                 ctx.fillStyle = `rgba(255,255,255,${flash * (isNP ? 0.035 : 0.025)})`;
@@ -1350,79 +1347,7 @@
             }
         }
 
-        function extractColor(img) { /* legacy compatibility hook */ }        /* ==================================================================
-           BACKGROUND COLOR EXTRACTION & COVERS
-           ================================================================== */
-        function updateCovers(imgUrl) {
-            document.getElementById('player-img').src = imgUrl;
-            const lg = document.getElementById('np-img-large'); 
-            lg.src = imgUrl;
-            
-            // Extract palette as soon as image loads
-            if (!lg.complete) {
-                lg.addEventListener('load', () => {
-                    const palette = extractPaletteFromImage(lg);
-                    if (palette) {
-                        globalPalette = palette;
-                        startPaletteTransition(palette);
-                        // Also set accent from brightest color
-                        applyAccentFromPalette(palette);
-                    }
-                }, { once: true });
-            } else {
-                const palette = extractPaletteFromImage(lg);
-                if (palette) {
-                    globalPalette = palette;
-                    startPaletteTransition(palette);
-                    applyAccentFromPalette(palette);
-                }
-            }
-        }
-        
-        function applyAccentFromPalette(palette) {
-            // Find the most vivid/saturated color for accent
-            let bestIdx = 0, bestSat = -1;
-            palette.forEach((c, i) => {
-                const r=c.r/255, g=c.g/255, b=c.b/255;
-                const max=Math.max(r,g,b), min=Math.min(r,g,b);
-                const sat = max === 0 ? 0 : (max-min)/max;
-                if (sat > bestSat) { bestSat = sat; bestIdx = i; }
-            });
-            const a = palette[bestIdx];
-            const b2 = palette[(bestIdx+2) % palette.length];
-            document.documentElement.style.setProperty('--accent-1', `rgb(${a.r},${a.g},${a.b})`);
-            document.documentElement.style.setProperty('--accent-2', `rgb(${b2.r},${b2.g},${b2.b})`);
-            document.documentElement.style.setProperty('--accent-glow', `rgba(${a.r},${a.g},${a.b},0.45)`);
-        }
-
-        // Legacy extractColor kept for backwards compat (no longer primary path)
-        function extractColor(img) { /* handled by extractPaletteFromImage now */ }
-
-        async function processCoverQueue() {
-            updateCovers(cancionesData[currentPlayingIndex].cover);
-            // Preload the image so palette extraction runs immediately
-            const img = new Image();
-            img.crossOrigin = "anonymous";
-            img.onload = () => {
-                const palette = extractPaletteFromImage(img);
-                if (palette) {
-                    globalPalette = palette;
-                    activePalette = [...palette];
-                    applyAccentFromPalette(palette);
-                }
-            };
-            img.src = cancionesData[currentPlayingIndex].cover;
-        }
-
-        function loadSongCover(song, i) {
-            song.coverLoaded = true;
-            document.querySelectorAll(`.cover-song-${i}`).forEach(img => img.src = song.cover);
-            if(currentPlayingIndex === i) updateCovers(song.cover);
-            if(song.album && song.trackNum === 1) {
-                const detImg = document.getElementById('det-album-img');
-                if (detImg) detImg.src = song.cover;
-            }
-        }
+        function extractColor(img) { /* legacy compatibility hook */ }
 
         /* ==================================================================
            BACKGROUND ANALYSIS & AUTOMIX
@@ -1646,7 +1571,11 @@
             document.getElementById('player-title').innerText = song.title;
             document.getElementById('player-artist').innerText = song.artist;
             document.getElementById('np-title-large').innerText = song.title;
-            document.getElementById('np-artist-large').innerText = `${song.artist} — Single`;
+            
+            // Look up corresponding album details for the label, fallback to "Single"
+            const alb = albumsData.find(a => a.id === song.album);
+            const albumName = alb ? alb.title : "Single";
+            document.getElementById('np-artist-large').innerText = `${song.artist} — ${albumName}`;
             
             fetchLyrics(song.lrc);
         }
