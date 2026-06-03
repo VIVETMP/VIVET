@@ -673,6 +673,7 @@
             
             <div class="player-info" onclick="toggleNP()">
                 <img src="https://4nemxki6k8.ucarecd.net/0455c685-6df4-4dca-ba77-16d7bf4135d6/PROBLEMAA.jpg" id="player-img" class="player-img" crossorigin="anonymous">
+                <video id="player-video" class="player-img" loop muted playsinline style="display:none; object-fit:cover; width:56px; height:56px;"></video>
                 <div class="player-meta">
                     <div class="player-title"><span id="player-title">Problema</span> <div class="ai-badge" id="badge-pill">Mix</div></div>
                     <div class="player-artist" id="player-artist">Dei V & Luar La L</div>
@@ -718,7 +719,10 @@
         <div class="np-layout">
             <!-- Left Pane: Info & Scrubber -->
             <div class="np-left-pane">
-                <div class="np-art-wrap" onclick="togglePlay()"><img src="https://4nemxki6k8.ucarecd.net/0455c685-6df4-4dca-ba77-16d7bf4135d6/PROBLEMAA.jpg" id="np-img-large" class="np-art" crossorigin="anonymous"></div>
+                <div class="np-art-wrap" onclick="togglePlay()">
+                    <img src="https://4nemxki6k8.ucarecd.net/0455c685-6df4-4dca-ba77-16d7bf4135d6/PROBLEMAA.jpg" id="np-img-large" class="np-art" crossorigin="anonymous">
+                    <video id="np-video-large" class="np-art" loop muted playsinline style="display:none; object-fit:cover; width:100%; height:100%; pointer-events:none;"></video>
+                </div>
                 
                 <div class="np-info-block">
                     <div class="np-scrubber-group">
@@ -822,6 +826,7 @@
                 url: "https://4nemxki6k8.ucarecd.net/c239864b-6c60-4301-a778-5c127cb06cd6/SpotiDownAppSheLike2FuckJayWheeler.mp3",
                 lrc: "https://4nemxki6k8.ucarecd.net/a09f4747-a554-4fef-8a79-0d9c971497f5/SpotiDownAppSheLike2FuckJayWheeler.ttml",
                 cover: sheLike2FuckCoverUrl,
+                videoCover: "https://4nemxki6k8.ucarecd.net/fb63335a-e05d-4686-9b1e-7f6e107a5d5b/Shelike2fuck.mp4",
                 album: "la-voz-favorita",
                 trackNum: 4,
                 coverLoaded: true
@@ -1325,8 +1330,13 @@
         function updateCovers(imgUrl) {
             const playerImg = document.getElementById('player-img');
             const npImg = document.getElementById('np-img-large');
+            const playerVideo = document.getElementById('player-video');
+            const npVideo = document.getElementById('np-video-large');
 
-            if (playerImg) playerImg.src = imgUrl;
+            const currentSong = cancionesData[currentPlayingIndex];
+            const hasVideo = currentSong && currentSong.videoCover;
+
+            // Always update static npImg in background for palette extraction
             if (npImg) {
                 npImg.src = imgUrl;
                 const onLoaded = () => {
@@ -1341,6 +1351,49 @@
 
                 if (npImg.complete && npImg.naturalWidth > 0) onLoaded();
                 else npImg.addEventListener('load', onLoaded, { once: true });
+            }
+
+            // Bottom player mini cover
+            if (playerImg) {
+                if (hasVideo) {
+                    playerImg.style.display = 'none';
+                    if (playerVideo) {
+                        playerVideo.style.display = 'block';
+                        if (playerVideo.src !== currentSong.videoCover) {
+                            playerVideo.src = currentSong.videoCover;
+                            playerVideo.load();
+                        }
+                        playerVideo.play().catch(e => {});
+                    }
+                } else {
+                    playerImg.style.display = 'block';
+                    playerImg.src = imgUrl;
+                    if (playerVideo) {
+                        playerVideo.style.display = 'none';
+                        playerVideo.pause();
+                    }
+                }
+            }
+
+            // Fullscreen large cover
+            if (npImg) {
+                if (hasVideo) {
+                    npImg.style.display = 'none';
+                    if (npVideo) {
+                        npVideo.style.display = 'block';
+                        if (npVideo.src !== currentSong.videoCover) {
+                            npVideo.src = currentSong.videoCover;
+                            npVideo.load();
+                        }
+                        npVideo.play().catch(e => {});
+                    }
+                } else {
+                    npImg.style.display = 'block';
+                    if (npVideo) {
+                        npVideo.style.display = 'none';
+                        npVideo.pause();
+                    }
+                }
             }
         }
 
@@ -1620,6 +1673,17 @@
             document.getElementById('icon-play-mob').className = icon;
             document.getElementById('icon-play-desk').className = icon;
             document.getElementById('icon-play-np').className = icon;
+
+            // Synchronize cover videos if active
+            const playerVideo = document.getElementById('player-video');
+            const npVideo = document.getElementById('np-video-large');
+            if (playing) {
+                if (playerVideo && playerVideo.style.display !== 'none') playerVideo.play().catch(e=>{});
+                if (npVideo && npVideo.style.display !== 'none') npVideo.play().catch(e=>{});
+            } else {
+                if (playerVideo) playerVideo.pause();
+                if (npVideo) npVideo.pause();
+            }
         }
 
         function seek(e, el) { 
