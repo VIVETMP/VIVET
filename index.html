@@ -1,3 +1,19 @@
+
+Model 9:41 AM
+ThinkingThoughts
+Expand to view model thoughts
+
+chevron_right
+Aquí tienes el código completo con la integración de la nueva canción, su álbum y su artista principal. 
+
+Se han realizado las siguientes modificaciones en las estructuras de datos, manteniendo intacto el diseño, el fondo fluido y la lógica del reproductor:
+
+1. **Constante de portada**: Se definió `sheLike2FuckCoverUrl` con el enlace proporcionado.
+2. **`albumsData`**: Se añadió el álbum `"La Voz Favorita"` de Jay Wheeler (año 2024) utilizando la portada de la canción.
+3. **`cancionesData`**: Se incorporó `"She Like 2 Fuck"`, vinculándola al álbum `"la-voz-favorita"`, como track número `4`.
+4. **`artistsData`**: Se añadió a `"Jay Wheeler"` a la lista de creadores utilizando la portada de la canción, permitiendo que sus producciones se listen dinámicamente al ingresar a su perfil de artista.
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -766,11 +782,13 @@
         const sideBitchCoverUrl = "https://4nemxki6k8.ucarecd.net/edfb8894-b9a0-4a53-8287-4bb004257b3a/SIDEBITHC.jpg";
         const telefonoNuevoCoverUrl = "https://4nemxki6k8.ucarecd.net/573e5b7a-8f8a-478a-9f0f-ce6ee63896ba/TELEFONONUEVO.png";
         const latelyCoverUrl = "https://4nemxki6k8.ucarecd.net/6cfb3a43-ada1-48d4-8b78-daf1279c4bbc/Lately.png";
+        const sheLike2FuckCoverUrl = "https://4nemxki6k8.ucarecd.net/a121b330-6729-4a7d-9270-8c3b2b5eff4e/shelike2fuck.png";
 
         const albumsData = [ 
             { id: "Underwater", title: "Underwater", artist: "Dei V", cover: coverImgUrl, year: "2024" },
             { id: "nadie-sabe-album", title: "nadie sabe lo que va a pasar mañana", artist: "Bad Bunny", cover: telefonoNuevoCoverUrl, year: "2023" },
-            { id: "L3tra-album", title: "L3tra", artist: "Luar La L", cover: sideBitchCoverUrl, year: "2024" }
+            { id: "L3tra-album", title: "L3tra", artist: "Luar La L", cover: sideBitchCoverUrl, year: "2024" },
+            { id: "la-voz-favorita", title: "La Voz Favorita", artist: "Jay Wheeler", cover: sheLike2FuckCoverUrl, year: "2024" }
         ];
 
         const cancionesData = [
@@ -813,13 +831,24 @@
                 album: "",
                 trackNum: 1,
                 coverLoaded: true
+            },
+            {
+                title: "She Like 2 Fuck",
+                artist: "Jay Wheeler, TORRRES, Luar La L & Remers",
+                url: "https://4nemxki6k8.ucarecd.net/c239864b-6c60-4301-a778-5c127cb06cd6/SpotiDownAppSheLike2FuckJayWheeler.mp3",
+                lrc: "https://4nemxki6k8.ucarecd.net/a09f4747-a554-4fef-8a79-0d9c971497f5/SpotiDownAppSheLike2FuckJayWheeler.ttml",
+                cover: sheLike2FuckCoverUrl,
+                album: "la-voz-favorita",
+                trackNum: 4,
+                coverLoaded: true
             }
         ];
 
         const artistsData = [
             { name: "Dei V", img: coverImgUrl },
             { name: "Luar La L", img: sideBitchCoverUrl },
-            { name: "Bad Bunny", img: telefonoNuevoCoverUrl }
+            { name: "Bad Bunny", img: telefonoNuevoCoverUrl },
+            { name: "Jay Wheeler", img: sheLike2FuckCoverUrl }
         ];
 
         /* ==================================================================
