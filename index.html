@@ -1673,17 +1673,6 @@
             document.getElementById('icon-play-mob').className = icon;
             document.getElementById('icon-play-desk').className = icon;
             document.getElementById('icon-play-np').className = icon;
-
-            // Synchronize cover videos if active
-            const playerVideo = document.getElementById('player-video');
-            const npVideo = document.getElementById('np-video-large');
-            if (playing) {
-                if (playerVideo && playerVideo.style.display !== 'none') playerVideo.play().catch(e=>{});
-                if (npVideo && npVideo.style.display !== 'none') npVideo.play().catch(e=>{});
-            } else {
-                if (playerVideo) playerVideo.pause();
-                if (npVideo) npVideo.pause();
-            }
         }
 
         function seek(e, el) { 
