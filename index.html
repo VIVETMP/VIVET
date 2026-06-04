@@ -671,7 +671,6 @@
             
             <div class="player-info" onclick="toggleNP()">
                 <img src="https://4nemxki6k8.ucarecd.net/0455c685-6df4-4dca-ba77-16d7bf4135d6/PROBLEMAA.jpg" id="player-img" class="player-img" crossorigin="anonymous">
-                <video id="player-video" class="player-img" muted playsinline style="display:none; object-fit:cover; width:56px; height:56px;"></video>
                 <div class="player-meta">
                     <div class="player-title"><span id="player-title">Problema</span> <div class="ai-badge" id="badge-pill">Mix</div></div>
                     <div class="player-artist" id="player-artist">Dei V & Luar La L</div>
@@ -719,7 +718,6 @@
             <div class="np-left-pane">
                 <div class="np-art-wrap" onclick="togglePlay()">
                     <img src="https://4nemxki6k8.ucarecd.net/0455c685-6df4-4dca-ba77-16d7bf4135d6/PROBLEMAA.jpg" id="np-img-large" class="np-art" crossorigin="anonymous">
-                    <video id="np-video-large" class="np-art" muted playsinline style="display:none; object-fit:cover; width:100%; height:100%; pointer-events:none;"></video>
                 </div>
                 
                 <div class="np-info-block">
@@ -804,7 +802,6 @@
                 url: "https://4nemxki6k8.ucarecd.net/d311e759-9126-42d6-9edc-840928b84e36/TELEFONONUEVO_spotdownorg.mp3",
                 lrc: "https://4nemxki6k8.ucarecd.net/720ba62e-1b37-48c2-8dbc-6cf178df747b/TELEFONONUEVO_spotdownorg.ttml",
                 cover: telefonoNuevoCoverUrl,
-                videoCover: "https://3lxj8u72k3.ucarecd.net/aa2c53b9-5ead-4e16-9b1e-05684a4a5ae9/TelefonoNuevo.mp4",
                 album: "nadie-sabe-album",
                 trackNum: 11,
                 coverLoaded: true
@@ -825,7 +822,6 @@
                 url: "https://4nemxki6k8.ucarecd.net/c239864b-6c60-4301-a778-5c127cb06cd6/SpotiDownAppSheLike2FuckJayWheeler.mp3",
                 lrc: "https://4nemxki6k8.ucarecd.net/a09f4747-a554-4fef-8a79-0d9c971497f5/SpotiDownAppSheLike2FuckJayWheeler.ttml",
                 cover: sheLike2FuckCoverUrl,
-                videoCover: "https://3lxj8u72k3.ucarecd.net/92260a67-fb29-4ea9-9136-df4f08c73d30/Shelike2fucknbuevo.mp4",
                 album: "la-voz-favorita",
                 trackNum: 4,
                 coverLoaded: true
@@ -960,8 +956,9 @@
             npFluidCtx = npFluidCanvas.getContext('2d');
 
             extractCanvas = document.createElement('canvas');
-            extractCanvas.width = 96;
-            extractCanvas.height = 96;
+            // Canvas scaled to 16x16 to extract aggregated/averaged colors natively
+            extractCanvas.width = 16;
+            extractCanvas.height = 16;
             extractCtx = extractCanvas.getContext('2d', { willReadFrequently: true });
 
             resizeFluidCanvas();
@@ -1058,52 +1055,89 @@
             };
         }
 
+        // Popularity-Clustering dominant color extractor
         function extractPaletteFromImage(img) {
             if (!img || !img.complete || img.naturalWidth === 0) return null;
 
             try {
-                extractCtx.clearRect(0, 0, extractCanvas.width, extractCanvas.height);
-                extractCtx.drawImage(img, 0, 0, extractCanvas.width, extractCanvas.height);
+                // Downsample image natively on canvas. Width 16x16 averages colors dynamically.
+                extractCanvas.width = 16;
+                extractCanvas.height = 16;
+                extractCtx.clearRect(0, 0, 16, 16);
+                extractCtx.drawImage(img, 0, 0, 16, 16);
 
-                const samples = [
-                    [8, 8], [48, 8], [88, 8],
-                    [8, 48], [48, 48], [88, 48],
-                    [8, 88], [48, 88], [88, 88],
-                    [24, 24], [72, 24], [48, 72]
-                ];
+                const imgData = extractCtx.getImageData(0, 0, 16, 16).data;
+                const clusters = [];
+                const distanceThreshold = 55; // Euclidean RGB grouping distance
 
-                const colors = [];
-                for (const [x, y] of samples) {
-                    const data = extractCtx.getImageData(x, y, 4, 4).data;
-                    let r = 0, g = 0, b = 0, n = 0;
-                    for (let i = 0; i < data.length; i += 4) {
-                        r += data[i];
-                        g += data[i + 1];
-                        b += data[i + 2];
-                        n++;
+                for (let i = 0; i < imgData.length; i += 4) {
+                    const r = imgData[i];
+                    const g = imgData[i+1];
+                    const b = imgData[i+2];
+                    const a = imgData[i+3];
+
+                    if (a < 150) continue; // Skip semi-transparent areas
+
+                    const luma = (r * 299 + g * 587 + b * 114) / 1000;
+                    if (luma < 15 || luma > 240) continue; // Skip extreme whites & blacks
+
+                    let foundCluster = false;
+                    for (const cluster of clusters) {
+                        const dr = cluster.r - r;
+                        const dg = cluster.g - g;
+                        const db = cluster.b - b;
+                        const dist = Math.sqrt(dr*dr + dg*dg + db*db);
+
+                        if (dist < distanceThreshold) {
+                            cluster.rSum += r;
+                            cluster.gSum += g;
+                            cluster.bSum += b;
+                            cluster.count++;
+                            foundCluster = true;
+                            break;
+                        }
                     }
-                    const boosted = boostSaturation(Math.round(r / n), Math.round(g / n), Math.round(b / n), 1.38);
-                    const brightness = (boosted.r * 299 + boosted.g * 587 + boosted.b * 114) / 1000;
-                    if (brightness > 16 && brightness < 244) colors.push(boosted);
+
+                    if (!foundCluster) {
+                        clusters.push({
+                            rSum: r, gSum: g, bSum: b,
+                            r: r, g: g, b: b,
+                            count: 1
+                        });
+                    }
                 }
 
-                if (!colors.length) return null;
+                if (!clusters.length) return null;
 
-                const deduped = [];
-                for (const c of colors) {
-                    const exists = deduped.some(d => {
-                        const dr = d.r - c.r;
-                        const dg = d.g - c.g;
-                        const db = d.b - c.b;
-                        return (dr * dr + dg * dg + db * db) < 900;
-                    });
-                    if (!exists) deduped.push(c);
-                    if (deduped.length >= 6) break;
+                clusters.forEach(c => {
+                    c.r = Math.round(c.rSum / c.count);
+                    c.g = Math.round(c.gSum / c.count);
+                    c.b = Math.round(c.bSum / c.count);
+                });
+
+                // Sort by pixel count (popularity)
+                clusters.sort((a, b) => b.count - a.count);
+
+                const palette = clusters.map(c => {
+                    return boostSaturation(c.r, c.g, c.b, 1.25);
+                });
+
+                while (palette.length < 6) {
+                    if (palette.length > 0) {
+                        const base = palette[palette.length - 1];
+                        palette.push({
+                            r: Math.max(0, Math.min(255, base.r + (Math.random() - 0.5) * 20)),
+                            g: Math.max(0, Math.min(255, base.g + (Math.random() - 0.5) * 20)),
+                            b: Math.max(0, Math.min(255, base.b + (Math.random() - 0.5) * 20))
+                        });
+                    } else {
+                        palette.push({ r: 127, g: 73, b: 180 });
+                    }
                 }
 
-                while (deduped.length < 6) deduped.push({ ...deduped[deduped.length - 1] });
-                return deduped.slice(0, 6);
+                return palette.slice(0, 6);
             } catch (e) {
+                console.error("Color extraction failed:", e);
                 return null;
             }
         }
@@ -1322,11 +1356,8 @@
         function updateCovers(imgUrl) {
             const playerImg = document.getElementById('player-img');
             const npImg = document.getElementById('np-img-large');
-            const playerVideo = document.getElementById('player-video');
-            const npVideo = document.getElementById('np-video-large');
 
-            const currentSong = cancionesData[currentPlayingIndex];
-            const hasVideo = currentSong && currentSong.videoCover;
+            if (playerImg) playerImg.src = imgUrl;
 
             // Always update static npImg in background for palette extraction
             if (npImg) {
@@ -1343,49 +1374,6 @@
 
                 if (npImg.complete && npImg.naturalWidth > 0) onLoaded();
                 else npImg.addEventListener('load', onLoaded, { once: true });
-            }
-
-            // Bottom player mini cover
-            if (playerImg) {
-                if (hasVideo) {
-                    playerImg.style.display = 'none';
-                    if (playerVideo) {
-                        playerVideo.style.display = 'block';
-                        if (playerVideo.src !== currentSong.videoCover) {
-                            playerVideo.src = currentSong.videoCover;
-                            playerVideo.load();
-                        }
-                        playerVideo.play().catch(e => {});
-                    }
-                } else {
-                    playerImg.style.display = 'block';
-                    playerImg.src = imgUrl;
-                    if (playerVideo) {
-                        playerVideo.style.display = 'none';
-                        playerVideo.pause();
-                    }
-                }
-            }
-
-            // Fullscreen large cover
-            if (npImg) {
-                if (hasVideo) {
-                    npImg.style.display = 'none';
-                    if (npVideo) {
-                        npVideo.style.display = 'block';
-                        if (npVideo.src !== currentSong.videoCover) {
-                            npVideo.src = currentSong.videoCover;
-                            npVideo.load();
-                        }
-                        npVideo.play().catch(e => {});
-                    }
-                } else {
-                    npImg.style.display = 'block';
-                    if (npVideo) {
-                        npVideo.style.display = 'none';
-                        npVideo.pause();
-                    }
-                }
             }
         }
 
@@ -2144,22 +2132,6 @@
             document.getElementById('search-input').addEventListener('input', handleSearch);
             document.body.addEventListener('click', ensureAudioContext, { once: true });
             document.body.addEventListener('touchstart', ensureAudioContext, { once: true });
-
-            // Explicitly force looping at the very end of the video duration for mobile/Safari compatibility
-            const playerVideo = document.getElementById('player-video');
-            const npVideo = document.getElementById('np-video-large');
-            if (playerVideo) {
-                playerVideo.addEventListener('ended', function() {
-                    this.currentTime = 0;
-                    this.play().catch(e => {});
-                });
-            }
-            if (npVideo) {
-                npVideo.addEventListener('ended', function() {
-                    this.currentTime = 0;
-                    this.play().catch(e => {});
-                });
-            }
 
             requestAnimationFrame(renderLoop);
             
