@@ -671,7 +671,7 @@
             
             <div class="player-info" onclick="toggleNP()">
                 <img src="https://4nemxki6k8.ucarecd.net/0455c685-6df4-4dca-ba77-16d7bf4135d6/PROBLEMAA.jpg" id="player-img" class="player-img" crossorigin="anonymous">
-                <video id="player-video" class="player-img" loop muted playsinline style="display:none; object-fit:cover; width:56px; height:56px;"></video>
+                <video id="player-video" class="player-img" muted playsinline style="display:none; object-fit:cover; width:56px; height:56px;"></video>
                 <div class="player-meta">
                     <div class="player-title"><span id="player-title">Problema</span> <div class="ai-badge" id="badge-pill">Mix</div></div>
                     <div class="player-artist" id="player-artist">Dei V & Luar La L</div>
@@ -719,7 +719,7 @@
             <div class="np-left-pane">
                 <div class="np-art-wrap" onclick="togglePlay()">
                     <img src="https://4nemxki6k8.ucarecd.net/0455c685-6df4-4dca-ba77-16d7bf4135d6/PROBLEMAA.jpg" id="np-img-large" class="np-art" crossorigin="anonymous">
-                    <video id="np-video-large" class="np-art" loop muted playsinline style="display:none; object-fit:cover; width:100%; height:100%; pointer-events:none;"></video>
+                    <video id="np-video-large" class="np-art" muted playsinline style="display:none; object-fit:cover; width:100%; height:100%; pointer-events:none;"></video>
                 </div>
                 
                 <div class="np-info-block">
@@ -804,7 +804,7 @@
                 url: "https://4nemxki6k8.ucarecd.net/d311e759-9126-42d6-9edc-840928b84e36/TELEFONONUEVO_spotdownorg.mp3",
                 lrc: "https://4nemxki6k8.ucarecd.net/720ba62e-1b37-48c2-8dbc-6cf178df747b/TELEFONONUEVO_spotdownorg.ttml",
                 cover: telefonoNuevoCoverUrl,
-                videoCover: "https://3lxj8u72k3.ucarecd.net/12bfb343-af9b-47d6-b65c-3be7e72bb740/Shelike2fuck1.mp4",
+                videoCover: "https://3lxj8u72k3.ucarecd.net/aa2c53b9-5ead-4e16-9b1e-05684a4a5ae9/TelefonoNuevo.mp4",
                 album: "nadie-sabe-album",
                 trackNum: 11,
                 coverLoaded: true
@@ -825,7 +825,7 @@
                 url: "https://4nemxki6k8.ucarecd.net/c239864b-6c60-4301-a778-5c127cb06cd6/SpotiDownAppSheLike2FuckJayWheeler.mp3",
                 lrc: "https://4nemxki6k8.ucarecd.net/a09f4747-a554-4fef-8a79-0d9c971497f5/SpotiDownAppSheLike2FuckJayWheeler.ttml",
                 cover: sheLike2FuckCoverUrl,
-                videoCover: "https://4nemxki6k8.ucarecd.net/fb63335a-e05d-4686-9b1e-7f6e107a5d5b/Shelike2fuck.mp4",
+                videoCover: "https://3lxj8u72k3.ucarecd.net/92260a67-fb29-4ea9-9136-df4f08c73d30/Shelike2fucknbuevo.mp4",
                 album: "la-voz-favorita",
                 trackNum: 4,
                 coverLoaded: true
@@ -944,7 +944,7 @@
         let globalPalette = [...DEFAULT_PALETTE];
 
         const BG_STATE = {
-            blobs: [],
+            waves: [],
             sparks: [],
             bins: null,
             audioEnergy: { low: 0, mid: 0, high: 0, total: 0, beat: 0 },
@@ -967,21 +967,21 @@
             resizeFluidCanvas();
             window.addEventListener('resize', resizeFluidCanvas);
 
-            BG_STATE.blobs = Array.from({ length: 7 }, (_, i) => ({
-                x: 0.15 + Math.random() * 0.7,
-                y: 0.15 + Math.random() * 0.7,
-                t: Math.random() * Math.PI * 2,
-                speed: 0.00014 + i * 0.00003,
-                radMul: 0.42 + (i % 4) * 0.11,
-                colorIdx: i % 6,
-                ax: 0.16 + (i % 3) * 0.08,
-                ay: 0.14 + ((i + 1) % 3) * 0.08,
-                fx: 0.9 + (i % 4) * 0.18,
-                fy: 0.8 + ((i + 2) % 4) * 0.16,
-                px: i * 0.7,
-                py: i * 1.1,
-                wobble: 0.012 + (i % 5) * 0.004
-            }));
+            // Configure 4 liquid wave layers with asymmetrical frequencies and horizontal asynchronous velocities
+            BG_STATE.waves = Array.from({ length: 4 }, (_, i) => {
+                return {
+                    verticalOffset: 0.22 + i * 0.18, 
+                    colorIdx: i % 6,
+                    cycle1Multiplier: 1.1 + i * 0.35, 
+                    cycle2Multiplier: 1.7 + i * 0.25, 
+                    speed1: (0.0003 + i * 0.0001) * (i % 2 === 0 ? 1 : -1), 
+                    speed2: (0.00025 + i * 0.00008) * (i % 2 === 0 ? -1 : 1),
+                    phase1: Math.random() * Math.PI * 2,
+                    phase2: Math.random() * Math.PI * 2,
+                    amp1: 0.06 + Math.random() * 0.04,  
+                    amp2: 0.04 + Math.random() * 0.03
+                };
+            });
 
             BG_STATE.sparks = Array.from({ length: 36 }, () => ({
                 x: Math.random(),
@@ -1228,50 +1228,43 @@
             ctx.fillStyle = bg;
             ctx.fillRect(0, 0, W, H);
 
-            BG_STATE.blobs.forEach((b, i) => {
-                b.t += b.speed * (1 + e.low * 1.8 + e.total * 0.6);
+            // Render asymmetric mathematical liquid wave layers
+            BG_STATE.waves.forEach((wave, i) => {
+                const speedMultiplier = 1.0 + e.low * 1.5;
+                wave.phase1 += wave.speed1 * speedMultiplier;
+                wave.phase2 += wave.speed2 * speedMultiplier;
 
-                const waveX = Math.sin(b.t * b.fx + b.px);
-                const waveY = Math.sin(b.t * b.fy + b.py);
-                const drift = Math.sin(now * 0.00011 + i);
+                ctx.beginPath();
+                ctx.moveTo(0, H);
 
-                const nx = 0.5
-                    + b.ax * waveX
-                    + Math.sin(now * 0.000035 + i * 1.4) * b.wobble
-                    + drift * 0.01;
-                const ny = 0.5
-                    + b.ay * waveY
-                    + Math.cos(now * 0.000031 + i * 1.1) * b.wobble
-                    - drift * 0.008;
+                const step = 4;
+                for (let x = 0; x <= W; x += step) {
+                    const angle1 = (x / W) * Math.PI * 2 * wave.cycle1Multiplier + wave.phase1;
+                    const angle2 = (x / W) * Math.PI * 2 * wave.cycle2Multiplier + wave.phase2;
 
-                b.x += (nx - b.x) * 0.022;
-                b.y += (ny - b.y) * 0.022;
+                    const musicBoost = 1.0 + e.beat * 0.45;
+                    const h1 = Math.sin(angle1) * wave.amp1 * H * musicBoost;
+                    const h2 = Math.cos(angle2) * wave.amp2 * H * musicBoost;
 
-                const cx = b.x * W;
-                const cy = b.y * H;
-                const rad = maxDim * (b.radMul * (0.9 + beat * 0.18 + i * 0.01));
+                    const y = wave.verticalOffset * H + h1 + h2;
+                    ctx.lineTo(x, y);
+                }
+                ctx.lineTo(W, H);
+                ctx.closePath();
 
-                const col = palette[(b.colorIdx + i) % palette.length] || palette[0];
-                const alphaBoost = isNP ? 1.0 : 0.92;
+                // Vertical LinearGradient to fade color smoothly to the bottom
+                const gradStartY = Math.max(0, wave.verticalOffset * H - (wave.amp1 + wave.amp2) * H * 1.5);
+                const grad = ctx.createLinearGradient(0, gradStartY, 0, H);
+                const col = palette[wave.colorIdx % palette.length] || palette[0];
+                const alphaBoost = isNP ? 1.0 : 0.88;
 
-                const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, rad);
-                g.addColorStop(0, `rgba(${col.r},${col.g},${col.b},${0.95 * alphaBoost})`);
-                g.addColorStop(0.22, `rgba(${col.r},${col.g},${col.b},${0.72 * alphaBoost})`);
-                g.addColorStop(0.52, `rgba(${col.r},${col.g},${col.b},${0.25 * alphaBoost})`);
-                g.addColorStop(1, `rgba(${col.r},${col.g},${col.b},0)`);
+                grad.addColorStop(0, `rgba(${col.r}, ${col.g}, ${col.b}, ${0.80 * alphaBoost})`);
+                grad.addColorStop(0.5, `rgba(${col.r}, ${col.g}, ${col.b}, ${0.30 * alphaBoost})`);
+                grad.addColorStop(1, `rgba(${col.r}, ${col.g}, ${col.b}, 0)`);
 
+                ctx.fillStyle = grad;
                 ctx.globalCompositeOperation = i % 2 === 0 ? 'screen' : 'lighter';
-                ctx.fillStyle = g;
-                ctx.fillRect(0, 0, W, H);
-
-                const gx = cx + Math.sin(b.t * 1.4 + i) * rad * 0.08;
-                const gy = cy + Math.cos(b.t * 1.2 + i) * rad * 0.06;
-                const h = ctx.createRadialGradient(gx, gy, 0, gx, gy, rad * 0.55);
-                h.addColorStop(0, `rgba(255,255,255,${0.05 + e.high * 0.08})`);
-                h.addColorStop(1, 'rgba(255,255,255,0)');
-                ctx.globalCompositeOperation = 'screen';
-                ctx.fillStyle = h;
-                ctx.fillRect(0, 0, W, H);
+                ctx.fill();
             });
 
             ctx.globalCompositeOperation = 'screen';
