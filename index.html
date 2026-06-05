@@ -88,12 +88,14 @@
             position: absolute; inset: 0; z-index: 2; opacity: 0.045; mix-blend-mode: overlay; pointer-events: none;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
-        /* WebGL Liquid Aurora Canvases (Borders and filters removed for GPU rendering) */
+        /* Spicy-style: canvas renders waves then CSS blur+saturate makes it fluid */
         #fluid-canvas {
-            position: absolute; inset: 0; width: 100%; height: 100%;
+            position: absolute; inset: -8%; width: 116%; height: 116%;
+            filter: blur(80px) saturate(220%) brightness(0.95);
             opacity: 1;
             pointer-events: none;
             z-index: 1;
+            will-change: filter;
         }
 
         /* ==================================================================
@@ -264,9 +266,12 @@
 
         .np-bg-wrap { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
         #fluid-canvas-np {
-            position: absolute; inset: 0; width: 100%; height: 100%;
+            position: absolute; inset: -8%; width: 116%; height: 116%;
+            filter: blur(80px) saturate(220%) brightness(0.85);
+            opacity: 1;
             pointer-events: none;
             z-index: 0;
+            will-change: filter;
         }
         .np-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.55); z-index: 1; }
         .np-grain { position: absolute; inset: 0; z-index: 2; opacity: 0.035; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none;}
@@ -751,6 +756,9 @@
         </div>
     </div>
 
+    <!-- Hidden Canvas for Color Extraction -->
+    <canvas id="color-extractor" style="display:none;"></canvas>
+
     <script>
         /* ==================================================================
            DATA
@@ -1062,51 +1070,6 @@
             BG_STATE.lastHeight = h;
         }
 
-        function boostSaturation(r, g, b, factor) {
-            r /= 255; g /= 255; b /= 255;
-            const max = Math.max(r, g, b), min = Math.min(r, g, b);
-            let h = 0, s = 0, l = (max + min) / 2;
-
-            if (max !== min) {
-                const d = max - min;
-                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-                switch (max) {
-                    case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-                    case g: h = (b - r) / d + 2; break;
-                    default: h = (r - g) / d + 4; break;
-                }
-                h /= 6;
-            }
-
-            s = Math.min(1, s * factor);
-
-            const hue2rgb = (p, q, t) => {
-                if (t < 0) t += 1;
-                if (t > 1) t -= 1;
-                if (t < 1 / 6) return p + (q - p) * 6 * t;
-                if (t < 1 / 2) return q;
-                if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
-                return p;
-            };
-
-            let nr, ng, nb;
-            if (s === 0) {
-                nr = ng = nb = l;
-            } else {
-                const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-                const p = 2 * l - q;
-                nr = hue2rgb(p, q, h + 1 / 3);
-                ng = hue2rgb(p, q, h);
-                nb = hue2rgb(p, q, h - 1 / 3);
-            }
-
-            return {
-                r: Math.round(nr * 255),
-                g: Math.round(ng * 255),
-                b: Math.round(nb * 255)
-            };
-        }
-
         function startPaletteTransition(newPalette) {
             if (!newPalette || !newPalette.length) return;
             targetPalette = newPalette.map(c => ({ ...c }));
@@ -1227,38 +1190,61 @@
             ctx.fillStyle = bg;
             ctx.fillRect(0, 0, W, H);
 
-            // Render asymmetric mathematical liquid wave layers
+            // Render asymmetric mathematical liquid wave layers (Floating morphing ribbons)
             BG_STATE.waves.forEach((wave, i) => {
                 const speedMultiplier = 1.0 + e.low * 1.5;
                 wave.phase1 += wave.speed1 * speedMultiplier;
                 wave.phase2 += wave.speed2 * speedMultiplier;
 
                 ctx.beginPath();
-                ctx.moveTo(0, H);
-
+                
                 const step = 4;
+                const musicBoost = 1.0 + e.beat * 0.55;
+                
+                // Draw top sinuous edge
                 for (let x = 0; x <= W; x += step) {
                     const angle1 = (x / W) * Math.PI * 2 * wave.cycle1Multiplier + wave.phase1;
                     const angle2 = (x / W) * Math.PI * 2 * wave.cycle2Multiplier + wave.phase2;
 
-                    const musicBoost = 1.0 + e.beat * 0.45;
                     const h1 = Math.sin(angle1) * wave.amp1 * H * musicBoost;
                     const h2 = Math.cos(angle2) * wave.amp2 * H * musicBoost;
-
-                    const y = wave.verticalOffset * H + h1 + h2;
-                    ctx.lineTo(x, y);
+                    const centerY = wave.verticalOffset * H + h1 + h2;
+                    
+                    const thickness = (0.12 + 0.06 * Math.sin(x * 0.015 + wave.phase1 * 0.5)) * H;
+                    const yTop = centerY - thickness * 0.5;
+                    
+                    if (x === 0) ctx.moveTo(x, yTop);
+                    else ctx.lineTo(x, yTop);
                 }
-                ctx.lineTo(W, H);
+                
+                // Draw bottom sinuous edge backwards
+                let lastCenterY = wave.verticalOffset * H;
+                let lastThickness = 0.12 * H;
+                for (let x = W; x >= 0; x -= step) {
+                    const angle1 = (x / W) * Math.PI * 2 * wave.cycle1Multiplier + wave.phase1;
+                    const angle2 = (x / W) * Math.PI * 2 * wave.cycle2Multiplier + wave.phase2;
+
+                    const h1 = Math.sin(angle1) * wave.amp1 * H * musicBoost;
+                    const h2 = Math.cos(angle2) * wave.amp2 * H * musicBoost;
+                    const centerY = wave.verticalOffset * H + h1 + h2;
+                    if (x === W) lastCenterY = centerY;
+                    
+                    const thickness = (0.12 + 0.06 * Math.sin(x * 0.015 + wave.phase1 * 0.5)) * H;
+                    if (x === W) lastThickness = thickness;
+                    const yBottom = centerY + thickness * 0.5;
+                    
+                    ctx.lineTo(x, yBottom);
+                }
+                
                 ctx.closePath();
 
-                // Vertical LinearGradient to fade color smoothly to the bottom
-                const gradStartY = Math.max(0, wave.verticalOffset * H - (wave.amp1 + wave.amp2) * H * 1.5);
-                const grad = ctx.createLinearGradient(0, gradStartY, 0, H);
+                // Adaptive LinearGradient built on each floating ribbon's center height bounds
+                const grad = ctx.createLinearGradient(0, lastCenterY - lastThickness * 0.8, 0, lastCenterY + lastThickness * 0.8);
                 const col = palette[wave.colorIdx % palette.length] || palette[0];
                 const alphaBoost = isNP ? 1.0 : 0.88;
 
-                grad.addColorStop(0, `rgba(${col.r}, ${col.g}, ${col.b}, ${0.80 * alphaBoost})`);
-                grad.addColorStop(0.5, `rgba(${col.r}, ${col.g}, ${col.b}, ${0.30 * alphaBoost})`);
+                grad.addColorStop(0, `rgba(${col.r}, ${col.g}, ${col.b}, 0)`);
+                grad.addColorStop(0.5, `rgba(${col.r}, ${col.g}, ${col.b}, ${0.52 * alphaBoost})`);
                 grad.addColorStop(1, `rgba(${col.r}, ${col.g}, ${col.b}, 0)`);
 
                 ctx.fillStyle = grad;
@@ -2042,8 +2028,8 @@
         function checkAutoMix() {
             if(activeAudio.duration && !isNaN(activeAudio.duration)) {
                 const rem = activeAudio.duration - activeAudio.currentTime;
-                const anal = trackAnalysis[cancionesData[currentPlayingIndex]?.url];
-                let out = anal && anal.outroDuration ? anal.outroDuration : 8;
+                const analyserInfo = trackAnalysis[cancionesData[currentPlayingIndex]?.url];
+                let out = analyserInfo && analyserInfo.outroDuration ? analyserInfo.outroDuration : 8;
                 if(mixTimingHumanized === 0) mixTimingHumanized = (Math.random()-0.5)*1.5;
                 if(rem <= (out + mixTimingHumanized) && !isCrossfading && rem > 0.5) { startAutoMix(); mixTimingHumanized = 0; }
             }
