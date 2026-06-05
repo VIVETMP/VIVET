@@ -91,7 +91,7 @@
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
         
-        /* Modificado: Removido el filtro de blur y reajustadas las dimensiones a 100% */
+        /* Eliminado el blur para renderizar las ondas totalmente nítidas */
         #fluid-canvas {
             position: absolute; inset: 0; width: 100%; height: 100%;
             filter: saturate(220%) brightness(0.95);
@@ -269,7 +269,7 @@
 
         .np-bg-wrap { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
         
-        /* Modificado: Removido el filtro de blur y reajustadas las dimensiones a 100% */
+        /* Eliminado el blur para renderizar las ondas totalmente nítidas */
         #fluid-canvas-np {
             position: absolute; inset: 0; width: 100%; height: 100%;
             filter: saturate(220%) brightness(0.85);
@@ -995,9 +995,6 @@
 
         let activePalette = null;
         let targetPalette = null;
-        let paletteProgress = 1.0;
-        let paletteLerpStart = 0;
-        const PALETTE_LERP_DURATION = 900;
 
         const DEFAULT_PALETTE = [
             { r: 255, g: 46,  b: 147 },
@@ -1029,7 +1026,7 @@
             resizeFluidCanvas();
             window.addEventListener('resize', resizeFluidCanvas);
 
-            // Modificado: Los fluidos/ondas en movimiento evitan el índice 0 (que será el fondo) usando de 1 a 5
+            // Los fluidos en movimiento evitan el índice 0 (que será el fondo) usando los índices de 1 a 5
             BG_STATE.waves = Array.from({ length: 4 }, (_, i) => {
                 return {
                     verticalOffset: 0.22 + i * 0.18, 
@@ -1058,7 +1055,7 @@
             requestAnimationFrame(animateFluid);
         }
 
-        // Modificado: Escala cambiada a 1 para renderizar vectores nítidos sin aliasing al quitar el blur
+        // Relación de escala 1 para vectores de alta definición (sin blur que distorsione los pixeles)
         function resizeFluidCanvas() {
             const scale = 1; 
             const w = Math.ceil(window.innerWidth / scale);
@@ -1079,32 +1076,6 @@
         function startPaletteTransition(newPalette) {
             if (!newPalette || !newPalette.length) return;
             targetPalette = newPalette.map(c => ({ ...c }));
-            paletteProgress = 0;
-            paletteLerpStart = performance.now();
-        }
-
-        function tickPaletteTransition(now) {
-            if (!targetPalette || paletteProgress >= 1) return;
-
-            const t = Math.min(1, (now - paletteLerpStart) / PALETTE_LERP_DURATION);
-            const eased = 1 - Math.pow(1 - t, 3);
-            paletteProgress = t;
-
-            if (!activePalette || !activePalette.length) {
-                activePalette = [...targetPalette];
-                return;
-            }
-
-            activePalette = activePalette.map((src, i) => {
-                const dst = targetPalette[i] || targetPalette[0];
-                return {
-                    r: Math.round(src.r + (dst.r - src.r) * eased),
-                    g: Math.round(src.g + (dst.g - src.g) * eased),
-                    b: Math.round(src.b + (dst.b - src.b) * eased)
-                };
-            });
-
-            if (t >= 1) activePalette = [...targetPalette];
         }
 
         function sampleAudioEnergy() {
@@ -1151,7 +1122,16 @@
             return BG_STATE.audioEnergy;
         }
 
-        // Modificado: El primer color de la paleta (c0) se define como el fondo sólido, los demás como fluidos
+        function animateFluid(now) {
+            sampleAudioEnergy();
+
+            if (fluidCanvas && fluidCtx) drawFluidFrame(fluidCanvas, fluidCtx, now, false);
+            if (isNPOpen && npFluidCanvas && npFluidCtx) drawFluidFrame(npFluidCanvas, npFluidCtx, now, true);
+
+            requestAnimationFrame(animateFluid);
+        }
+
+        // El primer color de la paleta (c0) se define como el fondo sólido, los demás como fluidos
         function drawFluidFrame(canvas, ctx, now, isNP) {
             const W = canvas.width || 1;
             const H = canvas.height || 1;
@@ -1161,24 +1141,29 @@
             ctx.globalCompositeOperation = 'source-over';
             ctx.clearRect(0, 0, W, H);
             
-            // Primer color de la paleta (c0) como fondo sólido
+            // Primer color de la paleta (c0) como fondo sólido con redondeo estricto de decimales
             const c0 = palette[0] || DEFAULT_PALETTE[0];
-            ctx.fillStyle = `rgb(${c0.r}, ${c0.g}, ${c0.b})`;
+            const r0 = Math.round(c0.r), g0 = Math.round(c0.g), b0 = Math.round(c0.b);
+            ctx.fillStyle = `rgb(${r0}, ${g0}, ${b0})`;
             ctx.fillRect(0, 0, W, H);
 
-            // Transición suave de la variable CSS para el fondo de la página
+            // Sincronización de la variable CSS para que el fondo de la página cambie suavemente
             if (isNP === false) {
-                document.documentElement.style.setProperty('--bg-deep', `rgb(${Math.round(c0.r)}, ${Math.round(c0.g)}, ${Math.round(c0.b)})`);
+                document.documentElement.style.setProperty('--bg-deep', `rgb(${r0}, ${g0}, ${b0})`);
             }
 
             const maxDim = Math.max(W, H);
             const beat = 0.5 + e.beat * 0.9;
             const total = 0.45 + e.total * 0.75;
 
-            // Fluidos y capas dinámicas con los demás colores (c1, c2, c3...)
+            // Fluidos y capas dinámicas generados con los otros colores de la paleta
             const c1 = palette[1] || palette[0] || DEFAULT_PALETTE[1];
             const c2 = palette[2] || palette[1] || DEFAULT_PALETTE[2];
             const c3 = palette[3] || palette[2] || DEFAULT_PALETTE[3];
+
+            const r1 = Math.round(c1.r), g1 = Math.round(c1.g), b1 = Math.round(c1.b);
+            const r2 = Math.round(c2.r), g2 = Math.round(c2.g), b2 = Math.round(c2.b);
+            const r3 = Math.round(c3.r), g3 = Math.round(c3.g), b3 = Math.round(c3.b);
 
             const bg = ctx.createRadialGradient(
                 W * (0.52 + Math.sin(now * 0.00008) * 0.02),
@@ -1190,9 +1175,9 @@
             );
             
             // Degradado ambiental construido con los otros colores
-            bg.addColorStop(0, `rgba(${c1.r},${c1.g},${c1.b},${0.24 + e.low * 0.16})`);
-            bg.addColorStop(0.38, `rgba(${c2.r},${c2.g},${c2.b},${0.16 + e.mid * 0.10})`);
-            bg.addColorStop(0.72, `rgba(${c3.r},${c3.g},${c3.b},${0.08 + e.high * 0.08})`);
+            bg.addColorStop(0, `rgba(${r1},${g1},${b1},${0.24 + e.low * 0.16})`);
+            bg.addColorStop(0.38, `rgba(${r2},${g2},${b2},${0.16 + e.mid * 0.10})`);
+            bg.addColorStop(0.72, `rgba(${r3},${g3},${b3},${0.08 + e.high * 0.08})`);
             bg.addColorStop(1, 'rgba(0,0,0,0)');
             
             ctx.globalCompositeOperation = 'screen';
@@ -1250,11 +1235,14 @@
                 // Relleno de las ondas utilizando los colores restantes de la paleta
                 const grad = ctx.createLinearGradient(0, lastCenterY - lastThickness * 0.8, 0, lastCenterY + lastThickness * 0.8);
                 const col = palette[wave.colorIdx % palette.length] || palette[1];
+                const colR = Math.round(col.r);
+                const colG = Math.round(col.g);
+                const colB = Math.round(col.b);
                 const alphaBoost = isNP ? 1.0 : 0.88;
 
-                grad.addColorStop(0, `rgba(${col.r}, ${col.g}, ${col.b}, 0)`);
-                grad.addColorStop(0.5, `rgba(${col.r}, ${col.g}, ${col.b}, ${0.52 * alphaBoost})`);
-                grad.addColorStop(1, `rgba(${col.r}, ${col.g}, ${col.b}, 0)`);
+                grad.addColorStop(0, `rgba(${colR}, ${colG}, ${colB}, 0)`);
+                grad.addColorStop(0.5, `rgba(${colR}, ${colG}, ${colB}, ${0.52 * alphaBoost})`);
+                grad.addColorStop(1, `rgba(${colR}, ${colG}, ${colB}, 0)`);
 
                 ctx.fillStyle = grad;
                 ctx.globalCompositeOperation = i % 2 === 0 ? 'screen' : 'lighter';
@@ -1265,7 +1253,6 @@
             for (const s of BG_STATE.sparks) {
                 s.x = (s.x + s.vx + 1) % 1;
                 s.y = (s.y + s.vy + 1) % 1;
-                const pulse = 0.45 + 0.55 * Math.sin(now * 0.0015 + s.phase);
                 const size = (s.size + e.high * 1.5) * (isNP ? 0.8 : 1);
                 ctx.beginPath();
                 ctx.arc(s.x * W, s.y * H, size, 0, Math.PI * 2);
@@ -1318,7 +1305,7 @@
 
             if (playerImg) playerImg.src = imgUrl;
 
-            // Siempre actualizar npImg para extracción y transiciones
+            // Siempre actualizar npImg en segundo plano para extracción de paleta
             if (npImg) {
                 npImg.src = imgUrl;
                 const onLoaded = () => {
@@ -2080,7 +2067,7 @@
                 }
             }
             
-            // Linear Interpolation (LERP) of Active Colors
+            // Interpolación Lineal (LERP) de Colores Activos para una transición suave de 60fps
             const lerpSpeed = 0.025;
             if (activePalette && targetPalette) {
                 for (let i = 0; i < activePalette.length; i++) {
