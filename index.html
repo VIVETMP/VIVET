@@ -823,14 +823,14 @@
                 album: "nadie-sabe-album",
                 trackNum: 11,
                 coverLoaded: true,
-                // Dominant palette for TELÉFONO NUEVO (Image 4)
+                // Updated dominant palette for TELÉFONO NUEVO
                 palette: [
-                    { r: 39, g: 64, b: 115 },   // #274073
+                    { r: 218, g: 204, b: 193 }, // #DACCC1
                     { r: 217, g: 202, b: 193 }, // #D9CAC1
-                    { r: 191, g: 101, b: 69 },  // #BF6545
-                    { r: 140, g: 55, b: 48 },   // #8C3730
+                    { r: 98, g: 117, b: 144 },  // #627590
+                    { r: 117, g: 58, b: 45 },   // #753A2D
                     { r: 64, g: 28, b: 24 },    // #401C18
-                    { r: 39, g: 64, b: 115 }    // padding
+                    { r: 218, g: 204, b: 193 }  // padding
                 ]
             },
             {
@@ -1045,6 +1045,51 @@
             }
             BG_STATE.lastWidth = w;
             BG_STATE.lastHeight = h;
+        }
+
+        function boostSaturation(r, g, b, factor) {
+            r /= 255; g /= 255; b /= 255;
+            const max = Math.max(r, g, b), min = Math.min(r, g, b);
+            let h = 0, s = 0, l = (max + min) / 2;
+
+            if (max !== min) {
+                const d = max - min;
+                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                switch (max) {
+                    case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                    case g: h = (b - r) / d + 2; break;
+                    default: h = (r - g) / d + 4; break;
+                }
+                h /= 6;
+            }
+
+            s = Math.min(1, s * factor);
+
+            const hue2rgb = (p, q, t) => {
+                if (t < 0) t += 1;
+                if (t > 1) t -= 1;
+                if (t < 1 / 6) return p + (q - p) * 6 * t;
+                if (t < 1 / 2) return q;
+                if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+                return p;
+            };
+
+            let nr, ng, nb;
+            if (s === 0) {
+                nr = ng = nb = l;
+            } else {
+                const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+                const p = 2 * l - q;
+                nr = hue2rgb(p, q, h + 1 / 3);
+                ng = hue2rgb(p, q, h);
+                nb = hue2rgb(p, q, h - 1 / 3);
+            }
+
+            return {
+                r: Math.round(nr * 255),
+                g: Math.round(ng * 255),
+                b: Math.round(nb * 255)
+            };
         }
 
         function startPaletteTransition(newPalette) {
