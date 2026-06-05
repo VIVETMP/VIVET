@@ -85,14 +85,17 @@
             pointer-events: none;
         }
         .noise-overlay {
-            position: absolute; inset: 0; z-index: 2; opacity: 0.035; mix-blend-mode: overlay; pointer-events: none;
+            position: absolute; inset: 0; z-index: 2; opacity: 0.045; mix-blend-mode: overlay; pointer-events: none;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
-        /* Full-screen high-fidelity background canvases */
+        /* Spicy-style: canvas renders waves then CSS blur+saturate makes it fluid */
         #fluid-canvas {
-            position: absolute; inset: 0; width: 100%; height: 100%;
+            position: absolute; inset: -8%; width: 116%; height: 116%;
+            filter: blur(80px) saturate(200%) brightness(0.9);
+            opacity: 1;
             pointer-events: none;
             z-index: 1;
+            will-change: filter;
         }
 
         /* ==================================================================
@@ -263,9 +266,12 @@
 
         .np-bg-wrap { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
         #fluid-canvas-np {
-            position: absolute; inset: 0; width: 100%; height: 100%;
+            position: absolute; inset: -8%; width: 116%; height: 116%;
+            filter: blur(80px) saturate(220%) brightness(0.85);
+            opacity: 1;
             pointer-events: none;
             z-index: 0;
+            will-change: filter;
         }
         .np-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.55); z-index: 1; }
         .np-grain { position: absolute; inset: 0; z-index: 2; opacity: 0.035; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none;}
@@ -1301,7 +1307,6 @@
                 s.y = (s.y + s.vy + 1) % 1;
                 const pulse = 0.45 + 0.55 * Math.sin(now * 0.0015 + s.phase);
                 const size = (s.size + e.high * 1.5) * (isNP ? 0.8 : 1);
-                ctx.fillStyle = `rgba(255,255,255,${0.02 + pulse * 0.05 + e.high * 0.05})`;
                 ctx.beginPath();
                 ctx.arc(s.x * W, s.y * H, size, 0, Math.PI * 2);
                 ctx.fill();
@@ -1838,10 +1843,10 @@
                             const time = (parseInt(lineMatch[1])*60) + parseFloat(lineMatch[2]);
                             const raw = lineMatch[3].replace('\r', '');
                             
-                            let words =[]; let wm; const wReg = /<(\d{2,}):(\d{2}(?:\.\d{1,3})?)>([^<]*)/g; let hasW = false;
+                            let words =[]; let wm; const wReg = /<(\d{2,}):(\d{2}(%3C?:\.\d{1,3})?)>([^<]*)/g; let hasW = false;
                             while((wm = wReg.exec(raw)) !== null) { hasW = true; words.push({ time: (parseInt(wm[1])*60)+parseFloat(wm[2]), text: wm[3], el: null, dur: 0, fill: 0, lastRenderedFill: 0 }); }
                             
-                            const clean = raw.replace(/<\d{2,}:\d{2}(?:\.\d{1,3})?>/g, '').trim();
+                            const clean = raw.replace(/<\d{2,}:\d{2}(%3C?:\.\d{1,3})?>/g, '').trim();
                             if(clean === "" || clean === "♪") words =[{ time, text: "•••", el: null, dur: 0, fill: 0, lastRenderedFill: 0 }];
                             else if(!hasW) words =[{ time, text: clean, el: null, dur: 0, fill: 0, lastRenderedFill: 0 }];
                             
@@ -2110,6 +2115,20 @@
                     }
                 }
             }
+            
+            // Linear Interpolation (LERP) of Active Colors
+            // This is the beautiful, smooth color melting transition over 1.5 - 2 seconds
+            const lerpSpeed = 0.025; // perfectly balances speed for 60fps LERP
+            if (activePalette && targetPalette) {
+                for (let i = 0; i < activePalette.length; i++) {
+                    if (targetPalette[i]) {
+                        activePalette[i].r += (targetPalette[i].r - activePalette[i].r) * lerpSpeed;
+                        activePalette[i].g += (targetPalette[i].g - activePalette[i].g) * lerpSpeed;
+                        activePalette[i].b += (targetPalette[i].b - activePalette[i].b) * lerpSpeed;
+                    }
+                }
+            }
+
             requestAnimationFrame(renderLoop);
         }
 
