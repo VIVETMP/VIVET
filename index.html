@@ -774,13 +774,15 @@
         const latelyCoverUrl = "https://4nemxki6k8.ucarecd.net/6cfb3a43-ada1-48d4-8b78-daf1279c4bbc/Lately.png";
         const sheLike2FuckCoverUrl = "https://4nemxki6k8.ucarecd.net/a121b330-6729-4a7d-9270-8c3b2b5eff4e/shelike2fuck.png";
         const piensaenmiCoverUrl = "https://3lxj8u72k3.ucarecd.net/7024d8d9-8ba3-405d-882e-0c2e055a51e4/Piensaenmi.jpg";
+        const tarotCoverUrl = "https://3lxj8u72k3.ucarecd.net/7aa123a5-1fff-46d0-9680-7def87d46064/Tarot.png";
 
         const albumsData = [ 
             { id: "Underwater", title: "Underwater", artist: "Dei V", cover: coverImgUrl, year: "2024" },
             { id: "nadie-sabe-album", title: "nadie sabe lo que va a pasar mañana", artist: "Bad Bunny", cover: telefonoNuevoCoverUrl, year: "2023" },
             { id: "L3tra-album", title: "L3tra", artist: "Luar La L", cover: sideBitchCoverUrl, year: "2024" },
             { id: "la-voz-favorita", title: "La Voz Favorita", artist: "Jay Wheeler", cover: sheLike2FuckCoverUrl, year: "2024" },
-            { id: "primera-musa-album", title: "PRIMERA MUSA", artist: "Omar Courtz", cover: piensaenmiCoverUrl, year: "2024" }
+            { id: "primera-musa-album", title: "PRIMERA MUSA", artist: "Omar Courtz", cover: piensaenmiCoverUrl, year: "2024" },
+            { id: "un-verano-sin-ti", title: "Un Verano Sin Ti", artist: "Bad Bunny", cover: tarotCoverUrl, year: "2022" }
         ];
 
         const cancionesData = [
@@ -869,7 +871,7 @@
                 album: "la-voz-favorita",
                 trackNum: 4,
                 coverLoaded: true,
-                // Modificado: Paleta de colores actualizada exactamente con la paleta de Adobe de la imagen adjunta
+                // Paleta de colores actualizada exactamente con la paleta de Adobe de la imagen adjunta
                 palette: [
                     { r: 117, g: 114, b: 109 }, // #75726D
                     { r: 98, g: 95, b: 90 },    // #625F5A
@@ -897,6 +899,25 @@
                     { r: 242, g: 153, b: 194 }, // #F299C2
                     { r: 242, g: 19, b: 60 }    // padding
                 ]
+            },
+            {
+                title: "Tarot",
+                artist: "Bad Bunny & JHAYCO",
+                url: "https://3lxj8u72k3.ucarecd.net/daaea497-292c-4eb7-b2bd-6e0fc6516e3e/Tarot_spotdownorg.mp3",
+                lrc: "https://3lxj8u72k3.ucarecd.net/c989f27a-3b89-4122-96f9-3a173274679f/Tarot_spotdownorg.ttml",
+                cover: tarotCoverUrl,
+                album: "un-verano-sin-ti",
+                trackNum: 5,
+                coverLoaded: true,
+                // Modificado: Paleta de colores de la imagen adjunta para Tarot
+                palette: [
+                    { r: 242, g: 107, b: 143 }, // #F26B8F (Rosa / Fondo c0)
+                    { r: 242, g: 159, b: 5 },   // #F29F05 (Amarillo c1)
+                    { r: 242, g: 137, b: 7 },   // #F28907 (Naranja claro c2)
+                    { r: 242, g: 93, b: 7 },    // #F25D07 (Naranja oscuro c3)
+                    { r: 217, g: 11, b: 11 },   // #D90B0B (Rojo c4)
+                    { r: 242, g: 107, b: 143 }  // padding (#F26B8F)
+                ]
             }
         ];
 
@@ -905,7 +926,8 @@
             { name: "Luar La L", img: sideBitchCoverUrl },
             { name: "Bad Bunny", img: telefonoNuevoCoverUrl },
             { name: "Jay Wheeler", img: sheLike2FuckCoverUrl },
-            { name: "Omar Courtz", img: piensaenmiCoverUrl }
+            { name: "Omar Courtz", img: piensaenmiCoverUrl },
+            { name: "JHAYCO", img: tarotCoverUrl }
         ];
 
         /* ==================================================================
@@ -1574,7 +1596,7 @@
             activeAudio.play().catch(e=>{}); setPlayIcon(true);
         }
 
-        // Se restringe la selección aleatoria de color de ondas para excluir la posición 0 (fondo)
+        // Modificado: Se ampliaron de forma permanente los radios de oscilación (amp) para un barrido mucho más dinámico
         function randomizeWaves() {
             if (!BG_STATE.waves || BG_STATE.waves.length === 0) return;
 
