@@ -550,7 +550,7 @@
 </head>
 <body>
 
-    <!-- AMBIENT CANVAS BACKGROUND -->
+    <!-- AMBIENT BACKGROUND -->
     <div id="ambient-bg">
         <div class="noise-overlay"></div>
         <canvas id="fluid-canvas"></canvas>
@@ -767,12 +767,14 @@
         const telefonoNuevoCoverUrl = "https://4nemxki6k8.ucarecd.net/573e5b7a-8f8a-478a-9f0f-ce6ee63896ba/TELEFONONUEVO.png";
         const latelyCoverUrl = "https://4nemxki6k8.ucarecd.net/6cfb3a43-ada1-48d4-8b78-daf1279c4bbc/Lately.png";
         const sheLike2FuckCoverUrl = "https://4nemxki6k8.ucarecd.net/a121b330-6729-4a7d-9270-8c3b2b5eff4e/shelike2fuck.png";
+        const piensaenmiCoverUrl = "https://3lxj8u72k3.ucarecd.net/7024d8d9-8ba3-405d-882e-0c2e055a51e4/Piensaenmi.jpg";
 
         const albumsData = [ 
             { id: "Underwater", title: "Underwater", artist: "Dei V", cover: coverImgUrl, year: "2024" },
             { id: "nadie-sabe-album", title: "nadie sabe lo que va a pasar mañana", artist: "Bad Bunny", cover: telefonoNuevoCoverUrl, year: "2023" },
             { id: "L3tra-album", title: "L3tra", artist: "Luar La L", cover: sideBitchCoverUrl, year: "2024" },
-            { id: "la-voz-favorita", title: "La Voz Favorita", artist: "Jay Wheeler", cover: sheLike2FuckCoverUrl, year: "2024" }
+            { id: "la-voz-favorita", title: "La Voz Favorita", artist: "Jay Wheeler", cover: sheLike2FuckCoverUrl, year: "2024" },
+            { id: "primera-musa-album", title: "PRIMERA MUSA", artist: "Omar Courtz", cover: piensaenmiCoverUrl, year: "2024" }
         ];
 
         const cancionesData = [
@@ -870,6 +872,25 @@
                     { r: 89, g: 86, b: 82 },    // #595652
                     { r: 242, g: 242, b: 242 }  // padding
                 ]
+            },
+            {
+                title: "P I E N S A S E N M I",
+                artist: "Omar Courtz & Luar La L",
+                url: "https://3lxj8u72k3.ucarecd.net/08260fda-fc6a-4363-8cbe-4f0899312111/PIENSASENMI_spotdownorg.mp3",
+                lrc: "https://3lxj8u72k3.ucarecd.net/6ae091e0-a222-477d-a67b-d9bdb5a862d4/PIENSASENMI_spotdownorg.ttml",
+                cover: piensaenmiCoverUrl,
+                album: "primera-musa-album",
+                trackNum: 1,
+                coverLoaded: true,
+                // Dominant palette for P I E N S A S E N M I
+                palette: [
+                    { r: 242, g: 19, b: 60 },   // #F2133C
+                    { r: 242, g: 46, b: 98 },   // #F22E62
+                    { r: 64, g: 22, b: 41 },    // #401629
+                    { r: 242, g: 114, b: 174 }, // #F272AE
+                    { r: 242, g: 153, b: 194 }, // #F299C2
+                    { r: 242, g: 19, b: 60 }    // padding
+                ]
             }
         ];
 
@@ -877,7 +898,8 @@
             { name: "Dei V", img: coverImgUrl },
             { name: "Luar La L", img: sideBitchCoverUrl },
             { name: "Bad Bunny", img: telefonoNuevoCoverUrl },
-            { name: "Jay Wheeler", img: sheLike2FuckCoverUrl }
+            { name: "Jay Wheeler", img: sheLike2FuckCoverUrl },
+            { name: "Omar Courtz", img: piensaenmiCoverUrl }
         ];
 
         /* ==================================================================
@@ -1470,6 +1492,11 @@
                         <img src="${item.cover || item.img}" class="card-img ${type==='song'?`cover-song-${realIndex}`:''}">
                         ${type!=='artist' ? `<div class="card-play-btn"><i class="ph-fill ph-play"></i></div>` : ''}
                     </div>
+                    <div class="card-img-wrapper ${type==='artist'?'is-circle':''}">
+                        ${badge}
+                        <img src="${item.cover || item.img}" class="card-img ${type==='song'?`cover-song-${realIndex}`:''}">
+                        ${type!=='artist' ? `<div class="card-play-btn"><i class="ph-fill ph-play"></i></div>` : ''}
+                    </div>
                     <div class="card-info" style="${type==='artist'?'text-align:center':''}">
                         <div class="card-title">${item.title || item.name}</div>
                         <div class="card-subtitle">${type==='artist' ? 'Artist' : (item.artist + (item.year ? ` • ${item.year}` : ''))}</div>
@@ -1682,6 +1709,7 @@
 
         /* ==================================================================
            LYRICS ENGINE — SPRING-PHYSICS + SUB-MS TIMING
+           ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
            ================================================================== */
         let parsedLyrics = [];
         let activeLyricIndex = -1;
