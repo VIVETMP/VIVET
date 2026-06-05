@@ -91,7 +91,7 @@
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
         
-        /* Restaurado: Sistema de difuminado (blur) original con reajuste de márgenes negativos */
+        /* Sistema de difuminado (blur) original para un fundido suave de color */
         #fluid-canvas {
             position: absolute; inset: -8%; width: 116%; height: 116%;
             filter: blur(80px) saturate(220%) brightness(0.95);
@@ -269,7 +269,7 @@
 
         .np-bg-wrap { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
         
-        /* Restaurado: Sistema de difuminado (blur) original para Now Playing */
+        /* Sistema de difuminado (blur) original para Now Playing */
         #fluid-canvas-np {
             position: absolute; inset: -8%; width: 116%; height: 116%;
             filter: blur(80px) saturate(220%) brightness(0.85);
@@ -1026,10 +1026,10 @@
             resizeFluidCanvas();
             window.addEventListener('resize', resizeFluidCanvas);
 
-            // Los fluidos en movimiento evitan el índice 0 (que será el fondo) usando los de 1 a 5
+            // Modificado: Se ampliaron de forma permanente el offset vertical y los radios de oscilación para fluidos más grandes
             BG_STATE.waves = Array.from({ length: 4 }, (_, i) => {
                 return {
-                    verticalOffset: 0.22 + i * 0.18, 
+                    verticalOffset: 0.18 + i * 0.20, 
                     colorIdx: (i % 5) + 1, // Evita c0
                     cycle1Multiplier: 1.1 + i * 0.35, 
                     cycle2Multiplier: 1.7 + i * 0.25, 
@@ -1037,8 +1037,8 @@
                     speed2: (0.00025 + i * 0.00008) * (i % 2 === 0 ? -1 : 1),
                     phase1: Math.random() * Math.PI * 2,
                     phase2: Math.random() * Math.PI * 2,
-                    amp1: 0.06 + Math.random() * 0.04,  
-                    amp2: 0.04 + Math.random() * 0.03
+                    amp1: 0.14 + Math.random() * 0.08,  // Amplitud muy potenciada
+                    amp2: 0.10 + Math.random() * 0.06   // Amplitud muy potenciada
                 };
             });
 
@@ -1131,7 +1131,7 @@
             requestAnimationFrame(animateFluid);
         }
 
-        // El primer color de la paleta (c0) actúa de fondo sólido difuminado y los demás de fluidos
+        // Modificado: Se agranda la masa y el grosor de los fluidos (ondas y degradados) para destacar los demás colores
         function drawFluidFrame(canvas, ctx, now, isNP) {
             const W = canvas.width || 1;
             const H = canvas.height || 1;
@@ -1156,7 +1156,7 @@
             const beat = 0.5 + e.beat * 0.9;
             const total = 0.45 + e.total * 0.75;
 
-            // Capas dinámicas con los otros colores (c1, c2, c3...)
+            // Capas dinámicas con los otros colores (c1, c2, c3...) con mayor visibilidad base
             const c1 = palette[1] || palette[0] || DEFAULT_PALETTE[1];
             const c2 = palette[2] || palette[1] || DEFAULT_PALETTE[2];
             const c3 = palette[3] || palette[2] || DEFAULT_PALETTE[3];
@@ -1174,17 +1174,17 @@
                 maxDim * (isNP ? 1.05 : 1.15)
             );
             
-            // Degradado ambiental construido con los otros colores
-            bg.addColorStop(0, `rgba(${r1},${g1},${b1},${0.24 + e.low * 0.16})`);
-            bg.addColorStop(0.38, `rgba(${r2},${g2},${b2},${0.16 + e.mid * 0.10})`);
-            bg.addColorStop(0.72, `rgba(${r3},${g3},${b3},${0.08 + e.high * 0.08})`);
+            // Modificado: Incrementada la opacidad de los degradados de color de apoyo para que brillen con más fuerza
+            bg.addColorStop(0, `rgba(${r1},${g1},${b1},${0.48 + e.low * 0.22})`);
+            bg.addColorStop(0.35, `rgba(${r2},${g2},${b2},${0.38 + e.mid * 0.18})`);
+            bg.addColorStop(0.65, `rgba(${r3},${g3},${b3},${0.25 + e.high * 0.12})`);
             bg.addColorStop(1, 'rgba(0,0,0,0)');
             
             ctx.globalCompositeOperation = 'screen';
             ctx.fillStyle = bg;
             ctx.fillRect(0, 0, W, H);
 
-            // Renderizado de ondas matemáticas asimétricas
+            // Renderizado de ondas matemáticas asimétricas y nítidas
             BG_STATE.waves.forEach((wave, i) => {
                 const speedMultiplier = 1.0 + e.low * 1.5;
                 wave.phase1 += wave.speed1 * speedMultiplier;
@@ -1204,7 +1204,8 @@
                     const h2 = Math.cos(angle2) * wave.amp2 * H * musicBoost;
                     const centerY = wave.verticalOffset * H + h1 + h2;
                     
-                    const thickness = (0.12 + 0.06 * Math.sin(x * 0.015 + wave.phase1 * 0.5)) * H;
+                    // Modificado: El grosor (thickness) base se duplicó de 0.12 a 0.24 para bandas de color masivas
+                    const thickness = (0.24 + 0.12 * Math.sin(x * 0.015 + wave.phase1 * 0.5)) * H;
                     const yTop = centerY - thickness * 0.5;
                     
                     if (x === 0) ctx.moveTo(x, yTop);
@@ -1223,7 +1224,8 @@
                     const centerY = wave.verticalOffset * H + h1 + h2;
                     if (x === W) lastCenterY = centerY;
                     
-                    const thickness = (0.12 + 0.06 * Math.sin(x * 0.015 + wave.phase1 * 0.5)) * H;
+                    // Modificado: El grosor base se duplicó de 0.12 a 0.24
+                    const thickness = (0.24 + 0.12 * Math.sin(x * 0.015 + wave.phase1 * 0.5)) * H;
                     if (x === W) lastThickness = thickness;
                     const yBottom = centerY + thickness * 0.5;
                     
@@ -1240,8 +1242,9 @@
                 const colB = Math.round(col.b);
                 const alphaBoost = isNP ? 1.0 : 0.88;
 
+                // Modificado: Se aumentó el tope de la opacidad en el centro de las ondas de 0.52 a 0.75 para realzar el color
                 grad.addColorStop(0, `rgba(${colR}, ${colG}, ${colB}, 0)`);
-                grad.addColorStop(0.5, `rgba(${colR}, ${colG}, ${colB}, ${0.52 * alphaBoost})`);
+                grad.addColorStop(0.5, `rgba(${colR}, ${colG}, ${colB}, ${0.75 * alphaBoost})`);
                 grad.addColorStop(1, `rgba(${colR}, ${colG}, ${colB}, 0)`);
 
                 ctx.fillStyle = grad;
@@ -1571,12 +1574,12 @@
             activeAudio.play().catch(e=>{}); setPlayIcon(true);
         }
 
-        // Se restringe la selección aleatoria de color de ondas para excluir la posición 0 (fondo)
+        // Modificado: Se ampliaron de forma permanente los radios de oscilación (amp) para un barrido mucho más dinámico
         function randomizeWaves() {
             if (!BG_STATE.waves || BG_STATE.waves.length === 0) return;
 
             BG_STATE.waves.forEach((wave, i) => {
-                wave.verticalOffset = 0.16 + (i * 0.16) + Math.random() * 0.12;
+                wave.verticalOffset = 0.12 + (i * 0.18) + Math.random() * 0.15;
                 
                 wave.cycle1Multiplier = 0.9 + Math.random() * 1.3;
                 wave.cycle2Multiplier = 1.4 + Math.random() * 1.6;
@@ -1589,8 +1592,8 @@
                 wave.phase1 = Math.random() * Math.PI * 2;
                 wave.phase2 = Math.random() * Math.PI * 2;
                 
-                wave.amp1 = 0.06 + Math.random() * 0.05;
-                wave.amp2 = 0.04 + Math.random() * 0.04;
+                wave.amp1 = 0.14 + Math.random() * 0.08; // Amplitud potenciada para abarcar más espacio en pantalla
+                wave.amp2 = 0.10 + Math.random() * 0.06; // Amplitud potenciada para abarcar más espacio en pantalla
                 
                 // Excluye el índice 0 para que los fluidos solo utilicen de c1 a c5
                 wave.colorIdx = 1 + Math.floor(Math.random() * 5);
