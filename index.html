@@ -77,21 +77,15 @@
             position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
             background: var(--bg-deep);
         }
-        #ambient-bg::after {
-            content: '';
-            position: absolute; inset: 0;
-            background: radial-gradient(ellipse at center, rgba(5, 5, 7, 0.15) 0%, rgba(5, 5, 7, 0.55) 60%, rgba(5, 5, 7, 0.85) 100%);
-            z-index: 3;
-            pointer-events: none;
-        }
+        /* El difuminador radial negro superior se ha removido para evitar esquinas oscuras */
         .noise-overlay {
             position: absolute; inset: 0; z-index: 2; opacity: 0.045; mix-blend-mode: overlay; pointer-events: none;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
-        /* Spicy-style: canvas renders waves then CSS blur+saturate makes it fluid */
+        /* Canvas de alta luminosidad y brillo mejorado */
         #fluid-canvas {
             position: absolute; inset: -8%; width: 116%; height: 116%;
-            filter: blur(80px) saturate(220%) brightness(0.95);
+            filter: blur(80px) saturate(220%) brightness(1.15);
             opacity: 1;
             pointer-events: none;
             z-index: 1;
@@ -265,15 +259,17 @@
         #np-fs.active { transform: translateY(0); opacity: 1; visibility: visible; }
 
         .np-bg-wrap { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+        /* Canvas de alta luminosidad y brillo mejorado en NP */
         #fluid-canvas-np {
             position: absolute; inset: -8%; width: 116%; height: 116%;
-            filter: blur(80px) saturate(220%) brightness(0.85);
+            filter: blur(80px) saturate(220%) brightness(1.15);
             opacity: 1;
             pointer-events: none;
             z-index: 0;
             will-change: filter;
         }
-        .np-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.55); z-index: 1; }
+        /* El velo oscuro se redujo a una opacidad muy ligera para no opacar el brillo del fondo */
+        .np-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.15); z-index: 1; }
         .np-grain { position: absolute; inset: 0; z-index: 2; opacity: 0.035; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none;}
 
         /* Collapse Button */
@@ -439,6 +435,8 @@
             opacity: 0.32;
             transform: scale(0.95) translateZ(0);
             filter: blur(0px);
+            /* Sombra agregada para proteger lectura en fondos 100% claros */
+            text-shadow: 0 1px 4px rgba(0,0,0,0.6);
             /* Critical: prevent transform clipping by giving overflow room */
             padding: 4px 6px 4px 2px;
             margin-left: -2px;
@@ -1230,30 +1228,23 @@
 
             ctx.globalCompositeOperation = 'source-over';
             ctx.clearRect(0, 0, W, H);
-            ctx.fillStyle = '#050507';
+            
+            // Set canvas baseline background to the most dominant hand-curated palette color to completely avoid dark backdrops
+            ctx.fillStyle = `rgb(${palette[0].r}, ${palette[0].g}, ${palette[0].b})`;
             ctx.fillRect(0, 0, W, H);
 
             const maxDim = Math.max(W, H);
             const beat = 0.5 + e.beat * 0.9;
             const total = 0.45 + e.total * 0.75;
 
-            const c0 = palette[0] || DEFAULT_PALETTE[0];
-            const c1 = palette[1] || palette[0] || DEFAULT_PALETTE[1];
-            const c2 = palette[2] || palette[1] || DEFAULT_PALETTE[2];
-
+            // Fluid radial blend using actual palette colors at high opacities to maximize vibrance
             const bg = ctx.createRadialGradient(
-                W * (0.52 + Math.sin(now * 0.00008) * 0.02),
-                H * (0.48 + Math.cos(now * 0.00007) * 0.02),
-                maxDim * 0.04,
-                W * 0.5,
-                H * 0.5,
-                maxDim * (isNP ? 1.05 : 1.15)
+                W * 0.5, H * 0.5, 0,
+                W * 0.5, H * 0.5, maxDim * 1.1
             );
-            bg.addColorStop(0, `rgba(${c0.r},${c0.g},${c0.b},${0.24 + e.low * 0.16})`);
-            bg.addColorStop(0.38, `rgba(${c1.r},${c1.g},${c1.b},${0.16 + e.mid * 0.10})`);
-            bg.addColorStop(0.72, `rgba(${c2.r},${c2.g},${c2.b},${0.08 + e.high * 0.08})`);
-            bg.addColorStop(1, 'rgba(0,0,0,0)');
-            ctx.globalCompositeOperation = 'screen';
+            bg.addColorStop(0, `rgba(${palette[1].r}, ${palette[1].g}, ${palette[1].b}, 0.85)`);
+            bg.addColorStop(0.5, `rgba(${palette[2].r}, ${palette[2].g}, ${palette[2].b}, 0.55)`);
+            bg.addColorStop(1, `rgba(${palette[3].r}, ${palette[3].g}, ${palette[3].b}, 0)`);
             ctx.fillStyle = bg;
             ctx.fillRect(0, 0, W, H);
 
@@ -1310,9 +1301,10 @@
                 const col = palette[wave.colorIdx % palette.length] || palette[0];
                 const alphaBoost = isNP ? 1.0 : 0.88;
 
-                grad.addColorStop(0, `rgba(${col.r}, ${col.g}, ${col.b}, 0)`);
-                grad.addColorStop(0.5, `rgba(${col.r}, ${col.g}, ${col.b}, ${0.52 * alphaBoost})`);
-                grad.addColorStop(1, `rgba(${col.r}, ${col.g}, ${col.b}, 0)`);
+                // High vibrancy ribbons (Opacity remains bright and rich without dark muddy gaps)
+                grad.addColorStop(0, `rgba(${col.r}, ${col.g}, ${col.b}, ${0.1 * alphaBoost})`);
+                grad.addColorStop(0.5, `rgba(${col.r}, ${col.g}, ${col.b}, ${0.72 * alphaBoost})`);
+                grad.addColorStop(1, `rgba(${col.r}, ${col.g}, ${col.b}, ${0.1 * alphaBoost})`);
 
                 ctx.fillStyle = grad;
                 ctx.globalCompositeOperation = i % 2 === 0 ? 'screen' : 'lighter';
@@ -1330,13 +1322,7 @@
                 ctx.fill();
             }
 
-            const vignette = ctx.createRadialGradient(W * 0.5, H * 0.5, Math.min(W, H) * 0.18, W * 0.5, H * 0.5, Math.max(W, H) * 0.78);
-            vignette.addColorStop(0, 'rgba(0,0,0,0)');
-            vignette.addColorStop(1, `rgba(0,0,0,${isNP ? 0.28 : 0.24})`);
-            ctx.globalCompositeOperation = 'source-over';
-            ctx.fillStyle = vignette;
-            ctx.fillRect(0, 0, W, H);
-
+            // Dark vignette overlay removed to avoid muddying borders/edges
             const flash = Math.max(0, (e.beat - 0.22) * 0.8);
             if (flash > 0.01) {
                 ctx.fillStyle = `rgba(255,255,255,${flash * (isNP ? 0.035 : 0.025)})`;
