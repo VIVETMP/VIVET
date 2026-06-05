@@ -38,8 +38,6 @@
             --accent-2: #7F49B4;
             --accent-glow: rgba(255, 46, 147, 0.3);
             
-            --vignette-color-rgb: 5, 5, 7; /* Fallback baseline vignette */
-            
             --font-display: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Outfit', sans-serif;
             --font-main: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Plus Jakarta Sans', sans-serif;
             
@@ -82,11 +80,9 @@
         #ambient-bg::after {
             content: '';
             position: absolute; inset: 0;
-            /* La viñeta ahora mezcla los colores de la carátula sin negro externo */
-            background: radial-gradient(ellipse at center, rgba(0,0,0,0) 0%, rgba(var(--vignette-color-rgb), 0.35) 60%, rgba(var(--vignette-color-rgb), 0.85) 100%);
+            background: radial-gradient(ellipse at center, rgba(5, 5, 7, 0.15) 0%, rgba(5, 5, 7, 0.55) 60%, rgba(5, 5, 7, 0.85) 100%);
             z-index: 3;
             pointer-events: none;
-            transition: background 0.8s ease;
         }
         .noise-overlay {
             position: absolute; inset: 0; z-index: 2; opacity: 0.045; mix-blend-mode: overlay; pointer-events: none;
@@ -95,7 +91,7 @@
         /* Spicy-style: canvas renders waves then CSS blur+saturate makes it fluid */
         #fluid-canvas {
             position: absolute; inset: -8%; width: 116%; height: 116%;
-            filter: blur(80px) saturate(220%) brightness(1.0);
+            filter: blur(80px) saturate(220%) brightness(0.95);
             opacity: 1;
             pointer-events: none;
             z-index: 1;
@@ -269,17 +265,15 @@
         #np-fs.active { transform: translateY(0); opacity: 1; visibility: visible; }
 
         .np-bg-wrap { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
-        /* Canvas de alta luminosidad y brillo mejorado en NP */
         #fluid-canvas-np {
             position: absolute; inset: -8%; width: 116%; height: 116%;
-            filter: blur(80px) saturate(220%) brightness(1.0);
+            filter: blur(80px) saturate(220%) brightness(0.85);
             opacity: 1;
             pointer-events: none;
             z-index: 0;
             will-change: filter;
         }
-        /* El velo oscuro se redujo a una opacidad muy ligera para no opacar el brillo del fondo */
-        .np-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.15); z-index: 1; }
+        .np-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.55); z-index: 1; }
         .np-grain { position: absolute; inset: 0; z-index: 2; opacity: 0.035; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none;}
 
         /* Collapse Button */
@@ -445,8 +439,6 @@
             opacity: 0.32;
             transform: scale(0.95) translateZ(0);
             filter: blur(0px);
-            /* Sombra agregada para proteger lectura en fondos 100% claros */
-            text-shadow: 0 1px 4px rgba(0,0,0,0.6);
             /* Critical: prevent transform clipping by giving overflow room */
             padding: 4px 6px 4px 2px;
             margin-left: -2px;
@@ -764,7 +756,7 @@
         </div>
     </div>
 
-    <!-- Hidden Canvas for Color Extraction (legacy support) -->
+    <!-- Hidden Canvas for Color Extraction -->
     <canvas id="color-extractor" style="display:none;"></canvas>
 
     <script>
@@ -777,15 +769,13 @@
         const latelyCoverUrl = "https://4nemxki6k8.ucarecd.net/6cfb3a43-ada1-48d4-8b78-daf1279c4bbc/Lately.png";
         const sheLike2FuckCoverUrl = "https://4nemxki6k8.ucarecd.net/a121b330-6729-4a7d-9270-8c3b2b5eff4e/shelike2fuck.png";
         const piensaenmiCoverUrl = "https://3lxj8u72k3.ucarecd.net/7024d8d9-8ba3-405d-882e-0c2e055a51e4/Piensaenmi.jpg";
-        const tarotCoverUrl = "https://3lxj8u72k3.ucarecd.net/7aa123a5-1fff-46d0-9680-7def87d46064/Tarot.png";
 
         const albumsData = [ 
             { id: "Underwater", title: "Underwater", artist: "Dei V", cover: coverImgUrl, year: "2024" },
             { id: "nadie-sabe-album", title: "nadie sabe lo que va a pasar mañana", artist: "Bad Bunny", cover: telefonoNuevoCoverUrl, year: "2023" },
             { id: "L3tra-album", title: "L3tra", artist: "Luar La L", cover: sideBitchCoverUrl, year: "2024" },
             { id: "la-voz-favorita", title: "La Voz Favorita", artist: "Jay Wheeler", cover: sheLike2FuckCoverUrl, year: "2024" },
-            { id: "primera-musa-album", title: "PRIMERA MUSA", artist: "Omar Courtz", cover: piensaenmiCoverUrl, year: "2024" },
-            { id: "un-verano-sin-ti-album", title: "Un Verano Sin Ti", artist: "Bad Bunny", cover: tarotCoverUrl, year: "2022" }
+            { id: "primera-musa-album", title: "PRIMERA MUSA", artist: "Omar Courtz", cover: piensaenmiCoverUrl, year: "2024" }
         ];
 
         const cancionesData = [
@@ -836,7 +826,7 @@
                 album: "nadie-sabe-album",
                 trackNum: 11,
                 coverLoaded: true,
-                // Hand-curated dominant palette for TELÉFONO NUEVO
+                // Updated dominant palette for TELÉFONO NUEVO
                 palette: [
                     { r: 218, g: 204, b: 193 }, // #DACCC1
                     { r: 217, g: 202, b: 193 }, // #D9CAC1
@@ -902,25 +892,6 @@
                     { r: 242, g: 153, b: 194 }, // #F299C2
                     { r: 242, g: 19, b: 60 }    // padding
                 ]
-            },
-            {
-                title: "Tarot",
-                artist: "Bad Bunny & JHAYCO",
-                url: "https://3lxj8u72k3.ucarecd.net/daaea497-292c-4eb7-b2bd-6e0fc6516e3e/Tarot_spotdownorg.mp3",
-                lrc: "https://3lxj8u72k3.ucarecd.net/c989f27a-3b89-4122-96f9-3a173274679f/Tarot_spotdownorg.ttml",
-                cover: tarotCoverUrl,
-                album: "un-verano-sin-ti-album",
-                trackNum: 7,
-                coverLoaded: true,
-                // Dominant palette for Tarot (Image 5)
-                palette: [
-                    { r: 242, g: 107, b: 143 }, // #F26B8F
-                    { r: 80, g: 166, b: 56 },   // #50A638
-                    { r: 242, g: 159, b: 5 },    // #F29F05
-                    { r: 242, g: 93, b: 7 },     // #F25D07
-                    { r: 217, g: 11, b: 11 },    // #D90B0B
-                    { r: 242, g: 107, b: 143 }   // padding
-                ]
             }
         ];
 
@@ -929,8 +900,7 @@
             { name: "Luar La L", img: sideBitchCoverUrl },
             { name: "Bad Bunny", img: telefonoNuevoCoverUrl },
             { name: "Jay Wheeler", img: sheLike2FuckCoverUrl },
-            { name: "Omar Courtz", img: piensaenmiCoverUrl },
-            { name: "JHAYCO", img: tarotCoverUrl }
+            { name: "Omar Courtz", img: piensaenmiCoverUrl }
         ];
 
         /* ==================================================================
@@ -1100,51 +1070,6 @@
             BG_STATE.lastHeight = h;
         }
 
-        function boostSaturation(r, g, b, factor) {
-            r /= 255; g /= 255; b /= 255;
-            const max = Math.max(r, g, b), min = Math.min(r, g, b);
-            let h = 0, s = 0, l = (max + min) / 2;
-
-            if (max !== min) {
-                const d = max - min;
-                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-                switch (max) {
-                    case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-                    case g: h = (b - r) / d + 2; break;
-                    default: h = (r - g) / d + 4; break;
-                }
-                h /= 6;
-            }
-
-            s = Math.min(1, s * factor);
-
-            const hue2rgb = (p, q, t) => {
-                if (t < 0) t += 1;
-                if (t > 1) t -= 1;
-                if (t < 1 / 6) return p + (q - p) * 6 * t;
-                if (t < 1 / 2) return q;
-                if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
-                return p;
-            };
-
-            let nr, ng, nb;
-            if (s === 0) {
-                nr = ng = nb = l;
-            } else {
-                const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-                const p = 2 * l - q;
-                nr = hue2rgb(p, q, h + 1 / 3);
-                ng = hue2rgb(p, q, h);
-                nb = hue2rgb(p, q, h - 1 / 3);
-            }
-
-            return {
-                r: Math.round(nr * 255),
-                g: Math.round(ng * 255),
-                b: Math.round(nb * 255)
-            };
-        }
-
         function startPaletteTransition(newPalette) {
             if (!newPalette || !newPalette.length) return;
             targetPalette = newPalette.map(c => ({ ...c }));
@@ -1238,23 +1163,30 @@
 
             ctx.globalCompositeOperation = 'source-over';
             ctx.clearRect(0, 0, W, H);
-            
-            // Set canvas baseline background to the most dominant hand-curated palette color to completely avoid dark backdrops
-            ctx.fillStyle = `rgb(${palette[0].r}, ${palette[0].g}, ${palette[0].b})`;
+            ctx.fillStyle = '#050507';
             ctx.fillRect(0, 0, W, H);
 
             const maxDim = Math.max(W, H);
             const beat = 0.5 + e.beat * 0.9;
             const total = 0.45 + e.total * 0.75;
 
-            // Fluid radial blend using actual palette colors at high opacities to maximize vibrance
+            const c0 = palette[0] || DEFAULT_PALETTE[0];
+            const c1 = palette[1] || palette[0] || DEFAULT_PALETTE[1];
+            const c2 = palette[2] || palette[1] || DEFAULT_PALETTE[2];
+
             const bg = ctx.createRadialGradient(
-                W * 0.5, H * 0.5, 0,
-                W * 0.5, H * 0.5, maxDim * 1.1
+                W * (0.52 + Math.sin(now * 0.00008) * 0.02),
+                H * (0.48 + Math.cos(now * 0.00007) * 0.02),
+                maxDim * 0.04,
+                W * 0.5,
+                H * 0.5,
+                maxDim * (isNP ? 1.05 : 1.15)
             );
-            bg.addColorStop(0, `rgba(${palette[1].r}, ${palette[1].g}, ${palette[1].b}, 0.85)`);
-            bg.addColorStop(0.5, `rgba(${palette[2].r}, ${palette[2].g}, ${palette[2].b}, 0.55)`);
-            bg.addColorStop(1, `rgba(${palette[3].r}, ${palette[3].g}, ${palette[3].b}, 0)`);
+            bg.addColorStop(0, `rgba(${c0.r},${c0.g},${c0.b},${0.24 + e.low * 0.16})`);
+            bg.addColorStop(0.38, `rgba(${c1.r},${c1.g},${c1.b},${0.16 + e.mid * 0.10})`);
+            bg.addColorStop(0.72, `rgba(${c2.r},${c2.g},${c2.b},${0.08 + e.high * 0.08})`);
+            bg.addColorStop(1, 'rgba(0,0,0,0)');
+            ctx.globalCompositeOperation = 'screen';
             ctx.fillStyle = bg;
             ctx.fillRect(0, 0, W, H);
 
@@ -1311,10 +1243,9 @@
                 const col = palette[wave.colorIdx % palette.length] || palette[0];
                 const alphaBoost = isNP ? 1.0 : 0.88;
 
-                // High vibrancy ribbons (Opacity remains bright and rich without dark muddy gaps)
-                grad.addColorStop(0, `rgba(${col.r}, ${col.g}, ${col.b}, ${0.1 * alphaBoost})`);
-                grad.addColorStop(0.5, `rgba(${col.r}, ${col.g}, ${col.b}, ${0.72 * alphaBoost})`);
-                grad.addColorStop(1, `rgba(${col.r}, ${col.g}, ${col.b}, ${0.1 * alphaBoost})`);
+                grad.addColorStop(0, `rgba(${col.r}, ${col.g}, ${col.b}, 0)`);
+                grad.addColorStop(0.5, `rgba(${col.r}, ${col.g}, ${col.b}, ${0.52 * alphaBoost})`);
+                grad.addColorStop(1, `rgba(${col.r}, ${col.g}, ${col.b}, 0)`);
 
                 ctx.fillStyle = grad;
                 ctx.globalCompositeOperation = i % 2 === 0 ? 'screen' : 'lighter';
@@ -1332,21 +1263,9 @@
                 ctx.fill();
             }
 
-            // Find the darkest color in the current active palette to use dynamically for the background depth vignette
-            let dark = palette[0];
-            let minLuma = 999;
-            palette.forEach(c => {
-                const luma = (c.r * 299 + c.g * 587 + c.b * 114) / 1000;
-                if (luma < minLuma) {
-                    minLuma = luma;
-                    dark = c;
-                }
-            });
-
-            // Volumetric ambient depth shadow calculated from the active palette's darkest values [1]
             const vignette = ctx.createRadialGradient(W * 0.5, H * 0.5, Math.min(W, H) * 0.18, W * 0.5, H * 0.5, Math.max(W, H) * 0.78);
             vignette.addColorStop(0, 'rgba(0,0,0,0)');
-            vignette.addColorStop(1, `rgba(${dark.r}, ${dark.g}, ${dark.b}, ${isNP ? 0.32 : 0.28})`);
+            vignette.addColorStop(1, `rgba(0,0,0,${isNP ? 0.28 : 0.24})`);
             ctx.globalCompositeOperation = 'source-over';
             ctx.fillStyle = vignette;
             ctx.fillRect(0, 0, W, H);
@@ -1382,18 +1301,6 @@
             document.documentElement.style.setProperty('--accent-1', `rgb(${a.r},${a.g},${a.b})`);
             document.documentElement.style.setProperty('--accent-2', `rgb(${b.r},${b.g},${b.b})`);
             document.documentElement.style.setProperty('--accent-glow', `rgba(${a.r},${a.g},${a.b},0.42)`);
-
-            // Find the darkest color in the palette to inject into the CSS vignette overlay
-            let darkColor = palette[0];
-            let minLuma = 999;
-            palette.forEach(c => {
-                const luma = (c.r * 299 + c.g * 587 + c.b * 114) / 1000;
-                if (luma < minLuma) {
-                    minLuma = luma;
-                    darkColor = c;
-                }
-            });
-            document.documentElement.style.setProperty('--vignette-color-rgb', `${darkColor.r}, ${darkColor.g}, ${darkColor.b}`);
         }
 
         function updateCovers(imgUrl) {
@@ -1559,11 +1466,6 @@
                 }
 
                 card.innerHTML = `
-                    <div class="card-img-wrapper ${type==='artist'?'is-circle':''}">
-                        ${badge}
-                        <img src="${item.cover || item.img}" class="card-img ${type==='song'?`cover-song-${realIndex}`:''}">
-                        ${type!=='artist' ? `<div class="card-play-btn"><i class="ph-fill ph-play"></i></div>` : ''}
-                    </div>
                     <div class="card-img-wrapper ${type==='artist'?'is-circle':''}">
                         ${badge}
                         <img src="${item.cover || item.img}" class="card-img ${type==='song'?`cover-song-${realIndex}`:''}">
