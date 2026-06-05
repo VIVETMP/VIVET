@@ -85,17 +85,14 @@
             pointer-events: none;
         }
         .noise-overlay {
-            position: absolute; inset: 0; z-index: 2; opacity: 0.045; mix-blend-mode: overlay; pointer-events: none;
+            position: absolute; inset: 0; z-index: 2; opacity: 0.035; mix-blend-mode: overlay; pointer-events: none;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
-        /* Spicy-style: canvas renders waves then CSS blur+saturate makes it fluid */
+        /* Full-screen high-fidelity background canvases */
         #fluid-canvas {
-            position: absolute; inset: -8%; width: 116%; height: 116%;
-            filter: blur(80px) saturate(200%) brightness(0.9);
-            opacity: 1;
+            position: absolute; inset: 0; width: 100%; height: 100%;
             pointer-events: none;
             z-index: 1;
-            will-change: filter;
         }
 
         /* ==================================================================
@@ -266,12 +263,9 @@
 
         .np-bg-wrap { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
         #fluid-canvas-np {
-            position: absolute; inset: -8%; width: 116%; height: 116%;
-            filter: blur(80px) saturate(220%) brightness(0.85);
-            opacity: 1;
+            position: absolute; inset: 0; width: 100%; height: 100%;
             pointer-events: none;
             z-index: 0;
-            will-change: filter;
         }
         .np-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.55); z-index: 1; }
         .np-grain { position: absolute; inset: 0; z-index: 2; opacity: 0.035; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none;}
