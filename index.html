@@ -68,7 +68,6 @@
             user-select: none;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
-            transition: background-color 0.8s var(--ease-cinematic);
         }
 
         /* ==================================================================
@@ -77,12 +76,11 @@
         #ambient-bg {
             position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
             background: var(--bg-deep);
-            transition: background-color 0.8s var(--ease-cinematic);
         }
         #ambient-bg::after {
             content: '';
             position: absolute; inset: 0;
-            background: radial-gradient(ellipse at center, rgba(5, 5, 7, 0.05) 0%, rgba(5, 5, 7, 0.35) 60%, rgba(5, 5, 7, 0.65) 100%);
+            background: radial-gradient(ellipse at center, rgba(5, 5, 7, 0.15) 0%, rgba(5, 5, 7, 0.55) 60%, rgba(5, 5, 7, 0.85) 100%);
             z-index: 3;
             pointer-events: none;
         }
@@ -90,11 +88,10 @@
             position: absolute; inset: 0; z-index: 2; opacity: 0.045; mix-blend-mode: overlay; pointer-events: none;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
-        
-        /* Eliminado el blur para renderizar las ondas totalmente nítidas */
+        /* Liquid artwork canvas */
         #fluid-canvas {
             position: absolute; inset: 0; width: 100%; height: 100%;
-            filter: saturate(220%) brightness(0.95);
+            filter: none;
             opacity: 1;
             pointer-events: none;
             z-index: 1;
@@ -268,17 +265,15 @@
         #np-fs.active { transform: translateY(0); opacity: 1; visibility: visible; }
 
         .np-bg-wrap { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
-        
-        /* Eliminado el blur para renderizar las ondas totalmente nítidas */
         #fluid-canvas-np {
             position: absolute; inset: 0; width: 100%; height: 100%;
-            filter: saturate(220%) brightness(0.85);
+            filter: none;
             opacity: 1;
             pointer-events: none;
             z-index: 0;
             will-change: transform;
         }
-        .np-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.3); z-index: 1; }
+        .np-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.22); z-index: 1; }
         .np-grain { position: absolute; inset: 0; z-index: 2; opacity: 0.035; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none;}
 
         /* Collapse Button */
@@ -985,8 +980,9 @@
 
         function haptic() { if (navigator.vibrate) navigator.vibrate(10); }
 
+        
         /* ==================================================================
-           SPICY LYRICS-STYLE DYNAMIC BACKGROUND ENGINE
+           LIQUID MARBLE BACKGROUND ENGINE
            ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
            ================================================================== */
 
@@ -995,6 +991,9 @@
 
         let activePalette = null;
         let targetPalette = null;
+        let paletteProgress = 1.0;
+        let paletteLerpStart = 0;
+        const PALETTE_LERP_DURATION = 900;
 
         const DEFAULT_PALETTE = [
             { r: 255, g: 46,  b: 147 },
@@ -1008,13 +1007,69 @@
         let globalPalette = [...DEFAULT_PALETTE];
 
         const BG_STATE = {
-            waves: [],
+            liquids: [],
             sparks: [],
             bins: null,
             audioEnergy: { low: 0, mid: 0, high: 0, total: 0, beat: 0 },
             lastWidth: 0,
             lastHeight: 0
         };
+
+        const clamp01 = (n) => Math.max(0, Math.min(1, n));
+        const rgb = (c) => `rgb(${c.r},${c.g},${c.b})`;
+        const rgba = (c, a) => `rgba(${c.r},${c.g},${c.b},${a})`;
+        const mix = (a, b, t) => ({
+            r: Math.round(a.r + (b.r - a.r) * t),
+            g: Math.round(a.g + (b.g - a.g) * t),
+            b: Math.round(a.b + (b.b - a.b) * t)
+        });
+        const darken = (c, amt = 0.16) => ({
+            r: Math.max(0, Math.round(c.r * (1 - amt))),
+            g: Math.max(0, Math.round(c.g * (1 - amt))),
+            b: Math.max(0, Math.round(c.b * (1 - amt)))
+        });
+        const lighten = (c, amt = 0.16) => ({
+            r: Math.min(255, Math.round(c.r + (255 - c.r) * amt)),
+            g: Math.min(255, Math.round(c.g + (255 - c.g) * amt)),
+            b: Math.min(255, Math.round(c.b + (255 - c.b) * amt))
+        });
+
+        function getPaletteForSong(song) {
+            if (song && song.palette && song.palette.length) return song.palette.map(c => ({ ...c }));
+            return [...DEFAULT_PALETTE];
+        }
+
+        function buildLiquidSet(palette) {
+            const colors = (palette && palette.length) ? palette : [...DEFAULT_PALETTE];
+            const liquidCount = 5;
+            const usable = colors.slice(1);
+            const colorPool = usable.length ? usable : [colors[0]];
+            BG_STATE.liquids = Array.from({ length: liquidCount }, (_, i) => {
+                const main = colorPool[i % colorPool.length];
+                const accent = colorPool[(i + 1) % colorPool.length] || main;
+                return {
+                    colorIdx: 1 + (i % Math.max(1, colorPool.length)),
+                    accentIdx: 1 + ((i + 1) % Math.max(1, colorPool.length)),
+                    main: { ...main },
+                    accent: { ...accent },
+                    phaseA: Math.random() * Math.PI * 2,
+                    phaseB: Math.random() * Math.PI * 2,
+                    phaseC: Math.random() * Math.PI * 2,
+                    speedA: (0.00022 + i * 0.00006) * (i % 2 === 0 ? 1 : -1),
+                    speedB: (0.00018 + i * 0.00005) * (i % 3 === 0 ? -1 : 1),
+                    speedC: (0.00012 + i * 0.00004) * (i % 2 === 0 ? 1 : -1),
+                    ampA: 0.045 + i * 0.01,
+                    ampB: 0.028 + i * 0.007,
+                    ampC: 0.012 + i * 0.004,
+                    thickness: 0.16 + i * 0.028,
+                    yBias: 0.16 + i * 0.15,
+                    tilt: (i % 2 === 0 ? 1 : -1) * (0.14 + i * 0.02),
+                    drift: 0.2 + i * 0.08,
+                    mode: i % 2 === 0 ? 'screen' : 'lighter',
+                    glow: 0.38 - i * 0.04
+                };
+            });
+        }
 
         function initFluidBackground() {
             fluidCanvas = document.getElementById('fluid-canvas');
@@ -1026,40 +1081,25 @@
             resizeFluidCanvas();
             window.addEventListener('resize', resizeFluidCanvas);
 
-            // Los fluidos en movimiento evitan el índice 0 (que será el fondo) usando los índices de 1 a 5
-            BG_STATE.waves = Array.from({ length: 4 }, (_, i) => {
-                return {
-                    verticalOffset: 0.22 + i * 0.18, 
-                    colorIdx: (i % 5) + 1, // Evita c0
-                    cycle1Multiplier: 1.1 + i * 0.35, 
-                    cycle2Multiplier: 1.7 + i * 0.25, 
-                    speed1: (0.0003 + i * 0.0001) * (i % 2 === 0 ? 1 : -1), 
-                    speed2: (0.00025 + i * 0.00008) * (i % 2 === 0 ? -1 : 1),
-                    phase1: Math.random() * Math.PI * 2,
-                    phase2: Math.random() * Math.PI * 2,
-                    amp1: 0.06 + Math.random() * 0.04,  
-                    amp2: 0.04 + Math.random() * 0.03
-                };
-            });
-
-            BG_STATE.sparks = Array.from({ length: 36 }, () => ({
+            buildLiquidSet(globalPalette);
+            BG_STATE.sparks = Array.from({ length: 28 }, () => ({
                 x: Math.random(),
                 y: Math.random(),
-                vx: (Math.random() - 0.5) * 0.00012,
-                vy: (Math.random() - 0.5) * 0.00012,
-                size: 0.8 + Math.random() * 1.8,
-                phase: Math.random() * Math.PI * 2
+                vx: (Math.random() - 0.5) * 0.00008,
+                vy: (Math.random() - 0.5) * 0.00008,
+                size: 0.9 + Math.random() * 1.4,
+                phase: Math.random() * Math.PI * 2,
+                colorOffset: Math.random()
             }));
 
             activePalette = [...globalPalette];
             requestAnimationFrame(animateFluid);
         }
 
-        // Relación de escala 1 para vectores de alta definición (sin blur que distorsione los pixeles)
         function resizeFluidCanvas() {
-            const scale = 1; 
-            const w = Math.ceil(window.innerWidth / scale);
-            const h = Math.ceil(window.innerHeight / scale);
+            const scale = 1.25;
+            const w = Math.max(1, Math.ceil(window.innerWidth / scale));
+            const h = Math.max(1, Math.ceil(window.innerHeight / scale));
 
             if (fluidCanvas && (fluidCanvas.width !== w || fluidCanvas.height !== h)) {
                 fluidCanvas.width = w;
@@ -1076,6 +1116,33 @@
         function startPaletteTransition(newPalette) {
             if (!newPalette || !newPalette.length) return;
             targetPalette = newPalette.map(c => ({ ...c }));
+            paletteProgress = 0;
+            paletteLerpStart = performance.now();
+            buildLiquidSet(targetPalette);
+        }
+
+        function tickPaletteTransition(now) {
+            if (!targetPalette || paletteProgress >= 1) return;
+
+            const t = Math.min(1, (now - paletteLerpStart) / PALETTE_LERP_DURATION);
+            const eased = 1 - Math.pow(1 - t, 3);
+            paletteProgress = t;
+
+            if (!activePalette || !activePalette.length) {
+                activePalette = [...targetPalette];
+                return;
+            }
+
+            activePalette = activePalette.map((src, i) => {
+                const dst = targetPalette[i] || targetPalette[0];
+                return {
+                    r: Math.round(src.r + (dst.r - src.r) * eased),
+                    g: Math.round(src.g + (dst.g - src.g) * eased),
+                    b: Math.round(src.b + (dst.b - src.b) * eased)
+                };
+            });
+
+            if (t >= 1) activePalette = [...targetPalette];
         }
 
         function sampleAudioEnergy() {
@@ -1123,6 +1190,7 @@
         }
 
         function animateFluid(now) {
+            tickPaletteTransition(now);
             sampleAudioEnergy();
 
             if (fluidCanvas && fluidCtx) drawFluidFrame(fluidCanvas, fluidCtx, now, false);
@@ -1131,144 +1199,180 @@
             requestAnimationFrame(animateFluid);
         }
 
-        // El primer color de la paleta (c0) se define como el fondo sólido, los demás como fluidos
+        function drawLiquidRibbon(ctx, W, H, liquid, palette, energy, now, isNP, idx) {
+            const cMain = palette[liquid.colorIdx % palette.length] || palette[0];
+            const cAccent = palette[liquid.accentIdx % palette.length] || palette[0];
+            const cLight = lighten(cMain, 0.35);
+            const cDark = darken(cMain, 0.22);
+
+            liquid.phaseA += liquid.speedA * (1 + energy.low * 1.5);
+            liquid.phaseB += liquid.speedB * (1 + energy.mid * 1.2);
+            liquid.phaseC += liquid.speedC * (1 + energy.beat * 1.8);
+
+            const points = [];
+            const step = Math.max(8, Math.round(W / 70));
+            const energyLift = (energy.beat * 0.12 + energy.total * 0.08) * H;
+            const baseY = liquid.yBias * H + Math.sin(now * 0.00035 + idx) * H * 0.015;
+
+            for (let x = -step; x <= W + step; x += step) {
+                const nx = x / Math.max(1, W);
+                const waveA = Math.sin(nx * Math.PI * 2 * (1.1 + idx * 0.18) + liquid.phaseA) * liquid.ampA * H;
+                const waveB = Math.cos(nx * Math.PI * 2 * (1.8 + idx * 0.12) + liquid.phaseB) * liquid.ampB * H;
+                const waveC = Math.sin(nx * Math.PI * 2 * (0.7 + idx * 0.09) + liquid.phaseC) * liquid.ampC * H;
+                const centerY = baseY + waveA + waveB + waveC + energyLift;
+                const thickness = H * (liquid.thickness + Math.sin(nx * Math.PI * 2 + liquid.phaseB) * 0.015 + energy.total * 0.02);
+                points.push({
+                    x,
+                    yTop: centerY - thickness * 0.5,
+                    yBottom: centerY + thickness * 0.5,
+                    centerY,
+                    thickness
+                });
+            }
+
+            // Main body
+            ctx.beginPath();
+            ctx.moveTo(points[0].x, points[0].yTop);
+            for (let i = 1; i < points.length; i++) {
+                const p0 = points[i - 1];
+                const p1 = points[i];
+                const cx = (p0.x + p1.x) * 0.5;
+                ctx.quadraticCurveTo(p0.x, p0.yTop, cx, (p0.yTop + p1.yTop) * 0.5);
+            }
+            const last = points[points.length - 1];
+            ctx.lineTo(last.x, last.yBottom);
+            for (let i = points.length - 2; i >= 0; i--) {
+                const p0 = points[i + 1];
+                const p1 = points[i];
+                const cx = (p0.x + p1.x) * 0.5;
+                ctx.quadraticCurveTo(p0.x, p0.yBottom, cx, (p0.yBottom + p1.yBottom) * 0.5);
+            }
+            ctx.closePath();
+
+            const top = Math.max(0, points[0].centerY - points[0].thickness);
+            const bottom = Math.min(H, points[points.length - 1].centerY + points[points.length - 1].thickness);
+            const grad = ctx.createLinearGradient(0, top, W, bottom);
+            grad.addColorStop(0, rgba(cDark, 0.10));
+            grad.addColorStop(0.35, rgba(cMain, 0.72));
+            grad.addColorStop(0.62, rgba(cAccent, 0.58));
+            grad.addColorStop(1, rgba(cLight, 0.12));
+
+            ctx.globalCompositeOperation = liquid.mode;
+            ctx.fillStyle = grad;
+            ctx.fill();
+
+            // Bright inner sheen
+            ctx.beginPath();
+            ctx.moveTo(points[0].x, points[0].centerY);
+            for (let i = 1; i < points.length; i++) {
+                const p0 = points[i - 1];
+                const p1 = points[i];
+                const cx = (p0.x + p1.x) * 0.5;
+                const yA = (p0.centerY + p1.centerY) * 0.5 - Math.sin((i * 0.08) + liquid.phaseC) * H * 0.01;
+                ctx.quadraticCurveTo(p0.x, p0.centerY, cx, yA);
+            }
+            ctx.lineWidth = Math.max(1, H * 0.004);
+            ctx.strokeStyle = rgba(cLight, isNP ? 0.22 : 0.16);
+            ctx.stroke();
+
+            // Edge line for glassy liquidity
+            ctx.beginPath();
+            ctx.moveTo(points[0].x, points[0].yTop + H * 0.006);
+            for (let i = 1; i < points.length; i++) {
+                const p0 = points[i - 1];
+                const p1 = points[i];
+                const cx = (p0.x + p1.x) * 0.5;
+                ctx.quadraticCurveTo(p0.x, p0.yTop, cx, (p0.yTop + p1.yTop) * 0.5);
+            }
+            ctx.lineWidth = Math.max(1, H * 0.0025);
+            ctx.strokeStyle = rgba(cAccent, isNP ? 0.24 : 0.18);
+            ctx.stroke();
+        }
+
         function drawFluidFrame(canvas, ctx, now, isNP) {
             const W = canvas.width || 1;
             const H = canvas.height || 1;
             const palette = (activePalette && activePalette.length) ? activePalette : globalPalette;
             const e = BG_STATE.audioEnergy;
+            const base = palette[0] || DEFAULT_PALETTE[0];
 
             ctx.globalCompositeOperation = 'source-over';
             ctx.clearRect(0, 0, W, H);
-            
-            // Primer color de la paleta (c0) como fondo sólido con redondeo estricto de decimales
-            const c0 = palette[0] || DEFAULT_PALETTE[0];
-            const r0 = Math.round(c0.r), g0 = Math.round(c0.g), b0 = Math.round(c0.b);
-            ctx.fillStyle = `rgb(${r0}, ${g0}, ${b0})`;
+            ctx.fillStyle = rgb(base);
             ctx.fillRect(0, 0, W, H);
 
-            // Sincronización de la variable CSS para que el fondo de la página cambie suavemente
-            if (isNP === false) {
-                document.documentElement.style.setProperty('--bg-deep', `rgb(${r0}, ${g0}, ${b0})`);
-            }
-
-            const maxDim = Math.max(W, H);
-            const beat = 0.5 + e.beat * 0.9;
-            const total = 0.45 + e.total * 0.75;
-
-            // Fluidos y capas dinámicas generados con los otros colores de la paleta
-            const c1 = palette[1] || palette[0] || DEFAULT_PALETTE[1];
-            const c2 = palette[2] || palette[1] || DEFAULT_PALETTE[2];
-            const c3 = palette[3] || palette[2] || DEFAULT_PALETTE[3];
-
-            const r1 = Math.round(c1.r), g1 = Math.round(c1.g), b1 = Math.round(c1.b);
-            const r2 = Math.round(c2.r), g2 = Math.round(c2.g), b2 = Math.round(c2.b);
-            const r3 = Math.round(c3.r), g3 = Math.round(c3.g), b3 = Math.round(c3.b);
-
-            const bg = ctx.createRadialGradient(
-                W * (0.52 + Math.sin(now * 0.00008) * 0.02),
-                H * (0.48 + Math.cos(now * 0.00007) * 0.02),
-                maxDim * 0.04,
+            ctx.save();
+            ctx.globalCompositeOperation = 'source-over';
+            const baseGlow = ctx.createRadialGradient(
+                W * (0.52 + Math.sin(now * 0.00009) * 0.03),
+                H * (0.46 + Math.cos(now * 0.00007) * 0.03),
+                Math.min(W, H) * 0.05,
                 W * 0.5,
-                H * 0.5,
-                maxDim * (isNP ? 1.05 : 1.15)
+                H * 0.52,
+                Math.max(W, H) * (isNP ? 0.92 : 1.05)
             );
-            
-            // Degradado ambiental construido con los otros colores
-            bg.addColorStop(0, `rgba(${r1},${g1},${b1},${0.24 + e.low * 0.16})`);
-            bg.addColorStop(0.38, `rgba(${r2},${g2},${b2},${0.16 + e.mid * 0.10})`);
-            bg.addColorStop(0.72, `rgba(${r3},${g3},${b3},${0.08 + e.high * 0.08})`);
-            bg.addColorStop(1, 'rgba(0,0,0,0)');
-            
-            ctx.globalCompositeOperation = 'screen';
-            ctx.fillStyle = bg;
+            baseGlow.addColorStop(0, rgba(lighten(base, 0.12), 0.18 + e.low * 0.06));
+            baseGlow.addColorStop(0.55, rgba(base, 0.04 + e.mid * 0.03));
+            baseGlow.addColorStop(1, rgba(darken(base, 0.12), 0.18));
+            ctx.fillStyle = baseGlow;
             ctx.fillRect(0, 0, W, H);
+            ctx.restore();
 
-            // Renderizado de ondas matemáticas asimétricas y nítidas (sin blur)
-            BG_STATE.waves.forEach((wave, i) => {
-                const speedMultiplier = 1.0 + e.low * 1.5;
-                wave.phase1 += wave.speed1 * speedMultiplier;
-                wave.phase2 += wave.speed2 * speedMultiplier;
+            const liquidPalette = palette.length > 1 ? palette : [base, DEFAULT_PALETTE[1], DEFAULT_PALETTE[2]];
 
-                ctx.beginPath();
-                
-                const step = 4;
-                const musicBoost = 1.0 + e.beat * 0.55;
-                
-                // Dibujo de cresta sinuosa superior
-                for (let x = 0; x <= W; x += step) {
-                    const angle1 = (x / W) * Math.PI * 2 * wave.cycle1Multiplier + wave.phase1;
-                    const angle2 = (x / W) * Math.PI * 2 * wave.cycle2Multiplier + wave.phase2;
-
-                    const h1 = Math.sin(angle1) * wave.amp1 * H * musicBoost;
-                    const h2 = Math.cos(angle2) * wave.amp2 * H * musicBoost;
-                    const centerY = wave.verticalOffset * H + h1 + h2;
-                    
-                    const thickness = (0.12 + 0.06 * Math.sin(x * 0.015 + wave.phase1 * 0.5)) * H;
-                    const yTop = centerY - thickness * 0.5;
-                    
-                    if (x === 0) ctx.moveTo(x, yTop);
-                    else ctx.lineTo(x, yTop);
-                }
-                
-                // Dibujo de cresta sinuosa inferior (reversa)
-                let lastCenterY = wave.verticalOffset * H;
-                let lastThickness = 0.12 * H;
-                for (let x = W; x >= 0; x -= step) {
-                    const angle1 = (x / W) * Math.PI * 2 * wave.cycle1Multiplier + wave.phase1;
-                    const angle2 = (x / W) * Math.PI * 2 * wave.cycle2Multiplier + wave.phase2;
-
-                    const h1 = Math.sin(angle1) * wave.amp1 * H * musicBoost;
-                    const h2 = Math.cos(angle2) * wave.amp2 * H * musicBoost;
-                    const centerY = wave.verticalOffset * H + h1 + h2;
-                    if (x === W) lastCenterY = centerY;
-                    
-                    const thickness = (0.12 + 0.06 * Math.sin(x * 0.015 + wave.phase1 * 0.5)) * H;
-                    if (x === W) lastThickness = thickness;
-                    const yBottom = centerY + thickness * 0.5;
-                    
-                    ctx.lineTo(x, yBottom);
-                }
-                
-                ctx.closePath();
-
-                // Relleno de las ondas utilizando los colores restantes de la paleta
-                const grad = ctx.createLinearGradient(0, lastCenterY - lastThickness * 0.8, 0, lastCenterY + lastThickness * 0.8);
-                const col = palette[wave.colorIdx % palette.length] || palette[1];
-                const colR = Math.round(col.r);
-                const colG = Math.round(col.g);
-                const colB = Math.round(col.b);
-                const alphaBoost = isNP ? 1.0 : 0.88;
-
-                grad.addColorStop(0, `rgba(${colR}, ${colG}, ${colB}, 0)`);
-                grad.addColorStop(0.5, `rgba(${colR}, ${colG}, ${colB}, ${0.52 * alphaBoost})`);
-                grad.addColorStop(1, `rgba(${colR}, ${colG}, ${colB}, 0)`);
-
-                ctx.fillStyle = grad;
-                ctx.globalCompositeOperation = i % 2 === 0 ? 'screen' : 'lighter';
-                ctx.fill();
+            BG_STATE.liquids.forEach((liquid, idx) => {
+                liquid.colorIdx = 1 + (idx % Math.max(1, liquidPalette.length - 1));
+                liquid.accentIdx = 1 + ((idx + 1) % Math.max(1, liquidPalette.length - 1));
+                drawLiquidRibbon(ctx, W, H, liquid, liquidPalette, e, now, isNP, idx);
             });
 
+            // Floating organic blobs
             ctx.globalCompositeOperation = 'screen';
             for (const s of BG_STATE.sparks) {
                 s.x = (s.x + s.vx + 1) % 1;
                 s.y = (s.y + s.vy + 1) % 1;
-                const size = (s.size + e.high * 1.5) * (isNP ? 0.8 : 1);
+                const pulse = 0.5 + 0.5 * Math.sin(now * 0.0012 + s.phase);
+                const size = (s.size + e.high * 1.2) * (isNP ? 0.8 : 1);
+                const colorA = liquidPalette[(Math.floor(s.colorOffset * liquidPalette.length) + 1) % liquidPalette.length] || liquidPalette[0];
+                const colorB = liquidPalette[(Math.floor(s.colorOffset * liquidPalette.length) + 2) % liquidPalette.length] || liquidPalette[0];
+                const blob = ctx.createRadialGradient(
+                    s.x * W,
+                    s.y * H,
+                    0,
+                    s.x * W,
+                    s.y * H,
+                    size * (10 + pulse * 10)
+                );
+                blob.addColorStop(0, rgba(lighten(colorA, 0.18), 0.20 * pulse));
+                blob.addColorStop(0.35, rgba(colorA, 0.12 * pulse));
+                blob.addColorStop(0.72, rgba(colorB, 0.06 * pulse));
+                blob.addColorStop(1, 'rgba(0,0,0,0)');
+
+                ctx.fillStyle = blob;
                 ctx.beginPath();
-                ctx.arc(s.x * W, s.y * H, size, 0, Math.PI * 2);
+                ctx.ellipse(
+                    s.x * W,
+                    s.y * H,
+                    size * (8 + pulse * 12),
+                    size * (5 + pulse * 9),
+                    s.phase,
+                    0,
+                    Math.PI * 2
+                );
                 ctx.fill();
             }
 
-            const vignette = ctx.createRadialGradient(W * 0.5, H * 0.5, Math.min(W, H) * 0.18, W * 0.5, H * 0.5, Math.max(W, H) * 0.78);
+            // Dark edge control so the first palette color stays dominant
+            const vignette = ctx.createRadialGradient(W * 0.5, H * 0.45, Math.min(W, H) * 0.20, W * 0.5, H * 0.5, Math.max(W, H) * 0.90);
             vignette.addColorStop(0, 'rgba(0,0,0,0)');
-            vignette.addColorStop(1, `rgba(0,0,0,${isNP ? 0.28 : 0.24})`);
+            vignette.addColorStop(1, `rgba(0,0,0,${isNP ? 0.22 : 0.18})`);
             ctx.globalCompositeOperation = 'source-over';
             ctx.fillStyle = vignette;
             ctx.fillRect(0, 0, W, H);
 
-            const flash = Math.max(0, (e.beat - 0.22) * 0.8);
+            const flash = Math.max(0, (e.beat - 0.22) * 0.5);
             if (flash > 0.01) {
-                ctx.fillStyle = `rgba(255,255,255,${flash * (isNP ? 0.035 : 0.025)})`;
+                ctx.fillStyle = `rgba(255,255,255,${flash * (isNP ? 0.03 : 0.02)})`;
                 ctx.fillRect(0, 0, W, H);
             }
         }
@@ -1305,7 +1409,7 @@
 
             if (playerImg) playerImg.src = imgUrl;
 
-            // Siempre actualizar npImg en segundo plano para extracción de paleta
+            // Always update static npImg in background for palette extraction
             if (npImg) {
                 npImg.src = imgUrl;
                 const onLoaded = () => {
@@ -1313,8 +1417,10 @@
                     let palette;
 
                     if (currentSong && currentSong.palette) {
+                        // Use exact hand-curated palette provided by user
                         palette = currentSong.palette;
                     } else {
+                        // Fallback default palette
                         palette = [...DEFAULT_PALETTE];
                     }
 
@@ -1571,29 +1677,37 @@
             activeAudio.play().catch(e=>{}); setPlayIcon(true);
         }
 
-        // Modificado: Se restringe la selección aleatoria de color de ondas para excluir la posición 0 (fondo)
+        // Randomizes the liquid ribbons and blob motion specifically for each track
         function randomizeWaves() {
-            if (!BG_STATE.waves || BG_STATE.waves.length === 0) return;
+            if (!BG_STATE.liquids || BG_STATE.liquids.length === 0) return;
 
-            BG_STATE.waves.forEach((wave, i) => {
-                wave.verticalOffset = 0.16 + (i * 0.16) + Math.random() * 0.12;
-                
-                wave.cycle1Multiplier = 0.9 + Math.random() * 1.3;
-                wave.cycle2Multiplier = 1.4 + Math.random() * 1.6;
-                
+            BG_STATE.liquids.forEach((liquid, i) => {
+                liquid.phaseA = Math.random() * Math.PI * 2;
+                liquid.phaseB = Math.random() * Math.PI * 2;
+                liquid.phaseC = Math.random() * Math.PI * 2;
+
                 const dir1 = Math.random() > 0.5 ? 1 : -1;
                 const dir2 = Math.random() > 0.5 ? 1 : -1;
-                wave.speed1 = (0.0015 + Math.random() * 0.002) * dir1;
-                wave.speed2 = (0.001 + Math.random() * 0.0015) * dir2;
-                
-                wave.phase1 = Math.random() * Math.PI * 2;
-                wave.phase2 = Math.random() * Math.PI * 2;
-                
-                wave.amp1 = 0.06 + Math.random() * 0.05;
-                wave.amp2 = 0.04 + Math.random() * 0.04;
-                
-                // Excluye el índice 0 para que los fluidos solo utilicen de c1 a c5
-                wave.colorIdx = 1 + Math.floor(Math.random() * 5);
+                const dir3 = Math.random() > 0.5 ? 1 : -1;
+
+                liquid.speedA = (0.00016 + Math.random() * 0.00016) * dir1;
+                liquid.speedB = (0.00012 + Math.random() * 0.00014) * dir2;
+                liquid.speedC = (0.00008 + Math.random() * 0.00012) * dir3;
+
+                liquid.ampA = 0.034 + Math.random() * 0.028;
+                liquid.ampB = 0.020 + Math.random() * 0.018;
+                liquid.ampC = 0.010 + Math.random() * 0.012;
+                liquid.thickness = 0.14 + Math.random() * 0.08;
+                liquid.yBias = 0.10 + i * 0.16 + Math.random() * 0.06;
+                liquid.tilt = (Math.random() > 0.5 ? 1 : -1) * (0.10 + Math.random() * 0.16);
+                liquid.drift = 0.16 + Math.random() * 0.18;
+                liquid.mode = i % 2 === 0 ? 'screen' : 'lighter';
+
+                const usable = (activePalette && activePalette.length > 1) ? activePalette.slice(1) : (globalPalette.length > 1 ? globalPalette.slice(1) : globalPalette);
+                if (usable && usable.length) {
+                    liquid.colorIdx = 1 + (Math.floor(Math.random() * usable.length));
+                    liquid.accentIdx = 1 + (Math.floor(Math.random() * usable.length));
+                }
             });
         }
 
@@ -1606,13 +1720,14 @@
             currentPlayingIndex = idx; activeLyricIndex = -1; const song = cancionesData[idx];
             updateCovers(song.cover);
 
-            // Re-renderización de ondas dinámicas independientes por cada track
+            // Re-randomize waves to dynamically generate a brand new background animation unique to this song
             randomizeWaves();
             
             document.getElementById('player-title').innerText = song.title;
             document.getElementById('player-artist').innerText = song.artist;
             document.getElementById('np-title-large').innerText = song.title;
             
+            // Look up corresponding album details for the label, fallback to "Single"
             const alb = albumsData.find(a => a.id === song.album);
             const albumName = alb ? alb.title : "Single";
             document.getElementById('np-artist-large').innerText = `${song.artist} — ${albumName}`;
@@ -2067,8 +2182,9 @@
                 }
             }
             
-            // Interpolación Lineal (LERP) de Colores Activos para una transición suave de 60fps
-            const lerpSpeed = 0.025;
+            // Linear Interpolation (LERP) of Active Colors
+            // This is the beautiful, smooth color melting transition over 1.5 - 2 seconds
+            const lerpSpeed = 0.025; // perfectly balances speed for 60fps LERP
             if (activePalette && targetPalette) {
                 for (let i = 0; i < activePalette.length; i++) {
                     if (targetPalette[i]) {
