@@ -869,14 +869,14 @@
                 album: "la-voz-favorita",
                 trackNum: 4,
                 coverLoaded: true,
-                // Dominant palette for She Like 2 Fuck (Image 3)
+                // Modificado: Paleta de colores actualizada exactamente con la paleta de Adobe de la imagen adjunta
                 palette: [
-                    { r: 242, g: 242, b: 242 }, // #F2F2F2
-                    { r: 140, g: 138, b: 135 }, // #8C8A87
-                    { r: 191, g: 189, b: 186 }, // #BFBDBA
+                    { r: 117, g: 114, b: 109 }, // #75726D
+                    { r: 98, g: 95, b: 90 },    // #625F5A
+                    { r: 96, g: 93, b: 88 },    // #605D58
                     { r: 38, g: 37, b: 35 },    // #262523
-                    { r: 89, g: 86, b: 82 },    // #595652
-                    { r: 242, g: 242, b: 242 }  // padding
+                    { r: 31, g: 30, b: 28 },    // #1F1E1C
+                    { r: 117, g: 114, b: 109 }  // padding
                 ]
             },
             {
@@ -1026,7 +1026,7 @@
             resizeFluidCanvas();
             window.addEventListener('resize', resizeFluidCanvas);
 
-            // Modificado: Se ampliaron de forma permanente el offset vertical y los radios de oscilación para fluidos más grandes
+            // Los fluidos en movimiento evitan el índice 0 (que será el fondo) usando los de 1 a 5
             BG_STATE.waves = Array.from({ length: 4 }, (_, i) => {
                 return {
                     verticalOffset: 0.18 + i * 0.20, 
@@ -1037,8 +1037,8 @@
                     speed2: (0.00025 + i * 0.00008) * (i % 2 === 0 ? -1 : 1),
                     phase1: Math.random() * Math.PI * 2,
                     phase2: Math.random() * Math.PI * 2,
-                    amp1: 0.14 + Math.random() * 0.08,  // Amplitud muy potenciada
-                    amp2: 0.10 + Math.random() * 0.06   // Amplitud muy potenciada
+                    amp1: 0.14 + Math.random() * 0.08,  // Amplitud potenciada
+                    amp2: 0.10 + Math.random() * 0.06   // Amplitud potenciada
                 };
             });
 
@@ -1131,7 +1131,7 @@
             requestAnimationFrame(animateFluid);
         }
 
-        // Modificado: Se agranda la masa y el grosor de los fluidos (ondas y degradados) para destacar los demás colores
+        // El primer color de la paleta (c0) actúa de fondo sólido difuminado y los demás de fluidos
         function drawFluidFrame(canvas, ctx, now, isNP) {
             const W = canvas.width || 1;
             const H = canvas.height || 1;
@@ -1156,7 +1156,7 @@
             const beat = 0.5 + e.beat * 0.9;
             const total = 0.45 + e.total * 0.75;
 
-            // Capas dinámicas con los otros colores (c1, c2, c3...) con mayor visibilidad base
+            // Capas dinámicas con los otros colores (c1, c2, c3...)
             const c1 = palette[1] || palette[0] || DEFAULT_PALETTE[1];
             const c2 = palette[2] || palette[1] || DEFAULT_PALETTE[2];
             const c3 = palette[3] || palette[2] || DEFAULT_PALETTE[3];
@@ -1174,7 +1174,7 @@
                 maxDim * (isNP ? 1.05 : 1.15)
             );
             
-            // Modificado: Incrementada la opacidad de los degradados de color de apoyo para que brillen con más fuerza
+            // Degradado ambiental con mayor cobertura de color
             bg.addColorStop(0, `rgba(${r1},${g1},${b1},${0.48 + e.low * 0.22})`);
             bg.addColorStop(0.35, `rgba(${r2},${g2},${b2},${0.38 + e.mid * 0.18})`);
             bg.addColorStop(0.65, `rgba(${r3},${g3},${b3},${0.25 + e.high * 0.12})`);
@@ -1204,7 +1204,7 @@
                     const h2 = Math.cos(angle2) * wave.amp2 * H * musicBoost;
                     const centerY = wave.verticalOffset * H + h1 + h2;
                     
-                    // Modificado: El grosor (thickness) base se duplicó de 0.12 a 0.24 para bandas de color masivas
+                    // Grosor (thickness) base duplicado para mayor protagonismo de fluidos
                     const thickness = (0.24 + 0.12 * Math.sin(x * 0.015 + wave.phase1 * 0.5)) * H;
                     const yTop = centerY - thickness * 0.5;
                     
@@ -1224,7 +1224,7 @@
                     const centerY = wave.verticalOffset * H + h1 + h2;
                     if (x === W) lastCenterY = centerY;
                     
-                    // Modificado: El grosor base se duplicó de 0.12 a 0.24
+                    // Grosor base duplicado
                     const thickness = (0.24 + 0.12 * Math.sin(x * 0.015 + wave.phase1 * 0.5)) * H;
                     if (x === W) lastThickness = thickness;
                     const yBottom = centerY + thickness * 0.5;
@@ -1242,7 +1242,7 @@
                 const colB = Math.round(col.b);
                 const alphaBoost = isNP ? 1.0 : 0.88;
 
-                // Modificado: Se aumentó el tope de la opacidad en el centro de las ondas de 0.52 a 0.75 para realzar el color
+                // Opacidad incrementada al 75%
                 grad.addColorStop(0, `rgba(${colR}, ${colG}, ${colB}, 0)`);
                 grad.addColorStop(0.5, `rgba(${colR}, ${colG}, ${colB}, ${0.75 * alphaBoost})`);
                 grad.addColorStop(1, `rgba(${colR}, ${colG}, ${colB}, 0)`);
@@ -1574,7 +1574,7 @@
             activeAudio.play().catch(e=>{}); setPlayIcon(true);
         }
 
-        // Modificado: Se ampliaron de forma permanente los radios de oscilación (amp) para un barrido mucho más dinámico
+        // Se restringe la selección aleatoria de color de ondas para excluir la posición 0 (fondo)
         function randomizeWaves() {
             if (!BG_STATE.waves || BG_STATE.waves.length === 0) return;
 
