@@ -784,7 +784,16 @@
                 cover: coverImgUrl,
                 album: "Underwater",
                 trackNum: 3,
-                coverLoaded: true
+                coverLoaded: true,
+                // Dominant palette for Problema (Image 1)
+                palette: [
+                    { r: 7, g: 38, b: 38 },     // #072626
+                    { r: 46, g: 89, b: 85 },    // #2E5955
+                    { r: 81, g: 140, b: 134 },  // #518C86
+                    { r: 136, g: 191, b: 186 }, // #88BFBA
+                    { r: 217, g: 207, b: 72 },  // #D9CF48
+                    { r: 7, g: 38, b: 38 }      // padding
+                ]
             },
             { 
                 title: "Side Bitch", 
@@ -795,14 +804,14 @@
                 album: "L3tra-album",
                 trackNum: 8,
                 coverLoaded: true,
-                // Curated dominant color palette directly mapped from the color swatch image [1]
+                // Dominant palette for Side Bitch
                 palette: [
-                    { r: 22, g: 52, b: 64 },   // #163440 (Dominant Slate Teal)
-                    { r: 156, g: 164, b: 166 }, // #9CA4A6 (Cool Grey)
-                    { r: 115, g: 2, b: 2 },     // #730202 (Crimson / Deep Red)
-                    { r: 64, g: 1, b: 1 },      // #400101 (Very Dark Maroon)
-                    { r: 115, g: 81, b: 81 },   // #735151 (Muted Dusty Rose)
-                    { r: 22, g: 52, b: 64 }     // 6th index padded for wave rendering distribution
+                    { r: 22, g: 52, b: 64 },    // #163440
+                    { r: 156, g: 164, b: 166 }, // #9CA4A6
+                    { r: 115, g: 2, b: 2 },     // #730202
+                    { r: 64, g: 1, b: 1 },      // #400101
+                    { r: 115, g: 81, b: 81 },   // #735151
+                    { r: 22, g: 52, b: 64 }     // padding
                 ]
             },
             {
@@ -813,7 +822,16 @@
                 cover: telefonoNuevoCoverUrl,
                 album: "nadie-sabe-album",
                 trackNum: 11,
-                coverLoaded: true
+                coverLoaded: true,
+                // Dominant palette for TELÉFONO NUEVO (Image 4)
+                palette: [
+                    { r: 39, g: 64, b: 115 },   // #274073
+                    { r: 217, g: 202, b: 193 }, // #D9CAC1
+                    { r: 191, g: 101, b: 69 },  // #BF6545
+                    { r: 140, g: 55, b: 48 },   // #8C3730
+                    { r: 64, g: 28, b: 24 },    // #401C18
+                    { r: 39, g: 64, b: 115 }    // padding
+                ]
             },
             {
                 title: "Lately",
@@ -823,7 +841,16 @@
                 cover: latelyCoverUrl,
                 album: "",
                 trackNum: 1,
-                coverLoaded: true
+                coverLoaded: true,
+                // Dominant palette for Lately (Image 2)
+                palette: [
+                    { r: 71, g: 50, b: 43 },    // #47322B
+                    { r: 217, g: 180, b: 113 }, // #D9B471
+                    { r: 47, g: 39, b: 36 },    // #2F2724
+                    { r: 67, g: 46, b: 40 },    // #432E28
+                    { r: 38, g: 37, b: 37 },    // #262525
+                    { r: 71, g: 50, b: 43 }     // padding
+                ]
             },
             {
                 title: "She Like 2 Fuck",
@@ -833,7 +860,16 @@
                 cover: sheLike2FuckCoverUrl,
                 album: "la-voz-favorita",
                 trackNum: 4,
-                coverLoaded: true
+                coverLoaded: true,
+                // Dominant palette for She Like 2 Fuck (Image 3)
+                palette: [
+                    { r: 242, g: 242, b: 242 }, // #F2F2F2
+                    { r: 140, g: 138, b: 135 }, // #8C8A87
+                    { r: 191, g: 189, b: 186 }, // #BFBDBA
+                    { r: 38, g: 37, b: 35 },    // #262523
+                    { r: 89, g: 86, b: 82 },    // #595652
+                    { r: 242, g: 242, b: 242 }  // padding
+                ]
             }
         ];
 
@@ -928,8 +964,6 @@
 
         let fluidCanvas, fluidCtx;
         let npFluidCanvas, npFluidCtx;
-        let extractCanvas = null;
-        let extractCtx = null;
 
         let activePalette = null;
         let targetPalette = null;
@@ -963,12 +997,6 @@
 
             npFluidCanvas = document.getElementById('fluid-canvas-np');
             npFluidCtx = npFluidCanvas.getContext('2d');
-
-            extractCanvas = document.createElement('canvas');
-            // Canvas scaled to 16x16 to extract aggregated/averaged colors natively
-            extractCanvas.width = 16;
-            extractCanvas.height = 16;
-            extractCtx = extractCanvas.getContext('2d', { willReadFrequently: true });
 
             resizeFluidCanvas();
             window.addEventListener('resize', resizeFluidCanvas);
@@ -1017,138 +1045,6 @@
             }
             BG_STATE.lastWidth = w;
             BG_STATE.lastHeight = h;
-        }
-
-        function boostSaturation(r, g, b, factor) {
-            r /= 255; g /= 255; b /= 255;
-            const max = Math.max(r, g, b), min = Math.min(r, g, b);
-            let h = 0, s = 0, l = (max + min) / 2;
-
-            if (max !== min) {
-                const d = max - min;
-                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-                switch (max) {
-                    case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-                    case g: h = (b - r) / d + 2; break;
-                    default: h = (r - g) / d + 4; break;
-                }
-                h /= 6;
-            }
-
-            s = Math.min(1, s * factor);
-
-            const hue2rgb = (p, q, t) => {
-                if (t < 0) t += 1;
-                if (t > 1) t -= 1;
-                if (t < 1 / 6) return p + (q - p) * 6 * t;
-                if (t < 1 / 2) return q;
-                if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
-                return p;
-            };
-
-            let nr, ng, nb;
-            if (s === 0) {
-                nr = ng = nb = l;
-            } else {
-                const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-                const p = 2 * l - q;
-                nr = hue2rgb(p, q, h + 1 / 3);
-                ng = hue2rgb(p, q, h);
-                nb = hue2rgb(p, q, h - 1 / 3);
-            }
-
-            return {
-                r: Math.round(nr * 255),
-                g: Math.round(ng * 255),
-                b: Math.round(nb * 255)
-            };
-        }
-
-        // Popularity-Clustering dominant color extractor
-        function extractPaletteFromImage(img) {
-            if (!img || !img.complete || img.naturalWidth === 0) return null;
-
-            try {
-                // Downsample image natively on canvas. Width 16x16 averages colors dynamically.
-                extractCanvas.width = 16;
-                extractCanvas.height = 16;
-                extractCtx.clearRect(0, 0, 16, 16);
-                extractCtx.drawImage(img, 0, 0, 16, 16);
-
-                const imgData = extractCtx.getImageData(0, 0, 16, 16).data;
-                const clusters = [];
-                const distanceThreshold = 55; // Euclidean RGB grouping distance
-
-                for (let i = 0; i < imgData.length; i += 4) {
-                    const r = imgData[i];
-                    const g = imgData[i+1];
-                    const b = imgData[i+2];
-                    const a = imgData[i+3];
-
-                    if (a < 150) continue; // Skip semi-transparent areas
-
-                    const luma = (r * 299 + g * 587 + b * 114) / 1000;
-                    if (luma < 15 || luma > 240) continue; // Skip extreme whites & blacks
-
-                    let foundCluster = false;
-                    for (const cluster of clusters) {
-                        const dr = cluster.r - r;
-                        const dg = cluster.g - g;
-                        const db = cluster.b - b;
-                        const dist = Math.sqrt(dr*dr + dg*dg + db*db);
-
-                        if (dist < distanceThreshold) {
-                            cluster.rSum += r;
-                            cluster.gSum += g;
-                            cluster.bSum += b;
-                            cluster.count++;
-                            foundCluster = true;
-                            break;
-                        }
-                    }
-
-                    if (!foundCluster) {
-                        clusters.push({
-                            rSum: r, gSum: g, bSum: b,
-                            r: r, g: g, b: b,
-                            count: 1
-                        });
-                    }
-                }
-
-                if (!clusters.length) return null;
-
-                clusters.forEach(c => {
-                    c.r = Math.round(c.rSum / c.count);
-                    c.g = Math.round(c.gSum / c.count);
-                    c.b = Math.round(c.bSum / c.count);
-                });
-
-                // Sort by pixel count (popularity)
-                clusters.sort((a, b) => b.count - a.count);
-
-                const palette = clusters.map(c => {
-                    return boostSaturation(c.r, c.g, c.b, 1.25);
-                });
-
-                while (palette.length < 6) {
-                    if (palette.length > 0) {
-                        const base = palette[palette.length - 1];
-                        palette.push({
-                            r: Math.max(0, Math.min(255, base.r + (Math.random() - 0.5) * 20)),
-                            g: Math.max(0, Math.min(255, base.g + (Math.random() - 0.5) * 20)),
-                            b: Math.max(0, Math.min(255, base.b + (Math.random() - 0.5) * 20))
-                        });
-                    } else {
-                        palette.push({ r: 127, g: 73, b: 180 });
-                    }
-                }
-
-                return palette.slice(0, 6);
-            } catch (e) {
-                console.error("Color extraction failed:", e);
-                return null;
-            }
         }
 
         function startPaletteTransition(newPalette) {
@@ -1378,8 +1274,8 @@
                         // Use exact hand-curated palette provided by user
                         palette = currentSong.palette;
                     } else {
-                        // Fallback to automatic dynamic extractor
-                        palette = extractPaletteFromImage(npImg);
+                        // Fallback default palette
+                        palette = [...DEFAULT_PALETTE];
                     }
 
                     if (palette) {
@@ -1398,26 +1294,21 @@
         function processCoverQueue() {
             updateCovers(cancionesData[currentPlayingIndex].cover);
 
-            const img = new Image();
-            img.crossOrigin = "anonymous";
-            img.onload = () => {
-                const currentSong = cancionesData[currentPlayingIndex];
-                let palette;
+            const currentSong = cancionesData[currentPlayingIndex];
+            let palette;
 
-                if (currentSong && currentSong.palette) {
-                    palette = currentSong.palette;
-                } else {
-                    palette = extractPaletteFromImage(img);
-                }
+            if (currentSong && currentSong.palette) {
+                palette = currentSong.palette;
+            } else {
+                palette = [...DEFAULT_PALETTE];
+            }
 
-                if (palette) {
-                    globalPalette = palette;
-                    activePalette = [...palette];
-                    startPaletteTransition(palette);
-                    applyAccentFromPalette(palette);
-                }
-            };
-            img.src = cancionesData[currentPlayingIndex].cover;
+            if (palette) {
+                globalPalette = palette;
+                activePalette = [...palette];
+                startPaletteTransition(palette);
+                applyAccentFromPalette(palette);
+            }
         }
 
         function loadSongCover(song, i) {
@@ -1429,8 +1320,6 @@
                 if (detImg) detImg.src = song.cover;
             }
         }
-
-        function extractColor(img) { /* legacy compatibility hook */ }
 
         /* ==================================================================
            BACKGROUND ANALYSIS & AUTOMIX
