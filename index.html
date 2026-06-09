@@ -778,6 +778,7 @@
         const uuU2CoverUrl = "https://3lxj8u72k3.ucarecd.net/1496ed3d-2af9-438c-9651-a822bf808310/UuU2.png";
         const tuyyoCoverUrl = "https://3lxj8u72k3.ucarecd.net/6d89588b-8ca1-408e-9e6d-2b5cf560bf6c/TUYYO.png";
         const remix444CoverUrl = "https://3lxj8u72k3.ucarecd.net/6fa38489-9140-4cfd-a6d1-a7e4399d83dd/444.png";
+        const kloufrensCoverUrl = "https://3lxj8u72k3.ucarecd.net/b243cc5d-4af1-4ab9-bcd2-277fc7c44aab/kloufrens.png";
 
         const albumsData = [ 
             { id: "Underwater", title: "Underwater", artist: "Dei V", cover: coverImgUrl, year: "2024" },
@@ -786,7 +787,8 @@
             { id: "la-voz-favorita", title: "La Voz Favorita", artist: "Jay Wheeler", cover: sheLike2FuckCoverUrl, year: "2024" },
             { id: "primera-musa-album", title: "PRIMERA MUSA", artist: "Omar Courtz", cover: piensaenmiCoverUrl, year: "2024" },
             { id: "un-verano-sin-ti", title: "Un Verano Sin Ti", artist: "Bad Bunny", cover: tarotCoverUrl, year: "2022" },
-            { id: "private-suite-vol4", title: "Private Suite (Vol. 4) - EP", artist: "ROA", cover: tuyyoCoverUrl, year: "2024" }
+            { id: "private-suite-vol4", title: "Private Suite (Vol. 4) - EP", artist: "ROA", cover: tuyyoCoverUrl, year: "2024" },
+            { id: "debi-tirar-mas-fotos", title: "DeBÍ TiRAR MáS FOToS", artist: "Bad Bunny", cover: kloufrensCoverUrl, year: "2026" }
         ];
 
         const cancionesData = [
@@ -970,7 +972,7 @@
                 album: "",
                 trackNum: 1,
                 coverLoaded: true,
-                // Modificado: Paleta de colores de la imagen adjunta para 444 (Remix)
+                // Paleta de colores de la imagen adjunta para 444 (Remix)
                 palette: [
                     { r: 12, g: 10, b: 10 },    // #0C0A0A (Fondo c0)
                     { r: 162, g: 111, b: 104 }, // #A26F68 (Rosa Viejo c1)
@@ -978,6 +980,25 @@
                     { r: 73, g: 44, b: 42 },    // #492C2A (Marrón Oscuro c3)
                     { r: 13, g: 10, b: 10 },    // #0D0A0A (Casi Negro c4)
                     { r: 12, g: 10, b: 10 }     // padding (#0C0A0A)
+                ]
+            },
+            {
+                title: "KLOuFRENS",
+                artist: "Bad Bunny",
+                url: "https://3lxj8u72k3.ucarecd.net/e72ea6c8-c746-4f46-8bf6-3fb0e2e2af16/KLOuFRENS_spotdownorg.mp3",
+                lrc: "https://3lxj8u72k3.ucarecd.net/d1050993-ccfa-4b9a-9c13-31be0ebb3113/KLOuFRENS_spotdownorg.ttml",
+                cover: kloufrensCoverUrl,
+                album: "debi-tirar-mas-fotos",
+                trackNum: 10,
+                coverLoaded: true,
+                // Modificado: Paleta de colores de la imagen adjunta para KLOuFRENS
+                palette: [
+                    { r: 11, g: 38, b: 18 },    // #0B2612 (Verde Bosque / Fondo c0)
+                    { r: 114, g: 140, b: 74 },  // #728C4A (Verde Sabio c1)
+                    { r: 106, g: 140, b: 31 },  // #6A8C1F (Verde Oliva c2)
+                    { r: 166, g: 134, b: 106 }, // #A6866A (Arena c3)
+                    { r: 115, g: 86, b: 70 },   // #735646 (Marrón Tierra c4)
+                    { r: 11, g: 38, b: 18 }     // padding (#0B2612)
                 ]
             }
         ];
