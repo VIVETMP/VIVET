@@ -779,6 +779,7 @@
         const tuyyoCoverUrl = "https://3lxj8u72k3.ucarecd.net/6d89588b-8ca1-408e-9e6d-2b5cf560bf6c/TUYYO.png";
         const remix444CoverUrl = "https://3lxj8u72k3.ucarecd.net/6fa38489-9140-4cfd-a6d1-a7e4399d83dd/444.png";
         const kloufrensCoverUrl = "https://3lxj8u72k3.ucarecd.net/b243cc5d-4af1-4ab9-bcd2-277fc7c44aab/kloufrens.png";
+        const nuevaYorkCoverUrl = "https://3lxj8u72k3.ucarecd.net/33f2c293-13ee-40e1-bca3-4f2ef5045130/NUevaYork.jpg";
 
         const albumsData = [ 
             { id: "Underwater", title: "Underwater", artist: "Dei V", cover: coverImgUrl, year: "2024" },
@@ -788,7 +789,8 @@
             { id: "primera-musa-album", title: "PRIMERA MUSA", artist: "Omar Courtz", cover: piensaenmiCoverUrl, year: "2024" },
             { id: "un-verano-sin-ti", title: "Un Verano Sin Ti", artist: "Bad Bunny", cover: tarotCoverUrl, year: "2022" },
             { id: "private-suite-vol4", title: "Private Suite (Vol. 4) - EP", artist: "ROA", cover: tuyyoCoverUrl, year: "2024" },
-            { id: "debi-tirar-mas-fotos", title: "DeBÍ TiRAR MáS FOToS", artist: "Bad Bunny", cover: kloufrensCoverUrl, year: "2026" }
+            { id: "debi-tirar-mas-fotos", title: "DeBÍ TiRAR MáS FOToS", artist: "Bad Bunny", cover: kloufrensCoverUrl, year: "2026" },
+            { id: "trinidad-bendita", title: "TRINIDAD BENDITA", artist: "Blessd", cover: nuevaYorkCoverUrl, year: "2026" }
         ];
 
         const cancionesData = [
@@ -991,7 +993,7 @@
                 album: "debi-tirar-mas-fotos",
                 trackNum: 10,
                 coverLoaded: true,
-                // Modificado: Paleta de colores de la imagen adjunta para KLOuFRENS
+                // Paleta de colores de la imagen adjunta para KLOuFRENS
                 palette: [
                     { r: 11, g: 38, b: 18 },    // #0B2612 (Verde Bosque / Fondo c0)
                     { r: 114, g: 140, b: 74 },  // #728C4A (Verde Sabio c1)
@@ -999,6 +1001,25 @@
                     { r: 166, g: 134, b: 106 }, // #A6866A (Arena c3)
                     { r: 115, g: 86, b: 70 },   // #735646 (Marrón Tierra c4)
                     { r: 11, g: 38, b: 18 }     // padding (#0B2612)
+                ]
+            },
+            {
+                title: "NUEVA YORK",
+                artist: "Blessd, Los Money Makers & ProdMonja",
+                url: "https://3lxj8u72k3.ucarecd.net/18bd678b-5973-4733-aa94-4bcaa994832c/NUEVAYORK_spotdownorg.mp3",
+                lrc: "https://3lxj8u72k3.ucarecd.net/b9b9572f-7bad-4d44-a5cb-a39b6817cb2f/NUEVAYORK_spotdownorg.ttml",
+                cover: nuevaYorkCoverUrl,
+                album: "trinidad-bendita",
+                trackNum: 4,
+                coverLoaded: true,
+                // Modificado: Paleta de colores de la imagen adjunta para NUEVA YORK
+                palette: [
+                    { r: 10, g: 10, b: 10 },    // #0A0A0A (Fondo c0)
+                    { r: 140, g: 140, b: 140 },  // #8C8C8C (Gris c1)
+                    { r: 89, g: 89, b: 89 },    // #595959 (Gris Carbón c2)
+                    { r: 38, g: 38, b: 38 },    // #262626 (Gris Oscuro c3)
+                    { r: 13, g: 13, b: 13 },    // #0D0D0D (Negro Suave c4)
+                    { r: 10, g: 10, b: 10 }     // padding (#0A0A0A)
                 ]
             }
         ];
@@ -1011,7 +1032,8 @@
             { name: "Omar Courtz", img: piensaenmiCoverUrl },
             { name: "JHAYCO", img: tarotCoverUrl },
             { name: "ROA", img: uuU2CoverUrl },
-            { name: "Yan Block", img: remix444CoverUrl }
+            { name: "Yan Block", img: remix444CoverUrl },
+            { name: "Blessd", img: nuevaYorkCoverUrl }
         ];
 
         /* ==================================================================
