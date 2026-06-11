@@ -781,6 +781,7 @@
         const kloufrensCoverUrl = "https://3lxj8u72k3.ucarecd.net/b243cc5d-4af1-4ab9-bcd2-277fc7c44aab/kloufrens.png";
         const nuevaYorkCoverUrl = "https://3lxj8u72k3.ucarecd.net/33f2c293-13ee-40e1-bca3-4f2ef5045130/NUevaYork.jpg";
         const emocionesCoverUrl = "https://3lxj8u72k3.ucarecd.net/5a17d10d-19e9-4402-8d1b-77f19cd2140b/EMOCIONES.png";
+        const netflixCoverUrl = "https://3lxj8u72k3.ucarecd.net/8c9efcbf-d628-4320-b199-976e34d4a238/netflixxandchill.png";
 
         const albumsData = [ 
             { id: "Underwater", title: "Underwater", artist: "Dei V", cover: coverImgUrl, year: "2024" },
@@ -1032,7 +1033,7 @@
                 album: "",
                 trackNum: 1,
                 coverLoaded: true,
-                // Modificado: Paleta de colores corregida de la nueva imagen adjunta para Emociones
+                // Paleta de colores de la imagen adjunta para Emociones
                 palette: [
                     { r: 23, g: 42, b: 52 },    // #172A34 (Fondo c0)
                     { r: 115, g: 129, b: 138 }, // #73818A (Gris Azulado Suave c1)
@@ -1040,6 +1041,25 @@
                     { r: 62, g: 78, b: 92 },    // #3E4E5C (Azul Acero c3)
                     { r: 85, g: 101, b: 111 },  // #55656F (Gris Acero c4)
                     { r: 23, g: 42, b: 52 }     // padding (#172A34)
+                ]
+            },
+            {
+                title: "NETFLIX AND CHILL",
+                artist: "Chris Jedi, Anuel AA & ROA",
+                url: "https://3lxj8u72k3.ucarecd.net/e2b29c3f-adbb-4ec6-a7fa-5805dda307a2/NETFLIXANDCHILL_spotdownorg.mp3",
+                lrc: "https://3lxj8u72k3.ucarecd.net/7b80fa33-0e31-45b8-8f43-3e0c25cf8f8a/NETFLIXANDCHILL_spotdownorg.ttml",
+                cover: netflixCoverUrl,
+                album: "",
+                trackNum: 1,
+                coverLoaded: true,
+                // Modificado: Paleta de colores de la imagen adjunta para NETFLIX AND CHILL
+                palette: [
+                    { r: 13, g: 13, b: 13 },    // #0D0D0D (Fondo c0)
+                    { r: 191, g: 17, b: 32 },   // #BF1120 (Rojo Brillante c1)
+                    { r: 166, g: 5, b: 18 },    // #A60512 (Rojo Oscuro c2)
+                    { r: 115, g: 2, b: 2 },     // #730202 (Borgoña c3)
+                    { r: 191, g: 186, b: 181 }, // #BFBAB5 (Gris Cálido c4)
+                    { r: 13, g: 13, b: 13 }     // padding (#0D0D0D)
                 ]
             }
         ];
@@ -1054,7 +1074,8 @@
             { name: "ROA", img: uuU2CoverUrl },
             { name: "Yan Block", img: remix444CoverUrl },
             { name: "Blessd", img: nuevaYorkCoverUrl },
-            { name: "Hades66", img: emocionesCoverUrl }
+            { name: "Hades66", img: emocionesCoverUrl },
+            { name: "Chris Jedi", img: netflixCoverUrl }
         ];
 
         /* ==================================================================
