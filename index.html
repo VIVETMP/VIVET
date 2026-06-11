@@ -780,6 +780,7 @@
         const remix444CoverUrl = "https://3lxj8u72k3.ucarecd.net/6fa38489-9140-4cfd-a6d1-a7e4399d83dd/444.png";
         const kloufrensCoverUrl = "https://3lxj8u72k3.ucarecd.net/b243cc5d-4af1-4ab9-bcd2-277fc7c44aab/kloufrens.png";
         const nuevaYorkCoverUrl = "https://3lxj8u72k3.ucarecd.net/33f2c293-13ee-40e1-bca3-4f2ef5045130/NUevaYork.jpg";
+        const emocionesCoverUrl = "https://3lxj8u72k3.ucarecd.net/5a17d10d-19e9-4402-8d1b-77f19cd2140b/EMOCIONES.png";
 
         const albumsData = [ 
             { id: "Underwater", title: "Underwater", artist: "Dei V", cover: coverImgUrl, year: "2024" },
@@ -993,11 +994,11 @@
                 album: "debi-tirar-mas-fotos",
                 trackNum: 10,
                 coverLoaded: true,
-                // Modificado: Paleta de colores actualizada con la imagen correcta provista por el usuario
+                // Modificado: Paleta de colores de la imagen corregida para KLOuFRENS
                 palette: [
                     { r: 11, g: 38, b: 18 },    // #0B2612 (Verde Bosque / Fondo c0)
                     { r: 114, g: 140, b: 74 },  // #728C4A (Verde Sabio c1)
-                    { r: 151, g: 121, b: 92 },  // #97795C (Marrón Cálido c2 - Corregido)
+                    { r: 151, g: 121, b: 92 },  // #97795C (Marrón Cálido c2)
                     { r: 166, g: 134, b: 106 }, // #A6866A (Arena c3)
                     { r: 115, g: 86, b: 70 },   // #735646 (Marrón Tierra c4)
                     { r: 11, g: 38, b: 18 }     // padding (#0B2612)
@@ -1021,6 +1022,25 @@
                     { r: 10, g: 10, b: 10 },    // #0A0A0A (Negro c4)
                     { r: 10, g: 10, b: 10 }     // padding (#0A0A0A)
                 ]
+            },
+            {
+                title: "Emociones",
+                artist: "Hades66",
+                url: "https://3lxj8u72k3.ucarecd.net/1a3215c1-e9b6-4b00-85c8-3850de69b58a/Emociones_spotdownorg.mp3",
+                lrc: "https://3lxj8u72k3.ucarecd.net/f31025ae-1a36-4afd-bb8f-4b26de826b35/Emociones_spotdownorg.ttml",
+                cover: emocionesCoverUrl,
+                album: "",
+                trackNum: 1,
+                coverLoaded: true,
+                // Modificado: Paleta de colores de la imagen adjunta para Emociones
+                palette: [
+                    { r: 23, g: 42, b: 52 },    // #172A34 (Fondo c0)
+                    { r: 85, g: 101, b: 111 },  // #55656F (Gris Acero c1)
+                    { r: 62, g: 78, b: 92 },    // #3E4E5C (Azul Acero c2)
+                    { r: 29, g: 53, b: 71 },    // #1D3547 (Azul Marino c3)
+                    { r: 22, g: 40, b: 53 },    // #162835 (Azul Noche c4)
+                    { r: 23, g: 42, b: 52 }     // padding (#172A34)
+                ]
             }
         ];
 
@@ -1033,7 +1053,8 @@
             { name: "JHAYCO", img: tarotCoverUrl },
             { name: "ROA", img: uuU2CoverUrl },
             { name: "Yan Block", img: remix444CoverUrl },
-            { name: "Blessd", img: nuevaYorkCoverUrl }
+            { name: "Blessd", img: nuevaYorkCoverUrl },
+            { name: "Hades66", img: emocionesCoverUrl }
         ];
 
         /* ==================================================================
