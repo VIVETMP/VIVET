@@ -101,6 +101,26 @@
             will-change: filter;
         }
 
+        /* Estilo personalizado para el Badge de Canción Explícita */
+        .explicit-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.15);
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 10px;
+            font-weight: 800;
+            width: 14px;
+            height: 14px;
+            border-radius: 3px;
+            text-transform: uppercase;
+            margin-left: 6px;
+            vertical-align: middle;
+            flex-shrink: 0;
+            line-height: 1;
+            font-family: var(--font-main);
+        }
+
         /* ==================================================================
            APP LAYOUT
            ================================================================== */
@@ -784,6 +804,7 @@
         const netflixCoverUrl = "https://3lxj8u72k3.ucarecd.net/8c9efcbf-d628-4320-b199-976e34d4a238/netflixxandchill.png";
         const twoTwoTwoCoverUrl = "https://3lxj8u72k3.ucarecd.net/56131901-1dc5-47e6-bbdc-b63378346bc9/222.png";
         const contigoNoMasRemixCoverUrl = "https://3lxj8u72k3.ucarecd.net/dc984730-d023-413a-9ea0-56b70e2d6932/contigonamasremix.png";
+        const tripleOneCoverUrl = "https://3lxj8u72k3.ucarecd.net/c99faa59-51a3-4fc6-91e1-ec27eb9ef65e/111.png";
 
         const albumsData = [ 
             { id: "Underwater", title: "Underwater", artist: "Dei V", cover: coverImgUrl, year: "2024" },
@@ -1092,7 +1113,7 @@
                 album: "",
                 trackNum: 1,
                 coverLoaded: true,
-                // Modificado: Paleta de colores de la imagen adjunta para Contigo Na Más - Remix
+                // Paleta de colores de la imagen adjunta para Contigo Na Más - Remix
                 palette: [
                     { r: 18, g: 18, b: 18 },    // #121212 (Fondo c0)
                     { r: 177, g: 118, b: 67 },  // #B17643 (Ocre c1)
@@ -1100,6 +1121,25 @@
                     { r: 121, g: 31, b: 37 },   // #791F25 (Borgoña c3)
                     { r: 86, g: 58, b: 36 },    // #563A24 (Café c4)
                     { r: 18, g: 18, b: 18 }     // padding (#121212)
+                ]
+            },
+            {
+                title: "111",
+                artist: "Yan Block",
+                url: "https://3lxj8u72k3.ucarecd.net/d60a80db-0136-4100-bd5e-d2ebd510b0af/111_spotdownorg.mp3",
+                lrc: "https://3lxj8u72k3.ucarecd.net/bc13807b-9a2d-412a-867e-c6eaded55000/111_spotdownorg.ttml",
+                cover: tripleOneCoverUrl,
+                album: "",
+                trackNum: 1,
+                coverLoaded: true,
+                // Paleta de colores de la imagen adjunta para 111
+                palette: [
+                    { r: 5, g: 175, b: 242 },   // #05AFF2 (Vibrante Azul / Fondo c0)
+                    { r: 61, g: 191, b: 242 },  // #3DBFF2 (Vibrante Azul Claro c1)
+                    { r: 7, g: 199, b: 242 },   // #07C7F2 (Cyan c2)
+                    { r: 114, g: 219, b: 242 }, // #72DBF2 (Cyan Claro c3)
+                    { r: 113, g: 217, b: 254 }, // #71D9FE (Azul Suave c4)
+                    { r: 5, g: 175, b: 242 }    // padding (#05AFF2)
                 ]
             }
         ];
@@ -1679,7 +1719,7 @@
                         ${type!=='artist' ? `<div class="card-play-btn"><i class="ph-fill ph-play"></i></div>` : ''}
                     </div>
                     <div class="card-info" style="${type==='artist'?'text-align:center':''}">
-                        <div class="card-title">${item.title || item.name}</div>
+                        <div class="card-title">${item.title || item.name} ${type === 'song' ? '<span class="explicit-badge">E</span>' : ''}</div>
                         <div class="card-subtitle">${type==='artist' ? 'Artist' : (item.artist + (item.year ? ` • ${item.year}` : ''))}</div>
                     </div>
                 `;
@@ -1708,7 +1748,7 @@
                 row.innerHTML = `
                     <div class="track-num">${song.trackNum}</div>
                     <div class="track-info">
-                        <div class="track-title">${song.title}</div>
+                        <div class="track-title">${song.title} <span class="explicit-badge">E</span></div>
                         <div class="track-artist">${song.artist}</div>
                     </div>
                 `;
@@ -1822,9 +1862,9 @@
             // Re-renderización de ondas dinámicas independientes por cada track
             randomizeWaves();
             
-            document.getElementById('player-title').innerText = song.title;
+            document.getElementById('player-title').innerHTML = `${song.title} <span class="explicit-badge">E</span>`;
             document.getElementById('player-artist').innerText = song.artist;
-            document.getElementById('np-title-large').innerText = song.title;
+            document.getElementById('np-title-large').innerHTML = `${song.title} <span class="explicit-badge" style="font-size: 11px; width: 16px; height: 16px;">E</span>`;
             
             const alb = albumsData.find(a => a.id === song.album);
             const albumName = alb ? alb.title : "Single";
