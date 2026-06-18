@@ -805,6 +805,7 @@
         const twoTwoTwoCoverUrl = "https://3lxj8u72k3.ucarecd.net/56131901-1dc5-47e6-bbdc-b63378346bc9/222.png";
         const contigoNoMasRemixCoverUrl = "https://3lxj8u72k3.ucarecd.net/dc984730-d023-413a-9ea0-56b70e2d6932/contigonamasremix.png";
         const tripleOneCoverUrl = "https://3lxj8u72k3.ucarecd.net/c99faa59-51a3-4fc6-91e1-ec27eb9ef65e/111.png";
+        const dreamTeamCoverUrl = "https://3lxj8u72k3.ucarecd.net/dbefa243-768c-4a48-9486-aa5e2a62fefa/Dreamteam.png";
 
         const albumsData = [ 
             { id: "Underwater", title: "Underwater", artist: "Dei V", cover: coverImgUrl, year: "2024" },
@@ -815,7 +816,8 @@
             { id: "un-verano-sin-ti", title: "Un Verano Sin Ti", artist: "Bad Bunny", cover: tarotCoverUrl, year: "2022" },
             { id: "private-suite-vol4", title: "Private Suite (Vol. 4) - EP", artist: "ROA", cover: tuyyoCoverUrl, year: "2024" },
             { id: "debi-tirar-mas-fotos", title: "DeBÍ TiRAR MáS FOToS", artist: "Bad Bunny", cover: kloufrensCoverUrl, year: "2026" },
-            { id: "trinidad-bendita", title: "TRINIDAD BENDITA", artist: "Blessd", cover: nuevaYorkCoverUrl, year: "2026" }
+            { id: "trinidad-bendita", title: "TRINIDAD BENDITA", artist: "Blessd", cover: nuevaYorkCoverUrl, year: "2026" },
+            { id: "do-not-disturb", title: "Do Not Disturb: Late Checkout", artist: "Young Miko", cover: dreamTeamCoverUrl, year: "2026" }
         ];
 
         const cancionesData = [
@@ -1134,12 +1136,31 @@
                 coverLoaded: true,
                 // Paleta de colores de la imagen adjunta para 111
                 palette: [
-                    { r: 5, g: 175, b: 242 },   // #05AFF2 (Vibrante Azul / Fondo c0)
-                    { r: 61, g: 191, b: 242 },  // #3DBFF2 (Vibrante Azul Claro c1)
-                    { r: 7, g: 199, b: 242 },   // #07C7F2 (Cyan c2)
-                    { r: 114, g: 219, b: 242 }, // #72DBF2 (Cyan Claro c3)
-                    { r: 113, g: 217, b: 254 }, // #71D9FE (Azul Suave c4)
+                    { r: 5, g: 175, b: 242 },   // #05AFF2 (Fondo c0)
+                    { r: 61, g: 191, b: 242 },  // #3DBFF2 (c1)
+                    { r: 7, g: 199, b: 242 },   // #07C7F2 (c2)
+                    { r: 114, g: 219, b: 242 }, // #72DBF2 (c3)
+                    { r: 113, g: 217, b: 254 }, // #71D9FE (c4)
                     { r: 5, g: 175, b: 242 }    // padding (#05AFF2)
+                ]
+            },
+            {
+                title: "Dream Team",
+                artist: "Young Miko & De La Rose",
+                url: "https://3lxj8u72k3.ucarecd.net/a31c3ec4-f70b-47b3-a6dc-ed24ab041c95/DreamTeam_spotdownorg.mp3",
+                lrc: "https://3lxj8u72k3.ucarecd.net/04888ee5-0b88-4a37-b83a-6dda485c9c08/DreamTeam_spotdownorg.ttml",
+                cover: dreamTeamCoverUrl,
+                album: "do-not-disturb",
+                trackNum: 3,
+                coverLoaded: true,
+                // Paleta de colores corregida de la nueva imagen adjunta para Dream Team
+                palette: [
+                    { r: 0, g: 2, b: 6 },       // #000206 (Fondo c0)
+                    { r: 255, g: 4, b: 2 },     // #FF0402 (Rojo Vibrante c1)
+                    { r: 2, g: 55, b: 90 },     // #02375A (Azul Prusia c2)
+                    { r: 0, g: 48, b: 86 },     // #003056 (Azul Marino c3)
+                    { r: 0, g: 19, b: 49 },     // #001331 (Índigo Oscuro c4)
+                    { r: 0, g: 2, b: 6 }        // padding (#000206)
                 ]
             }
         ];
@@ -1155,7 +1176,8 @@
             { name: "Yan Block", img: remix444CoverUrl },
             { name: "Blessd", img: nuevaYorkCoverUrl },
             { name: "Hades66", img: emocionesCoverUrl },
-            { name: "Chris Jedi", img: netflixCoverUrl }
+            { name: "Chris Jedi", img: netflixCoverUrl },
+            { name: "Young Miko", img: dreamTeamCoverUrl }
         ];
 
         /* ==================================================================
