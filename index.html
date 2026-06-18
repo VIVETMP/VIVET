@@ -257,7 +257,7 @@
         .controls-buttons i { cursor: pointer; transition: all 0.3s var(--ease-snappy); }
         .controls-buttons i:hover { color: #fff; transform: scale(1.2); text-shadow: 0 0 10px rgba(255,255,255,0.5); }
         .controls-buttons i:active { transform: scale(0.9); }
-        .btn-play-circle { width: 52px; height: 52px; background: #fff; color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; transition: all 0.4s var(--ease-snappy); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+        .btn-play-circle { width: 52px; height: 52px; background: #fff; color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; transition: all 0.4s var(--ease-snappy); box-shadow: 0 10px 20px rgba(255,255,255,0.2); }
         .btn-play-circle i { margin-left: 3px; }
         .btn-play-circle:hover { transform: scale(1.1); box-shadow: 0 15px 30px rgba(255,255,255,0.4); }
 
@@ -806,8 +806,6 @@
         const contigoNoMasRemixCoverUrl = "https://3lxj8u72k3.ucarecd.net/dc984730-d023-413a-9ea0-56b70e2d6932/contigonamasremix.png";
         const tripleOneCoverUrl = "https://3lxj8u72k3.ucarecd.net/c99faa59-51a3-4fc6-91e1-ec27eb9ef65e/111.png";
         const dreamTeamCoverUrl = "https://3lxj8u72k3.ucarecd.net/dbefa243-768c-4a48-9486-aa5e2a62fefa/Dreamteam.png";
-        const luarLaLProfileUrl = "https://3lxj8u72k3.ucarecd.net/eb9f27b1-2c3e-4e3b-a976-15dba4e0361c/LUARLAL.jpg";
-        const luarLaLBgUrl = "https://3lxj8u72k3.ucarecd.net/9047c56b-b0cc-4398-9d5c-7ef35eaa5d7e/Luarlal1.jpg";
 
         const albumsData = [ 
             { id: "Underwater", title: "Underwater", artist: "Dei V", cover: coverImgUrl, year: "2024" },
@@ -1157,23 +1155,19 @@
                 coverLoaded: true,
                 // Paleta de colores corregida de la nueva imagen adjunta para Dream Team
                 palette: [
-                    { r: 1, g: 38, b: 64 },     // #012640 (Swatch 1 / Fondo c0)
-                    { r: 1, g: 31, b: 53 },     // #011F35 (Swatch 2 / c1)
-                    { r: 0, g: 3, b: 8 },       // #000308 (Swatch 3 / c2)
-                    { r: 255, g: 14, b: 6 },    // #FF0E06 (Swatch 4 / c3)
-                    { r: 243, g: 1, b: 0 },     // #F30100 (Swatch 5 / c4)
-                    { r: 1, g: 38, b: 64 }      // padding (#012640)
+                    { r: 0, g: 2, b: 6 },       // #000206 (Fondo c0)
+                    { r: 255, g: 4, b: 2 },     // #FF0402 (Rojo Vibrante c1)
+                    { r: 2, g: 55, b: 90 },     // #02375A (Azul Prusia c2)
+                    { r: 0, g: 48, b: 86 },     // #003056 (Azul Marino c3)
+                    { r: 0, g: 19, b: 49 },     // #001331 (Índigo Oscuro c4)
+                    { r: 0, g: 2, b: 6 }        // padding (#000206)
                 ]
             }
         ];
 
         const artistsData = [
             { name: "Dei V", img: coverImgUrl },
-            { 
-                name: "Luar La L", 
-                img: luarLaLProfileUrl, // Nueva foto de perfil de Luar La L
-                bg: luarLaLBgUrl       // Nueva foto de fondo del perfil de Luar La L
-            },
+            { name: "Luar La L", img: sideBitchCoverUrl },
             { name: "Bad Bunny", img: telefonoNuevoCoverUrl },
             { name: "Jay Wheeler", img: sheLike2FuckCoverUrl },
             { name: "Omar Courtz", img: piensaenmiCoverUrl },
@@ -1797,32 +1791,6 @@
         function openArtistDetail(name, img) {
             document.getElementById('det-artist-name').innerText = name;
             document.getElementById('det-artist-img').src = img;
-            
-            // Buscar si el artista tiene un banner de fondo personalizado en su base de datos
-            const artist = artistsData.find(a => a.name === name);
-            const heroSection = document.querySelector('#view-artist-detail .hero-section');
-            
-            if (artist && artist.bg) {
-                // Aplicar estilo inmersivo si cuenta con fondo personalizado
-                heroSection.style.backgroundImage = `linear-gradient(to bottom, rgba(5,5,7,0.2) 0%, rgba(5,5,7,0.85) 100%), url('${artist.bg}')`;
-                heroSection.style.backgroundSize = 'cover';
-                heroSection.style.backgroundPosition = 'center';
-                heroSection.style.borderRadius = '24px';
-                heroSection.style.padding = '40px';
-                heroSection.style.boxShadow = 'inset 0 0 100px rgba(0,0,0,0.8), 0 20px 40px rgba(0,0,0,0.4)';
-                document.getElementById('det-artist-img').style.border = '4px solid rgba(255,255,255,0.15)';
-                document.getElementById('det-artist-img').style.boxShadow = '0 20px 40px rgba(0,0,0,0.5)';
-            } else {
-                // Restaurar estilos por defecto de la aplicación
-                heroSection.style.backgroundImage = '';
-                heroSection.style.backgroundSize = '';
-                heroSection.style.backgroundPosition = '';
-                heroSection.style.borderRadius = '';
-                heroSection.style.padding = '';
-                heroSection.style.boxShadow = '';
-                document.getElementById('det-artist-img').style.border = '';
-                document.getElementById('det-artist-img').style.boxShadow = '';
-            }
             
             const songs = cancionesData.filter(s => s.artist.includes(name));
             const albums = albumsData.filter(a => a.artist.includes(name));
