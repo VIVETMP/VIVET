@@ -168,7 +168,8 @@
         .card:hover { transform: translateY(-8px); }
         .card:active { transform: scale(0.95); transition: 0.2s; }
         
-        .card-img-wrapper { position: relative; width: 100%; aspect-ratio: 1; border-radius: 20px; overflow: hidden; box-shadow: var(--shadow-float); background: #111; z-index: 2; }
+        /* Contenedor sin fondo negro de relleno */
+        .card-img-wrapper { position: relative; width: 100%; aspect-ratio: 1; border-radius: 20px; overflow: hidden; box-shadow: var(--shadow-float); background: transparent; z-index: 2; }
         .card-img-wrapper.is-circle { border-radius: 50%; }
         .card-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.7s var(--ease-fluid); }
         .card:hover .card-img { transform: scale(1.1); }
@@ -295,11 +296,12 @@
             position: relative; z-index: 10; display: flex; align-items: center; gap: 40px;
         }
 
+        /* Contenedor sin fondo negro de relleno ni borde marcado */
         .np-art-wrap { 
             width: 180px; height: 180px; border-radius: 16px; 
             box-shadow: 0 25px 60px rgba(0,0,0,0.6); 
             overflow: hidden; transition: transform 0.5s var(--ease-snappy); 
-            background: #111; cursor: pointer; border: 1px solid rgba(255,255,255,0.08);
+            background: transparent; cursor: pointer;
             flex-shrink: 0;
         }
         .np-art-wrap:hover { transform: scale(1.04); }
@@ -759,7 +761,8 @@
                     { r: 166, g: 134, b: 106 }, // #A6866A
                     { r: 115, g: 86, b: 70 },   // #735646
                     { r: 11, g: 38, b: 18 }     // padding
-                ]
+                ],
+                bgImage: "https://3lxj8u72k3.ucarecd.net/86edb601-4308-432f-987d-c0d45e4746a2/kloufrens.jpg"
             },
             {
                 title: "NUEVA YORK",
@@ -810,7 +813,8 @@
                     { r: 115, g: 2, b: 2 },     // #730202
                     { r: 191, g: 186, b: 181 }, // #BFBAB5
                     { r: 13, g: 13, b: 13 }     // padding
-                ]
+                ],
+                bgImage: "https://3lxj8u72k3.ucarecd.net/d4b3525b-e640-4328-a5ae-b13dfa190247/Netflixandchill.png"
             },
             {
                 title: "222",
@@ -827,7 +831,8 @@
                     { r: 217, g: 82, b: 4 },    // #D95204
                     { r: 13, g: 13, b: 13 },    // #0D0D0D
                     { r: 4, g: 4, b: 4 }        // padding
-                ]
+                ],
+                bgImage: "https://3lxj8u72k3.ucarecd.net/d3f1cf8c-1ba1-4fca-8191-640c6027d730/2222.png"
             },
             {
                 title: "Contigo Na Más - Remix",
@@ -1245,12 +1250,24 @@
             const albumName = alb ? alb.title : "Single";
             document.getElementById('np-artist-large').innerText = `${song.artist} — ${albumName}`;
 
-            // Static high performance background change once per song instead of continuously in a loop
-            if (song.palette && song.palette.length > 0) {
+            const npFs = document.getElementById('np-fs');
+            if (song.bgImage) {
+                // Background image setup
+                npFs.style.backgroundImage = `url('${song.bgImage}')`;
+                npFs.style.backgroundSize = 'cover';
+                npFs.style.backgroundPosition = 'center';
+                npFs.style.backgroundRepeat = 'no-repeat';
+            } else if (song.palette && song.palette.length > 0) {
+                // Gradient palette fallback
                 const primaryColor = song.palette[0];
                 const secondaryColor = song.palette[2] || song.palette[1];
+                npFs.style.backgroundImage = `linear-gradient(135deg, rgb(${primaryColor.r}, ${primaryColor.g}, ${primaryColor.b}) 0%, rgb(${secondaryColor.r}, ${secondaryColor.g}, ${secondaryColor.b}) 100%)`;
+            }
+
+            // Document body solid fallback sync
+            if (song.palette && song.palette.length > 0) {
+                const primaryColor = song.palette[0];
                 document.documentElement.style.setProperty('--bg-deep', `rgb(${primaryColor.r}, ${primaryColor.g}, ${primaryColor.b})`);
-                document.getElementById('np-fs').style.background = `linear-gradient(135deg, rgb(${primaryColor.r}, ${primaryColor.g}, ${primaryColor.b}) 0%, rgb(${secondaryColor.r}, ${secondaryColor.g}, ${secondaryColor.b}) 100%)`;
                 applyAccentFromPalette(song.palette);
             }
         }
