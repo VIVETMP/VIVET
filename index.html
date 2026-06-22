@@ -50,12 +50,6 @@
             --nav-height-mob: 80px;
         }
 
-        @property --fill {
-            syntax: '<percentage>';
-            inherits: true;
-            initial-value: 0%;
-        }
-
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
         body {
@@ -90,18 +84,8 @@
             position: absolute; inset: 0; z-index: 2; opacity: 0.045; mix-blend-mode: overlay; pointer-events: none;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
-        
-        /* Sistema de difuminado (blur) original para un fundido suave de color */
-        #fluid-canvas {
-            position: absolute; inset: -8%; width: 116%; height: 116%;
-            filter: blur(80px) saturate(220%) brightness(0.95);
-            opacity: 1;
-            pointer-events: none;
-            z-index: 1;
-            will-change: filter;
-        }
 
-        /* Estilo personalizado para el Badge de Canción Explícita */
+        /* Estilo para el Badge de Canción Explícita */
         .explicit-badge {
             display: inline-flex;
             align-items: center;
@@ -278,233 +262,52 @@
         .btn-fullscreen:hover { background: rgba(255,255,255,0.15); transform: scale(1.1); color: #fff; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
 
         /* ==================================================================
-           FULLSCREEN NOW PLAYING (APPLE TV / DESKTOP REPLICA)
+           FULLSCREEN NOW PLAYING (ULTRA-MINIMALIST APPLE TV DESIGN)
            ================================================================== */
         #np-fs {
             position: fixed; inset: 0; z-index: 100; transform: translateY(100%); opacity: 0; visibility: hidden;
-            transition: transform 0.8s var(--ease-cinematic), opacity 0.5s; display: flex; flex-direction: column; 
-            overflow: hidden; background: #000; font-family: var(--font-display);
+            transition: transform 0.8s var(--ease-cinematic), opacity 0.5s; display: flex; 
+            overflow: hidden; 
+            background: linear-gradient(135deg, #051319 0%, #021a24 100%); 
+            font-family: var(--font-display);
+            align-items: flex-end;
+            justify-content: flex-start;
+            padding: 96px;
         }
         #np-fs.active { transform: translateY(0); opacity: 1; visibility: visible; }
 
-        .np-bg-wrap { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
-        
-        /* Sistema de difuminado (blur) original para Now Playing */
-        #fluid-canvas-np {
-            position: absolute; inset: -8%; width: 116%; height: 116%;
-            filter: blur(80px) saturate(220%) brightness(0.85);
-            opacity: 1;
-            pointer-events: none;
-            z-index: 0;
-            will-change: filter;
-        }
-        .np-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.3); z-index: 1; }
-        .np-grain { position: absolute; inset: 0; z-index: 2; opacity: 0.035; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none;}
+        .np-bg-overlay { position: absolute; inset: 0; background: radial-gradient(circle at bottom left, rgba(255,255,255,0.01) 0%, rgba(0,0,0,0.55) 100%); z-index: 1; pointer-events: none; }
+        .np-grain { position: absolute; inset: 0; z-index: 2; opacity: 0.02; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none;}
 
         /* Collapse Button */
-        @media (min-width: 1025px) {
-            .btn-collapse {
-                position: absolute; top: 40px; left: 40px; width: 44px; height: 44px;
-                background: transparent; border: none; cursor: pointer; z-index: 10;
-                display: flex; align-items: center; justify-content: center; font-size: 32px; 
-                color: rgba(255,255,255,0.5); transition: all 0.2s var(--ease-snappy); outline: none;
-            }
-            .btn-collapse:hover { color: #fff; transform: scale(1.1); }
-            .btn-collapse i { display: block; }
-            .btn-collapse-mob { display: none; }
+        .btn-collapse {
+            position: absolute; top: 48px; right: 48px; width: 52px; height: 52px;
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); cursor: pointer; z-index: 10;
+            display: flex; align-items: center; justify-content: center; font-size: 24px; 
+            color: rgba(255,255,255,0.5); border-radius: 50%; transition: all 0.3s var(--ease-snappy); outline: none;
         }
+        .btn-collapse:hover { color: #fff; background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.2); transform: scale(1.08); }
+        .btn-collapse i { display: block; }
+        .btn-collapse-mob { display: none; }
 
-        /* Desktop 2-Column Layout */
-        .np-layout { 
-            position: relative; z-index: 3; display: flex; width: 100%; height: 100%; 
-            max-width: 1600px; padding: 0 8vw; gap: 8vw; margin: 0 auto; align-items: center; justify-content: center;
-        }
-        
-        .np-left-pane {
-            flex: 0 0 clamp(320px, 35vw, 480px); display: flex; flex-direction: column; justify-content: center; gap: 24px; position: relative;
+        /* Integrated Minimal Container */
+        .np-minimal-container {
+            position: relative; z-index: 10; display: flex; align-items: center; gap: 40px;
         }
 
         .np-art-wrap { 
-            width: 100%; aspect-ratio: 1; border-radius: 12px; 
-            box-shadow: 0 25px 60px rgba(0,0,0,0.5); 
-            overflow: hidden; transition: transform 0.6s var(--ease-cinematic); 
-            background: #111; cursor: pointer;
+            width: 180px; height: 180px; border-radius: 16px; 
+            box-shadow: 0 25px 60px rgba(0,0,0,0.6); 
+            overflow: hidden; transition: transform 0.5s var(--ease-snappy); 
+            background: #111; cursor: pointer; border: 1px solid rgba(255,255,255,0.08);
+            flex-shrink: 0;
         }
-        .np-art-wrap:hover { transform: scale(1.02); }
+        .np-art-wrap:hover { transform: scale(1.04); }
         .np-art { width: 100%; height: 100%; object-fit: cover; }
 
-        .np-info-block { display: flex; flex-direction: column; gap: 16px; width: 100%; }
-
-        .np-scrubber-group { display: flex; flex-direction: column; gap: 10px; width: 100%; }
-        .np-time-row { display: flex; justify-content: space-between; font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.55); font-variant-numeric: tabular-nums; letter-spacing: 0.02em; margin-bottom: 2px;}
-        
-        /* Beautiful Spicy-style progress bar */
-        .np-progress-track {
-            width: 100%;
-            height: 5px;
-            background: rgba(255,255,255,0.12);
-            border-radius: 100px;
-            cursor: pointer;
-            position: relative;
-            transition: height 0.25s var(--ease-snappy);
-            overflow: visible;
-        }
-        .np-progress-track:hover {
-            height: 8px;
-        }
-        .np-progress-fill {
-            width: 0%;
-            height: 100%;
-            border-radius: 100px;
-            background: #fff;
-            position: relative;
-            transition: width 0.1s linear;
-            box-shadow: 0 0 12px rgba(255,255,255,0.35);
-        }
-        .np-progress-fill::after {
-            content: '';
-            position: absolute;
-            right: -6px;
-            top: 50%;
-            transform: translateY(-50%) scale(0);
-            width: 14px;
-            height: 14px;
-            background: #fff;
-            border-radius: 50%;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.5), 0 0 16px rgba(255,255,255,0.5);
-            transition: transform 0.2s var(--ease-snappy);
-        }
-        .np-progress-track:hover .np-progress-fill::after {
-            transform: translateY(-50%) scale(1);
-        }
-        /* Buffered/glow shimmer effect */
-        .np-progress-fill::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: 100px;
-            background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%);
-            animation: progressShimmer 2.5s ease-in-out infinite;
-        }
-        @keyframes progressShimmer {
-            0% { transform: translateX(-100%); opacity: 0; }
-            50% { opacity: 1; }
-            100% { transform: translateX(100%); opacity: 0; }
-        }
-        
-        .np-scrubber-group .scrubber-bg { height: 4px; border-radius: 2px; background: rgba(255,255,255,0.2); }
-        .np-scrubber-group .scrubber-bg:hover { height: 6px; }
-        .np-scrubber-group .scrubber-fill { border-radius: 2px; box-shadow: none; transition: width 0.1s linear;}
-        .np-scrubber-group .scrubber-fill::after { display: none; }
-
-        .np-track-info-center { display: flex; flex-direction: column; gap: 4px; align-items: center; text-align: center; }
-        .np-track-title { font-size: 18px; font-weight: 700; color: #fff; letter-spacing: -0.01em;}
-        .np-track-artist { font-size: 16px; color: rgba(255,255,255,0.6); font-weight: 500; letter-spacing: -0.01em;}
-
-        /* Controls visible only on hover on Desktop */
-        .hidden-controls { 
-            display: flex; justify-content: center; align-items: center; gap: 32px; 
-            opacity: 0; pointer-events: none; transition: opacity 0.3s ease; 
-            margin-top: 10px; position: absolute; bottom: -80px; width: 100%;
-        }
-        .np-left-pane:hover .hidden-controls { opacity: 1; pointer-events: auto; }
-        
-        .np-main-controls i { cursor: pointer; transition: 0.2s; color: #fff; }
-        .np-main-controls i:hover { transform: scale(1.15); filter: drop-shadow(0 0 10px rgba(255,255,255,0.4));}
-        .np-main-controls i:active { transform: scale(0.95); }
-
-        /* Right Pane: Immersive Lyrics */
-        .np-right-pane { 
-            flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: center; position: relative; 
-            max-width: 800px;
-            /* Mask only on top/bottom — NOT left/right — so words never get clipped at edges */
-            mask-image: linear-gradient(to bottom, 
-                transparent 0%, 
-                rgba(0,0,0,0.6) 8%, 
-                rgba(0,0,0,1) 16%, 
-                rgba(0,0,0,1) 82%, 
-                rgba(0,0,0,0.6) 92%, 
-                transparent 100%
-            );
-            -webkit-mask-image: linear-gradient(to bottom, 
-                transparent 0%, 
-                rgba(0,0,0,0.6) 8%, 
-                rgba(0,0,0,1) 16%, 
-                rgba(0,0,0,1) 82%, 
-                rgba(0,0,0,0.6) 92%, 
-                transparent 100%
-            );
-        }
-        .lyrics-scroll-area {
-            position: relative; height: 100%; overflow-y: auto; overflow-x: visible; 
-            padding: 40vh 2vw 50vh 2vw; margin: 0; scroll-behavior: smooth;
-        }
-        .lyrics-scroll-area::-webkit-scrollbar { display: none; }
-
-        /* ============================================================
-           SPRING-PHYSICS LYRICS ENGINE — CSS LAYER
-           ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-           ============================================================ */
-
-        .lrc-line {
-            font-size: clamp(28px, 3.6vw, 52px);
-            font-weight: 700;
-            line-height: 1.42;
-            letter-spacing: -0.01em;
-            margin-bottom: 28px;
-            cursor: pointer;
-            word-wrap: break-word;
-            word-break: break-word;
-            white-space: normal;
-            overflow-wrap: break-word;
-            color: #fff;
-            text-align: left;
-            transform-origin: left center;
-            will-change: transform, opacity, filter;
-            opacity: 0.32;
-            transform: scale(0.95) translateZ(0);
-            filter: blur(0px);
-            /* Critical: prevent transform clipping by giving overflow room */
-            padding: 4px 6px 4px 2px;
-            margin-left: -2px;
-        }
-
-        .lrc-line:not(.active):hover {
-            opacity: 0.72 !important;
-        }
-
-        /* WORD TOKEN */
-        .lrc-word {
-            display: inline;
-            padding: 0;
-            margin: 0;
-            vertical-align: baseline;
-            background: linear-gradient(90deg,
-                rgba(255,255,255,1)   0%,
-                rgba(255,255,255,1)   calc(var(--wp, 0%) - 14%),
-                rgba(255,255,255,0.55) calc(var(--wp, 0%) - 2%),
-                rgba(255,255,255,0.22) var(--wp, 0%),
-                rgba(255,255,255,0.22) 100%
-            );
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            will-change: background;
-        }
-
-        .lrc-word.sung {
-            background: rgba(255,255,255,1);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
-        .lrc-word.idle {
-            background: rgba(255,255,255,0.22);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
+        .np-metadata-wrap { display: flex; flex-direction: column; gap: 12px; }
+        .np-track-title { font-size: clamp(32px, 4vw, 56px); font-weight: 800; color: #fff; letter-spacing: -0.03em; line-height: 1.1; margin: 0; display: flex; align-items: center; }
+        .np-track-artist { font-size: clamp(18px, 1.8vw, 24px); color: rgba(255,255,255,0.65); font-weight: 500; letter-spacing: -0.01em; margin: 0; }
 
         /* ==================================================================
            MOBILE RESPONSIVE
@@ -543,8 +346,7 @@
             .search-container { max-width: 100%; }
 
             /* Fullscreen NP Mobile */
-            #np-fs { overflow-y: auto; overflow-x: hidden; } 
-            
+            #np-fs { padding: 48px 24px; align-items: center; justify-content: center; } 
             .btn-collapse { display: none; }
             .btn-collapse-mob { 
                 position: absolute; top: 16px; left: 50%; transform: translateX(-50%);
@@ -552,34 +354,19 @@
                 background: rgba(255,255,255,0.4); border: none; cursor: pointer; z-index: 10;
                 display: block; transition: 0.3s;
             }
-            
-            .np-layout { 
-                flex-direction: column; padding: 60px 8vw 40px; gap: 32px; 
-                height: auto; min-height: 100vh; justify-content: flex-start;
-            }
-            .np-left-pane { max-width: 100%; width: 100%; gap: 24px; flex: none; align-items: center; }
-            
-            .np-art-wrap { width: 100%; max-width: 360px; aspect-ratio: 1; border-radius: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
-            
-            .np-track-title { font-size: 22px; white-space: normal; line-height: 1.2; }
-            .np-track-artist { font-size: 18px; }
-            
-            .hidden-controls { position: relative; opacity: 1; pointer-events: auto; bottom: 0; margin-top: 0; gap: 40px;}
-            
-            .np-right-pane { width: 100%; max-width: 400px; flex: none; height: 70vh; position: relative; margin-top: 10px; }
-            .lyrics-scroll-area { padding: 10vh 4vw 30vh 4vw; }
-            .lrc-line { font-size: 30px; margin-bottom: 22px; padding: 3px 4px 3px 2px; }
-            .np-progress-track { height: 4px; }
-            .np-progress-track:hover { height: 7px; }
+            .np-minimal-container { flex-direction: column; text-align: center; gap: 24px; }
+            .np-art-wrap { width: 220px; height: 220px; }
+            .np-metadata-wrap { align-items: center; }
+            .np-track-title { font-size: 28px; justify-content: center; }
+            .np-track-artist { font-size: 16px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- AMBIENT CANVAS BACKGROUND -->
+    <!-- AMBIENT BACKGROUND -->
     <div id="ambient-bg">
         <div class="noise-overlay"></div>
-        <canvas id="fluid-canvas"></canvas>
     </div>
 
     <!-- MAIN APP SHELL -->
@@ -728,55 +515,21 @@
         </div>
     </div>
 
-    <!-- FULLSCREEN NOW PLAYING OVERLAY (APPLE TV / MUSIC MAC REPLICA) -->
+    <!-- FULLSCREEN NOW PLAYING OVERLAY (APPLE TV STYLE) -->
     <div id="np-fs">
-        <div class="np-bg-wrap">
-            <canvas id="fluid-canvas-np"></canvas>
-            <div class="np-overlay"></div>
-            <div class="np-grain"></div>
-        </div>
+        <div class="np-bg-overlay"></div>
+        <div class="np-grain"></div>
         
         <button class="btn-collapse" onclick="toggleNP()"><i class="ph ph-x"></i></button>
         <button class="btn-collapse-mob" onclick="toggleNP()"></button>
 
-        <div class="np-layout">
-            <!-- Left Pane: Info & Scrubber -->
-            <div class="np-left-pane">
-                <div class="np-art-wrap" onclick="togglePlay()">
-                    <img src="https://4nemxki6k8.ucarecd.net/0455c685-6df4-4dca-ba77-16d7bf4135d6/PROBLEMAA.jpg" id="np-img-large" class="np-art" crossorigin="anonymous">
-                </div>
-                
-                <div class="np-info-block">
-                    <div class="np-scrubber-group">
-                        <div class="np-progress-track" id="np-progress-track" onclick="seek(event, this)">
-                            <div class="np-progress-fill" id="bar-fill-np"></div>
-                        </div>
-                        <div class="np-time-row">
-                            <span id="time-curr-np">0:00</span>
-                            <span id="time-tot-np">-0:00</span>
-                        </div>
-                    </div>
-
-                    <div class="np-track-info-center">
-                        <h2 class="np-track-title"><span id="np-title-large">Problema</span></h2>
-                        <p class="np-track-artist" id="np-artist-large">Dei V & Luar La L — Underwater</p>
-                    </div>
-                </div>
-
-                <div class="np-main-controls hidden-controls">
-                    <i class="ph-bold ph-shuffle" style="font-size: 20px; color: rgba(255,255,255,0.5);"></i>
-                    <i class="ph-fill ph-skip-back" onclick="prevSong()" style="font-size: 38px;"></i>
-                    <i class="ph-fill ph-play" id="icon-play-np" onclick="togglePlay()" style="font-size: 48px;"></i>
-                    <i class="ph-fill ph-skip-forward" onclick="nextSong()" style="font-size: 38px;"></i>
-                    <i class="ph-bold ph-repeat" style="font-size: 20px; color: rgba(255,255,255,0.5);"></i>
-                </div>
+        <div class="np-minimal-container">
+            <div class="np-art-wrap" onclick="togglePlay()">
+                <img src="https://4nemxki6k8.ucarecd.net/0455c685-6df4-4dca-ba77-16d7bf4135d6/PROBLEMAA.jpg" id="np-img-large" class="np-art" crossorigin="anonymous">
             </div>
-
-            <!-- Right Pane: Immersive Lyrics -->
-            <div class="np-right-pane">
-                <div class="lyrics-scroll-area" id="lyrics-scroller">
-                    <div id="lyrics-content"></div>
-                </div>
+            <div class="np-metadata-wrap">
+                <h2 class="np-track-title" id="np-title-large">Problema</h2>
+                <p class="np-track-artist" id="np-artist-large">Dei V & Luar La L — Underwater</p>
             </div>
         </div>
     </div>
@@ -825,12 +578,10 @@
                 title: "Problema", 
                 artist: "Dei V & Luar La L", 
                 url: "https://4nemxki6k8.ucarecd.net/32f380fe-a6e5-49de-ac5a-4f5f1e0e54b1/ProblemawithLuarLaL_spotdownorg.mp3", 
-                lrc: "https://4nemxki6k8.ucarecd.net/02c0c60d-654e-4d64-bc17-fb9cf436dee2/ProblemawithLuarLaL_spotdownorg.ttml",
                 cover: coverImgUrl,
                 album: "Underwater",
                 trackNum: 3,
                 coverLoaded: true,
-                // Dominant palette for Problema (Image 1)
                 palette: [
                     { r: 7, g: 38, b: 38 },     // #072626
                     { r: 46, g: 89, b: 85 },    // #2E5955
@@ -844,12 +595,10 @@
                 title: "Side Bitch", 
                 artist: "Luar La L", 
                 url: "https://4nemxki6k8.ucarecd.net/96ecc174-aa34-4068-90ad-cfc1aa8de6ad/SideBitch_spotdownorg.mp3", 
-                lrc: "https://4nemxki6k8.ucarecd.net/5da249fc-b53a-47d4-af02-22323ced80a5/SideBitch_spotdownorg.ttml",
                 cover: sideBitchCoverUrl,
                 album: "L3tra-album",
                 trackNum: 8,
                 coverLoaded: true,
-                // Dominant palette for Side Bitch
                 palette: [
                     { r: 22, g: 52, b: 64 },    // #163440
                     { r: 156, g: 164, b: 166 }, // #9CA4A6
@@ -863,12 +612,10 @@
                 title: "TELÉFONO NUEVO",
                 artist: "Bad Bunny & Luar La L",
                 url: "https://4nemxki6k8.ucarecd.net/d311e759-9126-42d6-9edc-840928b84e36/TELEFONONUEVO_spotdownorg.mp3",
-                lrc: "https://4nemxki6k8.ucarecd.net/720ba62e-1b37-48c2-8dbc-6cf178df747b/TELEFONONUEVO_spotdownorg.ttml",
                 cover: telefonoNuevoCoverUrl,
                 album: "nadie-sabe-album",
                 trackNum: 11,
                 coverLoaded: true,
-                // Updated dominant palette for TELÉFONO NUEVO
                 palette: [
                     { r: 218, g: 204, b: 193 }, // #DACCC1
                     { r: 217, g: 202, b: 193 }, // #D9CAC1
@@ -882,12 +629,10 @@
                 title: "Lately",
                 artist: "Luar La L",
                 url: "https://4nemxki6k8.ucarecd.net/9ad5c566-263a-46b9-b66d-39c05ec0f88f/Lately_spotdownorg.mp3",
-                lrc: "https://4nemxki6k8.ucarecd.net/43a568fb-1e9f-41d7-aba8-b85c00a69c7e/Lately_spotdownorg.ttml",
                 cover: latelyCoverUrl,
                 album: "",
                 trackNum: 1,
                 coverLoaded: true,
-                // Dominant palette for Lately (Image 2)
                 palette: [
                     { r: 71, g: 50, b: 43 },    // #47322B
                     { r: 217, g: 180, b: 113 }, // #D9B471
@@ -901,12 +646,10 @@
                 title: "She Like 2 Fuck",
                 artist: "Jay Wheeler, TORRRES, Luar La L & Remers",
                 url: "https://4nemxki6k8.ucarecd.net/c239864b-6c60-4301-a778-5c127cb06cd6/SpotiDownAppSheLike2FuckJayWheeler.mp3",
-                lrc: "https://4nemxki6k8.ucarecd.net/a09f4747-a554-4fef-8a79-0d9c971497f5/SpotiDownAppSheLike2FuckJayWheeler.ttml",
                 cover: sheLike2FuckCoverUrl,
                 album: "la-voz-favorita",
                 trackNum: 4,
                 coverLoaded: true,
-                // Paleta de colores actualizada exactamente con la paleta de Adobe de la imagen adjunta
                 palette: [
                     { r: 117, g: 114, b: 109 }, // #75726D
                     { r: 98, g: 95, b: 90 },    // #625F5A
@@ -920,12 +663,10 @@
                 title: "P I E N S A S E N M I",
                 artist: "Omar Courtz & Luar La L",
                 url: "https://3lxj8u72k3.ucarecd.net/08260fda-fc6a-4363-8cbe-4f0899312111/PIENSASENMI_spotdownorg.mp3",
-                lrc: "https://3lxj8u72k3.ucarecd.net/6ae091e0-a222-477d-a67b-d9bdb5a862d4/PIENSASENMI_spotdownorg.ttml",
                 cover: piensaenmiCoverUrl,
                 album: "primera-musa-album",
                 trackNum: 1,
                 coverLoaded: true,
-                // Dominant palette for P I E N S A S E N M I
                 palette: [
                     { r: 242, g: 19, b: 60 },   // #F2133C
                     { r: 242, g: 46, b: 98 },   // #F22E62
@@ -939,228 +680,204 @@
                 title: "Tarot",
                 artist: "Bad Bunny & JHAYCO",
                 url: "https://3lxj8u72k3.ucarecd.net/daaea497-292c-4eb7-b2bd-6e0fc6516e3e/Tarot_spotdownorg.mp3",
-                lrc: "https://3lxj8u72k3.ucarecd.net/c989f27a-3b89-4122-96f9-3a173274679f/Tarot_spotdownorg.ttml",
                 cover: tarotCoverUrl,
                 album: "un-verano-sin-ti",
                 trackNum: 5,
                 coverLoaded: true,
-                // Paleta de colores de la imagen adjunta para Tarot
                 palette: [
-                    { r: 242, g: 107, b: 143 }, // #F26B8F (Rosa / Fondo c0)
-                    { r: 242, g: 159, b: 5 },   // #F29F05 (Amarillo c1)
-                    { r: 242, g: 137, b: 7 },   // #F28907 (Naranja claro c2)
-                    { r: 242, g: 93, b: 7 },    // #F25D07 (Naranja oscuro c3)
-                    { r: 217, g: 11, b: 11 },   // #D90B0B (Rojo c4)
-                    { r: 242, g: 107, b: 143 }  // padding (#F26B8F)
+                    { r: 242, g: 107, b: 143 }, // #F26B8F
+                    { r: 242, g: 159, b: 5 },   // #F29F05
+                    { r: 242, g: 137, b: 7 },   // #F28907
+                    { r: 242, g: 93, b: 7 },    // #F25D07
+                    { r: 217, g: 11, b: 11 },   // #D90B0B
+                    { r: 242, g: 107, b: 143 }  // padding
                 ]
             },
             {
                 title: "UuU 2",
                 artist: "ROA, Hades66 & Luar La L",
                 url: "https://3lxj8u72k3.ucarecd.net/e3872610-7c50-4d2a-8733-6a5bef7c5972/UuU2_spotdownorg.mp3",
-                lrc: "https://3lxj8u72k3.ucarecd.net/bc720953-e64d-4540-b901-b64914a98c42/UuU2_spotdownorg.ttml",
                 cover: uuU2CoverUrl,
                 album: "",
                 trackNum: 1,
                 coverLoaded: true,
-                // Paleta de colores de la imagen adjunta para UuU 2
                 palette: [
-                    { r: 43, g: 10, b: 115 },   // #2B0A73 (Púrpura Profundo / Fondo c0)
-                    { r: 81, g: 31, b: 191 },   // #511FBF (Púrpura Vibrante c1)
-                    { r: 142, g: 130, b: 217 }, // #8E82D9 (Lavanda c2)
-                    { r: 226, g: 242, b: 107 }, // #E2F26B (Verde Voltio c3)
-                    { r: 207, g: 217, b: 130 }, // #CFD982 (Verde Lima Suave c4)
-                    { r: 43, g: 10, b: 115 }    // padding (#2B0A73)
+                    { r: 43, g: 10, b: 115 },   // #2B0A73
+                    { r: 81, g: 31, b: 191 },   // #511FBF
+                    { r: 142, g: 130, b: 217 }, // #8E82D9
+                    { r: 226, g: 242, b: 107 }, // #E2F26B
+                    { r: 207, g: 217, b: 130 }, // #CFD982
+                    { r: 43, g: 10, b: 115 }    // padding
                 ]
             },
             {
                 title: "TÚ Y YO",
                 artist: "ROA",
                 url: "https://3lxj8u72k3.ucarecd.net/4fcc2d96-ee94-4aef-a38a-61bf05d2579c/TUYYO_spotdownorg.mp3",
-                lrc: "https://3lxj8u72k3.ucarecd.net/b95aacee-c175-4524-9e8a-77b4b4f6ae65/TUYYO_spotdownorg.ttml",
                 cover: tuyyoCoverUrl,
                 album: "private-suite-vol4",
                 trackNum: 1,
                 coverLoaded: true,
-                // Paleta de colores de la imagen adjunta para TÚ Y YO
                 palette: [
-                    { r: 1, g: 1, b: 1 },       // #010101 (Negro Puro / Fondo c0)
-                    { r: 191, g: 74, b: 6 },    // #BF4A06 (Óxido c1)
-                    { r: 242, g: 70, b: 7 },    // #F24607 (Naranja Neón c2)
-                    { r: 242, g: 50, b: 7 },    // #F23207 (Rojo-Anaranjado c3)
-                    { r: 2, g: 35, b: 43 },     // #02232B (Azul Petróleo c4)
-                    { r: 1, g: 1, b: 1 }        // padding (#010101)
+                    { r: 1, g: 1, b: 1 },       // #010101
+                    { r: 191, g: 74, b: 6 },    // #BF4A06
+                    { r: 242, g: 70, b: 7 },    // #F24607
+                    { r: 242, g: 50, b: 7 },    // #F23207
+                    { r: 2, g: 35, b: 43 },     // #02232B
+                    { r: 1, g: 1, b: 1 }        // padding
                 ]
             },
             {
                 title: "444 (Remix)",
                 artist: "Yan Block, De La Rose, Hades66 & Ñengo Flow",
                 url: "https://3lxj8u72k3.ucarecd.net/16aa377b-bce3-45b0-9a48-e1c5ec5a40ae/444Remix_spotdownorg.mp3",
-                lrc: "https://3lxj8u72k3.ucarecd.net/1ef7750e-d13e-43c3-8878-a4155f041d38/444Remix_spotdownorg.ttml",
                 cover: remix444CoverUrl,
                 album: "",
                 trackNum: 1,
                 coverLoaded: true,
-                // Paleta de colores de la imagen adjunta para 444 (Remix)
                 palette: [
-                    { r: 12, g: 10, b: 10 },    // #0C0A0A (Fondo c0)
-                    { r: 162, g: 111, b: 104 }, // #A26F68 (Rosa Viejo c1)
-                    { r: 102, g: 60, b: 57 },   // #663C39 (Chocolate c2)
-                    { r: 73, g: 44, b: 42 },    // #492C2A (Marrón Oscuro c3)
-                    { r: 13, g: 10, b: 10 },    // #0D0A0A (Casi Negro c4)
-                    { r: 12, g: 10, b: 10 }     // padding (#0C0A0A)
+                    { r: 12, g: 10, b: 10 },    // #0C0A0A
+                    { r: 162, g: 111, b: 104 }, // #A26F68
+                    { r: 102, g: 60, b: 57 },   // #663C39
+                    { r: 73, g: 44, b: 42 },    // #492C2A
+                    { r: 13, g: 10, b: 10 },    // #0D0A0A
+                    { r: 12, g: 10, b: 10 }     // padding
                 ]
             },
             {
                 title: "KLOuFRENS",
                 artist: "Bad Bunny",
                 url: "https://3lxj8u72k3.ucarecd.net/e72ea6c8-c746-4f46-8bf6-3fb0e2e2af16/KLOuFRENS_spotdownorg.mp3",
-                lrc: "https://3lxj8u72k3.ucarecd.net/d1050993-ccfa-4b9a-9c13-31be0ebb3113/KLOuFRENS_spotdownorg.ttml",
                 cover: kloufrensCoverUrl,
                 album: "debi-tirar-mas-fotos",
                 trackNum: 10,
                 coverLoaded: true,
-                // Paleta de colores de la imagen corregida para KLOuFRENS
                 palette: [
-                    { r: 11, g: 38, b: 18 },    // #0B2612 (Verde Bosque / Fondo c0)
-                    { r: 114, g: 140, b: 74 },  // #728C4A (Verde Sabio c1)
-                    { r: 151, g: 121, b: 92 },  // #97795C (Marrón Cálido c2)
-                    { r: 166, g: 134, b: 106 }, // #A6866A (Arena c3)
-                    { r: 115, g: 86, b: 70 },   // #735646 (Marrón Tierra c4)
-                    { r: 11, g: 38, b: 18 }     // padding (#0B2612)
+                    { r: 11, g: 38, b: 18 },    // #0B2612
+                    { r: 114, g: 140, b: 74 },  // #728C4A
+                    { r: 151, g: 121, b: 92 },  // #97795C
+                    { r: 166, g: 134, b: 106 }, // #A6866A
+                    { r: 115, g: 86, b: 70 },   // #735646
+                    { r: 11, g: 38, b: 18 }     // padding
                 ]
             },
             {
                 title: "NUEVA YORK",
                 artist: "Blessd, Los Money Makers & ProdMonja",
                 url: "https://3lxj8u72k3.ucarecd.net/18bd678b-5973-4733-aa94-4bcaa994832c/NUEVAYORK_spotdownorg.mp3",
-                lrc: "https://3lxj8u72k3.ucarecd.net/b9b9572f-7bad-4d44-a5cb-a39b6817cb2f/NUEVAYORK_spotdownorg.ttml",
                 cover: nuevaYorkCoverUrl,
                 album: "trinidad-bendita",
                 trackNum: 4,
                 coverLoaded: true,
-                // Paleta de colores de la imagen de Adobe para NUEVA YORK
                 palette: [
-                    { r: 10, g: 10, b: 10 },    // #0A0A0A (Fondo c0)
-                    { r: 139, g: 139, b: 139 },  // #8B8B8B (Gris claro c1)
-                    { r: 67, g: 67, b: 67 },    // #434343 (Gris medio c2)
-                    { r: 57, g: 57, b: 57 },    // #393939 (Gris oscuro c3)
-                    { r: 10, g: 10, b: 10 },    // #0A0A0A (Negro c4)
-                    { r: 10, g: 10, b: 10 }     // padding (#0A0A0A)
+                    { r: 10, g: 10, b: 10 },    // #0A0A0A
+                    { r: 139, g: 139, b: 139 },  // #8B8B8B
+                    { r: 67, g: 67, b: 67 },    // #434343
+                    { r: 57, g: 57, b: 57 },    // #393939
+                    { r: 10, g: 10, b: 10 },    // #0A0A0A
+                    { r: 10, g: 10, b: 10 }     // padding
                 ]
             },
             {
                 title: "Emociones",
                 artist: "Hades66",
                 url: "https://3lxj8u72k3.ucarecd.net/1a3215c1-e9b6-4b00-85c8-3850de69b58a/Emociones_spotdownorg.mp3",
-                lrc: "https://3lxj8u72k3.ucarecd.net/f31025ae-1a36-4afd-bb8f-4b26de826b35/Emociones_spotdownorg.ttml",
                 cover: emocionesCoverUrl,
                 album: "",
                 trackNum: 1,
                 coverLoaded: true,
-                // Paleta de colores de la nueva imagen adjunta para Emociones
                 palette: [
-                    { r: 23, g: 42, b: 52 },    // #172A34 (Fondo c0)
-                    { r: 115, g: 129, b: 138 }, // #73818A (Gris Azulado Suave c1)
-                    { r: 28, g: 50, b: 66 },    // #1C3242 (Azul Slate Oscuro c2)
-                    { r: 62, g: 78, b: 92 },    // #3E4E5C (Azul Acero c3)
-                    { r: 85, g: 101, b: 111 },  // #55656F (Gris Acero c4)
-                    { r: 23, g: 42, b: 52 }     // padding (#172A34)
+                    { r: 23, g: 42, b: 52 },    // #172A34
+                    { r: 115, g: 129, b: 138 }, // #73818A
+                    { r: 28, g: 50, b: 66 },    // #1C3242
+                    { r: 62, g: 78, b: 92 },    // #3E4E5C
+                    { r: 85, g: 101, b: 111 },  // #55656F
+                    { r: 23, g: 42, b: 52 }     // padding
                 ]
             },
             {
                 title: "NETFLIX AND CHILL",
                 artist: "Chris Jedi, Anuel AA & ROA",
                 url: "https://3lxj8u72k3.ucarecd.net/e2b29c3f-adbb-4ec6-a7fa-5805dda307a2/NETFLIXANDCHILL_spotdownorg.mp3",
-                lrc: "https://3lxj8u72k3.ucarecd.net/7b80fa33-0e31-45b8-8f43-3e0c25cf8f8a/NETFLIXANDCHILL_spotdownorg.ttml",
                 cover: netflixCoverUrl,
                 album: "",
                 trackNum: 1,
                 coverLoaded: true,
-                // Paleta de colores de la imagen adjunta para NETFLIX AND CHILL
                 palette: [
-                    { r: 13, g: 13, b: 13 },    // #0D0D0D (Fondo c0)
-                    { r: 191, g: 17, b: 32 },   // #BF1120 (Rojo Brillante c1)
-                    { r: 166, g: 5, b: 18 },    // #A60512 (Rojo Oscuro c2)
-                    { r: 115, g: 2, b: 2 },     // #730202 (Borgoña c3)
-                    { r: 191, g: 186, b: 181 }, // #BFBAB5 (Gris Cálido c4)
-                    { r: 13, g: 13, b: 13 }     // padding (#0D0D0D)
+                    { r: 13, g: 13, b: 13 },    // #0D0D0D
+                    { r: 191, g: 17, b: 32 },   // #BF1120
+                    { r: 166, g: 5, b: 18 },    // #A60512
+                    { r: 115, g: 2, b: 2 },     // #730202
+                    { r: 191, g: 186, b: 181 }, // #BFBAB5
+                    { r: 13, g: 13, b: 13 }     // padding
                 ]
             },
             {
                 title: "222",
                 artist: "Yan Block",
                 url: "https://3lxj8u72k3.ucarecd.net/851fe865-2274-4ec3-a2b7-06a8752a7c15/222_spotdownorg.mp3",
-                lrc: "https://3lxj8u72k3.ucarecd.net/9e1d5f1c-c88d-4fc0-be8d-20400b7da6dc/222_spotdownorg.ttml",
                 cover: twoTwoTwoCoverUrl,
                 album: "",
                 trackNum: 1,
                 coverLoaded: true,
-                // Paleta de colores de la imagen adjunta para 222
                 palette: [
-                    { r: 4, g: 4, b: 4 },       // #040404 (Fondo c0)
-                    { r: 94, g: 140, b: 140 },  // #5E8C8C (Verde Mar c1)
-                    { r: 242, g: 117, b: 7 },   // #F27507 (Naranja Neón c2)
-                    { r: 217, g: 82, b: 4 },    // #D95204 (Naranja Arcilla c3)
-                    { r: 13, g: 13, b: 13 },    // #0D0D0D (Gris Carbón c4)
-                    { r: 4, g: 4, b: 4 }        // padding (#040404)
+                    { r: 4, g: 4, b: 4 },       // #040404
+                    { r: 94, g: 140, b: 140 },  // #5E8C8C
+                    { r: 242, g: 117, b: 7 },   // #F27507
+                    { r: 217, g: 82, b: 4 },    // #D95204
+                    { r: 13, g: 13, b: 13 },    // #0D0D0D
+                    { r: 4, g: 4, b: 4 }        // padding
                 ]
             },
             {
                 title: "Contigo Na Más - Remix",
                 artist: "Luar La L, Jay Wheeler, Hades66, Bryant Myers, Ozuna, Dei V & ROA",
                 url: "https://3lxj8u72k3.ucarecd.net/0e0b76d9-67bd-4ac5-97bf-74bedcb432af/SpotiDownAppContigoNaMsRemix_featJayWheeler_Hades66_BryantMyers_LuarLaL.mp3",
-                lrc: "https://3lxj8u72k3.ucarecd.net/69f3ec5f-7a43-4779-b916-d9490f762a47/SpotiDownAppContigoNaMsRemix_featJayWheeler_Hades66_BryantMyers_LuarLaL.ttml",
                 cover: contigoNoMasRemixCoverUrl,
                 album: "",
                 trackNum: 1,
                 coverLoaded: true,
-                // Paleta de colores de la imagen adjunta para Contigo Na Más - Remix
                 palette: [
-                    { r: 18, g: 18, b: 18 },    // #121212 (Fondo c0)
-                    { r: 177, g: 118, b: 67 },  // #B17643 (Ocre c1)
-                    { r: 166, g: 96, b: 56 },   // #A66038 (Terracota c2)
-                    { r: 121, g: 31, b: 37 },   // #791F25 (Borgoña c3)
-                    { r: 86, g: 58, b: 36 },    // #563A24 (Café c4)
-                    { r: 18, g: 18, b: 18 }     // padding (#121212)
+                    { r: 18, g: 18, b: 18 },    // #121212
+                    { r: 177, g: 118, b: 67 },  // #B17643
+                    { r: 166, g: 96, b: 56 },   // #A66038
+                    { r: 121, g: 31, b: 37 },   // #791F25
+                    { r: 86, g: 58, b: 36 },    // #563A24
+                    { r: 18, g: 18, b: 18 }     // padding
                 ]
             },
             {
                 title: "111",
                 artist: "Yan Block",
                 url: "https://3lxj8u72k3.ucarecd.net/d60a80db-0136-4100-bd5e-d2ebd510b0af/111_spotdownorg.mp3",
-                lrc: "https://3lxj8u72k3.ucarecd.net/bc13807b-9a2d-412a-867e-c6eaded55000/111_spotdownorg.ttml",
                 cover: tripleOneCoverUrl,
                 album: "",
                 trackNum: 1,
                 coverLoaded: true,
-                // Paleta de colores de la imagen adjunta para 111
                 palette: [
-                    { r: 5, g: 175, b: 242 },   // #05AFF2 (Fondo c0)
-                    { r: 61, g: 191, b: 242 },  // #3DBFF2 (c1)
-                    { r: 7, g: 199, b: 242 },   // #07C7F2 (c2)
-                    { r: 114, g: 219, b: 242 }, // #72DBF2 (c3)
-                    { r: 113, g: 217, b: 254 }, // #71D9FE (c4)
-                    { r: 5, g: 175, b: 242 }    // padding (#05AFF2)
+                    { r: 5, g: 175, b: 242 },   // #05AFF2
+                    { r: 61, g: 191, b: 242 },  // #3DBFF2
+                    { r: 7, g: 199, b: 242 },   // #07C7F2
+                    { r: 114, g: 219, b: 242 }, // #72DBF2
+                    { r: 113, g: 217, b: 254 }, // #71D9FE
+                    { r: 5, g: 175, b: 242 }    // padding
                 ]
             },
             {
                 title: "Dream Team",
                 artist: "Young Miko & De La Rose",
                 url: "https://3lxj8u72k3.ucarecd.net/a31c3ec4-f70b-47b3-a6dc-ed24ab041c95/DreamTeam_spotdownorg.mp3",
-                lrc: "https://3lxj8u72k3.ucarecd.net/04888ee5-0b88-4a37-b83a-6dda485c9c08/DreamTeam_spotdownorg.ttml",
                 cover: dreamTeamCoverUrl,
                 album: "do-not-disturb",
                 trackNum: 3,
                 coverLoaded: true,
-                // Paleta de colores corregida de la nueva imagen adjunta para Dream Team
                 palette: [
-                    { r: 0, g: 2, b: 6 },       // #000206 (Fondo c0)
-                    { r: 255, g: 4, b: 2 },     // #FF0402 (Rojo Vibrante c1)
-                    { r: 2, g: 55, b: 90 },     // #02375A (Azul Prusia c2)
-                    { r: 0, g: 48, b: 86 },     // #003056 (Azul Marino c3)
-                    { r: 0, g: 19, b: 49 },     // #001331 (Índigo Oscuro c4)
-                    { r: 0, g: 2, b: 6 }        // padding (#000206)
+                    { r: 0, g: 2, b: 6 },       // #000206
+                    { r: 255, g: 4, b: 2 },     // #FF0402
+                    { r: 2, g: 55, b: 90 },     // #02375A
+                    { r: 0, g: 48, b: 86 },     // #003056
+                    { r: 0, g: 19, b: 49 },     // #001331
+                    { r: 0, g: 2, b: 6 }        // padding
                 ]
             }
         ];
@@ -1195,8 +912,8 @@
         let lastTimeUpdate = 0;
 
         const trackAnalysis = {};
-        let recentHistory =[];
-        let analysisQueue =[];
+        let recentHistory = [];
+        let analysisQueue = [];
 
         function initAudioEngine() {
             if (audioCtx) return;
@@ -1257,297 +974,6 @@
 
         function haptic() { if (navigator.vibrate) navigator.vibrate(10); }
 
-        /* ==================================================================
-           SPICY LYRICS-STYLE DYNAMIC BACKGROUND ENGINE
-           ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-           ================================================================== */
-
-        let fluidCanvas, fluidCtx;
-        let npFluidCanvas, npFluidCtx;
-
-        let activePalette = null;
-        let targetPalette = null;
-
-        const DEFAULT_PALETTE = [
-            { r: 255, g: 46,  b: 147 },
-            { r: 127, g: 73,  b: 180 },
-            { r:  80, g: 40,  b: 120 },
-            { r:  40, g: 20,  b:  70 },
-            { r: 200, g: 60,  b: 160 },
-            { r:  60, g: 30,  b: 100 }
-        ];
-
-        let globalPalette = [...DEFAULT_PALETTE];
-
-        const BG_STATE = {
-            waves: [],
-            sparks: [],
-            bins: null,
-            audioEnergy: { low: 0, mid: 0, high: 0, total: 0, beat: 0 },
-            lastWidth: 0,
-            lastHeight: 0
-        };
-
-        function initFluidBackground() {
-            fluidCanvas = document.getElementById('fluid-canvas');
-            fluidCtx = fluidCanvas.getContext('2d');
-
-            npFluidCanvas = document.getElementById('fluid-canvas-np');
-            npFluidCtx = npFluidCanvas.getContext('2d');
-
-            resizeFluidCanvas();
-            window.addEventListener('resize', resizeFluidCanvas);
-
-            // Los fluidos en movimiento evitan el índice 0 (que será el fondo) usando los de 1 a 5
-            BG_STATE.waves = Array.from({ length: 4 }, (_, i) => {
-                return {
-                    verticalOffset: 0.18 + i * 0.20, 
-                    colorIdx: (i % 5) + 1, // Evita c0
-                    cycle1Multiplier: 1.1 + i * 0.35, 
-                    cycle2Multiplier: 1.7 + i * 0.25, 
-                    speed1: (0.0003 + i * 0.0001) * (i % 2 === 0 ? 1 : -1), 
-                    speed2: (0.00025 + i * 0.00008) * (i % 2 === 0 ? -1 : 1),
-                    phase1: Math.random() * Math.PI * 2,
-                    phase2: Math.random() * Math.PI * 2,
-                    amp1: 0.14 + Math.random() * 0.08,  // Amplitud potenciada
-                    amp2: 0.10 + Math.random() * 0.06   // Amplitud potenciada
-                };
-            });
-
-            BG_STATE.sparks = Array.from({ length: 36 }, () => ({
-                x: Math.random(),
-                y: Math.random(),
-                vx: (Math.random() - 0.5) * 0.00012,
-                vy: (Math.random() - 0.5) * 0.00012,
-                size: 0.8 + Math.random() * 1.8,
-                phase: Math.random() * Math.PI * 2
-            }));
-
-            activePalette = [...globalPalette];
-            requestAnimationFrame(animateFluid);
-        }
-
-        // Se restaura la escala en 4 para optimizar el rendimiento al usar el blur
-        function resizeFluidCanvas() {
-            const scale = 4; 
-            const w = Math.ceil(window.innerWidth / scale);
-            const h = Math.ceil(window.innerHeight / scale);
-
-            if (fluidCanvas && (fluidCanvas.width !== w || fluidCanvas.height !== h)) {
-                fluidCanvas.width = w;
-                fluidCanvas.height = h;
-            }
-            if (npFluidCanvas && (npFluidCanvas.width !== w || npFluidCanvas.height !== h)) {
-                npFluidCanvas.width = w;
-                npFluidCanvas.height = h;
-            }
-            BG_STATE.lastWidth = w;
-            BG_STATE.lastHeight = h;
-        }
-
-        function startPaletteTransition(newPalette) {
-            if (!newPalette || !newPalette.length) return;
-            targetPalette = newPalette.map(c => ({ ...c }));
-        }
-
-        function sampleAudioEnergy() {
-            if (!analyser) {
-                BG_STATE.audioEnergy = {
-                    low: 0.08,
-                    mid: 0.08,
-                    high: 0.05,
-                    total: 0.08,
-                    beat: 0.08
-                };
-                return BG_STATE.audioEnergy;
-            }
-
-            const binCount = analyser.frequencyBinCount;
-            if (!BG_STATE.bins || BG_STATE.bins.length !== binCount) {
-                BG_STATE.bins = new Uint8Array(binCount);
-            }
-
-            analyser.getByteFrequencyData(BG_STATE.bins);
-
-            let low = 0, mid = 0, high = 0;
-            const lowEnd = Math.max(1, Math.floor(binCount * 0.12));
-            const midEnd = Math.max(lowEnd + 1, Math.floor(binCount * 0.42));
-
-            for (let i = 0; i < binCount; i++) {
-                const v = BG_STATE.bins[i] / 255;
-                if (i < lowEnd) low += v;
-                else if (i < midEnd) mid += v;
-                else high += v;
-            }
-
-            low /= lowEnd;
-            mid /= Math.max(1, midEnd - lowEnd);
-            high /= Math.max(1, binCount - midEnd);
-            const total = (low + mid + high) / 3;
-
-            BG_STATE.audioEnergy.low = BG_STATE.audioEnergy.low * 0.84 + low * 0.16;
-            BG_STATE.audioEnergy.mid = BG_STATE.audioEnergy.mid * 0.88 + mid * 0.12;
-            BG_STATE.audioEnergy.high = BG_STATE.audioEnergy.high * 0.9 + high * 0.1;
-            BG_STATE.audioEnergy.total = BG_STATE.audioEnergy.total * 0.9 + total * 0.1;
-            BG_STATE.audioEnergy.beat = BG_STATE.audioEnergy.beat * 0.86 + Math.max(low, total) * 0.14;
-
-            return BG_STATE.audioEnergy;
-        }
-
-        function animateFluid(now) {
-            sampleAudioEnergy();
-
-            if (fluidCanvas && fluidCtx) drawFluidFrame(fluidCanvas, fluidCtx, now, false);
-            if (isNPOpen && npFluidCanvas && npFluidCtx) drawFluidFrame(npFluidCanvas, npFluidCtx, now, true);
-
-            requestAnimationFrame(animateFluid);
-        }
-
-        // El primer color de la paleta (c0) actúa de fondo sólido difuminado y los demás de fluidos
-        function drawFluidFrame(canvas, ctx, now, isNP) {
-            const W = canvas.width || 1;
-            const H = canvas.height || 1;
-            const palette = (activePalette && activePalette.length) ? activePalette : globalPalette;
-            const e = BG_STATE.audioEnergy;
-
-            ctx.globalCompositeOperation = 'source-over';
-            ctx.clearRect(0, 0, W, H);
-            
-            // Primer color de la paleta (c0) como fondo sólido
-            const c0 = palette[0] || DEFAULT_PALETTE[0];
-            const r0 = Math.round(c0.r), g0 = Math.round(c0.g), b0 = Math.round(c0.b);
-            ctx.fillStyle = `rgb(${r0}, ${g0}, ${b0})`;
-            ctx.fillRect(0, 0, W, H);
-
-            // Sincronización de la variable CSS para que el fondo de la página cambie suavemente
-            if (isNP === false) {
-                document.documentElement.style.setProperty('--bg-deep', `rgb(${r0}, ${g0}, ${b0})`);
-            }
-
-            const maxDim = Math.max(W, H);
-            const beat = 0.5 + e.beat * 0.9;
-            const total = 0.45 + e.total * 0.75;
-
-            // Capas dinámicas con los otros colores (c1, c2, c3...)
-            const c1 = palette[1] || palette[0] || DEFAULT_PALETTE[1];
-            const c2 = palette[2] || palette[1] || DEFAULT_PALETTE[2];
-            const c3 = palette[3] || palette[2] || DEFAULT_PALETTE[3];
-
-            const r1 = Math.round(c1.r), g1 = Math.round(c1.g), b1 = Math.round(c1.b);
-            const r2 = Math.round(c2.r), g2 = Math.round(c2.g), b2 = Math.round(c2.b);
-            const r3 = Math.round(c3.r), g3 = Math.round(c3.g), b3 = Math.round(c3.b);
-
-            const bg = ctx.createRadialGradient(
-                W * (0.52 + Math.sin(now * 0.00008) * 0.02),
-                H * (0.48 + Math.cos(now * 0.00007) * 0.02),
-                maxDim * 0.04,
-                W * 0.5,
-                H * 0.5,
-                maxDim * (isNP ? 1.05 : 1.15)
-            );
-            
-            // Degradado ambiental con mayor cobertura de color
-            bg.addColorStop(0, `rgba(${r1},${g1},${b1},${0.48 + e.low * 0.22})`);
-            bg.addColorStop(0.35, `rgba(${r2},${g2},${b2},${0.38 + e.mid * 0.18})`);
-            bg.addColorStop(0.65, `rgba(${r3},${g3},${b3},${0.25 + e.high * 0.12})`);
-            bg.addColorStop(1, 'rgba(0,0,0,0)');
-            
-            ctx.globalCompositeOperation = 'screen';
-            ctx.fillStyle = bg;
-            ctx.fillRect(0, 0, W, H);
-
-            // Renderizado de ondas matemáticas asimétricas y nítidas
-            BG_STATE.waves.forEach((wave, i) => {
-                const speedMultiplier = 1.0 + e.low * 1.5;
-                wave.phase1 += wave.speed1 * speedMultiplier;
-                wave.phase2 += wave.speed2 * speedMultiplier;
-
-                ctx.beginPath();
-                
-                const step = 4;
-                const musicBoost = 1.0 + e.beat * 0.55;
-                
-                // Dibujo de cresta sinuosa superior
-                for (let x = 0; x <= W; x += step) {
-                    const angle1 = (x / W) * Math.PI * 2 * wave.cycle1Multiplier + wave.phase1;
-                    const angle2 = (x / W) * Math.PI * 2 * wave.cycle2Multiplier + wave.phase2;
-
-                    const h1 = Math.sin(angle1) * wave.amp1 * H * musicBoost;
-                    const h2 = Math.cos(angle2) * wave.amp2 * H * musicBoost;
-                    const centerY = wave.verticalOffset * H + h1 + h2;
-                    
-                    // Grosor (thickness) base duplicado para mayor protagonismo de fluidos
-                    const thickness = (0.24 + 0.12 * Math.sin(x * 0.015 + wave.phase1 * 0.5)) * H;
-                    const yTop = centerY - thickness * 0.5;
-                    
-                    if (x === 0) ctx.moveTo(x, yTop);
-                    else ctx.lineTo(x, yTop);
-                }
-                
-                // Dibujo de cresta sinuosa inferior (reversa)
-                let lastCenterY = wave.verticalOffset * H;
-                let lastThickness = 0.12 * H;
-                for (let x = W; x >= 0; x -= step) {
-                    const angle1 = (x / W) * Math.PI * 2 * wave.cycle1Multiplier + wave.phase1;
-                    const angle2 = (x / W) * Math.PI * 2 * wave.cycle2Multiplier + wave.phase2;
-
-                    const h1 = Math.sin(angle1) * wave.amp1 * H * musicBoost;
-                    const h2 = Math.cos(angle2) * wave.amp2 * H * musicBoost;
-                    const centerY = wave.verticalOffset * H + h1 + h2;
-                    if (x === W) lastCenterY = centerY;
-                    
-                    // Grosor base duplicado
-                    const thickness = (0.24 + 0.12 * Math.sin(x * 0.015 + wave.phase1 * 0.5)) * H;
-                    if (x === W) lastThickness = thickness;
-                    const yBottom = centerY + thickness * 0.5;
-                    
-                    ctx.lineTo(x, yBottom);
-                }
-                
-                ctx.closePath();
-
-                // Relleno de las ondas utilizando los colores restantes de la paleta
-                const grad = ctx.createLinearGradient(0, lastCenterY - lastThickness * 0.8, 0, lastCenterY + lastThickness * 0.8);
-                const col = palette[wave.colorIdx % palette.length] || palette[1];
-                const colR = Math.round(col.r);
-                const colG = Math.round(col.g);
-                const colB = Math.round(col.b);
-                const alphaBoost = isNP ? 1.0 : 0.88;
-
-                // Opacidad incrementada al 75%
-                grad.addColorStop(0, `rgba(${colR}, ${colG}, ${colB}, 0)`);
-                grad.addColorStop(0.5, `rgba(${colR}, ${colG}, ${colB}, ${0.75 * alphaBoost})`);
-                grad.addColorStop(1, `rgba(${colR}, ${colG}, ${colB}, 0)`);
-
-                ctx.fillStyle = grad;
-                ctx.globalCompositeOperation = i % 2 === 0 ? 'screen' : 'lighter';
-                ctx.fill();
-            });
-
-            ctx.globalCompositeOperation = 'screen';
-            for (const s of BG_STATE.sparks) {
-                s.x = (s.x + s.vx + 1) % 1;
-                s.y = (s.y + s.vy + 1) % 1;
-                const size = (s.size + e.high * 1.5) * (isNP ? 0.8 : 1);
-                ctx.beginPath();
-                ctx.arc(s.x * W, s.y * H, size, 0, Math.PI * 2);
-                ctx.fill();
-            }
-
-            const vignette = ctx.createRadialGradient(W * 0.5, H * 0.5, Math.min(W, H) * 0.18, W * 0.5, H * 0.5, Math.max(W, H) * 0.78);
-            vignette.addColorStop(0, 'rgba(0,0,0,0)');
-            vignette.addColorStop(1, `rgba(0,0,0,${isNP ? 0.28 : 0.24})`);
-            ctx.globalCompositeOperation = 'source-over';
-            ctx.fillStyle = vignette;
-            ctx.fillRect(0, 0, W, H);
-
-            const flash = Math.max(0, (e.beat - 0.22) * 0.8);
-            if (flash > 0.01) {
-                ctx.fillStyle = `rgba(255,255,255,${flash * (isNP ? 0.035 : 0.025)})`;
-                ctx.fillRect(0, 0, W, H);
-            }
-        }
-
         function applyAccentFromPalette(palette) {
             if (!palette || !palette.length) return;
 
@@ -1579,51 +1005,7 @@
             const npImg = document.getElementById('np-img-large');
 
             if (playerImg) playerImg.src = imgUrl;
-
-            // Siempre actualizar npImg en segundo plano para extracción de paleta
-            if (npImg) {
-                npImg.src = imgUrl;
-                const onLoaded = () => {
-                    const currentSong = cancionesData[currentPlayingIndex];
-                    let palette;
-
-                    if (currentSong && currentSong.palette) {
-                        palette = currentSong.palette;
-                    } else {
-                        palette = [...DEFAULT_PALETTE];
-                    }
-
-                    if (palette) {
-                        globalPalette = palette;
-                        activePalette = activePalette ? activePalette : [...palette];
-                        startPaletteTransition(palette);
-                        applyAccentFromPalette(palette);
-                    }
-                };
-
-                if (npImg.complete && npImg.naturalWidth > 0) onLoaded();
-                else npImg.addEventListener('load', onLoaded, { once: true });
-            }
-        }
-
-        function processCoverQueue() {
-            updateCovers(cancionesData[currentPlayingIndex].cover);
-
-            const currentSong = cancionesData[currentPlayingIndex];
-            let palette;
-
-            if (currentSong && currentSong.palette) {
-                palette = currentSong.palette;
-            } else {
-                palette = [...DEFAULT_PALETTE];
-            }
-
-            if (palette) {
-                globalPalette = palette;
-                activePalette = [...palette];
-                startPaletteTransition(palette);
-                applyAccentFromPalette(palette);
-            }
+            if (npImg) npImg.src = imgUrl;
         }
 
         function loadSongCover(song, i) {
@@ -1655,7 +1037,7 @@
                 const data = buf.getChannelData(0);
                 const sr = buf.sampleRate;
                 const len = data.length;
-                let tot = 0; const rmsArr =[];
+                let tot = 0; const rmsArr = [];
                 
                 for(let i=0; i<len; i+=sr) {
                     let sum = 0, count = 0;
@@ -1846,53 +1228,31 @@
             activeAudio.play().catch(e=>{}); setPlayIcon(true);
         }
 
-        // Modificado: Se ampliaron de forma permanente los radios de oscilación (amp) para un barrido mucho más dinámico
-        function randomizeWaves() {
-            if (!BG_STATE.waves || BG_STATE.waves.length === 0) return;
-
-            BG_STATE.waves.forEach((wave, i) => {
-                wave.verticalOffset = 0.12 + (i * 0.18) + Math.random() * 0.15;
-                
-                wave.cycle1Multiplier = 0.9 + Math.random() * 1.3;
-                wave.cycle2Multiplier = 1.4 + Math.random() * 1.6;
-                
-                const dir1 = Math.random() > 0.5 ? 1 : -1;
-                const dir2 = Math.random() > 0.5 ? 1 : -1;
-                wave.speed1 = (0.0015 + Math.random() * 0.002) * dir1;
-                wave.speed2 = (0.001 + Math.random() * 0.0015) * dir2;
-                
-                wave.phase1 = Math.random() * Math.PI * 2;
-                wave.phase2 = Math.random() * Math.PI * 2;
-                
-                wave.amp1 = 0.14 + Math.random() * 0.08; // Amplitud potenciada para abarcar más espacio en pantalla
-                wave.amp2 = 0.10 + Math.random() * 0.06; // Amplitud potenciada para abarcar más espacio en pantalla
-                
-                // Excluye el índice 0 para que los fluidos solo utilicen de c1 a c5
-                wave.colorIdx = 1 + Math.floor(Math.random() * 5);
-            });
-        }
-
         function triggerUIForSong(idx) {
             document.querySelectorAll('.card.active').forEach(el => el.classList.remove('active'));
             document.querySelectorAll(`.card-song-${idx}`).forEach(el => el.classList.add('active'));
             document.querySelectorAll('.track-row.active').forEach(el => el.classList.remove('active'));
             document.querySelectorAll(`.track-row-${idx}`).forEach(el => el.classList.add('active'));
             
-            currentPlayingIndex = idx; activeLyricIndex = -1; const song = cancionesData[idx];
+            currentPlayingIndex = idx; const song = cancionesData[idx];
             updateCovers(song.cover);
-
-            // Re-renderización de ondas dinámicas independientes por cada track
-            randomizeWaves();
             
             document.getElementById('player-title').innerHTML = `${song.title} <span class="explicit-badge">E</span>`;
             document.getElementById('player-artist').innerText = song.artist;
-            document.getElementById('np-title-large').innerHTML = `${song.title} <span class="explicit-badge" style="font-size: 11px; width: 16px; height: 16px;">E</span>`;
+            document.getElementById('np-title-large').innerHTML = `${song.title} <span class="explicit-badge" style="font-size: 14px; width: 20px; height: 20px; margin-left: 10px;">E</span>`;
             
             const alb = albumsData.find(a => a.id === song.album);
             const albumName = alb ? alb.title : "Single";
             document.getElementById('np-artist-large').innerText = `${song.artist} — ${albumName}`;
-            
-            fetchLyrics(song.lrc);
+
+            // Static high performance background change once per song instead of continuously in a loop
+            if (song.palette && song.palette.length > 0) {
+                const primaryColor = song.palette[0];
+                const secondaryColor = song.palette[2] || song.palette[1];
+                document.documentElement.style.setProperty('--bg-deep', `rgb(${primaryColor.r}, ${primaryColor.g}, ${primaryColor.b})`);
+                document.getElementById('np-fs').style.background = `linear-gradient(135deg, rgb(${primaryColor.r}, ${primaryColor.g}, ${primaryColor.b}) 0%, rgb(${secondaryColor.r}, ${secondaryColor.g}, ${secondaryColor.b}) 100%)`;
+                applyAccentFromPalette(song.palette);
+            }
         }
 
         function togglePlay() {
@@ -1910,7 +1270,6 @@
             const icon = playing ? "ph-fill ph-pause" : "ph-fill ph-play";
             document.getElementById('icon-play-mob').className = icon;
             document.getElementById('icon-play-desk').className = icon;
-            document.getElementById('icon-play-np').className = icon;
         }
 
         function seek(e, el) { 
@@ -1936,353 +1295,10 @@
             if (isNPOpen) { 
                 np.classList.add('active'); 
                 app.classList.add('scaled'); 
-                resizeFluidCanvas(); 
             } 
             else { 
                 np.classList.remove('active'); 
                 app.classList.remove('scaled'); 
-            }
-        }
-
-        /* ==================================================================
-           LYRICS ENGINE — SPRING-PHYSICS + SUB-MS TIMING
-           ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-           ================================================================== */
-        let parsedLyrics = [];
-        let activeLyricIndex = -1;
-
-        let _anchorAudioTime = 0;       
-        let _anchorPerfTime  = 0;       
-        let _lastRawTime     = -1;      
-
-        const SPRING_K   = 170;   
-        const SPRING_D   = 26;    
-        const SPRING_M   = 1;     
-        const SPRING_DT  = 1/120; 
-
-        let linePhysics = [];
-        let scrollSpring = { pos: 0, vel: 0, target: 0 };
-
-        let isUserScrolling  = false;
-        let scrollTimeout    = null;
-        const USER_SCROLL_GRACE = 3000; 
-
-        let _physicsAccum = 0;
-        let _lastRafTime  = 0;
-
-        function parseTTMLTime(str) {
-            if(!str) return 0;
-            str = str.toString().replace(/s$/, '').trim(); 
-            const parts = str.split(':');
-            let sec = 0;
-            if(parts.length === 3) {
-                sec = parseInt(parts[0], 10) * 3600 + parseInt(parts[1], 10) * 60 + parseFloat(parts[2].replace(',', '.'));
-            } else if(parts.length === 2) {
-                sec = parseInt(parts[0], 10) * 60 + parseFloat(parts[1].replace(',', '.'));
-            } else {
-                sec = parseFloat(str.replace(',', '.'));
-            }
-            return sec || 0;
-        }
-
-        async function fetchLyrics(url) {
-            const container = document.getElementById('lyrics-content');
-            const scroller = document.getElementById('lyrics-scroller');
-            
-            parsedLyrics =[];
-            targetScrollY = 0;
-            currentScrollY = 0;
-            scroller.scrollTop = 0;
-            
-            if(!url) { container.innerHTML = "<div style='height:100%; display:flex; align-items:center; justify-content:center;'><p style='color:rgba(255,255,255,0.3); font-size:32px; font-weight:800;'>Instrumental</p></div>"; return; }
-            container.innerHTML = "<p style='color:rgba(255,255,255,0.3); font-size:32px; font-weight:800; text-align:center;'>Loading...</p>";
-            
-            try {
-                const res = await fetch(url); 
-                const text = await res.text(); 
-                
-                if (url.endsWith('.ttml') || text.includes('http://www.w3.org/ns/ttml') || text.includes('<?xml')) {
-                    
-                    const parser = new DOMParser();
-                    const xmlDoc = parser.parseFromString(text, "text/xml");
-                    const pTags = xmlDoc.getElementsByTagName('p');
-                    
-                    for(let i=0; i<pTags.length; i++) {
-                        const p = pTags[i];
-                        const beginAttr = p.getAttribute('begin') || p.getAttribute('t');
-                        if (!beginAttr) continue;
-                        
-                        const pBegin = parseTTMLTime(beginAttr);
-                        const endAttr = p.getAttribute('end');
-                        const pEnd = endAttr ? parseTTMLTime(endAttr) : 0;
-                        
-                        let words =[];
-                        
-                        Array.from(p.childNodes).forEach(node => {
-                            if (node.nodeType === Node.TEXT_NODE) {
-                                let val = node.nodeValue;
-                                if(val) {
-                                    val = val.replace(/[\r\n\t]+/g, ' ').replace(/\s{2,}/g, ' ');
-                                    if(val === ' ') {
-                                        if(words.length > 0) words[words.length - 1].text += ' ';
-                                    } else if (val.trim() !== '') {
-                                        words.push({ time: pBegin, dur: 0, text: val, el: null, fill: 0, lastRenderedFill: 0 });
-                                    }
-                                }
-                            } else if (node.nodeType === Node.ELEMENT_NODE && (node.nodeName.toLowerCase() === 'span' || node.nodeName.toLowerCase() === 's')) {
-                                const sBeginAttr = node.getAttribute('begin') || node.getAttribute('t');
-                                const sBegin = sBeginAttr ? parseTTMLTime(sBeginAttr) : pBegin;
-                                
-                                const sEndAttr = node.getAttribute('end');
-                                const sDurAttr = node.getAttribute('d');
-                                
-                                let dur = 0;
-                                if(sEndAttr) dur = parseTTMLTime(sEndAttr) - sBegin;
-                                else if(sDurAttr) dur = parseTTMLTime(sDurAttr);
-                                else dur = 0;
-
-                                words.push({ time: sBegin, dur: dur, text: node.textContent || "", el: null, fill: 0, lastRenderedFill: 0 });
-                            }
-                        });
-
-                        if (words.length === 0) {
-                            const rawText = p.textContent || "";
-                            const cleanLine = rawText.trim();
-                            const pDur = pEnd > pBegin ? pEnd - pBegin : 0;
-                            if (cleanLine) {
-                                words.push({ time: pBegin, dur: pDur, text: cleanLine, el: null, fill: 0, lastRenderedFill: 0 });
-                            }
-                        }
-                        
-                        if(words.length > 0) {
-                            const cleanLine = words.map(w => w.text).join('').trim();
-                            parsedLyrics.push({ time: pBegin, text: cleanLine, words, el: null, dur: pEnd > pBegin ? pEnd - pBegin : 0 });
-                        }
-                    }
-
-                } else {
-                    
-                    const lines = text.split('\n');
-                    lines.forEach(line => {
-                        const lineMatch = line.match(/\[(\d{2,}):(\d{2}(%3C?:\.\d{1,3})?)\](.*)/);
-                        if(lineMatch) {
-                            const time = (parseInt(lineMatch[1])*60) + parseFloat(lineMatch[2]);
-                            const raw = lineMatch[3].replace('\r', '');
-                            
-                            let words =[]; let wm; const wReg = /<(\d{2,}):(\d{2}(%3C?:\.\d{1,3})?)>([^<]*)/g; let hasW = false;
-                            while((wm = wReg.exec(raw)) !== null) { hasW = true; words.push({ time: (parseInt(wm[1])*60)+parseFloat(wm[2]), text: wm[3], el: null, dur: 0, fill: 0, lastRenderedFill: 0 }); }
-                            
-                            const clean = raw.replace(/<\d{2,}:\d{2}(%3C?:\.\d{1,3})?>/g, '').trim();
-                            if(clean === "" || clean === "♪") words =[{ time, text: "•••", el: null, dur: 0, fill: 0, lastRenderedFill: 0 }];
-                            else if(!hasW) words =[{ time, text: clean, el: null, dur: 0, fill: 0, lastRenderedFill: 0 }];
-                            
-                            parsedLyrics.push({ time, text: clean, words, el: null, dur: 0 });
-                        }
-                    });
-                }
-                
-                parsedLyrics.forEach((l, i) => {
-                    let nTime = (i < parsedLyrics.length - 1) ? parsedLyrics[i+1].time : l.time + 8;
-                    if(!l.dur) l.dur = Math.max(0, nTime - l.time);
-                    
-                    for(let j=0; j<l.words.length; j++) {
-                        if(!l.words[j].dur || l.words[j].dur <= 0) {
-                            if(j < l.words.length - 1) l.words[j].dur = Math.max(0.05, l.words[j+1].time - l.words[j].time);
-                            else l.words[j].dur = Math.min(2.5, Math.max(0.05, nTime - l.words[j].time));
-                        }
-                    }
-                });
-
-                container.innerHTML = ""; if(!parsedLyrics.length) throw new Error();
-                
-                linePhysics = parsedLyrics.map(() => ({
-                    scalePos: 0.95, scaleVel: 0,   
-                    opacPos:  0.32, opacVel:  0,   
-                    blurPos:  0.8,  blurVel:  0,   
-                }));
-
-                parsedLyrics.forEach((l, lineIdx) => {
-                    const div = document.createElement('div'); div.className = 'lrc-line';
-                    div.onclick = () => { activeAudio.currentTime = l.time; activeAudio.play(); setPlayIcon(true); };
-                    
-                    l.words.forEach(w => {
-                        let t = w.text;
-                        let leadingSpace = false;
-                        let trailingSpace = false;
-                        
-                        if (/^\s+/.test(t)) { leadingSpace = true;  t = t.trimStart(); }
-                        if (/\s+$/.test(t)) { trailingSpace = true; t = t.trimEnd(); }
-                        
-                        if(leadingSpace) div.appendChild(document.createTextNode(" "));
-                        
-                        if(t) { 
-                            const s = document.createElement('span'); 
-                            s.className = 'lrc-word idle'; 
-                            s.textContent = t; 
-                            w.el = s; 
-                            div.appendChild(s); 
-                        }
-                        
-                        if(trailingSpace) div.appendChild(document.createTextNode(" "));
-                    });
-                    
-                    l.el = div; container.appendChild(div);
-
-                    const sp = linePhysics[lineIdx];
-                    div.style.opacity   = sp.opacPos;
-                    div.style.transform = `scale(${sp.scalePos}) translateZ(0)`;
-                    div.style.filter    = `blur(${sp.blurPos}px)`;
-                });
-                
-                scrollSpring = { pos: 0, vel: 0, target: 0 };
-                const sc = document.getElementById('lyrics-scroller');
-                sc.scrollTop = 0;
-
-                const setManual = () => { 
-                    isUserScrolling = true; 
-                    clearTimeout(scrollTimeout); 
-                    scrollTimeout = setTimeout(() => { isUserScrolling = false; }, USER_SCROLL_GRACE); 
-                };
-                sc.removeEventListener('wheel',     setManual);
-                sc.removeEventListener('touchmove', setManual);
-                sc.addEventListener('wheel',     setManual, {passive: true});
-                sc.addEventListener('touchmove', setManual, {passive: true});
-                
-            } catch(e) { container.innerHTML = "<div style='height:100%; display:flex; align-items:center; justify-content:center;'><p style='color:rgba(255,255,255,0.3); font-size:32px; font-weight:800;'>Lyrics Unavailable</p></div>"; }
-        }
-
-        function springStep(pos, vel, target) {
-            const force = -SPRING_K * (pos - target) - SPRING_D * vel;
-            const acc   = force / SPRING_M;
-            const newVel = vel + acc * SPRING_DT;
-            const newPos = pos + newVel * SPRING_DT;
-            return { pos: newPos, vel: newVel };
-        }
-
-        function tickLinePhysics(dt, activeIdx) {
-            if(!parsedLyrics.length || !linePhysics.length) return;
-            _physicsAccum += dt;
-            while(_physicsAccum >= SPRING_DT) {
-                _physicsAccum -= SPRING_DT;
-                for(let i = 0; i < linePhysics.length; i++) {
-                    const sp = linePhysics[i];
-                    const isActive = (i === activeIdx);
-                    
-                    const tScale = isActive ? 1.08 : 0.95;
-                    const tOpac  = isActive ? 1.0  : (i < activeIdx ? 0.28 : 0.32);
-                    const tBlur  = isActive ? 0.0  : (i < activeIdx ? 0.6  : 0.7);
-                    
-                    let r;
-                    r = springStep(sp.scalePos, sp.scaleVel, tScale);
-                    sp.scalePos = r.pos; sp.scaleVel = r.vel;
-                    r = springStep(sp.opacPos, sp.opacVel, tOpac);
-                    sp.opacPos = r.pos; sp.opacVel = r.vel;
-                    r = springStep(sp.blurPos, sp.blurVel, tBlur);
-                    sp.blurPos = r.pos; sp.blurVel = r.vel;
-                }
-            }
-        }
-
-        function flushLinePhysics() {
-            for(let i = 0; i < linePhysics.length; i++) {
-                const el = parsedLyrics[i]?.el;
-                if(!el) continue;
-                const sp = linePhysics[i];
-                el.style.opacity   = sp.opacPos.toFixed(4);
-                el.style.transform = `scale(${sp.scalePos.toFixed(5)}) translateZ(0)`;
-                el.style.filter    = `blur(${Math.max(0, sp.blurPos).toFixed(3)}px)`;
-            }
-        }
-
-        function updateKaraoke(cur, dt) {
-            if(!parsedLyrics.length) return;
-            
-            let nIdx = -1;
-            for(let i = 0; i < parsedLyrics.length; i++) {
-                if(cur >= parsedLyrics[i].time) nIdx = i;
-                else break;
-            }
-
-            if(nIdx !== activeLyricIndex) {
-                parsedLyrics.forEach((l, i) => {
-                    if(!l.el) return;
-                    l.el.className = i < nIdx  ? 'lrc-line passed'
-                                   : i === nIdx ? 'lrc-line active'
-                                   :              'lrc-line';
-                });
-                activeLyricIndex = nIdx;
-
-                if(nIdx >= 0 && !isUserScrolling) {
-                    const sc = document.getElementById('lyrics-scroller');
-                    const el = parsedLyrics[nIdx].el;
-                    const newTarget = el.offsetTop - (sc.clientHeight * 0.4) + (el.clientHeight / 2);
-                    scrollSpring.target = Math.max(0, newTarget);
-                }
-            }
-
-            tickLinePhysics(dt, nIdx);
-            flushLinePhysics();
-
-            if(!isUserScrolling && nIdx >= 0) {
-                const sc = document.getElementById('lyrics-scroller');
-                let sr = springStep(scrollSpring.pos, scrollSpring.vel, scrollSpring.target);
-                scrollSpring.pos = sr.pos;
-                scrollSpring.vel = sr.vel;
-                sc.scrollTop = scrollSpring.pos;
-            }
-
-            if(nIdx < 0) return;
-            const line = parsedLyrics[nIdx];
-
-            const paintLines = nIdx < parsedLyrics.length - 1 ? [nIdx, nIdx + 1] : [nIdx];
-
-            for(const li of paintLines) {
-                const ln = parsedLyrics[li];
-                ln.words.forEach(w => {
-                    if(!w.el) return;
-
-                    let raw;
-                    if(cur >= w.time + w.dur) {
-                        if(!w._sung) {
-                            w._sung = true;
-                            w.el.style.removeProperty('--wp');
-                            w.el.className = 'lrc-word sung';
-                        }
-                        return;
-                    } else if(cur >= w.time) {
-                        raw = w.dur > 0 ? (cur - w.time) / w.dur : 1;
-                    } else {
-                        if(w._sung) {
-                            w._sung = false;
-                            w.el.className = 'lrc-word idle';
-                            w.el.style.removeProperty('--wp');
-                        }
-                        return;
-                    }
-
-                    w._sung = false;
-                    w.el.className = 'lrc-word';
-                    const wp = Math.min(115, raw * 115);
-                    w.el.style.setProperty('--wp', `${wp.toFixed(2)}%`);
-                });
-            }
-
-            for(let i = 0; i < nIdx; i++) {
-                parsedLyrics[i].words.forEach(w => {
-                    if(!w.el || w._sung) return;
-                    w._sung = true;
-                    w.el.style.removeProperty('--wp');
-                    w.el.className = 'lrc-word sung';
-                });
-            }
-
-            for(let i = nIdx + 1; i < parsedLyrics.length; i++) {
-                parsedLyrics[i].words.forEach(w => {
-                    if(!w.el || !w._sung) return;
-                    w._sung = false;
-                    w.el.style.removeProperty('--wp');
-                    w.el.className = 'lrc-word idle';
-                });
             }
         }
 
@@ -2317,43 +1333,12 @@
                 
                 document.getElementById('bar-fill-mini').style.width = `${pct}%`;
                 document.getElementById('bar-fill-desk').style.width = `${pct}%`;
-                document.getElementById('bar-fill-np').style.width = `${pct}%`;
                 
                 document.getElementById('time-curr-desk').innerText = fmt(cur);
                 document.getElementById('time-tot-desk').innerText = "-" + fmt(dur-cur);
-                document.getElementById('time-curr-np').innerText = fmt(cur);
-                document.getElementById('time-tot-np').innerText = "-" + fmt(dur-cur);
                 
                 checkAutoMix();
-                
-                if(isNPOpen) { 
-                    const visualTime = cur + 0.1;
-                    updateKaraoke(visualTime, 1/60); 
-
-                    const sc = document.getElementById('lyrics-scroller');
-                    if (isUserScrolling) { currentScrollY = sc.scrollTop; } 
-                    else {
-                        const scrollDiff = targetScrollY - currentScrollY;
-                        if (Math.abs(scrollDiff) > 0.5) {
-                            currentScrollY += scrollDiff * 0.05;
-                            sc.scrollTop = currentScrollY;
-                        }
-                    }
-                }
             }
-            
-            // Linear Interpolation (LERP) de Colores Activos para una transición suave de 60fps
-            const lerpSpeed = 0.025;
-            if (activePalette && targetPalette) {
-                for (let i = 0; i < activePalette.length; i++) {
-                    if (targetPalette[i]) {
-                        activePalette[i].r += (targetPalette[i].r - activePalette[i].r) * lerpSpeed;
-                        activePalette[i].g += (targetPalette[i].g - activePalette[i].g) * lerpSpeed;
-                        activePalette[i].b += (targetPalette[i].b - activePalette[i].b) * lerpSpeed;
-                    }
-                }
-            }
-
             requestAnimationFrame(renderLoop);
         }
 
@@ -2364,16 +1349,12 @@
             let sY=0, cY=0; const np = document.getElementById('np-fs'), app = document.getElementById('app-wrapper');
             
             np.addEventListener('touchstart', e => {
-                if(e.target.closest('#lyrics-scroller') && document.getElementById('lyrics-scroller').scrollTop > 0) return;
                 if(np.scrollTop > 0) return; 
-                
                 sY = e.touches[0].clientY; np.style.transition = 'none'; app.style.transition = 'none';
             }, {passive:true});
             
             np.addEventListener('touchmove', e => {
                 if(!isNPOpen || sY===0) return;
-                if(e.target.closest('.scrubber-bg')) return;
-                
                 cY = e.touches[0].clientY; let d = cY - sY;
                 if(d > 0 && np.scrollTop <= 0) { 
                     np.style.transform = `translateY(${d}px)`;
@@ -2383,7 +1364,6 @@
             
             np.addEventListener('touchend', e => {
                 if(!isNPOpen || sY===0) return;
-                if(e.target.closest('.scrubber-bg')) return;
                 let d = cY - sY; sY = 0;
                 np.style.transition = ''; app.style.transition = '';
                 if(d > 120) toggleNP();
@@ -2399,17 +1379,14 @@
             renderGrid(albumsData, 'grid-albums', 'album');
             renderGrid(artistsData, 'grid-artists', 'artist');
             
-            initFluidBackground();
-            
             document.getElementById('search-input').addEventListener('input', handleSearch);
             document.body.addEventListener('click', ensureAudioContext, { once: true });
             document.body.addEventListener('touchstart', ensureAudioContext, { once: true });
 
             requestAnimationFrame(renderLoop);
             
-            analysisQueue =[...cancionesData];
+            analysisQueue = [...cancionesData];
             setTimeout(runAnalysisQueue, 1000);
-            setTimeout(processCoverQueue, 1500);
             
             setupGestures();
             document.getElementById('vol-fill-desk').style.width = `${globalVolume*100}%`;
