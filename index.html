@@ -1459,7 +1459,11 @@
             { name: "Omar Courtz", img: piensaenmiCoverUrl },
             { name: "JHAYCO", img: tarotCoverUrl },
             { name: "ROA", img: uuU2CoverUrl },
-            { name: "Yan Block", img: remix444CoverUrl },
+            { 
+                name: "Yan Block", 
+                img: "https://cdn.discordapp.com/attachments/1243422250955182100/1519093635205828739/Yan_Block.jpg?ex=6a3c4db2&is=6a3afc32&hm=67ec70e0120f54a7cc6f9799c907796b71568ee86385ccc8a2993725cc9081ac&",
+                bgImage: "https://cdn.discordapp.com/attachments/1243422250955182100/1519094106763296839/ChatGPT_Image_Jun_23_2026_03_39_49_PM.png?ex=6a3c4e22&is=6a3afca2&hm=1e2983558947f35e1c307d6f12069902bcc24aa7866e272a2c5d2857db810f62&"
+            },
             { name: "Blessd", img: nuevaYorkCoverUrl },
             { name: "Hades66", img: emocionesCoverUrl },
             { name: "Chris Jedi", img: netflixCoverUrl },
@@ -1641,7 +1645,7 @@
            ================================================================== */
         function navTo(tabId) {
             haptic();
-            // Restablecer el fondo ambient si se abandona la sección detallada de un álbum
+            // Restablecer el fondo ambient si se abandona la sección detallada de un álbum o artista
             document.getElementById('ambient-bg').style.backgroundImage = '';
             document.getElementById('ambient-bg').style.backgroundSize = '';
             document.getElementById('ambient-bg').style.backgroundPosition = '';
@@ -1770,6 +1774,16 @@
             renderGrid(songs, 'grid-artist-top', 'song');
             renderGrid(songs, 'grid-artist-latest', 'song');
             renderGrid([], 'grid-artist-singles', 'song');
+
+            // Find artist in artistsData to check if they have a custom background image
+            const artist = artistsData.find(a => a.name === name);
+            if (artist && artist.bgImage) {
+                document.getElementById('ambient-bg').style.backgroundImage = `url('${artist.bgImage}')`;
+                document.getElementById('ambient-bg').style.backgroundSize = 'cover';
+                document.getElementById('ambient-bg').style.backgroundPosition = 'center';
+            } else {
+                document.getElementById('ambient-bg').style.backgroundImage = '';
+            }
 
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
             document.getElementById('view-artist-detail').classList.add('active');
