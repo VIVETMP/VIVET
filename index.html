@@ -569,11 +569,23 @@
             { id: "la-voz-favorita", title: "La Voz Favorita", artist: "Jay Wheeler", cover: sheLike2FuckCoverUrl, year: "2024" },
             { id: "primera-musa-album", title: "PRIMERA MUSA", artist: "Omar Courtz", cover: piensaenmiCoverUrl, year: "2024" },
             { id: "un-verano-sin-ti", title: "Un Verano Sin Ti", artist: "Bad Bunny", cover: tarotCoverUrl, year: "2022" },
-            { id: "private-suite-vol4", title: "Private Suite (Vol. 4) - EP", artist: "ROA", cover: tuyyoCoverUrl, year: "2024" },
+            { id: "private-suite-complete", title: "PRIVATE SUITE (COMPLETE EP EDITION)", artist: "ROA", cover: tuyyoCoverUrl, year: "2026" },
             { id: "debi-tirar-mas-fotos", title: "DeBÍ TiRAR MáS FOToS", artist: "Bad Bunny", cover: kloufrensCoverUrl, year: "2026" },
             { id: "trinidad-bendita", title: "TRINIDAD BENDITA", artist: "Blessd", cover: nuevaYorkCoverUrl, year: "2026" },
             { id: "do-not-disturb", title: "Do Not Disturb: Late Checkout", artist: "Young Miko", cover: dreamTeamCoverUrl, year: "2026" },
             { id: "por-si-manana", title: "POR SI MAÑANA NO ESTOY", artist: "Omar Courtz", cover: "https://3lxj8u72k3.ucarecd.net/e4fe0e30-48fd-41e8-a686-39c2ae860ddb/moonlight.png", year: "2026" }
+        ];
+
+        // Shared ROA metadata to prevent redundancy across 37 tracks
+        const roaCover = tuyyoCoverUrl;
+        const roaBg = "https://69rxyf0ea9.ucarecd.net/3fc66e80-32ba-4fb1-affa-a95e5a3e6204/7A88FC1734644D74AFEFC808A54CB249.png";
+        const roaPalette = [
+            { r: 1, g: 1, b: 1 },
+            { r: 191, g: 74, b: 6 },
+            { r: 242, g: 70, b: 7 },
+            { r: 242, g: 50, b: 7 },
+            { r: 2, g: 35, b: 43 },
+            { r: 1, g: 1, b: 1 }
         ];
 
         const cancionesData = [
@@ -702,41 +714,6 @@
                     { r: 242, g: 107, b: 143 }  // padding
                 ],
                 bgImage: "https://3lxj8u72k3.ucarecd.net/2212c066-d3b1-4685-b9b1-3a1b15c4d20b/UVST1.png"
-            },
-            {
-                title: "UuU 2",
-                artist: "ROA, Hades66 & Luar La L",
-                url: "https://3lxj8u72k3.ucarecd.net/e3872610-7c50-4d2a-8733-6a5bef7c5972/UuU2_spotdownorg.mp3",
-                cover: uuU2CoverUrl,
-                album: "",
-                trackNum: 1,
-                coverLoaded: true,
-                palette: [
-                    { r: 43, g: 10, b: 115 },   // #2B0A73
-                    { r: 81, g: 31, b: 191 },   // #511FBF
-                    { r: 142, g: 130, b: 217 }, // #8E82D9
-                    { r: 226, g: 242, b: 107 }, // #E2F26B
-                    { r: 207, g: 217, b: 130 }, // #CFD982
-                    { r: 43, g: 10, b: 115 }    // padding
-                ]
-            },
-            {
-                title: "TÚ Y YO",
-                artist: "ROA",
-                url: "https://3lxj8u72k3.ucarecd.net/4fcc2d96-ee94-4aef-a38a-61bf05d2579c/TUYYO_spotdownorg.mp3",
-                cover: tuyyoCoverUrl,
-                album: "private-suite-vol4",
-                trackNum: 1,
-                coverLoaded: true,
-                palette: [
-                    { r: 1, g: 1, b: 1 },       // #010101
-                    { r: 191, g: 74, b: 6 },    // #BF4A06
-                    { r: 242, g: 70, b: 7 },    // #F24607
-                    { r: 242, g: 50, b: 7 },    // #F23207
-                    { r: 2, g: 35, b: 43 },     // #02232B
-                    { r: 1, g: 1, b: 1 }        // padding
-                ],
-                bgImage: "https://69rxyf0ea9.ucarecd.net/3fc66e80-32ba-4fb1-affa-a95e5a3e6204/7A88FC1734644D74AFEFC808A54CB249.png"
             },
             {
                 title: "444 (Remix)",
@@ -988,6 +965,417 @@
                     { r: 15, g: 15, b: 25 }
                 ],
                 bgImage: "https://69rxyf0ea9.ucarecd.net/059cf688-0b68-461f-990b-57e60f1bbd6c/EF6D2C02DAD84839980B9C58215BE00C.png"
+            },
+            
+            /* ==================================================================
+               PRIVATE SUITE (COMPLETE EP EDITION) — 37 TRACKS
+               ================================================================== */
+            {
+                title: "Freelance",
+                artist: "ROA",
+                url: "https://43rdwl1h89.ucarecd.net/44b3c18e-6950-4083-8f54-c7a31c1233a7/Freelance_spotdownorg.mp3",
+                cover: roa,
+                album: "private-suite-complete",
+                trackNum: 1,
+                coverLoaded: true,
+                palette: roaPalette,
+                bgImage: roaBg
+            },
+            {
+                title: "UuU",
+                artist: "ROA & Hades66",
+                url: "https://43rdwl1h89.ucarecd.net/db1e054e-6a16-41b5-801e-cf0db8d09a40/UuU_spotdownorg.mp3",
+                cover: roa,
+                album: "private-suite-complete",
+                trackNum: 2,
+                coverLoaded: true,
+                palette: roaPalette,
+                bgImage: roaBg
+            },
+            {
+                title: "JETSKI",
+                artist: "ROA",
+                url: "https://43rdwl1h89.ucarecd.net/27529a31-a2fd-45a4-8198-4837e2a468cd/JETSKI_spotdownorg.mp3",
+                cover: roa,
+                album: "private-suite-complete",
+                trackNum: 3,
+                coverLoaded: true,
+                palette: roaPalette,
+                bgImage: roaBg
+            },
+            {
+                title: "11:11 (interlude)",
+                artist: "ROA",
+                url: "https://43rdwl1h89.ucarecd.net/8d268a23-9116-414a-87ed-57e378143bcb/11_11Interlude_spotdownorg.mp3",
+                cover: roa,
+                album: "private-suite-complete",
+                trackNum: 4,
+                coverLoaded: true,
+                palette: roaPalette,
+                bgImage: roaBg
+            },
+            {
+                title: "Bellakeame",
+                artist: "ROA",
+                url: "https://43rdwl1h89.ucarecd.net/d0d19a4c-9670-48fc-add5-55ffbdc30a53/Bellakeame_spotdownorg.mp3",
+                cover: roa,
+                album: "private-suite-complete",
+                trackNum: 5,
+                coverLoaded: true,
+                palette: roaPalette,
+                bgImage: roaBg
+            },
+            {
+                title: "Noche Pasajera",
+                artist: "ROA",
+                url: "https://43rdwl1h89.ucarecd.net/14c842db-a936-4605-9947-af6866b31346/NochePasajera_spotdownorg.mp3",
+                cover: roa,
+                album: "private-suite-complete",
+                trackNum: 6,
+                coverLoaded: true,
+                palette: roaPalette,
+                bgImage: roaBg
+            },
+            {
+                title: "LA CURA… coming soon (Outro)",
+                artist: "ROA",
+                url: "https://43rdwl1h89.ucarecd.net/b9aed547-543e-40f3-994f-2b61e87b3534/LACURAcomingsoonOutro_spotdownorg.mp3",
+                cover: roa,
+                album: "private-suite-complete",
+                trackNum: 7,
+                coverLoaded: true,
+                palette: roaPalette,
+                bgImage: roaBg
+            },
+            {
+                title: "La Cura",
+                artist: "ROA",
+                url: "https://43rdwl1h89.ucarecd.net/4fc37b60-e202-4ea6-ad68-46714eb54363/LaCura_spotdownorg.mp3",
+                cover: roa,
+                album: "private-suite-complete",
+                trackNum: 8,
+                coverLoaded: true,
+                palette: roaPalette,
+                bgImage: roaBg
+            },
+            {
+                title: "Y Si Te Llamo",
+                artist: "ROA",
+                url: "https://43rdwl1h89.ucarecd.net/ef74b9aa-c329-4a47-8f0e-2f6a5bcd45f6/YSiTeLlamo_spotdownorg.mp3",
+                cover: roa,
+                album: "private-suite-complete",
+                trackNum: 9,
+                coverLoaded: true,
+                palette: roaPalette,
+                bgImage: roaBg
+            },
+            {
+                title: "NOCHE PASAJERA II",
+                artist: "ROA & Jay Wheeler",
+                url: "https://43rdwl1h89.ucarecd.net/36b8f21a-ba5e-4174-a1ee-afc5ccbdde9b/NOCHEPASAJERAII_spotdownorg.mp3",
+                cover: roa,
+                album: "private-suite-complete",
+                trackNum: 10,
+                coverLoaded: true,
+                palette: roaPalette,
+                bgImage: roaBg
+            },
+            {
+                title: "JETSKI - Remix",
+                artist: "ROA, Omar Courtz, Dei V & Bryant Myers",
+                url: "https://43rdwl1h89.ucarecd.net/0a5c7e1a-f062-4ef8-b99c-dd1034da60f4/JETSKIRemix_spotdownorg1.mp3",
+                cover: roa,
+                album: "private-suite-complete",
+                trackNum: 11,
+                coverLoaded: true,
+                palette: roaPalette,
+                bgImage: roaBg
+            },
+            {
+                title: "11:12 (Interlude)",
+                artist: "ROA & De La Rose",
+                url: "https://43rdwl1h89.ucarecd.net/749dffe2-6e64-4f99-b596-b2496d4096c6/11_12Interlude_spotdownorg.mp3",
+                cover: roa,
+                album: "private-suite-complete",
+                trackNum: 12,
+                coverLoaded: true,
+                palette: roaPalette,
+                bgImage: roaBg
+            },
+            {
+                title: "UuU 2",
+                artist: "ROA, Hades66 & Luar La L",
+                url: "https://43rdwl1h89.ucarecd.net/a99ac52d-d2e7-4214-9a7f-ecdc1b585473/UuU2_spotdownorg.mp3",
+                cover: roa,
+                album: "private-suite-complete",
+                trackNum: 13,
+                coverLoaded: true,
+                palette: roaPalette,
+                bgImage: roaBg
+            },
+            {
+                title: "FREELANCE 2.0",
+                artist: "ROA, CDobleta, Amarion, Ankhal & Anubiis",
+                url: "https://43rdwl1h89.ucarecd.net/566b4669-7d4e-4f92-9b54-37eb40614929/FREELANCE20_spotdownorg.mp3",
+                cover: roa,
+                album: "private-suite-complete",
+                trackNum: 14,
+                coverLoaded: true,
+                palette: roaPalette,
+                bgImage: roaBg
+            },
+            {
+                title: "Eclipse... Coming Soon (Outro)",
+                artist: "ROA",
+                url: "https://43rdwl1h89.ucarecd.net/fd3612f0-8d53-4b85-ae50-bd883b398bfe/EclipseComingSoonOutro_spotdownorg.mp3",
+                cover: roa,
+                album: "private-suite-complete",
+                trackNum: 15,
+                coverLoaded: true,
+                palette: roaPalette,
+                bgImage: roaBg
+            },
+            {
+                title: "ETA",
+                artist: "ROA",
+                url: "https://43rdwl1h89.ucarecd.net/05ffac1c-63ec-4d3d-9ac8-4d321aeb28a7/ETA_spotdownorg.mp3",
+                cover: roa,
+                album: "private-suite-complete",
+                trackNum: 16,
+                coverLoaded: true,
+                palette: roaPalette,
+                bgImage: roaBg
+            },
+            {
+                title: "ECLIPSE",
+                artist: "ROA, J Abdiel & Slayter",
+                url: "https://43rdwl1h89.ucarecd.net/25a0018f-504a-49b3-8358-c38c62a548f4/ECLIPSE_spotdownorg.mp3",
+                cover: roa,
+                album: "private-suite-complete",
+                trackNum: 17,
+                coverLoaded: true,
+                palette: roaPalette,
+                bgImage: roaBg
+            },
+            {
+                title: "777",
+                artist: "ROA",
+                url: "https://43rdwl1h89.ucarecd.net/ba795269-fdb2-4938-90d4-6cca60aa7f14/777_spotdownorg.mp3",
+                cover: roa,
+                album: "private-suite-complete",
+                trackNum: 18,
+                coverLoaded: true,
+                palette: roaPalette,
+                bgImage: roaBg
+            },
+            {
+                title: "PETITE",
+                artist: "ROA",
+                url: "https://43rdwl1h89.ucarecd.net/202d26f3-9b1f-4f65-8152-449ce316eb09/PETITE_spotdownorg.mp3",
+                cover: roa,
+                album: "private-suite-complete",
+                trackNum: 19,
+                coverLoaded: true,
+                palette: roaPalette,
+                bgImage: roaBg
+            },
+            {
+                title: "MI DEMONIA... COMING SOON",
+                artist: "ROA",
+                url: "https://43rdwl1h89.ucarecd.net/37ae36d1-88ab-49f5-bb25-4736708577e7/MIDEMONIACOMINGSOON_spotdownorg.mp3",
+                cover: roa,
+                album: "private-suite-complete",
+                trackNum: 20,
+                coverLoaded: true,
+                palette: roaPalette,
+                bgImage: roaBg
+            },
+            {
+                title: "TATE QUIETA",
+                artist: "ROA & CDobleta",
+                url: "https://43rdwl1h89.ucarecd.net/84536705-8c96-4863-b707-56a85b7ef643/TATEQUIETA_spotdownorg.mp3",
+                cover: roa,
+                album: "private-suite-complete",
+                trackNum: 21,
+                coverLoaded: true,
+                palette: roaPalette,
+                bgImage: roaBg
+            },
+            {
+                title: "NEVER 2 LATE",
+                artist: "ROA & Yan Block",
+                url: "https://43rdwl1h89.ucarecd.net/be314035-f7e8-4396-add3-07e6c8e06417/NEVER2LATE_spotdownorg.mp3",
+                cover: roa,
+                album: "private-suite-complete",
+                trackNum: 22,
+                coverLoaded: true,
+                palette: roaPalette,
+                bgImage: roaBg
+            },
+            {
+                title: "ME GUSTAS CC",
+                artist: "ROA",
+                url: "https://43rdwl1h89.ucarecd.net/f97cd115-aa0b-4827-be03-ec4540f7be35/MEGUSTASCC_spotdownorg.mp3",
+                cover: roa,
+                album: "private-suite-complete",
+                trackNum: 23,
+                coverLoaded: true,
+                palette: roaPalette,
+                bgImage: roaBg
+            },
+            {
+                title: "ETA - Remix",
+                artist: "ROA, De La Rose, Omar Courtz, Yan Block & Luar La L",
+                url: "https://43rdwl1h89.ucarecd.net/ef2651fb-d382-411f-8557-d96c053e1a2d/ETARMX_spotdownorg.mp3",
+                cover: roa,
+                album: "private-suite-complete",
+                trackNum: 24,
+                coverLoaded: true,
+                palette: roaPalette,
+                bgImage: roaBg
+            },
+            {
+                title: "QUÉ TE PASA ?",
+                artist: "ROA",
+                url: "https://43rdwl1h89.ucarecd.net/ac319d64-229c-41c6-af4e-c79da4ec9fa7/QUETEPASA__spotdownorg.mp3",
+                cover: roa,
+                album: "private-suite-complete",
+                trackNum: 25,
+                coverLoaded: true,
+                palette: roaPalette,
+                bgImage: roaBg
+            },
+            {
+                title: "EENIMINIMAINIMOE",
+                artist: "ROA",
+                url: "https://43rdwl1h89.ucarecd.net/741bed09-b436-44d5-ac9a-228ff0b32f6c/EENIMINIMAINIMOE_spotdownorg.mp3",
+                cover: roa,
+                album: "private-suite-complete",
+                trackNum: 26,
+                coverLoaded: true,
+                palette: roaPalette,
+                bgImage: roaBg
+            },
+            {
+                title: "J's INTERLUDE",
+                artist: "ROA",
+                url: "https://43rdwl1h89.ucarecd.net/a1df7ad6-d0a2-4bd1-9d84-06a64eccaded/JsINTERLUDE_spotdownorg.mp3",
+                cover: roa,
+                album: "private-suite-complete",
+                trackNum: 27,
+                coverLoaded: true,
+                palette: roaPalette,
+                bgImage: roaBg
+            },
+            {
+                title: "MI DEMONIA",
+                artist: "ROA",
+                url: "https://43rdwl1h89.ucarecd.net/956f8423-913e-4239-a26c-a927a2857167/MIDEMONIA_spotdownorg.mp3",
+                cover: roa,
+                album: "private-suite-complete",
+                trackNum: 28,
+                coverLoaded: true,
+                palette: roaPalette,
+                bgImage: roaBg
+            },
+            {
+                title: "LA FAVORITA DE DIOS",
+                artist: "ROA & Dei V",
+                url: "https://43rdwl1h89.ucarecd.net/b6362bd6-cb26-4dab-8f48-9567da17e5dc/LAFAVORITADEDIOS_spotdownorg.mp3",
+                cover: roa,
+                album: "private-suite-complete",
+                trackNum: 29,
+                coverLoaded: true,
+                palette: roaPalette,
+                bgImage: roaBg
+            },
+            {
+                title: "11:11",
+                artist: "ROA",
+                url: "https://43rdwl1h89.ucarecd.net/e17efb10-5860-4bb3-b50d-2796d25679cc/11_11_spotdownorg.mp3",
+                cover: roa,
+                album: "private-suite-complete",
+                trackNum: 30,
+                coverLoaded: true,
+                palette: roaPalette,
+                bgImage: roaBg
+            },
+            {
+                title: "ARE YOU FEELING ME ? (OUTRO)",
+                artist: "ROA",
+                url: "https://43rdwl1h89.ucarecd.net/488ece66-43a9-45da-b67e-20a9a68e4734/AREYOUFEELINGME_OUTRO_spotdownorg.mp3",
+                cover: roa,
+                album: "private-suite-complete",
+                trackNum: 31,
+                coverLoaded: true,
+                palette: roaPalette,
+                bgImage: roaBg
+            },
+            {
+                title: "BABY HOY",
+                artist: "ROA",
+                url: "https://43rdwl1h89.ucarecd.net/735e39b9-1907-4600-8619-8e3034695ae1/BABYHOY_spotdownorg.mp3",
+                cover: roa,
+                album: "private-suite-complete",
+                trackNum: 32,
+                coverLoaded: true,
+                palette: roaPalette,
+                bgImage: roaBg
+            },
+            {
+                title: "MI PEOR ERROR",
+                artist: "ROA & Botlok",
+                url: "https://43rdwl1h89.ucarecd.net/20c9633c-95e1-48f7-82be-006ee84fbc7a/MIPEORERROR_spotdownorg.mp3",
+                cover: roa,
+                album: "private-suite-complete",
+                trackNum: 33,
+                coverLoaded: true,
+                palette: roaPalette,
+                bgImage: roaBg
+            },
+            {
+                title: "EL MALO... Coming soon",
+                artist: "ROA",
+                url: "https://43rdwl1h89.ucarecd.net/85290498-b4a1-461b-8f87-067e0eb353cd/ELMALOComingsoon_spotdownorg.mp3",
+                cover: roa,
+                album: "private-suite-complete",
+                trackNum: 34,
+                coverLoaded: true,
+                palette: roaPalette,
+                bgImage: roaBg
+            },
+            {
+                title: "TÚ Y YO",
+                artist: "ROA",
+                url: "https://43rdwl1h89.ucarecd.net/8ce4aec7-f400-4bd4-9060-ba8a6ecf231b/TUYYO_spotdownorg.mp3",
+                cover: roa,
+                album: "private-suite-complete",
+                trackNum: 35,
+                coverLoaded: true,
+                palette: roaPalette,
+                bgImage: roaBg
+            },
+            {
+                title: "MI CHIMBITA",
+                artist: "ROA, Kris R, Hades66, GeezyDee & TopBoy TGR",
+                url: "https://43rdwl1h89.ucarecd.net/9d5655b0-6576-49f3-9b6f-f3c91e3f753d/MICHIMBITA_spotdownorg.mp3",
+                cover: roa,
+                album: "private-suite-complete",
+                trackNum: 36,
+                coverLoaded: true,
+                palette: roaPalette,
+                bgImage: roaBg
+            },
+            {
+                title: "TATE QUIETA - Remix",
+                artist: "ROA, CDobleta, Midnvght, Tutu, Luar La L & Almighty",
+                url: "https://43rdwl1h89.ucarecd.net/5650fe3c-bb05-4cc5-848e-258118a4eb65/TATEQUIETARMX_spotdownorg.mp3",
+                cover: roa,
+                album: "private-suite-complete",
+                trackNum: 37,
+                coverLoaded: true,
+                palette: roaPalette,
+                bgImage: roaBg
             }
         ];
 
@@ -1181,6 +1569,11 @@
            ================================================================== */
         function navTo(tabId) {
             haptic();
+            // Restablecer el fondo ambient si se abandona la sección detallada de un álbum
+            document.getElementById('ambient-bg').style.backgroundImage = '';
+            document.getElementById('ambient-bg').style.backgroundSize = '';
+            document.getElementById('ambient-bg').style.backgroundPosition = '';
+
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-item, .nav-item-mob').forEach(el => el.classList.remove('active'));
             
@@ -1269,6 +1662,15 @@
                 if(song.trackNum === 1 && !song.coverLoaded && !song.coverLoading) loadSongCover(song, realIndex);
                 else if(song.trackNum === 1 && song.coverLoaded) document.getElementById('det-album-img').src = song.cover;
             });
+
+            // Establecer el fondo ambient si se accede al álbum específico de ROA
+            if (albumId === "private-suite-complete") {
+                document.getElementById('ambient-bg').style.backgroundImage = `url('https://69rxyf0ea9.ucarecd.net/3fc66e80-32ba-4fb1-affa-a95e5a3e6204/7A88FC1734644D74AFEFC808A54CB249.png')`;
+                document.getElementById('ambient-bg').style.backgroundSize = 'cover';
+                document.getElementById('ambient-bg').style.backgroundPosition = 'center';
+            } else {
+                document.getElementById('ambient-bg').style.backgroundImage = '';
+            }
 
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
             document.getElementById('view-album-detail').classList.add('active');
