@@ -444,6 +444,9 @@
                         <div class="hero-actions"><button class="btn-primary" onclick="playCurrentAlbum()"><i class="ph-fill ph-play"></i> Play Album</button></div>
                     </div>
                 </div>
+                <!-- Nueva sección para descripción del álbum -->
+                <div id="det-album-description" style="margin: -24px 0 48px 0; max-width: 800px; font-size: 15px; line-height: 1.7; color: rgba(255, 255, 255, 0.7); font-weight: 400; display: none; background: rgba(255,255,255,0.02); border-left: 3px solid var(--accent-1); padding: 16px 24px; border-radius: 4px 12px 12px 4px;"></div>
+                
                 <div class="track-list" id="tracklist-album"></div>
             </section>
 
@@ -569,7 +572,14 @@
             { id: "la-voz-favorita", title: "La Voz Favorita", artist: "Jay Wheeler", cover: sheLike2FuckCoverUrl, year: "2024" },
             { id: "primera-musa-album", title: "PRIMERA MUSA", artist: "Omar Courtz", cover: piensaenmiCoverUrl, year: "2024" },
             { id: "un-verano-sin-ti", title: "Un Verano Sin Ti", artist: "Bad Bunny", cover: tarotCoverUrl, year: "2022" },
-            { id: "private-suite-complete", title: "PRIVATE SUITE (COMPLETE EP EDITION)", artist: "ROA", cover: tuyyoCoverUrl, year: "2026" },
+            { 
+                id: "private-suite-complete", 
+                title: "PRIVATE SUITE (COMPLETE EP EDITION)", 
+                artist: "ROA", 
+                cover: tuyyoCoverUrl, 
+                year: "2026",
+                description: '"PRIVATE SUITE (COMPLETE EP EDITION)", lanzado el 30 de enero de 2026, es el monumento sonoro a la identidad de ROA: un viaje masivo de 37 canciones que consolida su famosa trilogía de EPs en una sola obra que se siente como una larga y caótica noche de hotel. Grabado en habitaciones alrededor del mundo durante sus giras, el álbum transmite una atmósfera nocturna, sensual y sumamente oscura que fusiona la crudeza del reggaetón underground y el trap con acordes melancólicos de R&B. Para el artista, este disco representa el espacio donde cae la máscara pública al apagarse las luces del show, exponiendo el tira y afloja entre el deseo desenfrenado, la soledad y las obsesiones de las relaciones modernas, consolidándolo definitivamente como el arquitecto de la vanguardia urbana más conceptual y oscura de la nueva ola.'
+            },
             { id: "debi-tirar-mas-fotos", title: "DeBÍ TiRAR MáS FOToS", artist: "Bad Bunny", cover: kloufrensCoverUrl, year: "2026" },
             { id: "trinidad-bendita", title: "TRINIDAD BENDITA", artist: "Blessd", cover: nuevaYorkCoverUrl, year: "2026" },
             { id: "do-not-disturb", title: "Do Not Disturb: Late Checkout", artist: "Young Miko", cover: dreamTeamCoverUrl, year: "2026" },
@@ -693,7 +703,7 @@
                     { r: 242, g: 19, b: 60 },   // #F2133C
                     { r: 242, g: 46, b: 98 },   // #F22E62
                     { r: 64, g: 22, b: 41 },    // #401629
-                    { r: 242, g: 114, b: 174 }, // #F272AE
+                    { r: 242, g: 117, b: 174 }, // #F272AE
                     { r: 242, g: 153, b: 194 }, // #F299C2
                     { r: 242, g: 19, b: 60 }    // padding
                 ],
@@ -1787,6 +1797,16 @@
             
             const tracks = cancionesData.filter(s => s.album === albumId).sort((a,b) => a.trackNum - b.trackNum);
             document.getElementById('det-album-info').innerText = `${album.year} • ${tracks.length} Songs`;
+
+            // Mostrar/Ocultar y rellenar descripción
+            const descEl = document.getElementById('det-album-description');
+            if (album.description) {
+                descEl.innerText = album.description;
+                descEl.style.display = 'block';
+            } else {
+                descEl.innerText = '';
+                descEl.style.display = 'none';
+            }
 
             const tracklist = document.getElementById('tracklist-album'); tracklist.innerHTML = '';
             tracks.forEach(song => {
