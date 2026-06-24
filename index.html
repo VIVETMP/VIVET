@@ -444,9 +444,6 @@
                         <div class="hero-actions"><button class="btn-primary" onclick="playCurrentAlbum()"><i class="ph-fill ph-play"></i> Play Album</button></div>
                     </div>
                 </div>
-                <!-- Nueva sección para descripción del álbum -->
-                <div id="det-album-description" style="margin: -24px 0 48px 0; max-width: 800px; font-size: 15px; line-height: 1.7; color: rgba(255, 255, 255, 0.7); font-weight: 400; display: none; background: rgba(255,255,255,0.02); border-left: 3px solid var(--accent-1); padding: 16px 24px; border-radius: 4px 12px 12px 4px;"></div>
-                
                 <div class="track-list" id="tracklist-album"></div>
             </section>
 
@@ -572,18 +569,11 @@
             { id: "la-voz-favorita", title: "La Voz Favorita", artist: "Jay Wheeler", cover: sheLike2FuckCoverUrl, year: "2024" },
             { id: "primera-musa-album", title: "PRIMERA MUSA", artist: "Omar Courtz", cover: piensaenmiCoverUrl, year: "2024" },
             { id: "un-verano-sin-ti", title: "Un Verano Sin Ti", artist: "Bad Bunny", cover: tarotCoverUrl, year: "2022" },
-            { 
-                id: "private-suite-complete", 
-                title: "PRIVATE SUITE (COMPLETE EP EDITION)", 
-                artist: "ROA", 
-                cover: tuyyoCoverUrl, 
-                year: "2026",
-                description: '"PRIVATE SUITE (COMPLETE EP EDITION)", lanzado el 30 de enero de 2026, es el monumento sonoro a la identidad de ROA: un viaje masivo de 37 canciones que consolida su famosa trilogía de EPs en una sola obra que se siente como una larga y caótica noche de hotel. Grabado en habitaciones alrededor del mundo durante sus giras, el álbum transmite una atmósfera nocturna, sensual y sumamente oscura que fusiona la crudeza del reggaetón underground y el trap con acordes melancólicos de R&B. Para el artista, este disco representa el espacio donde cae la máscara pública al apagarse las luces del show, exponiendo el tira y afloja entre el deseo desenfrenado, la soledad y las obsesiones de las relaciones modernas, consolidándolo definitivamente como el arquitecto de la vanguardia urbana más conceptual y oscura de la nueva ola.'
-            },
+            { id: "private-suite-complete", title: "PRIVATE SUITE (COMPLETE EP EDITION)", artist: "ROA", cover: tuyyoCoverUrl, year: "2026", duration: "1 hora y 58 minutos" },
             { id: "debi-tirar-mas-fotos", title: "DeBÍ TiRAR MáS FOToS", artist: "Bad Bunny", cover: kloufrensCoverUrl, year: "2026" },
             { id: "trinidad-bendita", title: "TRINIDAD BENDITA", artist: "Blessd", cover: nuevaYorkCoverUrl, year: "2026" },
             { id: "do-not-disturb", title: "Do Not Disturb: Late Checkout", artist: "Young Miko", cover: dreamTeamCoverUrl, year: "2026" },
-            { id: "por-si-manana", title: "POR SI MAÑANA NO ESTOY", artist: "Omar Courtz", cover: "https://3lxj8u72k3.ucarecd.net/e4fe0e30-48fd-41e8-a686-39c2ae860ddb/moonlight.png", year: "2026" },
+            { id: "por-si-manana", title: "POR SI MAÑANA NO ESTOY", artist: "Omar Courtz", cover: "https://3lxj8u72k3.ucarecd.net/e4fe0e30-48fd-41e8-a686-39c2ae860ddb/moonlight.png", year: "2026", duration: "51 minutos y 18 segundos" },
             { id: "microdosis", title: "MICRODOSIS", artist: "Mora", cover: "https://cdn.discordapp.com/attachments/1243422250955182100/1519397167305986108/IMG_3304.png?ex=6a3d6861&is=6a3c16e1&hm=03d3225c603838795bbeee7e243f74adf7fa1ed6f650b780540a1df0b82717fd&", year: "2022" },
             { id: "genesis", title: "GÉNESIS", artist: "Peso Pluma", cover: "https://cdn.discordapp.com/attachments/1243422250955182100/1519401333986431047/IMG_3306.png?ex=6a3d6c43&is=6a3c1ac3&hm=c1f32097df2ab22d020e9f1f02ee10fb55a2fd59e64ae3375ffde7dc859226ef&", year: "2023" }
         ];
@@ -598,6 +588,18 @@
             { r: 242, g: 50, b: 7 },
             { r: 2, g: 35, b: 43 },
             { r: 1, g: 1, b: 1 }
+        ];
+
+        // Shared POR SI MAÑANA NO ESTOY metadata
+        const moonlightCover = "https://3lxj8u72k3.ucarecd.net/e4fe0e30-48fd-41e8-a686-39c2ae860ddb/moonlight.png";
+        const moonlightBg = "https://69rxyf0ea9.ucarecd.net/2a82d23a-6d3f-45a1-a11d-ca42f2ab4cde/B3F943DBCA684424826974917FF841D0.png";
+        const moonlightPalette = [
+            { r: 10, g: 25, b: 45 },
+            { r: 40, g: 75, b: 115 },
+            { r: 80, g: 125, b: 175 },
+            { r: 150, g: 195, b: 235 },
+            { r: 10, g: 25, b: 45 },
+            { r: 10, g: 25, b: 45 }
         ];
 
         const cancionesData = [
@@ -703,7 +705,7 @@
                     { r: 242, g: 19, b: 60 },   // #F2133C
                     { r: 242, g: 46, b: 98 },   // #F22E62
                     { r: 64, g: 22, b: 41 },    // #401629
-                    { r: 242, g: 117, b: 174 }, // #F272AE
+                    { r: 242, g: 114, b: 174 }, // #F272AE
                     { r: 242, g: 153, b: 194 }, // #F299C2
                     { r: 242, g: 19, b: 60 }    // padding
                 ],
@@ -922,24 +924,6 @@
                     { r: 20, g: 15, b: 15 }
                 ],
                 bgImage: "https://69rxyf0ea9.ucarecd.net/bf86ea3d-ce5a-4dd1-9a12-dcb70f16f841/EDC88DBBE33A492D9FF6878A4D50FA37.png"
-            },
-            {
-                title: "MOONLIGHT",
-                artist: "Omar Courtz & Eladio Carrión",
-                url: "https://3lxj8u72k3.ucarecd.net/fdbf934c-ce61-4f08-935a-fb06fa194b3e/MOONLIGHT_spotdownorg.mp3",
-                cover: "https://3lxj8u72k3.ucarecd.net/e4fe0e30-48fd-41e8-a686-39c2ae860ddb/moonlight.png",
-                album: "por-si-manana",
-                trackNum: 4,
-                coverLoaded: true,
-                palette: [
-                    { r: 10, g: 25, b: 45 },
-                    { r: 40, g: 75, b: 115 },
-                    { r: 80, g: 125, b: 175 },
-                    { r: 150, g: 195, b: 235 },
-                    { r: 10, g: 25, b: 45 },
-                    { r: 10, g: 25, b: 45 }
-                ],
-                bgImage: "https://69rxyf0ea9.ucarecd.net/2a82d23a-6d3f-45a1-a11d-ca42f2ab4cde/B3F943DBCA684424826974917FF841D0.png"
             },
             {
                 title: "Talento",
@@ -1513,6 +1497,208 @@
                     { r: 30, g: 30, b: 25 }
                 ],
                 bgImage: "https://cdn.discordapp.com/attachments/1243422250955182100/1519401334288289823/26F8EA49-B85E-4027-8D2A-A03953CE94A5.png?ex=6a3d6c43&is=6a3c1ac3&hm=270537d09e644d32462e0ecd93e3a44f73847a735f77ea1aa71beeb74e3daf7e&"
+            },
+            
+            /* ==================================================================
+               POR SI MAÑANA NO ESTOY — 18 TRACKS
+               ================================================================== */
+            {
+                title: "OUTRO",
+                artist: "Omar Courtz",
+                url: "https://files.catbox.moe/4eqs0r.mp3",
+                cover: moonlightCover,
+                album: "por-si-manana",
+                trackNum: 1,
+                coverLoaded: true,
+                palette: moonlightPalette,
+                bgImage: moonlightBg
+            },
+            {
+                title: "EL MUNDO SE VA A ACABAR",
+                artist: "Omar Courtz & KARBeats",
+                url: "https://files.catbox.moe/ioux89.mp3",
+                cover: moonlightCover,
+                album: "por-si-manana",
+                trackNum: 2,
+                coverLoaded: true,
+                palette: moonlightPalette,
+                bgImage: moonlightBg
+            },
+            {
+                title: "FOREVER TU GANTEL",
+                artist: "Omar Courtz & Ñengo Flow",
+                url: "https://files.catbox.moe/cievb6.mp3",
+                cover: moonlightCover,
+                album: "por-si-manana",
+                trackNum: 3,
+                coverLoaded: true,
+                palette: moonlightPalette,
+                bgImage: moonlightBg
+            },
+            {
+                title: "L a k e n o s h i",
+                artist: "Omar Courtz",
+                url: "https://files.catbox.moe/9qorg7.mp3",
+                cover: moonlightCover,
+                album: "por-si-manana",
+                trackNum: 4,
+                coverLoaded: true,
+                palette: moonlightPalette,
+                bgImage: moonlightBg
+            },
+            {
+                title: "VAMOaCOCHI",
+                artist: "Omar Courtz",
+                url: "https://files.catbox.moe/wns3m6.mp3",
+                cover: moonlightCover,
+                album: "por-si-manana",
+                trackNum: 5,
+                coverLoaded: true,
+                palette: moonlightPalette,
+                bgImage: moonlightBg
+            },
+            {
+                title: "SUSU",
+                artist: "Omar Courtz",
+                url: "https://files.catbox.moe/kdv57b.mp3",
+                cover: moonlightCover,
+                album: "por-si-manana",
+                trackNum: 6,
+                coverLoaded: true,
+                palette: moonlightPalette,
+                bgImage: moonlightBg
+            },
+            {
+                title: "SIRENA",
+                artist: "Omar Courtz",
+                url: "https://files.catbox.moe/msloqo.mp3",
+                cover: moonlightCover,
+                album: "por-si-manana",
+                trackNum: 7,
+                coverLoaded: true,
+                palette: moonlightPalette,
+                bgImage: moonlightBg
+            },
+            {
+                title: "GANTEL y BELLAKz",
+                artist: "Omar Courtz & Bassyy",
+                url: "https://files.catbox.moe/eeqvne.mp3",
+                cover: moonlightCover,
+                album: "por-si-manana",
+                trackNum: 8,
+                coverLoaded: true,
+                palette: moonlightPalette,
+                bgImage: moonlightBg
+            },
+            {
+                title: "SI ESTÁS CON ALGUIEN",
+                artist: "Omar Courtz",
+                url: "https://files.catbox.moe/v21n97.mp3",
+                cover: moonlightCover,
+                album: "por-si-manana",
+                trackNum: 9,
+                coverLoaded: true,
+                palette: moonlightPalette,
+                bgImage: moonlightBg
+            },
+            {
+                title: "Dulces SueñoZzz (+INTERLUDIO)",
+                artist: "Omar Courtz & Rubí",
+                url: "https://files.catbox.moe/cktziy.mp3",
+                cover: moonlightCover,
+                album: "por-si-manana",
+                trackNum: 10,
+                coverLoaded: true,
+                palette: moonlightPalette,
+                bgImage: moonlightBg
+            },
+            {
+                title: "$UELTA GATITA $UELTA",
+                artist: "Omar Courtz, Dei V, Clarent & Tito El Bambino",
+                url: "https://files.catbox.moe/0qxd21.mp3",
+                cover: moonlightCover,
+                album: "por-si-manana",
+                trackNum: 11,
+                coverLoaded: true,
+                palette: moonlightPalette,
+                bgImage: moonlightBg
+            },
+            {
+                title: "WHAT U NEED? (SexPlaylist 2)",
+                artist: "Omar Courtz & Myke Towers",
+                url: "https://files.catbox.moe/qncan5.mp3",
+                cover: moonlightCover,
+                album: "por-si-manana",
+                trackNum: 12,
+                coverLoaded: true,
+                palette: moonlightPalette,
+                bgImage: moonlightBg
+            },
+            {
+                title: "WO OH OH",
+                artist: "Omar Courtz & ROA",
+                url: "https://files.catbox.moe/xx2wn3.mp3",
+                cover: moonlightCover,
+                album: "por-si-manana",
+                trackNum: 13,
+                coverLoaded: true,
+                palette: moonlightPalette,
+                bgImage: moonlightBg
+            },
+            {
+                title: "KOKO",
+                artist: "Omar Courtz",
+                url: "https://files.catbox.moe/n733ws.mp3",
+                cover: moonlightCover,
+                album: "por-si-manana",
+                trackNum: 14,
+                coverLoaded: true,
+                palette: moonlightPalette,
+                bgImage: moonlightBg
+            },
+            {
+                title: "COMERNOS",
+                artist: "Omar Courtz & Bad Gyal",
+                url: "https://files.catbox.moe/u9f6nl.mp3",
+                cover: moonlightCover,
+                album: "por-si-manana",
+                trackNum: 15,
+                coverLoaded: true,
+                palette: moonlightPalette,
+                bgImage: moonlightBg
+            },
+            {
+                title: "SKY",
+                artist: "Omar Courtz",
+                url: "https://files.catbox.moe/4868ct.mp3",
+                cover: moonlightCover,
+                album: "por-si-manana",
+                trackNum: 16,
+                coverLoaded: true,
+                palette: moonlightPalette,
+                bgImage: moonlightBg
+            },
+            {
+                title: "MOONLIGHT",
+                artist: "Omar Courtz & Eladio Carrión",
+                url: "https://files.catbox.moe/hlrw1i.mp3",
+                cover: moonlightCover,
+                album: "por-si-manana",
+                trackNum: 17,
+                coverLoaded: true,
+                palette: moonlightPalette,
+                bgImage: moonlightBg
+            },
+            {
+                title: "POR SI MAÑANA NO ESTOY",
+                artist: "Omar Courtz",
+                url: "https://files.catbox.moe/f67tpy.mp3",
+                cover: moonlightCover,
+                album: "por-si-manana",
+                trackNum: 18,
+                coverLoaded: true,
+                palette: moonlightPalette,
+                bgImage: moonlightBg
             }
         ];
 
@@ -1525,7 +1711,11 @@
             },
             { name: "Bad Bunny", img: telefonoNuevoCoverUrl },
             { name: "Jay Wheeler", img: sheLike2FuckCoverUrl },
-            { name: "Omar Courtz", img: piensaenmiCoverUrl },
+            { 
+                name: "Omar Courtz", 
+                img: "https://cdn.discordapp.com/attachments/1243422250955182100/1519442649583587480/IMG_3319.jpg?ex=6a3d92bd&is=6a3c413d&hm=c8de82f47b83f6aa906b605ea3638890db252f9fb8d6e40496da203b6c47492c&",
+                bgImage: "https://cdn.discordapp.com/attachments/1243422250955182100/1519442649994756196/F4CD759E-92DF-4A4A-9FC6-635E8F46B503.png?ex=6a3d92bd&is=6a3c413d&hm=7a4baff981a2cbeb9131309b144c5e54b73dc25bf70dbc0fd94a2aa9baff2437&"
+            },
             { name: "JHAYCO", img: tarotCoverUrl },
             { 
                 name: "ROA", 
@@ -1796,17 +1986,8 @@
             document.getElementById('det-album-img').src = album.cover;
             
             const tracks = cancionesData.filter(s => s.album === albumId).sort((a,b) => a.trackNum - b.trackNum);
-            document.getElementById('det-album-info').innerText = `${album.year} • ${tracks.length} Songs`;
-
-            // Mostrar/Ocultar y rellenar descripción
-            const descEl = document.getElementById('det-album-description');
-            if (album.description) {
-                descEl.innerText = album.description;
-                descEl.style.display = 'block';
-            } else {
-                descEl.innerText = '';
-                descEl.style.display = 'none';
-            }
+            const durationStr = album.duration ? ` • ${album.duration}` : '';
+            document.getElementById('det-album-info').innerText = `${album.year} • ${tracks.length} Songs${durationStr}`;
 
             const tracklist = document.getElementById('tracklist-album'); tracklist.innerHTML = '';
             tracks.forEach(song => {
@@ -1826,9 +2007,13 @@
                 else if(song.trackNum === 1 && song.coverLoaded) document.getElementById('det-album-img').src = song.cover;
             });
 
-            // Establecer el fondo ambient si se accede al álbum específico de ROA
+            // Establecer el fondo ambient si se accede al álbum específico de ROA u Omar Courtz
             if (albumId === "private-suite-complete") {
                 document.getElementById('ambient-bg').style.backgroundImage = `url('https://69rxyf0ea9.ucarecd.net/3fc66e80-32ba-4fb1-affa-a95e5a3e6204/7A88FC1734644D74AFEFC808A54CB249.png')`;
+                document.getElementById('ambient-bg').style.backgroundSize = 'cover';
+                document.getElementById('ambient-bg').style.backgroundPosition = 'center';
+            } else if (albumId === "por-si-manana") {
+                document.getElementById('ambient-bg').style.backgroundImage = `url('https://69rxyf0ea9.ucarecd.net/2a82d23a-6d3f-45a1-a11d-ca42f2ab4cde/B3F943DBCA684424826974917FF841D0.png')`;
                 document.getElementById('ambient-bg').style.backgroundSize = 'cover';
                 document.getElementById('ambient-bg').style.backgroundPosition = 'center';
             } else {
