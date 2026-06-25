@@ -564,7 +564,7 @@
 
         const albumsData = [ 
             { id: "Underwater", title: "Underwater", artist: "Dei V", cover: coverImgUrl, year: "2024" },
-            { id: "nadie-sabe-album", title: "nadie sabe lo que va a pasar mañana", artist: "Bad Bunny", cover: telefonoNuevoCoverUrl, year: "2023" },
+            { id: "nadie-sabe-album", title: "nadie sabe lo que va a pasar mañana", artist: "Bad Bunny", cover: telefonoNuevoCoverUrl, year: "2023", duration: "1 hora y 21 minutos" },
             { id: "L3tra-album", title: "L3tra", artist: "Luar La L", cover: sideBitchCoverUrl, year: "2024" },
             { id: "la-voz-favorita", title: "La Voz Favorita", artist: "Jay Wheeler", cover: sheLike2FuckCoverUrl, year: "2024" },
             { id: "primera-musa-album", title: "PRIMERA MUSA", artist: "Omar Courtz", cover: piensaenmiCoverUrl, year: "2024" },
@@ -600,6 +600,18 @@
             { r: 150, g: 195, b: 235 },
             { r: 10, g: 25, b: 45 },
             { r: 10, g: 25, b: 45 }
+        ];
+
+        // Shared "nadie sabe lo que va a pasar mañana" metadata
+        const nadieSabeCover = telefonoNuevoCoverUrl;
+        const nadieSabeBg = "https://69rxyf0ea9.ucarecd.net/1d38da66-84c1-4b45-adb4-c83f3044eb7d/4F35CE85EF6B4CB5B3E7017AFFA079AD.png";
+        const nadieSabePalette = [
+            { r: 218, g: 204, b: 193 },
+            { r: 217, g: 202, b: 193 },
+            { r: 98,  g: 117, b: 144 },
+            { r: 117, g: 58,  b: 45  },
+            { r: 64,  g: 28,  b: 24  },
+            { r: 218, g: 204, b: 193 }
         ];
 
         const cancionesData = [
@@ -639,24 +651,31 @@
                 ],
                 bgImage: "https://3lxj8u72k3.ucarecd.net/16c02f5d-46a7-41ed-acad-188195b3b8dd/SIDEBITHCIHI.png"
             },
-            {
-                title: "TELÉFONO NUEVO",
-                artist: "Bad Bunny & Luar La L",
-                url: "https://4nemxki6k8.ucarecd.net/d311e759-9126-42d6-9edc-840928b84e36/TELEFONONUEVO_spotdownorg.mp3",
-                cover: telefonoNuevoCoverUrl,
-                album: "nadie-sabe-album",
-                trackNum: 11,
-                coverLoaded: true,
-                palette: [
-                    { r: 218, g: 204, b: 193 }, // #DACCC1
-                    { r: 217, g: 202, b: 193 }, // #D9CAC1
-                    { r: 98, g: 117, b: 144 },  // #627590
-                    { r: 117, g: 58, b: 45 },   // #753A2D
-                    { r: 64, g: 28, b: 24 },    // #401C18
-                    { r: 218, g: 204, b: 193 }  // padding
-                ],
-                bgImage: "https://69rxyf0ea9.ucarecd.net/1d38da66-84c1-4b45-adb4-c83f3044eb7d/4F35CE85EF6B4CB5B3E7017AFFA079AD.png"
-            },
+            /* ==================================================================
+               NADIE SABE LO QUE VA A PASAR MAÑANA — 22 TRACKS (Bad Bunny, 2023)
+               ================================================================== */
+            { title: "NADIE SABE", artist: "Bad Bunny", url: "https://files.catbox.moe/81i5i9.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 1, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
+            { title: "MONACO", artist: "Bad Bunny", url: "https://files.catbox.moe/i3k4mg.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 2, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
+            { title: "FINA", artist: "Bad Bunny & Young Miko", url: "https://files.catbox.moe/t0kzte.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 3, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
+            { title: "HIBIKI", artist: "Bad Bunny & Mora", url: "https://files.catbox.moe/ifxel2.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 4, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
+            { title: "MR. OCTOBER", artist: "Bad Bunny", url: "https://files.catbox.moe/l8pkvo.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 5, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
+            { title: "CYBERTRUCK", artist: "Bad Bunny", url: "https://files.catbox.moe/lmyd81.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 6, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
+            { title: "VOU 787", artist: "Bad Bunny", url: "https://files.catbox.moe/j0ifz6.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 7, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
+            { title: "SEDA", artist: "Bad Bunny & Bryant Myers", url: "https://files.catbox.moe/h9em77.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 8, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
+            { title: "GRACIAS POR NADA", artist: "Bad Bunny", url: "https://files.catbox.moe/0afdmi.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 9, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
+            { title: "TELEFONO NUEVO", artist: "Bad Bunny & Luar La L", url: "https://files.catbox.moe/ocv1jn.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 10, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
+            { title: "BABY NUEVA", artist: "Bad Bunny", url: "https://files.catbox.moe/c494lg.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 11, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
+            { title: "MERCEDES CAROTA", artist: "Bad Bunny & YovngChimi", url: "https://files.catbox.moe/kbi3ng.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 12, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
+            { title: "LOS PITS", artist: "Bad Bunny", url: "https://files.catbox.moe/5hi9zw.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 13, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
+            { title: "VUELVE CANDY B", artist: "Bad Bunny", url: "https://files.catbox.moe/c7c2tw.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 14, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
+            { title: "BATICANO", artist: "Bad Bunny", url: "https://files.catbox.moe/0ioak8.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 15, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
+            { title: "NO ME QUIERO CASAR", artist: "Bad Bunny", url: "https://files.catbox.moe/z0pt1j.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 16, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
+            { title: "WHERE SHE GOES", artist: "Bad Bunny", url: "https://files.catbox.moe/lr48kr.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 17, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
+            { title: "THUNDER Y LIGHTNING", artist: "Bad Bunny & Eladio Carrión", url: "https://files.catbox.moe/lakqe7.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 18, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
+            { title: "PERRO NEGRO", artist: "Bad Bunny & Feid", url: "https://files.catbox.moe/9zbzhl.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 19, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
+            { title: "EUROPA :(", artist: "Bad Bunny", url: "https://files.catbox.moe/0w8v89.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 20, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
+            { title: "ACHO PR", artist: "Bad Bunny, Arcángel, De La Ghetto & Ñengo Flow", url: "https://files.catbox.moe/nxz1nf.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 21, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
+            { title: "UN PREVIEW", artist: "Bad Bunny", url: "https://files.catbox.moe/ccfzeb.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 22, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
             {
                 title: "Lately",
                 artist: "Luar La L",
@@ -1943,7 +1962,8 @@
             
             dataArray.forEach((item, index) => {
                 if(!item) return;
-                const realIndex = (type === 'song') ? cancionesData.findIndex(s => s.title === item.title) : index;
+                // Use indexOf for songs to match by reference, avoiding title collisions
+                const realIndex = (type === 'song') ? cancionesData.indexOf(item) : index;
                 if(type === 'song' && realIndex === -1) return;
                 
                 const card = document.createElement('div');
@@ -1974,13 +1994,15 @@
                 `;
                 container.appendChild(card);
                 
-                if (type === 'song' && !item.coverLoaded && !item.coverLoading) loadSongCover(item, realIndex);
-                else if (type === 'song' && item.coverLoaded) document.querySelectorAll(`.cover-song-${realIndex}`).forEach(img => img.src = item.cover);
+                if (type === 'song' && item.coverLoaded) {
+                    container.querySelectorAll(`.cover-song-${realIndex}`).forEach(img => img.src = item.cover);
+                }
             });
         }
 
         function openAlbumDetail(albumId) {
             const album = albumsData.find(a => a.id === albumId); if(!album) return;
+            currentOpenAlbumId = albumId;
             document.getElementById('det-album-title').innerText = album.title;
             document.getElementById('det-album-artist').innerText = album.artist;
             document.getElementById('det-album-img').src = album.cover;
@@ -1991,7 +2013,7 @@
 
             const tracklist = document.getElementById('tracklist-album'); tracklist.innerHTML = '';
             tracks.forEach(song => {
-                const realIndex = cancionesData.findIndex(s => s.title === song.title);
+                const realIndex = cancionesData.findIndex((s, i) => s.album === albumId && s.trackNum === song.trackNum);
                 const row = document.createElement('div'); row.className = `track-row track-row-${realIndex}`;
                 if(currentPlayingIndex === realIndex) row.classList.add('active');
                 row.onclick = () => playSong(realIndex);
@@ -2003,21 +2025,23 @@
                     </div>
                 `;
                 tracklist.appendChild(row);
-                if(song.trackNum === 1 && !song.coverLoaded && !song.coverLoading) loadSongCover(song, realIndex);
-                else if(song.trackNum === 1 && song.coverLoaded) document.getElementById('det-album-img').src = song.cover;
             });
 
-            // Establecer el fondo ambient si se accede al álbum específico de ROA u Omar Courtz
-            if (albumId === "private-suite-complete") {
-                document.getElementById('ambient-bg').style.backgroundImage = `url('https://69rxyf0ea9.ucarecd.net/3fc66e80-32ba-4fb1-affa-a95e5a3e6204/7A88FC1734644D74AFEFC808A54CB249.png')`;
-                document.getElementById('ambient-bg').style.backgroundSize = 'cover';
-                document.getElementById('ambient-bg').style.backgroundPosition = 'center';
-            } else if (albumId === "por-si-manana") {
-                document.getElementById('ambient-bg').style.backgroundImage = `url('https://69rxyf0ea9.ucarecd.net/2a82d23a-6d3f-45a1-a11d-ca42f2ab4cde/B3F943DBCA684424826974917FF841D0.png')`;
-                document.getElementById('ambient-bg').style.backgroundSize = 'cover';
-                document.getElementById('ambient-bg').style.backgroundPosition = 'center';
+            // Set ambient background per album
+            const ambBg = document.getElementById('ambient-bg');
+            const bgMap = {
+                "private-suite-complete": "https://69rxyf0ea9.ucarecd.net/3fc66e80-32ba-4fb1-affa-a95e5a3e6204/7A88FC1734644D74AFEFC808A54CB249.png",
+                "por-si-manana": "https://69rxyf0ea9.ucarecd.net/2a82d23a-6d3f-45a1-a11d-ca42f2ab4cde/B3F943DBCA684424826974917FF841D0.png",
+                "nadie-sabe-album": nadieSabeBg
+            };
+            if (bgMap[albumId]) {
+                ambBg.style.backgroundImage = `url('${bgMap[albumId]}')`;
+                ambBg.style.backgroundSize = 'cover';
+                ambBg.style.backgroundPosition = 'center';
             } else {
-                document.getElementById('ambient-bg').style.backgroundImage = '';
+                ambBg.style.backgroundImage = '';
+                ambBg.style.backgroundSize = '';
+                ambBg.style.backgroundPosition = '';
             }
 
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
@@ -2025,8 +2049,14 @@
             document.getElementById('main-content').scrollTo({top: 0});
         }
 
+        let currentOpenAlbumId = null;
         function playCurrentAlbum() {
-            playSong(0);
+            if (!currentOpenAlbumId) return playSong(0);
+            const tracks = cancionesData
+                .map((s, i) => ({ s, i }))
+                .filter(({ s }) => s.album === currentOpenAlbumId)
+                .sort((a, b) => a.s.trackNum - b.s.trackNum);
+            if (tracks.length) playSong(tracks[0].i);
         }
 
         function openArtistDetail(name, img) {
