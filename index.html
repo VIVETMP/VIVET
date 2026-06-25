@@ -71,7 +71,7 @@
         #ambient-bg {
             position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
             background: var(--bg-deep);
-            transition: background-color 0.8s var(--ease-cinematic);
+            transition: background-image 0.8s var(--ease-cinematic), background-color 0.8s var(--ease-cinematic);
         }
         #ambient-bg::after {
             content: '';
@@ -85,7 +85,7 @@
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
 
-        /* Estilo para el Badge de Canción Explícita */
+        /* Explicit Badge Style */
         .explicit-badge {
             display: inline-flex;
             align-items: center;
@@ -162,13 +162,17 @@
         .page-header p { font-size: 18px; color: var(--text-secondary); font-weight: 500; letter-spacing: -0.01em; }
         .section-title { font-family: var(--font-display); font-size: 28px; font-weight: 700; letter-spacing: -0.02em; margin: 56px 0 32px; display: flex; align-items: center; justify-content: space-between; }
 
+        .search-container { position: relative; width: 100%; max-width: 600px; margin-top: 24px; }
+        .search-input { width: 100%; padding: 18px 24px 18px 56px; background: var(--bg-glass-light); border: 1px solid var(--border-subtle); border-radius: 100px; font-family: var(--font-main); font-size: 16px; font-weight: 500; color: #fff; outline: none; transition: all 0.4s var(--ease-snappy); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+        .search-input:focus { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
+        .search-container i { position: absolute; left: 24px; top: 50%; transform: translateY(-50%); font-size: 22px; color: var(--text-secondary); pointer-events: none; }
+
         .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 32px; width: 100%; }
         
         .card { background: transparent; padding: 0; cursor: pointer; transition: all 0.5s var(--ease-snappy); position: relative; display: flex; flex-direction: column; gap: 16px; border-radius: 20px; }
         .card:hover { transform: translateY(-8px); }
         .card:active { transform: scale(0.95); transition: 0.2s; }
         
-        /* Contenedor sin fondo negro de relleno */
         .card-img-wrapper { position: relative; width: 100%; aspect-ratio: 1; border-radius: 20px; overflow: hidden; box-shadow: var(--shadow-float); background: transparent; z-index: 2; }
         .card-img-wrapper.is-circle { border-radius: 50%; }
         .card-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.7s var(--ease-fluid); }
@@ -181,7 +185,8 @@
         .card-play-btn:hover { background: #fff !important; color: #000 !important; border-color: #fff !important; transform: scale(1.1) !important; }
 
         .card-info { padding: 0; }
-        .card-title { font-family: var(--font-display); font-size: 17px; font-weight: 700; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-primary); margin-bottom: 4px; }
+        .card-title { font-family: var(--font-display); font-size: 17px; font-weight: 700; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-primary); margin-bottom: 4px; display: flex; align-items: center; justify-content: space-between; gap: 4px; }
+        .card-title .explicit-badge { margin-left: auto; }
         .card-subtitle { font-size: 14px; font-weight: 500; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .card.active .card-title { color: var(--accent-1); }
         .card-badge { position: absolute; top: 16px; left: 16px; background: rgba(0,0,0,0.5); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); color: #fff; font-size: 11px; font-weight: 800; padding: 6px 10px; border-radius: 8px; text-transform: uppercase; letter-spacing: 0.5px; z-index: 3; border: 1px solid rgba(255,255,255,0.1); }
@@ -196,7 +201,7 @@
         .track-row.active .track-num { color: transparent; position: relative; }
         .track-row.active .track-num::before { content: ""; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 20px; height: 20px; background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23fff"><rect x="4" y="10" width="4" height="14" rx="2" transform-origin="bottom"><animateTransform attributeName="transform" type="scale" values="1 0.3; 1 1; 1 0.3" dur="0.8s" repeatCount="indefinite"/></rect><rect x="10" y="4" width="4" height="20" rx="2" transform-origin="bottom"><animateTransform attributeName="transform" type="scale" values="1 1; 1 0.4; 1 1" dur="0.8s" repeatCount="indefinite"/></rect><rect x="16" y="12" width="4" height="12" rx="2" transform-origin="bottom"><animateTransform attributeName="transform" type="scale" values="1 0.5; 1 0.9; 1 0.5" dur="0.8s" repeatCount="indefinite"/></rect></svg>') no-repeat center; filter: drop-shadow(0 0 5px var(--accent-glow)); }
         .track-info { display: flex; flex-direction: column; gap: 4px; flex: 1; }
-        .track-title { font-family: var(--font-display); font-size: 16px; font-weight: 600; color: var(--text-primary); letter-spacing: -0.01em;}
+        .track-title { font-family: var(--font-display); font-size: 16px; font-weight: 600; color: var(--text-primary); letter-spacing: -0.01em; display: flex; align-items: center; }
         .track-artist { font-size: 14px; font-weight: 500; color: var(--text-secondary); }
         .track-row.active .track-title { color: var(--accent-1); text-shadow: 0 0 10px var(--accent-glow); }
 
@@ -209,7 +214,7 @@
         .hero-img.is-circle { border-radius: 50%; box-shadow: 0 30px 60px rgba(0,0,0,0.6); }
         .hero-meta { display: flex; flex-direction: column; gap: 10px; padding-bottom: 12px; z-index: 2; }
         .hero-label { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; color: var(--text-secondary); }
-        .hero-title { font-family: var(--font-display); font-size: 80px; font-weight: 900; letter-spacing: -0.04em; line-height: 1; margin-bottom: 8px; text-shadow: 0 10px 40px rgba(0,0,0,0.6); background: linear-gradient(to bottom right, #fff, #bbb); -webkit-background-clip: text; color: transparent; }
+        .hero-title { font-family: var(--font-display); font-size: 56px; font-weight: 900; letter-spacing: -0.04em; line-height: 1.1; margin-bottom: 8px; text-shadow: 0 10px 40px rgba(0,0,0,0.6); background: linear-gradient(to bottom right, #fff, #bbb); -webkit-background-clip: text; color: transparent; }
         .hero-subtitle { font-family: var(--font-display); font-size: 24px; font-weight: 700; color: var(--accent-1); text-shadow: 0 0 20px var(--accent-glow); }
         .hero-stats { font-size: 15px; font-weight: 500; color: var(--text-secondary); margin-top: 8px; display: flex; align-items: center; gap: 12px;}
         .hero-actions { display: flex; gap: 16px; margin-top: 32px; }
@@ -280,7 +285,6 @@
         .np-bg-overlay { position: absolute; inset: 0; background: radial-gradient(circle at bottom left, rgba(255,255,255,0.01) 0%, rgba(0,0,0,0.55) 100%); z-index: 1; pointer-events: none; }
         .np-grain { position: absolute; inset: 0; z-index: 2; opacity: 0.02; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency = '0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none;}
 
-        /* Collapse Button */
         .btn-collapse {
             position: absolute; top: 48px; right: 48px; width: 52px; height: 52px;
             background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); cursor: pointer; z-index: 10;
@@ -291,12 +295,10 @@
         .btn-collapse i { display: block; }
         .btn-collapse-mob { display: none; }
 
-        /* Integrated Minimal Container */
         .np-minimal-container {
             position: relative; z-index: 10; display: flex; align-items: center; gap: 40px;
         }
 
-        /* Contenedor sin fondo negro de relleno ni borde marcado */
         .np-art-wrap { 
             width: 180px; height: 180px; border-radius: 16px; 
             box-shadow: 0 25px 60px rgba(0,0,0,0.6); 
@@ -342,12 +344,11 @@
             .page-header h1 { font-size: 48px; }
             .hero-section { flex-direction: column; align-items: center; text-align: center; gap: 32px; margin-bottom: 48px;}
             .hero-img { width: 240px; height: 240px; }
-            .hero-title { font-size: 48px; }
+            .hero-title { font-size: 40px; }
             .hero-actions { justify-content: center; }
             .track-row { padding: 12px; gap: 16px; }
             .search-container { max-width: 100%; }
 
-            /* Fullscreen NP Mobile */
             #np-fs { padding: 48px 24px; align-items: center; justify-content: center; } 
             .btn-collapse { display: none; }
             .btn-collapse-mob { 
@@ -517,7 +518,7 @@
         </div>
     </div>
 
-    <!-- FULLSCREEN NOW PLAYING OVERLAY (APPLE TV STYLE) -->
+    <!-- FULLSCREEN NOW PLAYING OVERLAY -->
     <div id="np-fs">
         <div class="np-bg-overlay"></div>
         <div class="np-grain"></div>
@@ -578,40 +579,28 @@
             { id: "genesis", title: "GÉNESIS", artist: "Peso Pluma", cover: "https://cdn.discordapp.com/attachments/1243422250955182100/1519401333986431047/IMG_3306.png?ex=6a3d6c43&is=6a3c1ac3&hm=c1f32097df2ab22d020e9f1f02ee10fb55a2fd59e64ae3375ffde7dc859226ef&", year: "2023" }
         ];
 
-        // Shared ROA metadata to prevent redundancy across 37 tracks
+        // Shared ROA metadata
         const roaCover = tuyyoCoverUrl;
         const roaBg = "https://69rxyf0ea9.ucarecd.net/3fc66e80-32ba-4fb1-affa-a95e5a3e6204/7A88FC1734644D74AFEFC808A54CB249.png";
         const roaPalette = [
-            { r: 1, g: 1, b: 1 },
-            { r: 191, g: 74, b: 6 },
-            { r: 242, g: 70, b: 7 },
-            { r: 242, g: 50, b: 7 },
-            { r: 2, g: 35, b: 43 },
-            { r: 1, g: 1, b: 1 }
+            { r: 1, g: 1, b: 1 }, { r: 191, g: 74, b: 6 }, { r: 242, g: 70, b: 7 },
+            { r: 242, g: 50, b: 7 }, { r: 2, g: 35, b: 43 }, { r: 1, g: 1, b: 1 }
         ];
 
         // Shared POR SI MAÑANA NO ESTOY metadata
         const moonlightCover = "https://3lxj8u72k3.ucarecd.net/e4fe0e30-48fd-41e8-a686-39c2ae860ddb/moonlight.png";
         const moonlightBg = "https://69rxyf0ea9.ucarecd.net/2a82d23a-6d3f-45a1-a11d-ca42f2ab4cde/B3F943DBCA684424826974917FF841D0.png";
         const moonlightPalette = [
-            { r: 10, g: 25, b: 45 },
-            { r: 40, g: 75, b: 115 },
-            { r: 80, g: 125, b: 175 },
-            { r: 150, g: 195, b: 235 },
-            { r: 10, g: 25, b: 45 },
-            { r: 10, g: 25, b: 45 }
+            { r: 10, g: 25, b: 45 }, { r: 40, g: 75, b: 115 }, { r: 80, g: 125, b: 175 },
+            { r: 150, g: 195, b: 235 }, { r: 10, g: 25, b: 45 }, { r: 10, g: 25, b: 45 }
         ];
 
-        // Shared "nadie sabe lo que va a pasar mañana" metadata
+        // Shared "Nadie sabe lo que va a pasar mañana" metadata
         const nadieSabeCover = telefonoNuevoCoverUrl;
         const nadieSabeBg = "https://69rxyf0ea9.ucarecd.net/1d38da66-84c1-4b45-adb4-c83f3044eb7d/4F35CE85EF6B4CB5B3E7017AFFA079AD.png";
         const nadieSabePalette = [
-            { r: 218, g: 204, b: 193 },
-            { r: 217, g: 202, b: 193 },
-            { r: 98,  g: 117, b: 144 },
-            { r: 117, g: 58,  b: 45  },
-            { r: 64,  g: 28,  b: 24  },
-            { r: 218, g: 204, b: 193 }
+            { r: 218, g: 204, b: 193 }, { r: 217, g: 202, b: 193 }, { r: 98, g: 117, b: 144 },
+            { r: 117, g: 58, b: 45 }, { r: 64, g: 28, b: 24 }, { r: 218, g: 204, b: 193 }
         ];
 
         const cancionesData = [
@@ -624,12 +613,8 @@
                 trackNum: 3,
                 coverLoaded: true,
                 palette: [
-                    { r: 7, g: 38, b: 38 },     // #072626
-                    { r: 46, g: 89, b: 85 },    // #2E5955
-                    { r: 81, g: 140, b: 134 },  // #518C86
-                    { r: 136, g: 191, b: 186 }, // #88BFBA
-                    { r: 217, g: 207, b: 72 },  // #D9CF48
-                    { r: 7, g: 38, b: 38 }      // padding
+                    { r: 7, g: 38, b: 38 }, { r: 46, g: 89, b: 85 }, { r: 81, g: 140, b: 134 },
+                    { r: 136, g: 191, b: 186 }, { r: 217, g: 207, b: 72 }, { r: 7, g: 38, b: 38 }
                 ],
                 bgImage: "https://3lxj8u72k3.ucarecd.net/e6cb90d7-495a-4282-b565-9f8349bafe9c/PROBLEMAAA.png"
             },
@@ -642,55 +627,269 @@
                 trackNum: 8,
                 coverLoaded: true,
                 palette: [
-                    { r: 22, g: 52, b: 64 },    // #163440
-                    { r: 156, g: 164, b: 166 }, // #9CA4A6
-                    { r: 115, g: 2, b: 2 },     // #730202
-                    { r: 64, g: 1, b: 1 },      // #400101
-                    { r: 115, g: 81, b: 81 },   // #735151
-                    { r: 22, g: 52, b: 64 }     // padding
+                    { r: 22, g: 52, b: 64 }, { r: 156, g: 164, b: 166 }, { r: 115, g: 2, b: 2 },
+                    { r: 64, g: 1, b: 1 }, { r: 115, g: 81, b: 81 }, { r: 22, g: 52, b: 64 }
                 ],
                 bgImage: "https://3lxj8u72k3.ucarecd.net/16c02f5d-46a7-41ed-acad-188195b3b8dd/SIDEBITHCIHI.png"
             },
+            
             /* ==================================================================
-               NADIE SABE LO QUE VA A PASAR MAÑANA — 22 TRACKS (Bad Bunny, 2023)
+               NADIE SABE LO QUE VA A PASAR MAÑANA — COMPLETE TRACKLIST (22 Tracks)
                ================================================================== */
-            { title: "NADIE SABE", artist: "Bad Bunny", url: "https://files.catbox.moe/81i5i9.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 1, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
-            { title: "MONACO", artist: "Bad Bunny", url: "https://files.catbox.moe/i3k4mg.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 2, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
-            { title: "FINA", artist: "Bad Bunny & Young Miko", url: "https://files.catbox.moe/t0kzte.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 3, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
-            { title: "HIBIKI", artist: "Bad Bunny & Mora", url: "https://files.catbox.moe/ifxel2.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 4, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
-            { title: "MR. OCTOBER", artist: "Bad Bunny", url: "https://files.catbox.moe/l8pkvo.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 5, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
-            { title: "CYBERTRUCK", artist: "Bad Bunny", url: "https://files.catbox.moe/lmyd81.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 6, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
-            { title: "VOU 787", artist: "Bad Bunny", url: "https://files.catbox.moe/j0ifz6.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 7, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
-            { title: "SEDA", artist: "Bad Bunny & Bryant Myers", url: "https://files.catbox.moe/h9em77.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 8, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
-            { title: "GRACIAS POR NADA", artist: "Bad Bunny", url: "https://files.catbox.moe/0afdmi.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 9, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
-            { title: "TELEFONO NUEVO", artist: "Bad Bunny & Luar La L", url: "https://files.catbox.moe/ocv1jn.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 10, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
-            { title: "BABY NUEVA", artist: "Bad Bunny", url: "https://files.catbox.moe/c494lg.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 11, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
-            { title: "MERCEDES CAROTA", artist: "Bad Bunny & YovngChimi", url: "https://files.catbox.moe/kbi3ng.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 12, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
-            { title: "LOS PITS", artist: "Bad Bunny", url: "https://files.catbox.moe/5hi9zw.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 13, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
-            { title: "VUELVE CANDY B", artist: "Bad Bunny", url: "https://files.catbox.moe/c7c2tw.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 14, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
-            { title: "BATICANO", artist: "Bad Bunny", url: "https://files.catbox.moe/0ioak8.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 15, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
-            { title: "NO ME QUIERO CASAR", artist: "Bad Bunny", url: "https://files.catbox.moe/z0pt1j.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 16, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
-            { title: "WHERE SHE GOES", artist: "Bad Bunny", url: "https://files.catbox.moe/lr48kr.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 17, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
-            { title: "THUNDER Y LIGHTNING", artist: "Bad Bunny & Eladio Carrión", url: "https://files.catbox.moe/lakqe7.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 18, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
-            { title: "PERRO NEGRO", artist: "Bad Bunny & Feid", url: "https://files.catbox.moe/9zbzhl.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 19, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
-            { title: "EUROPA :(", artist: "Bad Bunny", url: "https://files.catbox.moe/0w8v89.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 20, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
-            { title: "ACHO PR", artist: "Bad Bunny, Arcángel, De La Ghetto & Ñengo Flow", url: "https://files.catbox.moe/nxz1nf.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 21, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
-            { title: "UN PREVIEW", artist: "Bad Bunny", url: "https://files.catbox.moe/ccfzeb.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 22, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
+            {
+                title: "NADIE SABE",
+                artist: "Bad Bunny",
+                url: "https://files.catbox.moe/81i5i9.mp3",
+                cover: nadieSabeCover,
+                album: "nadie-sabe-album",
+                trackNum: 1,
+                coverLoaded: true,
+                palette: nadieSabePalette,
+                bgImage: nadieSabeBg
+            },
+            {
+                title: "MONACO",
+                artist: "Bad Bunny",
+                url: "https://files.catbox.moe/i3k4mg.mp3",
+                cover: nadieSabeCover,
+                album: "nadie-sabe-album",
+                trackNum: 2,
+                coverLoaded: true,
+                palette: nadieSabePalette,
+                bgImage: nadieSabeBg
+            },
+            {
+                title: "FINA",
+                artist: "Bad Bunny & Young Miko",
+                url: "https://files.catbox.moe/t0kzte.mp3",
+                cover: nadieSabeCover,
+                album: "nadie-sabe-album",
+                trackNum: 3,
+                coverLoaded: true,
+                palette: nadieSabePalette,
+                bgImage: nadieSabeBg
+            },
+            {
+                title: "HIBIKI",
+                artist: "Bad Bunny & Mora",
+                url: "https://files.catbox.moe/ifxel2.mp3",
+                cover: nadieSabeCover,
+                album: "nadie-sabe-album",
+                trackNum: 4,
+                coverLoaded: true,
+                palette: nadieSabePalette,
+                bgImage: nadieSabeBg
+            },
+            {
+                title: "MR. OCTOBER",
+                artist: "Bad Bunny",
+                url: "https://files.catbox.moe/l8pkvo.mp3",
+                cover: nadieSabeCover,
+                album: "nadie-sabe-album",
+                trackNum: 5,
+                coverLoaded: true,
+                palette: nadieSabePalette,
+                bgImage: nadieSabeBg
+            },
+            {
+                title: "CYBERTRUCK",
+                artist: "Bad Bunny",
+                url: "https://files.catbox.moe/lmyd81.mp3",
+                cover: nadieSabeCover,
+                album: "nadie-sabe-album",
+                trackNum: 6,
+                coverLoaded: true,
+                palette: nadieSabePalette,
+                bgImage: nadieSabeBg
+            },
+            {
+                title: "VOU 787",
+                artist: "Bad Bunny",
+                url: "https://files.catbox.moe/j0ifz6.mp3",
+                cover: nadieSabeCover,
+                album: "nadie-sabe-album",
+                trackNum: 7,
+                coverLoaded: true,
+                palette: nadieSabePalette,
+                bgImage: nadieSabeBg
+            },
+            {
+                title: "SEDA",
+                artist: "Bad Bunny & Bryant Myers",
+                url: "https://files.catbox.moe/h9em77.mp3",
+                cover: nadieSabeCover,
+                album: "nadie-sabe-album",
+                trackNum: 8,
+                coverLoaded: true,
+                palette: nadieSabePalette,
+                bgImage: nadieSabeBg
+            },
+            {
+                title: "GRACIAS POR NADA",
+                artist: "Bad Bunny",
+                url: "https://files.catbox.moe/0afdmi.mp3",
+                cover: nadieSabeCover,
+                album: "nadie-sabe-album",
+                trackNum: 9,
+                coverLoaded: true,
+                palette: nadieSabePalette,
+                bgImage: nadieSabeBg
+            },
+            {
+                title: "TELÉFONO NUEVO",
+                artist: "Bad Bunny & Luar La L",
+                url: "https://files.catbox.moe/ocv1jn.mp3",
+                cover: nadieSabeCover,
+                album: "nadie-sabe-album",
+                trackNum: 10,
+                coverLoaded: true,
+                palette: nadieSabePalette,
+                bgImage: nadieSabeBg
+            },
+            {
+                title: "BABY NUEVA",
+                artist: "Bad Bunny",
+                url: "https://files.catbox.moe/c494lg.mp3",
+                cover: nadieSabeCover,
+                album: "nadie-sabe-album",
+                trackNum: 11,
+                coverLoaded: true,
+                palette: nadieSabePalette,
+                bgImage: nadieSabeBg
+            },
+            {
+                title: "MERCEDES CAROTA",
+                artist: "Bad Bunny & YovngChimi",
+                url: "https://files.catbox.moe/kbi3ng.mp3",
+                cover: nadieSabeCover,
+                album: "nadie-sabe-album",
+                trackNum: 12,
+                coverLoaded: true,
+                palette: nadieSabePalette,
+                bgImage: nadieSabeBg
+            },
+            {
+                title: "LOS PITS",
+                artist: "Bad Bunny",
+                url: "https://files.catbox.moe/5hi9zw.mp3",
+                cover: nadieSabeCover,
+                album: "nadie-sabe-album",
+                trackNum: 13,
+                coverLoaded: true,
+                palette: nadieSabePalette,
+                bgImage: nadieSabeBg
+            },
+            {
+                title: "VUELVE CANDY B",
+                artist: "Bad Bunny",
+                url: "https://files.catbox.moe/c7c2tw.mp3",
+                cover: nadieSabeCover,
+                album: "nadie-sabe-album",
+                trackNum: 14,
+                coverLoaded: true,
+                palette: nadieSabePalette,
+                bgImage: nadieSabeBg
+            },
+            {
+                title: "BATICANO",
+                artist: "Bad Bunny",
+                url: "https://files.catbox.moe/0ioak8.mp3",
+                cover: nadieSabeCover,
+                album: "nadie-sabe-album",
+                trackNum: 15,
+                coverLoaded: true,
+                palette: nadieSabePalette,
+                bgImage: nadieSabeBg
+            },
+            {
+                title: "NO ME QUIERO CASAR",
+                artist: "Bad Bunny",
+                url: "https://files.catbox.moe/z0pt1j.mp3",
+                cover: nadieSabeCover,
+                album: "nadie-sabe-album",
+                trackNum: 16,
+                coverLoaded: true,
+                palette: nadieSabePalette,
+                bgImage: nadieSabeBg
+            },
+            {
+                title: "WHERE SHE GOES",
+                artist: "Bad Bunny",
+                url: "https://files.catbox.moe/lr48kr.mp3",
+                cover: nadieSabeCover,
+                album: "nadie-sabe-album",
+                trackNum: 17,
+                coverLoaded: true,
+                palette: nadieSabePalette,
+                bgImage: nadieSabeBg
+            },
+            {
+                title: "THUNDER Y LIGHTNING",
+                artist: "Bad Bunny & Eladio Carrión",
+                url: "https://files.catbox.moe/lakqe7.mp3",
+                cover: nadieSabeCover,
+                album: "nadie-sabe-album",
+                trackNum: 18,
+                coverLoaded: true,
+                palette: nadieSabePalette,
+                bgImage: nadieSabeBg
+            },
+            {
+                title: "PERRO NEGRO",
+                artist: "Bad Bunny & Feid",
+                url: "https://files.catbox.moe/9zbzhl.mp3",
+                cover: nadieSabeCover,
+                album: "nadie-sabe-album",
+                trackNum: 19,
+                coverLoaded: true,
+                palette: nadieSabePalette,
+                bgImage: nadieSabeBg
+            },
+            {
+                title: "EUROPA :(",
+                artist: "Bad Bunny",
+                url: "https://files.catbox.moe/0w8v89.mp3",
+                cover: nadieSabeCover,
+                album: "nadie-sabe-album",
+                trackNum: 20,
+                coverLoaded: true,
+                palette: nadieSabePalette,
+                bgImage: nadieSabeBg
+            },
+            {
+                title: "ACHO PR",
+                artist: "Bad Bunny, Arcángel, De La Ghetto & Ñengo Flow",
+                url: "https://files.catbox.moe/nxz1nf.mp3",
+                cover: nadieSabeCover,
+                album: "nadie-sabe-album",
+                trackNum: 21,
+                coverLoaded: true,
+                palette: nadieSabePalette,
+                bgImage: nadieSabeBg
+            },
+            {
+                title: "UN PREVIEW",
+                artist: "Bad Bunny",
+                url: "https://files.catbox.moe/ccfzeb.mp3",
+                cover: nadieSabeCover,
+                album: "nadie-sabe-album",
+                trackNum: 22,
+                coverLoaded: true,
+                palette: nadieSabePalette,
+                bgImage: nadieSabeBg
+            },
+
             {
                 title: "Lately",
                 artist: "Luar La L",
-                url: "https://4nemxki6k8.ucarecd.net/96ecc174-aa34-4068-90ad-cfc1aa8de6ad/SideBitch_spotdownorg.mp3", // Temporary fallback
+                url: "https://4nemxki6k8.ucarecd.net/96ecc174-aa34-4068-90ad-cfc1aa8de6ad/SideBitch_spotdownorg.mp3",
                 cover: latelyCoverUrl,
                 album: "",
                 trackNum: 1,
                 coverLoaded: true,
                 palette: [
-                    { r: 71, g: 50, b: 43 },    // #47322B
-                    { r: 217, g: 180, b: 113 }, // #D9B471
-                    { r: 47, g: 39, b: 36 },    // #2F2724
-                    { r: 67, g: 46, b: 40 },    // #432E28
-                    { r: 38, g: 37, b: 37 },    // #262525
-                    { r: 71, g: 50, b: 43 }     // padding
+                    { r: 71, g: 50, b: 43 }, { r: 217, g: 180, b: 113 }, { r: 47, g: 39, b: 36 },
+                    { r: 67, g: 46, b: 40 }, { r: 38, g: 37, b: 37 }, { r: 71, g: 50, b: 43 }
                 ],
                 bgImage: "https://3lxj8u72k3.ucarecd.net/e94f5434-37c6-4d4c-84ed-579b7fdb9363/LATELY.png"
             },
@@ -703,12 +902,8 @@
                 trackNum: 4,
                 coverLoaded: true,
                 palette: [
-                    { r: 117, g: 114, b: 109 }, // #75726D
-                    { r: 98, g: 95, b: 90 },    // #625F5A
-                    { r: 96, g: 93, b: 88 },    // #605D58
-                    { r: 38, g: 37, b: 35 },    // #262523
-                    { r: 31, g: 30, b: 28 },    // #1F1E1C
-                    { r: 117, g: 114, b: 109 }  // padding
+                    { r: 117, g: 114, b: 109 }, { r: 98, g: 95, b: 90 }, { r: 96, g: 93, b: 88 },
+                    { r: 38, g: 37, b: 35 }, { r: 31, g: 30, b: 28 }, { r: 117, g: 114, b: 109 }
                 ],
                 bgImage: "https://3lxj8u72k3.ucarecd.net/f80832e9-95c5-4b70-8c77-4c548ed86dfd/SHELIKETOFUCK.png"
             },
@@ -721,12 +916,8 @@
                 trackNum: 1,
                 coverLoaded: true,
                 palette: [
-                    { r: 242, g: 19, b: 60 },   // #F2133C
-                    { r: 242, g: 46, b: 98 },   // #F22E62
-                    { r: 64, g: 22, b: 41 },    // #401629
-                    { r: 242, g: 114, b: 174 }, // #F272AE
-                    { r: 242, g: 153, b: 194 }, // #F299C2
-                    { r: 242, g: 19, b: 60 }    // padding
+                    { r: 242, g: 19, b: 60 }, { r: 242, g: 46, b: 98 }, { r: 64, g: 22, b: 41 },
+                    { r: 242, g: 114, b: 174 }, { r: 242, g: 153, b: 194 }, { r: 242, g: 19, b: 60 }
                 ],
                 bgImage: "https://3lxj8u72k3.ucarecd.net/9d1e1847-d2d0-4d9b-b4e0-bd3609ae6c55/Piernsaenmi.png"
             },
@@ -739,12 +930,8 @@
                 trackNum: 5,
                 coverLoaded: true,
                 palette: [
-                    { r: 242, g: 107, b: 143 }, // #F26B8F
-                    { r: 242, g: 159, b: 5 },   // #F29F05
-                    { r: 242, g: 137, b: 7 },   // #F28907
-                    { r: 242, g: 93, b: 7 },    // #F25D07
-                    { r: 217, g: 11, b: 11 },   // #D90B0B
-                    { r: 242, g: 107, b: 143 }  // padding
+                    { r: 242, g: 107, b: 143 }, { r: 242, g: 159, b: 5 }, { r: 242, g: 137, b: 7 },
+                    { r: 242, g: 93, b: 7 }, { r: 217, g: 11, b: 11 }, { r: 242, g: 107, b: 143 }
                 ],
                 bgImage: "https://3lxj8u72k3.ucarecd.net/2212c066-d3b1-4685-b9b1-3a1b15c4d20b/UVST1.png"
             },
@@ -757,12 +944,8 @@
                 trackNum: 1,
                 coverLoaded: true,
                 palette: [
-                    { r: 12, g: 10, b: 10 },    // #0C0A0A
-                    { r: 162, g: 111, b: 104 }, // #A26F68
-                    { r: 102, g: 60, b: 57 },   // #663C39
-                    { r: 73, g: 44, b: 42 },    // #492C2A
-                    { r: 13, g: 10, b: 10 },    // #0D0A0A
-                    { r: 12, g: 10, b: 10 }     // padding
+                    { r: 12, g: 10, b: 10 }, { r: 162, g: 111, b: 104 }, { r: 102, g: 60, b: 57 },
+                    { r: 73, g: 44, b: 42 }, { r: 13, g: 10, b: 10 }, { r: 12, g: 10, b: 10 }
                 ],
                 bgImage: "https://3lxj8u72k3.ucarecd.net/c345f7c6-ed11-4947-858d-9e22b88fbd29/4444.png"
             },
@@ -775,11 +958,8 @@
                 trackNum: 10,
                 coverLoaded: true,
                 palette: [
-                    { r: 11, g: 38, b: 18 },    // #0B2612
-                    { r: 114, g: 140, b: 74 },  // #728C4A
-                    { r: 151, g: 121, b: 92 },  // #97795C
-                    { r: 166, g: 134, b: 106 }, // #A6866A
-                    { r: 115, g: 38, b: 18 }     // padding
+                    { r: 11, g: 38, b: 18 }, { r: 114, g: 140, b: 74 }, { r: 151, g: 121, b: 92 },
+                    { r: 166, g: 134, b: 106 }, { r: 115, g: 38, b: 18 }
                 ],
                 bgImage: "https://69rxyf0ea9.ucarecd.net/96474a8c-64ee-4a8e-bd48-6208b5327ffa/111CDB3352424910880F7A37469125CD.png"
             },
@@ -792,12 +972,8 @@
                 trackNum: 4,
                 coverLoaded: true,
                 palette: [
-                    { r: 10, g: 10, b: 10 },    // #0A0A0A
-                    { r: 139, g: 139, b: 139 },  // #8B8B8B
-                    { r: 67, g: 67, b: 67 },    // #434343
-                    { r: 57, g: 57, b: 57 },    // #393939
-                    { r: 10, g: 10, b: 10 },    // #0A0A0A
-                    { r: 10, g: 10, b: 10 }     // padding
+                    { r: 10, g: 10, b: 10 }, { r: 139, g: 139, b: 139 }, { r: 67, g: 67, b: 67 },
+                    { r: 57, g: 57, b: 57 }, { r: 10, g: 10, b: 10 }, { r: 10, g: 10, b: 10 }
                 ],
                 bgImage: "https://69rxyf0ea9.ucarecd.net/2d6de18d-c1bd-48ae-861c-b159d0100997/D39C8B5FC4534BC4B3848C78E23535F6.png"
             },
@@ -810,12 +986,8 @@
                 trackNum: 1,
                 coverLoaded: true,
                 palette: [
-                    { r: 23, g: 42, b: 52 },    // #172A34
-                    { r: 115, g: 129, b: 138 }, // #73818A
-                    { r: 28, g: 50, b: 66 },    // #1C3242
-                    { r: 62, g: 78, b: 92 },    // #3E4E5C
-                    { r: 85, g: 101, b: 111 },  // #55656F
-                    { r: 23, g: 42, b: 52 }     // padding
+                    { r: 23, g: 42, b: 52 }, { r: 115, g: 129, b: 138 }, { r: 28, g: 50, b: 66 },
+                    { r: 62, g: 78, b: 92 }, { r: 85, g: 101, b: 111 }, { r: 23, g: 42, b: 52 }
                 ],
                 bgImage: "https://69rxyf0ea9.ucarecd.net/71577bc6-ee8d-4773-8195-e4f0f2d0baba/3B0E2EE9296C48AAB24B25387F4DBA95.png"
             },
@@ -828,12 +1000,8 @@
                 trackNum: 1,
                 coverLoaded: true,
                 palette: [
-                    { r: 13, g: 13, b: 13 },    // #0D0D0D
-                    { r: 191, g: 17, b: 32 },   // #BF1120
-                    { r: 166, g: 5, b: 18 },    // #A60512
-                    { r: 115, g: 2, b: 2 },     // #730202
-                    { r: 191, g: 186, b: 181 }, // #BFBAB5
-                    { r: 13, g: 13, b: 13 }     // padding
+                    { r: 13, g: 13, b: 13 }, { r: 191, g: 17, b: 32 }, { r: 166, g: 5, b: 18 },
+                    { r: 115, g: 2, b: 2 }, { r: 191, g: 186, b: 181 }, { r: 13, g: 13, b: 13 }
                 ],
                 bgImage: "https://3lxj8u72k3.ucarecd.net/d4b3525b-e640-4328-a5ae-b13dfa190247/Netflixandchill.png"
             },
@@ -846,12 +1014,8 @@
                 trackNum: 1,
                 coverLoaded: true,
                 palette: [
-                    { r: 4, g: 4, b: 4 },       // #040404
-                    { r: 94, g: 140, b: 140 },  // #5E8C8C
-                    { r: 242, g: 117, b: 7 },   // #F27507
-                    { r: 217, g: 82, b: 4 },    // #D95204
-                    { r: 13, g: 13, b: 13 },    // #0D0D0D
-                    { r: 4, g: 4, b: 4 }        // padding
+                    { r: 4, g: 4, b: 4 }, { r: 94, g: 140, b: 140 }, { r: 242, g: 117, b: 7 },
+                    { r: 217, g: 82, b: 4 }, { r: 13, g: 13, b: 13 }, { r: 4, g: 4, b: 4 }
                 ],
                 bgImage: "https://3lxj8u72k3.ucarecd.net/d3f1cf8c-1ba1-4fca-8191-640c6027d730/2222.png"
             },
@@ -864,12 +1028,8 @@
                 trackNum: 1,
                 coverLoaded: true,
                 palette: [
-                    { r: 18, g: 18, b: 18 },    // #121212
-                    { r: 177, g: 118, b: 67 },  // #B17643
-                    { r: 166, g: 96, b: 56 },   // #A66038
-                    { r: 121, g: 31, b: 37 },   // #791F25
-                    { r: 86, g: 58, b: 36 },    // #563A24
-                    { r: 18, g: 18, b: 18 }     // padding
+                    { r: 18, g: 18, b: 18 }, { r: 177, g: 118, b: 67 }, { r: 166, g: 96, b: 56 },
+                    { r: 121, g: 31, b: 37 }, { r: 86, g: 58, b: 36 }, { r: 18, g: 18, b: 18 }
                 ],
                 bgImage: "https://3lxj8u72k3.ucarecd.net/ac311f76-1a48-444a-986c-d3eff56723f4/CNM.png"
             },
@@ -882,12 +1042,8 @@
                 trackNum: 1,
                 coverLoaded: true,
                 palette: [
-                    { r: 5, g: 175, b: 242 },   // #05AFF2
-                    { r: 61, g: 191, b: 242 },  // #3DBFF2
-                    { r: 7, g: 199, b: 242 },   // #07C7F2
-                    { r: 114, g: 219, b: 242 }, // #72DBF2
-                    { r: 113, g: 217, b: 254 }, // #71D9FE
-                    { r: 5, g: 175, b: 242 }    // padding
+                    { r: 5, g: 175, b: 242 }, { r: 61, g: 191, b: 242 }, { r: 7, g: 199, b: 242 },
+                    { r: 114, g: 219, b: 242 }, { r: 113, g: 217, b: 254 }, { r: 5, g: 175, b: 242 }
                 ],
                 bgImage: "https://69rxyf0ea9.ucarecd.net/be9ff552-8a78-455f-97e4-5d3be5ad3157/83E724E8C383492393E882E2B2B4B79E.png"
             },
@@ -900,12 +1056,8 @@
                 trackNum: 3,
                 coverLoaded: true,
                 palette: [
-                    { r: 0, g: 2, b: 6 },       // #000206
-                    { r: 255, g: 4, b: 2 },     // #FF0402
-                    { r: 2, g: 55, b: 90 },     // #02375A
-                    { r: 0, g: 48, b: 86 },     // #003056
-                    { r: 0, g: 19, b: 49 },     // #001331
-                    { r: 0, g: 2, b: 6 }        // padding
+                    { r: 0, g: 2, b: 6 }, { r: 255, g: 4, b: 2 }, { r: 2, g: 55, b: 90 },
+                    { r: 0, g: 48, b: 86 }, { r: 0, g: 19, b: 49 }, { r: 0, g: 2, b: 6 }
                 ]
             },
             {
@@ -917,12 +1069,8 @@
                 trackNum: 1,
                 coverLoaded: true,
                 palette: [
-                    { r: 15, g: 20, b: 35 },
-                    { r: 50, g: 70, b: 120 },
-                    { r: 100, g: 130, b: 200 },
-                    { r: 180, g: 210, b: 255 },
-                    { r: 15, g: 20, b: 35 },
-                    { r: 15, g: 20, b: 35 }
+                    { r: 15, g: 20, b: 35 }, { r: 50, g: 70, b: 120 }, { r: 100, g: 130, b: 200 },
+                    { r: 180, g: 210, b: 255 }, { r: 15, g: 20, b: 35 }, { r: 15, g: 20, b: 35 }
                 ],
                 bgImage: "https://69rxyf0ea9.ucarecd.net/1d19a5e2-b909-4909-9680-eaef6486d3d1/7192FA09047C49B287FF556EFB3D9AE7.png"
             },
@@ -935,12 +1083,8 @@
                 trackNum: 1,
                 coverLoaded: true,
                 palette: [
-                    { r: 20, g: 15, b: 15 },
-                    { r: 80, g: 40, b: 40 },
-                    { r: 150, g: 80, b: 80 },
-                    { r: 220, g: 150, b: 150 },
-                    { r: 20, g: 15, b: 15 },
-                    { r: 20, g: 15, b: 15 }
+                    { r: 20, g: 15, b: 15 }, { r: 80, g: 40, b: 40 }, { r: 150, g: 80, b: 80 },
+                    { r: 220, g: 150, b: 150 }, { r: 20, g: 15, b: 15 }, { r: 20, g: 15, b: 15 }
                 ],
                 bgImage: "https://69rxyf0ea9.ucarecd.net/bf86ea3d-ce5a-4dd1-9a12-dcb70f16f841/EDC88DBBE33A492D9FF6878A4D50FA37.png"
             },
@@ -953,12 +1097,8 @@
                 trackNum: 1,
                 coverLoaded: true,
                 palette: [
-                    { r: 20, g: 20, b: 20 },
-                    { r: 100, g: 100, b: 100 },
-                    { r: 150, g: 150, b: 150 },
-                    { r: 200, g: 200, b: 200 },
-                    { r: 20, g: 20, b: 20 },
-                    { r: 20, g: 20, b: 20 }
+                    { r: 20, g: 20, b: 20 }, { r: 100, g: 100, b: 100 }, { r: 150, g: 150, b: 150 },
+                    { r: 200, g: 200, b: 200 }, { r: 20, g: 20, b: 20 }, { r: 20, g: 20, b: 20 }
                 ],
                 bgImage: "https://69rxyf0ea9.ucarecd.net/3afd95e8-6746-406b-b78b-4674d0338fad/BFFD694F72D243A7ADB25DE1DFDCAD64.png"
             },
@@ -971,12 +1111,8 @@
                 trackNum: 1,
                 coverLoaded: true,
                 palette: [
-                    { r: 15, g: 15, b: 25 },
-                    { r: 70, g: 70, b: 110 },
-                    { r: 120, g: 120, b: 170 },
-                    { r: 190, g: 190, b: 230 },
-                    { r: 15, g: 15, b: 25 },
-                    { r: 15, g: 15, b: 25 }
+                    { r: 15, g: 15, b: 25 }, { r: 70, g: 70, b: 110 }, { r: 120, g: 120, b: 170 },
+                    { r: 190, g: 190, b: 230 }, { r: 15, g: 15, b: 25 }, { r: 15, g: 15, b: 25 }
                 ],
                 bgImage: "https://69rxyf0ea9.ucarecd.net/059cf688-0b68-461f-990b-57e60f1bbd6c/EF6D2C02DAD84839980B9C58215BE00C.png"
             },
@@ -985,412 +1121,154 @@
                PRIVATE SUITE (COMPLETE EP EDITION) — 37 TRACKS
                ================================================================== */
             {
-                title: "Freelance",
-                artist: "ROA",
-                url: "https://43rdwl1h89.ucarecd.net/44b3c18e-6950-4083-8f54-c7a31c1233a7/Freelance_spotdownorg.mp3",
-                cover: roaCover,
-                album: "private-suite-complete",
-                trackNum: 1,
-                coverLoaded: true,
-                palette: roaPalette,
-                bgImage: roaBg
+                title: "Freelance", artist: "ROA", url: "https://43rdwl1h89.ucarecd.net/44b3c18e-6950-4083-8f54-c7a31c1233a7/Freelance_spotdownorg.mp3",
+                cover: roaCover, album: "private-suite-complete", trackNum: 1, coverLoaded: true, palette: roaPalette, bgImage: roaBg
             },
             {
-                title: "UuU",
-                artist: "ROA & Hades66",
-                url: "https://43rdwl1h89.ucarecd.net/db1e054e-6a16-41b5-801e-cf0db8d09a40/UuU_spotdownorg.mp3",
-                cover: roaCover,
-                album: "private-suite-complete",
-                trackNum: 2,
-                coverLoaded: true,
-                palette: roaPalette,
-                bgImage: roaBg
+                title: "UuU", artist: "ROA & Hades66", url: "https://43rdwl1h89.ucarecd.net/db1e054e-6a16-41b5-801e-cf0db8d09a40/UuU_spotdownorg.mp3",
+                cover: roaCover, album: "private-suite-complete", trackNum: 2, coverLoaded: true, palette: roaPalette, bgImage: roaBg
             },
             {
-                title: "JETSKI",
-                artist: "ROA",
-                url: "https://43rdwl1h89.ucarecd.net/27529a31-a2fd-45a4-8198-4837e2a468cd/JETSKI_spotdownorg.mp3",
-                cover: roaCover,
-                album: "private-suite-complete",
-                trackNum: 3,
-                coverLoaded: true,
-                palette: roaPalette,
-                bgImage: roaBg
+                title: "JETSKI", artist: "ROA", url: "https://43rdwl1h89.ucarecd.net/27529a31-a2fd-45a4-8198-4837e2a468cd/JETSKI_spotdownorg.mp3",
+                cover: roaCover, album: "private-suite-complete", trackNum: 3, coverLoaded: true, palette: roaPalette, bgImage: roaBg
             },
             {
-                title: "11:11 (interlude)",
-                artist: "ROA",
-                url: "https://43rdwl1h89.ucarecd.net/8d268a23-9116-414a-87ed-57e378143bcb/11_11Interlude_spotdownorg.mp3",
-                cover: roaCover,
-                album: "private-suite-complete",
-                trackNum: 4,
-                coverLoaded: true,
-                palette: roaPalette,
-                bgImage: roaBg
+                title: "11:11 (interlude)", artist: "ROA", url: "https://43rdwl1h89.ucarecd.net/8d268a23-9116-414a-87ed-57e378143bcb/11_11Interlude_spotdownorg.mp3",
+                cover: roaCover, album: "private-suite-complete", trackNum: 4, coverLoaded: true, palette: roaPalette, bgImage: roaBg
             },
             {
-                title: "Bellakeame",
-                artist: "ROA",
-                url: "https://43rdwl1h89.ucarecd.net/d0d19a4c-9670-48fc-add5-55ffbdc30a53/Bellakeame_spotdownorg.mp3",
-                cover: roaCover,
-                album: "private-suite-complete",
-                trackNum: 5,
-                coverLoaded: true,
-                palette: roaPalette,
-                bgImage: roaBg
+                title: "Bellakeame", artist: "ROA", url: "https://43rdwl1h89.ucarecd.net/d0d19a4c-9670-48fc-add5-55ffbdc30a53/Bellakeame_spotdownorg.mp3",
+                cover: roaCover, album: "private-suite-complete", trackNum: 5, coverLoaded: true, palette: roaPalette, bgImage: roaBg
             },
             {
-                title: "Noche Pasajera",
-                artist: "ROA",
-                url: "https://43rdwl1h89.ucarecd.net/14c842db-a936-4605-9947-af6866b31346/NochePasajera_spotdownorg.mp3",
-                cover: roaCover,
-                album: "private-suite-complete",
-                trackNum: 6,
-                coverLoaded: true,
-                palette: roaPalette,
-                bgImage: roaBg
+                title: "Noche Pasajera", artist: "ROA", url: "https://43rdwl1h89.ucarecd.net/14c842db-a936-4605-9947-af6866b31346/NochePasajera_spotdownorg.mp3",
+                cover: roaCover, album: "private-suite-complete", trackNum: 6, coverLoaded: true, palette: roaPalette, bgImage: roaBg
             },
             {
-                title: "LA CURA… coming soon (Outro)",
-                artist: "ROA",
-                url: "https://43rdwl1h89.ucarecd.net/b9aed547-543e-40f3-994f-2b61e87b3534/LACURAcomingsoonOutro_spotdownorg.mp3",
-                cover: roaCover,
-                album: "private-suite-complete",
-                trackNum: 7,
-                coverLoaded: true,
-                palette: roaPalette,
-                bgImage: roaBg
+                title: "LA CURA… coming soon (Outro)", artist: "ROA", url: "https://43rdwl1h89.ucarecd.net/b9aed547-543e-40f3-994f-2b61e87b3534/LACURAcomingsoonOutro_spotdownorg.mp3",
+                cover: roaCover, album: "private-suite-complete", trackNum: 7, coverLoaded: true, palette: roaPalette, bgImage: roaBg
             },
             {
-                title: "La Cura",
-                artist: "ROA",
-                url: "https://43rdwl1h89.ucarecd.net/4fc37b60-e202-4ea6-ad68-46714eb54363/LaCura_spotdownorg.mp3",
-                cover: roaCover,
-                album: "private-suite-complete",
-                trackNum: 8,
-                coverLoaded: true,
-                palette: roaPalette,
-                bgImage: roaBg
+                title: "La Cura", artist: "ROA", url: "https://43rdwl1h89.ucarecd.net/4fc37b60-e202-4ea6-ad68-46714eb54363/LaCura_spotdownorg.mp3",
+                cover: roaCover, album: "private-suite-complete", trackNum: 8, coverLoaded: true, palette: roaPalette, bgImage: roaBg
             },
             {
-                title: "Y Si Te Llamo",
-                artist: "ROA",
-                url: "https://43rdwl1h89.ucarecd.net/ef74b9aa-c329-4a47-8f0e-2f6a5bcd45f6/YSiTeLlamo_spotdownorg.mp3",
-                cover: roaCover,
-                album: "private-suite-complete",
-                trackNum: 9,
-                coverLoaded: true,
-                palette: roaPalette,
-                bgImage: roaBg
+                title: "Y Si Te Llamo", artist: "ROA", url: "https://43rdwl1h89.ucarecd.net/ef74b9aa-c329-4a47-8f0e-2f6a5bcd45f6/YSiTeLlamo_spotdownorg.mp3",
+                cover: roaCover, album: "private-suite-complete", trackNum: 9, coverLoaded: true, palette: roaPalette, bgImage: roaBg
             },
             {
-                title: "NOCHE PASAJERA II",
-                artist: "ROA & Jay Wheeler",
-                url: "https://43rdwl1h89.ucarecd.net/36b8f21a-ba5e-4174-a1ee-afc5ccbdde9b/NOCHEPASAJERAII_spotdownorg.mp3",
-                cover: roaCover,
-                album: "private-suite-complete",
-                trackNum: 10,
-                coverLoaded: true,
-                palette: roaPalette,
-                bgImage: roaBg
+                title: "NOCHE PASAJERA II", artist: "ROA & Jay Wheeler", url: "https://43rdwl1h89.ucarecd.net/36b8f21a-ba5e-4174-a1ee-afc5ccbdde9b/NOCHEPASAJERAII_spotdownorg.mp3",
+                cover: roaCover, album: "private-suite-complete", trackNum: 10, coverLoaded: true, palette: roaPalette, bgImage: roaBg
             },
             {
-                title: "JETSKI - Remix",
-                artist: "ROA, Omar Courtz, Dei V & Bryant Myers",
-                url: "https://43rdwl1h89.ucarecd.net/0a5c7e1a-f062-4ef8-b99c-dd1034da60f4/JETSKIRemix_spotdownorg1.mp3",
-                cover: roaCover,
-                album: "private-suite-complete",
-                trackNum: 11,
-                coverLoaded: true,
-                palette: roaPalette,
-                bgImage: roaBg
+                title: "JETSKI - Remix", artist: "ROA, Omar Courtz, Dei V & Bryant Myers", url: "https://43rdwl1h89.ucarecd.net/0a5c7e1a-f062-4ef8-b99c-dd1034da60f4/JETSKIRemix_spotdownorg1.mp3",
+                cover: roaCover, album: "private-suite-complete", trackNum: 11, coverLoaded: true, palette: roaPalette, bgImage: roaBg
             },
             {
-                title: "11:12 (Interlude)",
-                artist: "ROA & De La Rose",
-                url: "https://43rdwl1h89.ucarecd.net/749dffe2-6e64-4f99-b596-b2496d4096c6/11_12Interlude_spotdownorg.mp3",
-                cover: roaCover,
-                album: "private-suite-complete",
-                trackNum: 12,
-                coverLoaded: true,
-                palette: roaPalette,
-                bgImage: roaBg
+                title: "11:12 (Interlude)", artist: "ROA & De La Rose", url: "https://43rdwl1h89.ucarecd.net/749dffe2-6e64-4f99-b596-b2496d4096c6/11_12Interlude_spotdownorg.mp3",
+                cover: roaCover, album: "private-suite-complete", trackNum: 12, coverLoaded: true, palette: roaPalette, bgImage: roaBg
             },
             {
-                title: "UuU 2",
-                artist: "ROA, Hades66 & Luar La L",
-                url: "https://43rdwl1h89.ucarecd.net/a99ac52d-d2e7-4214-9a7f-ecdc1b585473/UuU2_spotdownorg.mp3",
-                cover: roaCover,
-                album: "private-suite-complete",
-                trackNum: 13,
-                coverLoaded: true,
-                palette: roaPalette,
-                bgImage: roaBg
+                title: "UuU 2", artist: "ROA, Hades66 & Luar La L", url: "https://43rdwl1h89.ucarecd.net/a99ac52d-d2e7-4214-9a7f-ecdc1b585473/UuU2_spotdownorg.mp3",
+                cover: roaCover, album: "private-suite-complete", trackNum: 13, coverLoaded: true, palette: roaPalette, bgImage: roaBg
             },
             {
-                title: "FREELANCE 2.0",
-                artist: "ROA, CDobleta, Amarion, Ankhal & Anubiis",
-                url: "https://43rdwl1h89.ucarecd.net/566b4669-7d4e-4f92-9b54-37eb40614929/FREELANCE20_spotdownorg.mp3",
-                cover: roaCover,
-                album: "private-suite-complete",
-                trackNum: 14,
-                coverLoaded: true,
-                palette: roaPalette,
-                bgImage: roaBg
+                title: "FREELANCE 2.0", artist: "ROA, CDobleta, Amarion, Ankhal & Anubiis", url: "https://43rdwl1h89.ucarecd.net/566b4669-7d4e-4f92-9b54-37eb40614929/FREELANCE20_spotdownorg.mp3",
+                cover: roaCover, album: "private-suite-complete", trackNum: 14, coverLoaded: true, palette: roaPalette, bgImage: roaBg
             },
             {
-                title: "Eclipse... Coming Soon (Outro)",
-                artist: "ROA",
-                url: "https://43rdwl1h89.ucarecd.net/fd3612f0-8d53-4b85-ae50-bd883b398bfe/EclipseComingSoonOutro_spotdownorg.mp3",
-                cover: roaCover,
-                album: "private-suite-complete",
-                trackNum: 15,
-                coverLoaded: true,
-                palette: roaPalette,
-                bgImage: roaBg
+                title: "Eclipse... Coming Soon (Outro)", artist: "ROA", url: "https://43rdwl1h89.ucarecd.net/fd3612f0-8d53-4b85-ae50-bd883b398bfe/EclipseComingSoonOutro_spotdownorg.mp3",
+                cover: roaCover, album: "private-suite-complete", trackNum: 15, coverLoaded: true, palette: roaPalette, bgImage: roaBg
             },
             {
-                title: "ETA",
-                artist: "ROA",
-                url: "https://43rdwl1h89.ucarecd.net/05ffac1c-63ec-4d3d-9ac8-4d321aeb28a7/ETA_spotdownorg.mp3",
-                cover: roaCover,
-                album: "private-suite-complete",
-                trackNum: 16,
-                coverLoaded: true,
-                palette: roaPalette,
-                bgImage: roaBg
+                title: "ETA", artist: "ROA", url: "https://43rdwl1h89.ucarecd.net/05ffac1c-63ec-4d3d-9ac8-4d321aeb28a7/ETA_spotdownorg.mp3",
+                cover: roaCover, album: "private-suite-complete", trackNum: 16, coverLoaded: true, palette: roaPalette, bgImage: roaBg
             },
             {
-                title: "ECLIPSE",
-                artist: "ROA, J Abdiel & Slayter",
-                url: "https://43rdwl1h89.ucarecd.net/25a0018f-504a-49b3-8358-c38c62a548f4/ECLIPSE_spotdownorg.mp3",
-                cover: roaCover,
-                album: "private-suite-complete",
-                trackNum: 17,
-                coverLoaded: true,
-                palette: roaPalette,
-                bgImage: roaBg
+                title: "ECLIPSE", artist: "ROA, J Abdiel & Slayter", url: "https://43rdwl1h89.ucarecd.net/25a0018f-504a-49b3-8358-c38c62a548f4/ECLIPSE_spotdownorg.mp3",
+                cover: roaCover, album: "private-suite-complete", trackNum: 17, coverLoaded: true, palette: roaPalette, bgImage: roaBg
             },
             {
-                title: "777",
-                artist: "ROA",
-                url: "https://43rdwl1h89.ucarecd.net/ba795269-fdb2-4938-90d4-6cca60aa7f14/777_spotdownorg.mp3",
-                cover: roaCover,
-                album: "private-suite-complete",
-                trackNum: 18,
-                coverLoaded: true,
-                palette: roaPalette,
-                bgImage: roaBg
+                title: "777", artist: "ROA", url: "https://43rdwl1h89.ucarecd.net/ba795269-fdb2-4938-90d4-6cca60aa7f14/777_spotdownorg.mp3",
+                cover: roaCover, album: "private-suite-complete", trackNum: 18, coverLoaded: true, palette: roaPalette, bgImage: roaBg
             },
             {
-                title: "PETITE",
-                artist: "ROA",
-                url: "https://43rdwl1h89.ucarecd.net/202d26f3-9b1f-4f65-8152-449ce316eb09/PETITE_spotdownorg.mp3",
-                cover: roaCover,
-                album: "private-suite-complete",
-                trackNum: 19,
-                coverLoaded: true,
-                palette: roaPalette,
-                bgImage: roaBg
+                title: "PETITE", artist: "ROA", url: "https://43rdwl1h89.ucarecd.net/202d26f3-9b1f-4f65-8152-449ce316eb09/PETITE_spotdownorg.mp3",
+                cover: roaCover, album: "private-suite-complete", trackNum: 19, coverLoaded: true, palette: roaPalette, bgImage: roaBg
             },
             {
-                title: "MI DEMONIA... COMING SOON",
-                artist: "ROA",
-                url: "https://43rdwl1h89.ucarecd.net/37ae36d1-88ab-49f5-bb25-4736708577e7/MIDEMONIACOMINGSOON_spotdownorg.mp3",
-                cover: roaCover,
-                album: "private-suite-complete",
-                trackNum: 20,
-                coverLoaded: true,
-                palette: roaPalette,
-                bgImage: roaBg
+                title: "MI DEMONIA... COMING SOON", artist: "ROA", url: "https://43rdwl1h89.ucarecd.net/37ae36d1-88ab-49f5-bb25-4736708577e7/MIDEMONIACOMINGSOON_spotdownorg.mp3",
+                cover: roaCover, album: "private-suite-complete", trackNum: 20, coverLoaded: true, palette: roaPalette, bgImage: roaBg
             },
             {
-                title: "TATE QUIETA",
-                artist: "ROA & CDobleta",
-                url: "https://43rdwl1h89.ucarecd.net/84536705-8c96-4863-b707-56a85b7ef643/TATEQUIETA_spotdownorg.mp3",
-                cover: roaCover,
-                album: "private-suite-complete",
-                trackNum: 21,
-                coverLoaded: true,
-                palette: roaPalette,
-                bgImage: roaBg
+                title: "TATE QUIETA", artist: "ROA & CDobleta", url: "https://43rdwl1h89.ucarecd.net/84536705-8c96-4863-b707-56a85b7ef643/TATEQUIETA_spotdownorg.mp3",
+                cover: roaCover, album: "private-suite-complete", trackNum: 21, coverLoaded: true, palette: roaPalette, bgImage: roaBg
             },
             {
-                title: "NEVER 2 LATE",
-                artist: "ROA & Yan Block",
-                url: "https://43rdwl1h89.ucarecd.net/be314035-f7e8-4396-add3-07e6c8e06417/NEVER2LATE_spotdownorg.mp3",
-                cover: roaCover,
-                album: "private-suite-complete",
-                trackNum: 22,
-                coverLoaded: true,
-                palette: roaPalette,
-                bgImage: roaBg
+                title: "NEVER 2 LATE", artist: "ROA & Yan Block", url: "https://43rdwl1h89.ucarecd.net/be314035-f7e8-4396-add3-07e6c8e06417/NEVER2LATE_spotdownorg.mp3",
+                cover: roaCover, album: "private-suite-complete", trackNum: 22, coverLoaded: true, palette: roaPalette, bgImage: roaBg
             },
             {
-                title: "ME GUSTAS CC",
-                artist: "ROA",
-                url: "https://43rdwl1h89.ucarecd.net/f97cd115-aa0b-4827-be03-ec4540f7be35/MEGUSTASCC_spotdownorg.mp3",
-                cover: roaCover,
-                album: "private-suite-complete",
-                trackNum: 23,
-                coverLoaded: true,
-                palette: roaPalette,
-                bgImage: roaBg
+                title: "ME GUSTAS CC", artist: "ROA", url: "https://43rdwl1h89.ucarecd.net/f97cd115-aa0b-4827-be03-ec4540f7be35/MEGUSTASCC_spotdownorg.mp3",
+                cover: roaCover, album: "private-suite-complete", trackNum: 23, coverLoaded: true, palette: roaPalette, bgImage: roaBg
             },
             {
-                title: "ETA - Remix",
-                artist: "ROA, De La Rose, Omar Courtz, Yan Block & Luar La L",
-                url: "https://43rdwl1h89.ucarecd.net/ef2651fb-d382-411f-8557-d96c053e1a2d/ETARMX_spotdownorg.mp3",
-                cover: roaCover,
-                album: "private-suite-complete",
-                trackNum: 24,
-                coverLoaded: true,
-                palette: roaPalette,
-                bgImage: roaBg
+                title: "ETA - Remix", artist: "ROA, De La Rose, Omar Courtz, Yan Block & Luar La L", url: "https://43rdwl1h89.ucarecd.net/ef2651fb-d382-411f-8557-d96c053e1a2d/ETARMX_spotdownorg.mp3",
+                cover: roaCover, album: "private-suite-complete", trackNum: 24, coverLoaded: true, palette: roaPalette, bgImage: roaBg
             },
             {
-                title: "QUÉ TE PASA ?",
-                artist: "ROA",
-                url: "https://43rdwl1h89.ucarecd.net/ac319d64-229c-41c6-af4e-c79da4ec9fa7/QUETEPASA__spotdownorg.mp3",
-                cover: roaCover,
-                album: "private-suite-complete",
-                trackNum: 25,
-                coverLoaded: true,
-                palette: roaPalette,
-                bgImage: roaBg
+                title: "QUÉ TE PASA ?", artist: "ROA", url: "https://43rdwl1h89.ucarecd.net/ac319d64-229c-41c6-af4e-c79da4ec9fa7/QUETEPASA__spotdownorg.mp3",
+                cover: roaCover, album: "private-suite-complete", trackNum: 25, coverLoaded: true, palette: roaPalette, bgImage: roaBg
             },
             {
-                title: "EENIMINIMAINIMOE",
-                artist: "ROA",
-                url: "https://43rdwl1h89.ucarecd.net/741bed09-b436-44d5-ac9a-228ff0b32f6c/EENIMINIMAINIMOE_spotdownorg.mp3",
-                cover: roaCover,
-                album: "private-suite-complete",
-                trackNum: 26,
-                coverLoaded: true,
-                palette: roaPalette,
-                bgImage: roaBg
+                title: "EENIMINIMAINIMOE", artist: "ROA", url: "https://43rdwl1h89.ucarecd.net/741bed09-b436-44d5-ac9a-228ff0b32f6c/EENIMINIMAINIMOE_spotdownorg.mp3",
+                cover: roaCover, album: "private-suite-complete", trackNum: 26, coverLoaded: true, palette: roaPalette, bgImage: roaBg
             },
             {
-                title: "J's INTERLUDE",
-                artist: "ROA",
-                url: "https://43rdwl1h89.ucarecd.net/a1df7ad6-d0a2-4bd1-9d84-06a64eccaded/JsINTERLUDE_spotdownorg.mp3",
-                cover: roaCover,
-                album: "private-suite-complete",
-                trackNum: 27,
-                coverLoaded: true,
-                palette: roaPalette,
-                bgImage: roaBg
+                title: "J's INTERLUDE", artist: "ROA", url: "https://43rdwl1h89.ucarecd.net/a1df7ad6-d0a2-4bd1-9d84-06a64eccaded/JsINTERLUDE_spotdownorg.mp3",
+                cover: roaCover, album: "private-suite-complete", trackNum: 27, coverLoaded: true, palette: roaPalette, bgImage: roaBg
             },
             {
-                title: "MI DEMONIA",
-                artist: "ROA",
-                url: "https://43rdwl1h89.ucarecd.net/956f8423-913e-4239-a26c-a927a2857167/MIDEMONIA_spotdownorg.mp3",
-                cover: roaCover,
-                album: "private-suite-complete",
-                trackNum: 28,
-                coverLoaded: true,
-                palette: roaPalette,
-                bgImage: roaBg
+                title: "MI DEMONIA", artist: "ROA", url: "https://43rdwl1h89.ucarecd.net/956f8423-913e-4239-a26c-a927a2857167/MIDEMONIA_spotdownorg.mp3",
+                cover: roaCover, album: "private-suite-complete", trackNum: 28, coverLoaded: true, palette: roaPalette, bgImage: roaBg
             },
             {
-                title: "LA FAVORITA DE DIOS",
-                artist: "ROA & Dei V",
-                url: "https://43rdwl1h89.ucarecd.net/b6362bd6-cb26-4dab-8f48-9567da17e5dc/LAFAVORITADEDIOS_spotdownorg.mp3",
-                cover: roaCover,
-                album: "private-suite-complete",
-                trackNum: 29,
-                coverLoaded: true,
-                palette: roaPalette,
-                bgImage: roaBg
+                title: "LA FAVORITA DE DIOS", artist: "ROA & Dei V", url: "https://43rdwl1h89.ucarecd.net/b6362bd6-cb26-4dab-8f48-9567da17e5dc/LAFAVORITADEDIOS_spotdownorg.mp3",
+                cover: roaCover, album: "private-suite-complete", trackNum: 29, coverLoaded: true, palette: roaPalette, bgImage: roaBg
             },
             {
-                title: "11:11",
-                artist: "ROA",
-                url: "https://43rdwl1h89.ucarecd.net/e17efb10-5860-4bb3-b50d-2796d25679cc/11_11_spotdownorg.mp3",
-                cover: roaCover,
-                album: "private-suite-complete",
-                trackNum: 30,
-                coverLoaded: true,
-                palette: roaPalette,
-                bgImage: roaBg
+                title: "11:11", artist: "ROA", url: "https://43rdwl1h89.ucarecd.net/e17efb10-5860-4bb3-b50d-2796d25679cc/11_11_spotdownorg.mp3",
+                cover: roaCover, album: "private-suite-complete", trackNum: 30, coverLoaded: true, palette: roaPalette, bgImage: roaBg
             },
             {
-                title: "ARE YOU FEELING ME ? (OUTRO)",
-                artist: "ROA",
-                url: "https://43rdwl1h89.ucarecd.net/488ece66-43a9-45da-b67e-20a9a68e4734/AREYOUFEELINGME_OUTRO_spotdownorg.mp3",
-                cover: roaCover,
-                album: "private-suite-complete",
-                trackNum: 31,
-                coverLoaded: true,
-                palette: roaPalette,
-                bgImage: roaBg
+                title: "ARE YOU FEELING ME ? (OUTRO)", artist: "ROA", url: "https://43rdwl1h89.ucarecd.net/488ece66-43a9-45da-b67e-20a9a68e4734/AREYOUFEELINGME_OUTRO_spotdownorg.mp3",
+                cover: roaCover, album: "private-suite-complete", trackNum: 31, coverLoaded: true, palette: roaPalette, bgImage: roaBg
             },
             {
-                title: "BABY HOY",
-                artist: "ROA",
-                url: "https://43rdwl1h89.ucarecd.net/735e39b9-1907-4600-8619-8e3034695ae1/BABYHOY_spotdownorg.mp3",
-                cover: roaCover,
-                album: "private-suite-complete",
-                trackNum: 32,
-                coverLoaded: true,
-                palette: roaPalette,
-                bgImage: roaBg
+                title: "BABY HOY", artist: "ROA", url: "https://43rdwl1h89.ucarecd.net/735e39b9-1907-4600-8619-8e3034695ae1/BABYHOY_spotdownorg.mp3",
+                cover: roaCover, album: "private-suite-complete", trackNum: 32, coverLoaded: true, palette: roaPalette, bgImage: roaBg
             },
             {
-                title: "MI PEOR ERROR",
-                artist: "ROA & Botlok",
-                url: "https://43rdwl1h89.ucarecd.net/20c9633c-95e1-48f7-82be-006ee84fbc7a/MIPEORERROR_spotdownorg.mp3",
-                cover: roaCover,
-                album: "private-suite-complete",
-                trackNum: 33,
-                coverLoaded: true,
-                palette: roaPalette,
-                bgImage: roaBg
+                title: "MI PEOR ERROR", artist: "ROA & Botlok", url: "https://43rdwl1h89.ucarecd.net/20c9633c-95e1-48f7-82be-006ee84fbc7a/MIPEORERROR_spotdownorg.mp3",
+                cover: roaCover, album: "private-suite-complete", trackNum: 33, coverLoaded: true, palette: roaPalette, bgImage: roaBg
             },
             {
-                title: "EL MALO... Coming soon",
-                artist: "ROA",
-                url: "https://43rdwl1h89.ucarecd.net/85290498-b4a1-461b-8f87-067e0eb353cd/ELMALOComingsoon_spotdownorg.mp3",
-                cover: roaCover,
-                album: "private-suite-complete",
-                trackNum: 34,
-                coverLoaded: true,
-                palette: roaPalette,
-                bgImage: roaBg
+                title: "EL MALO... Coming soon", artist: "ROA", url: "https://43rdwl1h89.ucarecd.net/85290498-b4a1-461b-8f87-067e0eb353cd/ELMALOComingsoon_spotdownorg.mp3",
+                cover: roaCover, album: "private-suite-complete", trackNum: 34, coverLoaded: true, palette: roaPalette, bgImage: roaBg
             },
             {
-                title: "TÚ Y YO",
-                artist: "ROA",
-                url: "https://43rdwl1h89.ucarecd.net/8ce4aec7-f400-4bd4-9060-ba8a6ecf231b/TUYYO_spotdownorg.mp3",
-                cover: roaCover,
-                album: "private-suite-complete",
-                trackNum: 35,
-                coverLoaded: true,
-                palette: roaPalette,
-                bgImage: roaBg
+                title: "TÚ Y... YO", artist: "ROA", url: "https://43rdwl1h89.ucarecd.net/8ce4aec7-f400-4bd4-9060-ba8a6ecf231b/TUYYO_spotdownorg.mp3",
+                cover: roaCover, album: "private-suite-complete", trackNum: 35, coverLoaded: true, palette: roaPalette, bgImage: roaBg
             },
             {
-                title: "MI CHIMBITA",
-                artist: "ROA, Kris R, Hades66, GeezyDee & TopBoy TGR",
-                url: "https://43rdwl1h89.ucarecd.net/9d5655b0-6576-49f3-9b6f-f3c91e3f753d/MICHIMBITA_spotdownorg.mp3",
-                cover: roaCover,
-                album: "private-suite-complete",
-                trackNum: 36,
-                coverLoaded: true,
-                palette: roaPalette,
-                bgImage: roaBg
+                title: "MI CHIMBITA", artist: "ROA, Kris R, Hades66, GeezyDee & TopBoy TGR", url: "https://43rdwl1h89.ucarecd.net/9d5655b0-6576-49f3-9b6f-f3c91e3f753d/MICHIMBITA_spotdownorg.mp3",
+                cover: roaCover, album: "private-suite-complete", trackNum: 36, coverLoaded: true, palette: roaPalette, bgImage: roaBg
             },
             {
-                title: "TATE QUIETA - Remix",
-                artist: "ROA, CDobleta, Midnvght, Tutu, Luar La L & Almighty",
-                url: "https://43rdwl1h89.ucarecd.net/5650fe3c-bb05-4cc5-848e-258118a4eb65/TATEQUIETARMX_spotdownorg.mp3",
-                cover: roaCover,
-                album: "private-suite-complete",
-                trackNum: 37,
-                coverLoaded: true,
-                palette: roaPalette,
-                bgImage: roaBg
+                title: "TATE QUIETA - Remix", artist: "ROA, CDobleta, Midnvght, Tutu, Luar La L & Almighty", url: "https://43rdwl1h89.ucarecd.net/5650fe3c-bb05-4cc5-848e-258118a4eb65/TATEQUIETARMX_spotdownorg.mp3",
+                cover: roaCover, album: "private-suite-complete", trackNum: 37, coverLoaded: true, palette: roaPalette, bgImage: roaBg
             },
+            
             {
                 title: "MONSTRUO",
                 artist: "Tainy & Feid",
@@ -1400,12 +1278,8 @@
                 trackNum: 1,
                 coverLoaded: true,
                 palette: [
-                    { r: 20, g: 30, b: 20 },
-                    { r: 80, g: 120, b: 80 },
-                    { r: 120, g: 170, b: 120 },
-                    { r: 180, g: 230, b: 180 },
-                    { r: 20, g: 30, b: 20 },
-                    { r: 20, g: 30, b: 20 }
+                    { r: 20, g: 30, b: 20 }, { r: 80, g: 120, b: 80 }, { r: 120, g: 170, b: 120 },
+                    { r: 180, g: 230, b: 180 }, { r: 20, g: 30, b: 20 }, { r: 20, g: 30, b: 20 }
                 ],
                 bgImage: "https://cdn.discordapp.com/attachments/1243422250955182100/1519085645639712779/31655673-34C0-45E0-81B2-08A8E3585A0B.png?ex=6a3c4641&is=6a3af4c1&hm=72455ee446533ffbe0609e11a4fa94399ccecdf8bb6d57b5436aaf28f0bd9d9f&"
             },
@@ -1418,12 +1292,8 @@
                 trackNum: 1,
                 coverLoaded: true,
                 palette: [
-                    { r: 35, g: 30, b: 30 },
-                    { r: 120, g: 100, b: 100 },
-                    { r: 170, g: 140, b: 140 },
-                    { r: 230, g: 200, b: 200 },
-                    { r: 35, g: 30, b: 30 },
-                    { r: 35, g: 30, b: 30 }
+                    { r: 35, g: 30, b: 30 }, { r: 120, g: 100, b: 100 }, { r: 170, g: 140, b: 140 },
+                    { r: 230, g: 200, b: 200 }, { r: 35, g: 30, b: 30 }, { r: 35, g: 30, b: 30 }
                 ],
                 bgImage: "https://cdn.discordapp.com/attachments/1243422250955182100/1519089030476595210/CCF9B25D-94ED-4ACE-AE8F-398A692521C3.png?ex=6a3c4968&is=6a3af7e8&hm=9badda87775df3a86e3ea02f59edc5d58b00ed761a4e52776680aa89c19cbb61&"
             },
@@ -1436,12 +1306,8 @@
                 trackNum: 1,
                 coverLoaded: true,
                 palette: [
-                    { r: 25, g: 15, b: 15 },
-                    { r: 90, g: 45, b: 45 },
-                    { r: 160, g: 80, b: 80 },
-                    { r: 210, g: 110, b: 110 },
-                    { r: 25, g: 15, b: 15 },
-                    { r: 25, g: 15, b: 15 }
+                    { r: 25, g: 15, b: 15 }, { r: 90, g: 45, b: 45 }, { r: 160, g: 80, b: 80 },
+                    { r: 210, g: 110, b: 110 }, { r: 25, g: 15, b: 15 }, { r: 25, g: 15, b: 15 }
                 ],
                 bgImage: "https://cdn.discordapp.com/attachments/1243422250955182100/1519089031093424291/9B346630-7863-4F24-8F4D-054D8192530A.png?ex=6a3c4968&is=6a3af7e8&hm=6679ab42e0506954f53b1f28cef799063202a58e2745f4dd24bbba27f1f8967c&"
             },
@@ -1454,12 +1320,8 @@
                 trackNum: 1,
                 coverLoaded: true,
                 palette: [
-                    { r: 20, g: 25, b: 35 },
-                    { r: 70, g: 85, b: 110 },
-                    { r: 110, g: 135, b: 175 },
-                    { r: 180, g: 210, b: 245 },
-                    { r: 20, g: 25, b: 35 },
-                    { r: 20, g: 25, b: 35 }
+                    { r: 20, g: 25, b: 35 }, { r: 70, g: 85, b: 110 }, { r: 110, g: 135, b: 175 },
+                    { r: 180, g: 210, b: 245 }, { r: 20, g: 25, b: 35 }, { r: 20, g: 25, b: 35 }
                 ],
                 bgImage: "https://cdn.discordapp.com/attachments/1243422250955182100/1519089031688880198/9CE3B035-650D-4EA9-B60A-245326FB2C25.png?ex=6a3c4968&is=6a3af7e8&hm=850a6c2d91cde2325f76ead551339e7fbad64cb73fa8f38ad2fc4992186f6294&"
             },
@@ -1472,12 +1334,8 @@
                 trackNum: 1,
                 coverLoaded: true,
                 palette: [
-                    { r: 40, g: 30, b: 20 },
-                    { r: 120, g: 100, b: 80 },
-                    { r: 180, g: 150, b: 120 },
-                    { r: 230, g: 200, b: 170 },
-                    { r: 40, g: 30, b: 20 },
-                    { r: 40, g: 30, b: 20 }
+                    { r: 40, g: 30, b: 20 }, { r: 120, g: 100, b: 80 }, { r: 180, g: 150, b: 120 },
+                    { r: 230, g: 200, b: 170 }, { r: 40, g: 30, b: 20 }, { r: 40, g: 30, b: 20 }
                 ],
                 bgImage: "https://cdn.discordapp.com/attachments/1243422250955182100/1519397166685360148/7B8386C5-A4B7-43CD-B89F-D9F85F32E006.png?ex=6a3d6861&is=6a3c16e1&hm=c19ff98fd19aa770a004e6d26ebe493e3bf1144ca6e8f9bfcad70c7fdfbae9ec&"
             },
@@ -1490,12 +1348,8 @@
                 trackNum: 1,
                 coverLoaded: true,
                 palette: [
-                    { r: 25, g: 20, b: 35 },
-                    { r: 80, g: 70, b: 110 },
-                    { r: 130, g: 110, b: 170 },
-                    { r: 190, g: 170, b: 230 },
-                    { r: 25, g: 20, b: 35 },
-                    { r: 25, g: 20, b: 35 }
+                    { r: 25, g: 20, b: 35 }, { r: 80, g: 70, b: 110 }, { r: 130, g: 110, b: 170 },
+                    { r: 190, g: 170, b: 230 }, { r: 25, g: 20, b: 35 }, { r: 25, g: 20, b: 35 }
                 ],
                 bgImage: "https://cdn.discordapp.com/attachments/1243422250955182100/1519397167612301532/50976DBE-8220-4819-A045-D69E23D648BC.png?ex=6a3d6861&is=6a3c16e1&hm=8d91d3a282661e3986da423f8f99f57888de9fe051ed85cc985eeffa135439cb&"
             },
@@ -1508,12 +1362,8 @@
                 trackNum: 1,
                 coverLoaded: true,
                 palette: [
-                    { r: 30, g: 30, b: 25 },
-                    { r: 100, g: 100, b: 90 },
-                    { r: 160, g: 160, b: 140 },
-                    { r: 220, g: 220, b: 200 },
-                    { r: 30, g: 30, b: 25 },
-                    { r: 30, g: 30, b: 25 }
+                    { r: 30, g: 30, b: 25 }, { r: 100, g: 100, b: 90 }, { r: 160, g: 160, b: 140 },
+                    { r: 220, g: 220, b: 200 }, { r: 30, g: 30, b: 25 }, { r: 30, g: 30, b: 25 }
                 ],
                 bgImage: "https://cdn.discordapp.com/attachments/1243422250955182100/1519401334288289823/26F8EA49-B85E-4027-8D2A-A03953CE94A5.png?ex=6a3d6c43&is=6a3c1ac3&hm=270537d09e644d32462e0ecd93e3a44f73847a735f77ea1aa71beeb74e3daf7e&"
             },
@@ -1522,202 +1372,76 @@
                POR SI MAÑANA NO ESTOY — 18 TRACKS
                ================================================================== */
             {
-                title: "OUTRO",
-                artist: "Omar Courtz",
-                url: "https://files.catbox.moe/4eqs0r.mp3",
-                cover: moonlightCover,
-                album: "por-si-manana",
-                trackNum: 1,
-                coverLoaded: true,
-                palette: moonlightPalette,
-                bgImage: moonlightBg
+                title: "OUTRO", artist: "Omar Courtz", url: "https://files.catbox.moe/4eqs0r.mp3",
+                cover: moonlightCover, album: "por-si-manana", trackNum: 1, coverLoaded: true, palette: moonlightPalette, bgImage: moonlightBg
             },
             {
-                title: "EL MUNDO SE VA A ACABAR",
-                artist: "Omar Courtz & KARBeats",
-                url: "https://files.catbox.moe/ioux89.mp3",
-                cover: moonlightCover,
-                album: "por-si-manana",
-                trackNum: 2,
-                coverLoaded: true,
-                palette: moonlightPalette,
-                bgImage: moonlightBg
+                title: "EL MUNDO SE VA A ACABAR", artist: "Omar Courtz & KARBeats", url: "https://files.catbox.moe/ioux89.mp3",
+                cover: moonlightCover, album: "por-si-manana", trackNum: 2, coverLoaded: true, palette: moonlightPalette, bgImage: moonlightBg
             },
             {
-                title: "FOREVER TU GANTEL",
-                artist: "Omar Courtz & Ñengo Flow",
-                url: "https://files.catbox.moe/cievb6.mp3",
-                cover: moonlightCover,
-                album: "por-si-manana",
-                trackNum: 3,
-                coverLoaded: true,
-                palette: moonlightPalette,
-                bgImage: moonlightBg
+                title: "FOREVER TU GANTEL", artist: "Omar Courtz & Ñengo Flow", url: "https://files.catbox.moe/cievb6.mp3",
+                cover: moonlightCover, album: "por-si-manana", trackNum: 3, coverLoaded: true, palette: moonlightPalette, bgImage: moonlightBg
             },
             {
-                title: "L a k e n o s h i",
-                artist: "Omar Courtz",
-                url: "https://files.catbox.moe/9qorg7.mp3",
-                cover: moonlightCover,
-                album: "por-si-manana",
-                trackNum: 4,
-                coverLoaded: true,
-                palette: moonlightPalette,
-                bgImage: moonlightBg
+                title: "L a k e n o s h i", artist: "Omar Courtz", url: "https://files.catbox.moe/9qorg7.mp3",
+                cover: moonlightCover, album: "por-si-manana", trackNum: 4, coverLoaded: true, palette: moonlightPalette, bgImage: moonlightBg
             },
             {
-                title: "VAMOaCOCHI",
-                artist: "Omar Courtz",
-                url: "https://files.catbox.moe/wns3m6.mp3",
-                cover: moonlightCover,
-                album: "por-si-manana",
-                trackNum: 5,
-                coverLoaded: true,
-                palette: moonlightPalette,
-                bgImage: moonlightBg
+                title: "VAMOaCOCHI", artist: "Omar Courtz", url: "https://files.catbox.moe/wns3m6.mp3",
+                cover: moonlightCover, album: "por-si-manana", trackNum: 5, coverLoaded: true, palette: moonlightPalette, bgImage: moonlightBg
             },
             {
-                title: "SUSU",
-                artist: "Omar Courtz",
-                url: "https://files.catbox.moe/kdv57b.mp3",
-                cover: moonlightCover,
-                album: "por-si-manana",
-                trackNum: 6,
-                coverLoaded: true,
-                palette: moonlightPalette,
-                bgImage: moonlightBg
+                title: "SUSU", artist: "Omar Courtz", url: "https://files.catbox.moe/kdv57b.mp3",
+                cover: moonlightCover, album: "por-si-manana", trackNum: 6, coverLoaded: true, palette: moonlightPalette, bgImage: moonlightBg
             },
             {
-                title: "SIRENA",
-                artist: "Omar Courtz",
-                url: "https://files.catbox.moe/msloqo.mp3",
-                cover: moonlightCover,
-                album: "por-si-manana",
-                trackNum: 7,
-                coverLoaded: true,
-                palette: moonlightPalette,
-                bgImage: moonlightBg
+                title: "SIRENA", artist: "Omar Courtz", url: "https://files.catbox.moe/msloqo.mp3",
+                cover: moonlightCover, album: "por-si-manana", trackNum: 7, coverLoaded: true, palette: moonlightPalette, bgImage: moonlightBg
             },
             {
-                title: "GANTEL y BELLAKz",
-                artist: "Omar Courtz & Bassyy",
-                url: "https://files.catbox.moe/eeqvne.mp3",
-                cover: moonlightCover,
-                album: "por-si-manana",
-                trackNum: 8,
-                coverLoaded: true,
-                palette: moonlightPalette,
-                bgImage: moonlightBg
+                title: "GANTEL y BELLAKz", artist: "Omar Courtz & Bassyy", url: "https://files.catbox.moe/eeqvne.mp3",
+                cover: moonlightCover, album: "por-si-manana", trackNum: 8, coverLoaded: true, palette: moonlightPalette, bgImage: moonlightBg
             },
             {
-                title: "SI ESTÁS CON ALGUIEN",
-                artist: "Omar Courtz",
-                url: "https://files.catbox.moe/v21n97.mp3",
-                cover: moonlightCover,
-                album: "por-si-manana",
-                trackNum: 9,
-                coverLoaded: true,
-                palette: moonlightPalette,
-                bgImage: moonlightBg
+                title: "SI ESTÁS CON ALGUIEN", artist: "Omar Courtz", url: "https://files.catbox.moe/v21n97.mp3",
+                cover: moonlightCover, album: "por-si-manana", trackNum: 9, coverLoaded: true, palette: moonlightPalette, bgImage: moonlightBg
             },
             {
-                title: "Dulces SueñoZzz (+INTERLUDIO)",
-                artist: "Omar Courtz & Rubí",
-                url: "https://files.catbox.moe/cktziy.mp3",
-                cover: moonlightCover,
-                album: "por-si-manana",
-                trackNum: 10,
-                coverLoaded: true,
-                palette: moonlightPalette,
-                bgImage: moonlightBg
+                title: "Dulces SueñoZzz (+INTERLUDIO)", artist: "Omar Courtz & Rubí", url: "https://files.catbox.moe/cktziy.mp3",
+                cover: moonlightCover, album: "por-si-manana", trackNum: 10, coverLoaded: true, palette: moonlightPalette, bgImage: moonlightBg
             },
             {
-                title: "$UELTA GATITA $UELTA",
-                artist: "Omar Courtz, Dei V, Clarent & Tito El Bambino",
-                url: "https://files.catbox.moe/0qxd21.mp3",
-                cover: moonlightCover,
-                album: "por-si-manana",
-                trackNum: 11,
-                coverLoaded: true,
-                palette: moonlightPalette,
-                bgImage: moonlightBg
+                title: "$UELTA GATITA $UELTA", artist: "Omar Courtz, Dei V, Clarent & Tito El Bambino", url: "https://files.catbox.moe/0qxd21.mp3",
+                cover: moonlightCover, album: "por-si-manana", trackNum: 11, coverLoaded: true, palette: moonlightPalette, bgImage: moonlightBg
             },
             {
-                title: "WHAT U NEED? (SexPlaylist 2)",
-                artist: "Omar Courtz & Myke Towers",
-                url: "https://files.catbox.moe/qncan5.mp3",
-                cover: moonlightCover,
-                album: "por-si-manana",
-                trackNum: 12,
-                coverLoaded: true,
-                palette: moonlightPalette,
-                bgImage: moonlightBg
+                title: "WHAT U NEED? (SexPlaylist 2)", artist: "Omar Courtz & Myke Towers", url: "https://files.catbox.moe/qncan5.mp3",
+                cover: moonlightCover, album: "por-si-manana", trackNum: 12, coverLoaded: true, palette: moonlightPalette, bgImage: moonlightBg
             },
             {
-                title: "WO OH OH",
-                artist: "Omar Courtz & ROA",
-                url: "https://files.catbox.moe/xx2wn3.mp3",
-                cover: moonlightCover,
-                album: "por-si-manana",
-                trackNum: 13,
-                coverLoaded: true,
-                palette: moonlightPalette,
-                bgImage: moonlightBg
+                title: "WO OH OH", artist: "Omar Courtz & ROA", url: "https://files.catbox.moe/xx2wn3.mp3",
+                cover: moonlightCover, album: "por-si-manana", trackNum: 13, coverLoaded: true, palette: moonlightPalette, bgImage: moonlightBg
             },
             {
-                title: "KOKO",
-                artist: "Omar Courtz",
-                url: "https://files.catbox.moe/n733ws.mp3",
-                cover: moonlightCover,
-                album: "por-si-manana",
-                trackNum: 14,
-                coverLoaded: true,
-                palette: moonlightPalette,
-                bgImage: moonlightBg
+                title: "KOKO", artist: "Omar Courtz", url: "https://files.catbox.moe/n733ws.mp3",
+                cover: moonlightCover, album: "por-si-manana", trackNum: 14, coverLoaded: true, palette: moonlightPalette, bgImage: moonlightBg
             },
             {
-                title: "COMERNOS",
-                artist: "Omar Courtz & Bad Gyal",
-                url: "https://files.catbox.moe/u9f6nl.mp3",
-                cover: moonlightCover,
-                album: "por-si-manana",
-                trackNum: 15,
-                coverLoaded: true,
-                palette: moonlightPalette,
-                bgImage: moonlightBg
+                title: "COMERNOS", artist: "Omar Courtz & Bad Gyal", url: "https://files.catbox.moe/u9f6nl.mp3",
+                cover: moonlightCover, album: "por-si-manana", trackNum: 15, coverLoaded: true, palette: moonlightPalette, bgImage: moonlightBg
             },
             {
-                title: "SKY",
-                artist: "Omar Courtz",
-                url: "https://files.catbox.moe/4868ct.mp3",
-                cover: moonlightCover,
-                album: "por-si-manana",
-                trackNum: 16,
-                coverLoaded: true,
-                palette: moonlightPalette,
-                bgImage: moonlightBg
+                title: "SKY", artist: "Omar Courtz", url: "https://files.catbox.moe/4868ct.mp3",
+                cover: moonlightCover, album: "por-si-manana", trackNum: 16, coverLoaded: true, palette: moonlightPalette, bgImage: moonlightBg
             },
             {
-                title: "MOONLIGHT",
-                artist: "Omar Courtz & Eladio Carrión",
-                url: "https://files.catbox.moe/hlrw1i.mp3",
-                cover: moonlightCover,
-                album: "por-si-manana",
-                trackNum: 17,
-                coverLoaded: true,
-                palette: moonlightPalette,
-                bgImage: moonlightBg
+                title: "MOONLIGHT", artist: "Omar Courtz & Eladio Carrión", url: "https://files.catbox.moe/hlrw1i.mp3",
+                cover: moonlightCover, album: "por-si-manana", trackNum: 17, coverLoaded: true, palette: moonlightPalette, bgImage: moonlightBg
             },
             {
-                title: "POR SI MAÑANA NO ESTOY",
-                artist: "Omar Courtz",
-                url: "https://files.catbox.moe/f67tpy.mp3",
-                cover: moonlightCover,
-                album: "por-si-manana",
-                trackNum: 18,
-                coverLoaded: true,
-                palette: moonlightPalette,
-                bgImage: moonlightBg
+                title: "POR SI MAÑANA NO ESTOY", artist: "Omar Courtz", url: "https://files.catbox.moe/f67tpy.mp3",
+                cover: moonlightCover, album: "por-si-manana", trackNum: 18, coverLoaded: true, palette: moonlightPalette, bgImage: moonlightBg
             }
         ];
 
@@ -1762,16 +1486,15 @@
         let currentPlayingIndex = 0;
         let isNPOpen = false;
 
-        let audio1 = new Audio(); audio1.crossOrigin = "anonymous";
-        let audio2 = new Audio(); audio2.crossOrigin = "anonymous";
+        const audio1 = new Audio(); audio1.crossOrigin = "anonymous";
+        const audio2 = new Audio(); audio2.crossOrigin = "anonymous";
         let activeAudio = audio1, fadingAudio = null, isCrossfading = false, mixTimingHumanized = 0;
-        let audioCtx, masterGain, masterCompressor, analyser, deck1, deck2, activeDeck, fadingDeck;
+        let audioCtx, masterGain, masterCompressor, analyser, deck1, deck2, activeDeck;
         let globalVolume = 0.75;
         let lastAudioTime = 0;
         let lastTimeUpdate = 0;
 
         const trackAnalysis = {};
-        let recentHistory = [];
         let analysisQueue = [];
 
         function initAudioEngine() {
@@ -1962,8 +1685,7 @@
             
             dataArray.forEach((item, index) => {
                 if(!item) return;
-                // Use indexOf for songs to match by reference, avoiding title collisions
-                const realIndex = (type === 'song') ? cancionesData.indexOf(item) : index;
+                const realIndex = (type === 'song') ? cancionesData.findIndex(s => s.title === item.title) : index;
                 if(type === 'song' && realIndex === -1) return;
                 
                 const card = document.createElement('div');
@@ -1988,22 +1710,27 @@
                         ${type!=='artist' ? `<div class="card-play-btn"><i class="ph-fill ph-play"></i></div>` : ''}
                     </div>
                     <div class="card-info" style="${type==='artist'?'text-align:center':''}">
-                        <div class="card-title">${item.title || item.name} ${type === 'song' ? '<span class="explicit-badge">E</span>' : ''}</div>
+                        <div class="card-title">
+                            <span>${item.title || item.name}</span>
+                            ${type === 'song' ? '<span class="explicit-badge">E</span>' : ''}
+                        </div>
                         <div class="card-subtitle">${type==='artist' ? 'Artist' : (item.artist + (item.year ? ` • ${item.year}` : ''))}</div>
                     </div>
                 `;
                 container.appendChild(card);
                 
-                if (type === 'song' && item.coverLoaded) {
-                    container.querySelectorAll(`.cover-song-${realIndex}`).forEach(img => img.src = item.cover);
-                }
+                if (type === 'song' && !item.coverLoaded && !item.coverLoading) loadSongCover(item, realIndex);
+                else if (type === 'song' && item.coverLoaded) document.querySelectorAll(`.cover-song-${realIndex}`).forEach(img => img.src = item.cover);
             });
         }
 
         function openAlbumDetail(albumId) {
             const album = albumsData.find(a => a.id === albumId); if(!album) return;
-            currentOpenAlbumId = albumId;
-            document.getElementById('det-album-title').innerText = album.title;
+            
+            const titleEl = document.getElementById('det-album-title');
+            titleEl.innerText = album.title;
+            titleEl.dataset.albumId = albumId; // Guardar el ID de referencia para el auto-play del álbum entero
+            
             document.getElementById('det-album-artist').innerText = album.artist;
             document.getElementById('det-album-img').src = album.cover;
             
@@ -2013,7 +1740,7 @@
 
             const tracklist = document.getElementById('tracklist-album'); tracklist.innerHTML = '';
             tracks.forEach(song => {
-                const realIndex = cancionesData.findIndex((s, i) => s.album === albumId && s.trackNum === song.trackNum);
+                const realIndex = cancionesData.findIndex(s => s.title === song.title);
                 const row = document.createElement('div'); row.className = `track-row track-row-${realIndex}`;
                 if(currentPlayingIndex === realIndex) row.classList.add('active');
                 row.onclick = () => playSong(realIndex);
@@ -2025,23 +1752,26 @@
                     </div>
                 `;
                 tracklist.appendChild(row);
+                if(song.trackNum === 1 && !song.coverLoaded && !song.coverLoading) loadSongCover(song, realIndex);
+                else if(song.trackNum === 1 && song.coverLoaded) document.getElementById('det-album-img').src = song.cover;
             });
 
-            // Set ambient background per album
-            const ambBg = document.getElementById('ambient-bg');
-            const bgMap = {
-                "private-suite-complete": "https://69rxyf0ea9.ucarecd.net/3fc66e80-32ba-4fb1-affa-a95e5a3e6204/7A88FC1734644D74AFEFC808A54CB249.png",
-                "por-si-manana": "https://69rxyf0ea9.ucarecd.net/2a82d23a-6d3f-45a1-a11d-ca42f2ab4cde/B3F943DBCA684424826974917FF841D0.png",
-                "nadie-sabe-album": nadieSabeBg
-            };
-            if (bgMap[albumId]) {
-                ambBg.style.backgroundImage = `url('${bgMap[albumId]}')`;
-                ambBg.style.backgroundSize = 'cover';
-                ambBg.style.backgroundPosition = 'center';
+            // Cambiar dinámicamente el fondo de pantalla según el álbum cargado
+            const ambientBg = document.getElementById('ambient-bg');
+            if (albumId === "private-suite-complete") {
+                ambientBg.style.backgroundImage = `url('${roaBg}')`;
+                ambientBg.style.backgroundSize = 'cover';
+                ambientBg.style.backgroundPosition = 'center';
+            } else if (albumId === "por-si-manana") {
+                ambientBg.style.backgroundImage = `url('${moonlightBg}')`;
+                ambientBg.style.backgroundSize = 'cover';
+                ambientBg.style.backgroundPosition = 'center';
+            } else if (albumId === "nadie-sabe-album") {
+                ambientBg.style.backgroundImage = `url('${nadieSabeBg}')`;
+                ambientBg.style.backgroundSize = 'cover';
+                ambientBg.style.backgroundPosition = 'center';
             } else {
-                ambBg.style.backgroundImage = '';
-                ambBg.style.backgroundSize = '';
-                ambBg.style.backgroundPosition = '';
+                ambientBg.style.backgroundImage = '';
             }
 
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
@@ -2049,14 +1779,15 @@
             document.getElementById('main-content').scrollTo({top: 0});
         }
 
-        let currentOpenAlbumId = null;
         function playCurrentAlbum() {
-            if (!currentOpenAlbumId) return playSong(0);
-            const tracks = cancionesData
-                .map((s, i) => ({ s, i }))
-                .filter(({ s }) => s.album === currentOpenAlbumId)
-                .sort((a, b) => a.s.trackNum - b.s.trackNum);
-            if (tracks.length) playSong(tracks[0].i);
+            const currentAlbumId = document.getElementById('det-album-title').dataset.albumId;
+            if (!currentAlbumId) return;
+
+            const albumTracks = cancionesData.filter(s => s.album === currentAlbumId).sort((a,b) => a.trackNum - b.trackNum);
+            if (albumTracks.length > 0) {
+                const targetIndex = cancionesData.findIndex(s => s.title === albumTracks[0].title);
+                if (targetIndex !== -1) playSong(targetIndex);
+            }
         }
 
         function openArtistDetail(name, img) {
@@ -2077,7 +1808,6 @@
             renderGrid(songs, 'grid-artist-latest', 'song');
             renderGrid([], 'grid-artist-singles', 'song');
 
-            // Find artist in artistsData to check if they have a custom background image
             const artist = artistsData.find(a => a.name === name);
             if (artist && artist.bgImage) {
                 document.getElementById('ambient-bg').style.backgroundImage = `url('${artist.bgImage}')`;
@@ -2146,19 +1876,16 @@
 
             const npFs = document.getElementById('np-fs');
             if (song.bgImage) {
-                // Background image setup
                 npFs.style.backgroundImage = `url('${song.bgImage}')`;
                 npFs.style.backgroundSize = 'cover';
                 npFs.style.backgroundPosition = 'center';
                 npFs.style.backgroundRepeat = 'no-repeat';
             } else if (song.palette && song.palette.length > 0) {
-                // Gradient palette fallback
                 const primaryColor = song.palette[0];
                 const secondaryColor = song.palette[2] || song.palette[1];
                 npFs.style.backgroundImage = `linear-gradient(135deg, rgb(${primaryColor.r}, ${primaryColor.g}, ${primaryColor.b}) 0%, rgb(${secondaryColor.r}, ${secondaryColor.g}, ${secondaryColor.b}) 100%)`;
             }
 
-            // Document body solid fallback sync
             if (song.palette && song.palette.length > 0) {
                 const primaryColor = song.palette[0];
                 document.documentElement.style.setProperty('--bg-deep', `rgb(${primaryColor.r}, ${primaryColor.g}, ${primaryColor.b})`);
