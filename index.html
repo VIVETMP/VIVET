@@ -617,7 +617,6 @@
         ];
 
         // Sencillos del Home (Sección Solicitada de Singles) [5]
-        // Se agrega "Las mas bonitas son p#tas" de Anuel AA como primer sencillo
         const baseSingles = [
             { 
                 title: "Las mas bonitas son p#tas", 
@@ -627,7 +626,7 @@
                 album: "", 
                 trackNum: 1, 
                 coverLoaded: true, 
-                palette: [{ r: 15, g: 0, b: 0 },{ r: 120, g: 10, b: 10 },{ r: 200, g: 15, b: 15 },{ r: 40, g: 0, b: 0 }], 
+                palette: [{ r: 0, g: 11, b: 240 },{ r: 255, g: 25, b: 181 },{ r: 42, g: 245, b: 152 },{ r: 255, g: 15, b: 87 },{ r: 2, g: 8, b: 46 }], 
                 bgImage: "https://files.catbox.moe/f755oj.png" 
             }
         ];
@@ -662,67 +661,19 @@
         let currentPlayingIndex = 0;
         let isNPOpen = false;
 
-        // Declaración inicial de instancias de audio mapeadas de forma segura al DOM
+        // Declaración inicial de instancias de audio mapeadas de forma segura al DOM [5]
         const audio1 = new Audio(); audio1.crossOrigin = "anonymous";
         const audio2 = new Audio(); audio2.crossOrigin = "anonymous";
         let activeAudio = audio1, fadingAudio = null, isCrossfading = false, mixTimingHumanized = 0;
-        let audioCtx, masterGain, masterCompressor, analyser, deck1, deck2, activeDeck, fadingDeck;
         let globalVolume = 0.75;
         let lastAudioTime = 0, lastTimeUpdate = 0;
+        let fadeInterval = null; // Intervalo de crossfade compatible con segundo plano [5]
 
         const trackAnalysis = {};
         let analysisQueue = [];
 
-        function initAudioEngine() {
-            if (audioCtx) return;
-            const AudioContext = window.AudioContext || window.webkitAudioContext;
-            audioCtx = new AudioContext();
-            
-            masterCompressor = audioCtx.createDynamicsCompressor(); masterCompressor.threshold.value = -3; masterCompressor.knee.value = 10; masterCompressor.ratio.value = 5; masterCompressor.attack.value = 0.003; masterCompressor.release.value = 0.25;
-            masterGain = audioCtx.createGain(); masterGain.gain.value = globalVolume;
-            analyser = audioCtx.createAnalyser(); analyser.fftSize = 128;
-            
-            masterCompressor.connect(masterGain); masterGain.connect(analyser); analyser.connect(audioCtx.destination);
-            deck1 = createDeck(audio1); deck2 = createDeck(audio2); activeDeck = deck1;
-        }
-
-        function createDeck(audioEl) {
-            const source = audioCtx.createMediaElementSource(audioEl);
-            const highpass = audioCtx.createBiquadFilter(); highpass.type = 'highpass'; highpass.frequency.value = 0;
-            const lowpass = audioCtx.createBiquadFilter(); lowpass.type = 'lowpass'; lowpass.frequency.value = 22000;
-            const bass = audioCtx.createBiquadFilter(); bass.type = 'lowshelf'; bass.frequency.value = 200; bass.gain.value = 0;
-            const delay = audioCtx.createDelay(5.0); delay.delayTime.value = 0.45;
-            const feedback = audioCtx.createGain(); feedback.gain.value = 0; delay.connect(feedback); feedback.connect(delay);
-            const delayOut = audioCtx.createGain(); delayOut.gain.value = 0; delay.connect(delayOut);
-            const deckGain = audioCtx.createGain(); deckGain.gain.value = 1;
-            
-            source.connect(highpass); highpass.connect(lowpass); lowpass.connect(bass); bass.connect(deckGain); bass.connect(delay);
-            deckGain.connect(masterCompressor); delayOut.connect(masterCompressor);
-            return { source, highpass, lowpass, bass, delay, feedback, delayOut, deckGain };
-        }
-
-        function resetDeckFX(deck) {
-            if(!audioCtx) return; const now = audioCtx.currentTime;
-            deck.highpass.frequency.cancelScheduledValues(now); deck.highpass.frequency.setValueAtTime(0, now);
-            deck.lowpass.frequency.cancelScheduledValues(now); deck.lowpass.frequency.setValueAtTime(22000, now);
-            deck.bass.gain.cancelScheduledValues(now); deck.bass.gain.setValueAtTime(0, now);
-            deck.deckGain.gain.cancelScheduledValues(now); deck.deckGain.gain.setValueAtTime(1, now);
-            deck.delayOut.gain.cancelScheduledValues(now); deck.delayOut.gain.setValueAtTime(0, now);
-            deck.feedback.gain.cancelScheduledValues(now); deck.feedback.gain.setValueAtTime(0, now);
-        }
-
-        // Habilitación nativa y bypass de restricciones del sistema de audio para móviles (iOS/Safari) [5]
         function ensureAudioContext() {
-            initAudioEngine();
-            if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
-            
-            // Unlocking de hilos de audio para iOS/Background Playback en móviles [5]
-            if (!audio1.dataset.blessed) {
-                audio1.play().then(() => { audio1.pause(); audio1.dataset.blessed = "true"; }).catch(() => {});
-            }
-            if (!audio2.dataset.blessed) {
-                audio2.play().then(() => { audio2.pause(); audio2.dataset.blessed = "true"; }).catch(() => {});
-            }
+            // Se mantiene compatible por portabilidad de llamadas
         }
 
         function haptic() { if (navigator.vibrate) navigator.vibrate(10); }
@@ -949,84 +900,85 @@
         }
 
         /* ==================================================================
-           PLAYBACK CONTROLS & CROSSFADE ENGINE (12s)
+           PLAYBACK CONTROLS & COMPATIBLE CROSSFADE ENGINE (12s)
            ================================================================== */
         function playSong(idx, forceImmediate = false) {
-            ensureAudioContext(); haptic();
+            ensureAudioContext();
             
             const nextSongObj = cancionesData[idx];
             if (!nextSongObj) return;
 
-            // Transición forzada (manual) o saltos directos del usuario [5]
+            // Limpieza de hilos e intervalos previos de forma segura [5]
+            if (fadeInterval) {
+                clearInterval(fadeInterval);
+                fadeInterval = null;
+            }
+
+            // Reproducción forzada (manual) o saltos directos del usuario sin restricciones CORS [5]
             if (forceImmediate) {
                 cleanupCrossfade();
-                activeAudio.pause();
-                resetDeckFX(activeDeck);
+                audio1.pause();
+                audio2.pause();
+                
+                audio1.volume = globalVolume;
+                audio2.volume = globalVolume;
+                isCrossfading = false;
+
+                activeAudio = audio1; // Priorizar de forma segura audio1 para clicks directos
+                activeAudio.src = nextSongObj.url;
+                activeAudio.volume = globalVolume;
                 
                 triggerUIForSong(idx);
-                activeAudio.src = nextSongObj.url;
-                activeDeck.deckGain.gain.setValueAtTime(1, audioCtx.currentTime);
                 activeAudio.play().catch(e => {});
                 setPlayIcon(true);
                 return;
             }
 
-            // Crossfade automático de 12 segundos (siguiente pista) [5]
+            // Crossfade automático nativo de 12 segundos (Background Tab Friendly) [5]
             const nextAudio = (activeAudio === audio1) ? audio2 : audio1;
-            const nextDeck = (activeDeck === deck1) ? deck2 : deck1;
             const prevAudio = activeAudio;
-            const prevDeck = activeDeck;
-
-            if (isCrossfading) {
-                cleanupCrossfade();
-            }
 
             isCrossfading = true;
             fadingAudio = prevAudio;
-            fadingDeck = prevDeck;
 
-            resetDeckFX(nextDeck);
             nextAudio.src = nextSongObj.url;
+            nextAudio.volume = 0; // Inicia silenciado para mezcla suave [5]
             
-            const now = audioCtx.currentTime;
-            const fadeDuration = 12; // 12 segundos de desvanecimiento entre pistas [5]
-
-            prevDeck.deckGain.gain.setValueAtTime(prevDeck.deckGain.gain.value, now);
-            prevDeck.deckGain.gain.linearRampToValueAtTime(0, now + fadeDuration);
-
-            nextDeck.deckGain.gain.setValueAtTime(0, now);
-            nextDeck.deckGain.gain.linearRampToValueAtTime(1, now + fadeDuration);
-
-            nextAudio.play().catch(e => {});
-            
-            activeAudio = nextAudio;
-            activeDeck = nextDeck;
             triggerUIForSong(idx);
+            nextAudio.play().catch(e => {});
             setPlayIcon(true);
 
-            const fadeTimeoutId = setTimeout(() => {
-                if (fadingAudio === prevAudio) {
+            const steps = 24; // Intervalos de desvanecimiento para 12 segundos [5]
+            let currentStep = 0;
+
+            fadeInterval = setInterval(() => {
+                currentStep++;
+                const ratio = currentStep / steps;
+                
+                // Modificación directa de la ganancia del elemento (Independiente de CORS y compatible en segundo plano) [5]
+                prevAudio.volume = Math.max(0, globalVolume * (1 - ratio));
+                nextAudio.volume = Math.min(globalVolume, globalVolume * ratio);
+                
+                if (currentStep >= steps) {
+                    clearInterval(fadeInterval);
+                    fadeInterval = null;
                     prevAudio.pause();
                     prevAudio.src = "";
-                    prevDeck.deckGain.gain.setValueAtTime(1, audioCtx.currentTime);
+                    nextAudio.volume = globalVolume;
                     isCrossfading = false;
                     fadingAudio = null;
-                    fadingDeck = null;
                 }
-            }, fadeDuration * 1000 + 100);
-            
-            prevAudio.dataset.fadeTimeout = fadeTimeoutId;
+            }, 500); // Frecuencia de muestreo compatible con las restricciones de temporizador en background [5]
+
+            activeAudio = nextAudio;
         }
 
         function cleanupCrossfade() {
             if (!isCrossfading || !fadingAudio) return;
-            clearTimeout(parseInt(fadingAudio.dataset.fadeTimeout));
             fadingAudio.pause();
             fadingAudio.src = "";
-            fadingDeck.deckGain.gain.setValueAtTime(1, audioCtx.currentTime);
             isCrossfading = false;
             fadingAudio = null;
-            fadingDeck = null;
         }
 
         // Listener nativo resistente a pestañas en segundo plano (Background tab execution) [5]
@@ -1035,7 +987,7 @@
             
             if (audioEl.duration && !isNaN(audioEl.duration)) {
                 const rem = audioEl.duration - audioEl.currentTime;
-                const fadeThreshold = 12; // Umbral de 12 segundos para iniciar transición [5]
+                const fadeThreshold = 12; // Iniciar crossfade exactamente a los 12 segundos restantes [5]
                 
                 if (rem <= fadeThreshold && rem > 0.5) {
                     startAutoMix();
@@ -1080,7 +1032,7 @@
         function setVolumeLevel(vol) {
             if(vol < 0) vol = 0; if(vol > 1) vol = 1; globalVolume = vol;
             document.getElementById('vol-fill-desk').style.width = `${vol*100}%`;
-            if(audioCtx && masterGain) masterGain.gain.linearRampToValueAtTime(vol, audioCtx.currentTime + 0.1); else activeAudio.volume = vol;
+            activeAudio.volume = vol;
         }
 
         function toggleNP() {
@@ -1139,7 +1091,7 @@
            INITIALIZATION & EVENTS
            ================================================================== */
         function init() {
-            // Adjuntar elementos de audio al DOM de forma invisible para prevenir bloqueos de reproducción en Safari/iOS [5]
+            // Adjuntar elementos de audio de forma invisible al DOM (Vital para prevenir bloqueos de reproducción en Safari/iOS) [5]
             audio1.style.display = 'none';
             audio2.style.display = 'none';
             document.body.appendChild(audio1);
