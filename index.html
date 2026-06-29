@@ -378,7 +378,6 @@
         <aside id="sidebar">
             <div class="brand"><i class="ph-fill ph-waveform"></i> VIVETMP</div>
             <nav class="nav-menu">
-                <!-- Se remueve el Home de Sencillos ya que solo cargamos Álbumes completos -->
                 <div class="nav-item active" onclick="navTo('albums')"><i class="ph-fill ph-vinyl-record"></i> Albums</div>
                 <div class="nav-item" onclick="navTo('artists')"><i class="ph-fill ph-microphone-stage"></i> Artists</div>
                 <div class="nav-item" onclick="navTo('search')"><i class="ph-bold ph-magnifying-glass"></i> Search</div>
@@ -463,7 +462,6 @@
 
     <!-- MOBILE BOTTOM NAV -->
     <nav class="mobile-nav">
-        <!-- Navegación optimizada sin la pestaña Home de canciones vacías -->
         <div class="nav-item-mob active" onclick="navTo('albums')"><i class="ph-fill ph-vinyl-record"></i>Albums</div>
         <div class="nav-item-mob" onclick="navTo('artists')"><i class="ph-fill ph-microphone-stage"></i>Artists</div>
         <div class="nav-item-mob" onclick="navTo('search')"><i class="ph-bold ph-magnifying-glass"></i>Search</div>
@@ -533,29 +531,29 @@
         /* ==================================================================
            DATA DECLARATIONS
            ================================================================== */
-        const coverImgUrl = "https://4nemxki6k8.ucarecd.net/0455c685-6df4-4dca-ba77-16d7bf4135d6/PROBLEMAA.jpg";
-        const telefonoNuevoCoverUrl = "https://files.catbox.moe/vs6aao.jpg";
-        const tuyyoCoverUrl = "https://files.catbox.moe/q3o13t.png";
-        const moonlightCover = "https://files.catbox.moe/q3cn0w.png";
+        // Actualizados con los nuevos enlaces de portadas y fondos indicados [vs6aao, sea8gt, q3o13t, e1yrfu, q3cn0w, 3fwilh]
+        const nadieSabeCover = "https://files.catbox.moe/vs6aao.jpg"; 
+        const nadieSabeBg = "https://files.catbox.moe/sea8gt.png";
+        
+        const roaCover = "https://files.catbox.moe/q3o13t.png"; 
+        const roaBg = "https://files.catbox.moe/e1yrfu.png";
+        
+        const moonlightCover = "https://files.catbox.moe/q3cn0w.png"; 
+        const moonlightBg = "https://files.catbox.moe/3fwilh.png";
 
         // Filtro estricto de álbumes activos para renderizado limpio
         const albumsData = [ 
-            { id: "nadie-sabe-album", title: "nadie sabe lo que va a pasar mañana", artist: "Bad Bunny", cover: telefonoNuevoCoverUrl, year: "2023", duration: "1 hora y 21 minutos" },
-            { id: "private-suite-complete", title: "PRIVATE SUITE (COMPLETE EP EDITION)", artist: "ROA", cover: tuyyoCoverUrl, year: "2026", duration: "1 hora y 58 minutos" },
+            { id: "nadie-sabe-album", title: "nadie sabe lo que va a pasar mañana", artist: "Bad Bunny", cover: nadieSabeCover, year: "2023", duration: "1 hora y 21 minutos" },
+            { id: "private-suite-complete", title: "PRIVATE SUITE (COMPLETE EP EDITION)", artist: "ROA", cover: roaCover, year: "2026", duration: "1 hora y 58 minutos" },
             { id: "por-si-manana", title: "POR SI MAÑANA NO ESTOY", artist: "Omar Courtz", cover: moonlightCover, year: "2026", duration: "51 minutos y 18 segundos" }
         ];
 
         // Paletas de color y fondos de pantalla optimizados
-        const roaCover = tuyyoCoverUrl; 
-        const roaBg = "https://files.catbox.moe/e1yrfu.png";
-        const roaPalette = [{ r: 242, g: 70, b: 7 },{ r: 191, g: 74, b: 6 },{ r: 242, g: 50, b: 7 },{ r: 2, g: 35, b: 43 },{ r: 1, g: 1, b: 1 }];
-        
-        const moonlightBg = "https://files.catbox.moe/3fwilh.png";
-        const courtzPalette2 = [{ r: 0, g: 11, b: 240 },{ r: 255, g: 25, b: 181 },{ r: 42, g: 245, b: 152 },{ r: 255, g: 15, b: 87 },{ r: 2, g: 8, b: 46 }];
-        
-        const nadieSabeCover = telefonoNuevoCoverUrl; 
-        const nadieSabeBg = "https://files.catbox.moe/sea8gt.png";
+        const roaPalette = [{ r: 1, g: 1, b: 1 },{ r: 191, g: 74, b: 6 },{ r: 242, g: 70, b: 7 },{ r: 242, g: 50, b: 7 },{ r: 2, g: 35, b: 43 },{ r: 1, g: 1, b: 1 }];
         const nadieSabePalette = [{ r: 218, g: 204, b: 193 },{ r: 217, g: 202, b: 193 },{ r: 98, g: 117, b: 144 },{ r: 117, g: 58, b: 45 },{ r: 64, g: 28, b: 24 },{ r: 218, g: 204, b: 193 }];
+        
+        // Paleta de colores courtzPalette2 integrada correctamente
+        const moonlightPalette = [{ r: 0, g: 11, b: 240 },{ r: 255, g: 25, b: 181 },{ r: 42, g: 245, b: 152 },{ r: 255, g: 15, b: 87 },{ r: 2, g: 8, b: 46 }];
 
         // Base de datos de canciones de los álbumes (Comprimidas para ahorrar código de forma segura)
         const nadieSabeTracksRaw = [
@@ -644,7 +642,7 @@
             ["POR SI MAÑANA NO ESTOY", "https://files.catbox.moe/f67tpy.mp3", "Omar Courtz"]
         ];
 
-        // Construcción limpia de base de datos
+        // Construcción unificada y dinámica de canciones totales (Sin redundancia)
         const cancionesData = [];
 
         function addAlbumTracks(albumId, cover, bg, palette, artistDefault, tracksRaw) {
@@ -663,16 +661,16 @@
             });
         }
 
-        // Carga de álbumes activos
+        // Expandir las canciones de los álbumes en el backend automáticamente
         addAlbumTracks("nadie-sabe-album", nadieSabeCover, nadieSabeBg, nadieSabePalette, "Bad Bunny", nadieSabeTracksRaw);
         addAlbumTracks("private-suite-complete", roaCover, roaBg, roaPalette, "ROA", roaTracksRaw);
         addAlbumTracks("por-si-manana", moonlightCover, moonlightBg, moonlightPalette, "Omar Courtz", moonlightTracksRaw);
 
         // Artistas unificados para los álbumes cargados
         const artistsData = [
-            { name: "Bad Bunny", img: telefonoNuevoCoverUrl, bgImage: nadieSabeBg },
-            { name: "ROA", img: "https://cdn.discordapp.com/attachments/1243422250955182100/1519397164751524013/IMG_3314.jpg?ex=6a3d6861&is=6a3c16e1&hm=b69e3dd84f888efa5537c8497923754f599c72be10d58781b10f3eee75f1f5e3&", bgImage: roaBg },
-            { name: "Omar Courtz", img: "https://cdn.discordapp.com/attachments/1243422250955182100/1519442649583587480/IMG_3319.jpg?ex=6a3d92bd&is=6a3c413d&hm=c8de82f47b83f6aa906b605ea3638890db252f9fb8d6e40496da203b6c47492c&", bgImage: moonlightBg }
+            { name: "Bad Bunny", img: nadieSabeCover, bgImage: nadieSabeBg },
+            { name: "ROA", img: roaCover, bgImage: roaBg },
+            { name: "Omar Courtz", img: moonlightCover, bgImage: moonlightBg }
         ];
 
         /* ==================================================================
@@ -953,6 +951,7 @@
             }
 
             renderGrid(songs, 'grid-artist-top', 'song');
+            renderGrid(songs, 'grid-artist-latest', 'song');
             renderGrid([], 'grid-artist-singles', 'song');
 
             const artist = artistsData.find(a => a.name === name);
