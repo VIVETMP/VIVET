@@ -376,16 +376,26 @@
         <aside id="sidebar">
             <div class="brand"><i class="ph-fill ph-waveform"></i> VIVETMP</div>
             <nav class="nav-menu">
-                <div class="nav-item active" onclick="navTo('albums')"><i class="ph-fill ph-vinyl-record"></i> Albums</div>
+                <div class="nav-item active" onclick="navTo('songs')"><i class="ph-fill ph-house"></i> Home</div>
+                <div class="nav-item" onclick="navTo('albums')"><i class="ph-fill ph-vinyl-record"></i> Albums</div>
                 <div class="nav-item" onclick="navTo('search')"><i class="ph-bold ph-magnifying-glass"></i> Search</div>
             </nav>
         </aside>
 
         <!-- MAIN SCROLLING CONTENT -->
         <main id="main-content">
+
+            <!-- SONGS VIEW (HOME: Sencillos únicamente) -->
+            <section id="view-songs" class="view-section active">
+                <div class="page-header">
+                    <h1>Listen Now</h1>
+                    <p>Discover the latest standalone premium singles.</p>
+                </div>
+                <div class="grid-container" id="grid-songs"></div>
+            </section>
             
-            <!-- ALBUMS VIEW (Lanzamiento inicial predeterminado) -->
-            <section id="view-albums" class="view-section active">
+            <!-- ALBUMS VIEW -->
+            <section id="view-albums" class="view-section">
                 <div class="page-header">
                     <h1>Albums</h1>
                     <p>Immerse yourself in full projects and concepts.</p>
@@ -429,7 +439,8 @@
 
     <!-- MOBILE BOTTOM NAV -->
     <nav class="mobile-nav">
-        <div class="nav-item-mob active" onclick="navTo('albums')"><i class="ph-fill ph-vinyl-record"></i>Albums</div>
+        <div class="nav-item-mob active" onclick="navTo('songs')"><i class="ph-fill ph-house"></i>Home</div>
+        <div class="nav-item-mob" onclick="navTo('albums')"><i class="ph-fill ph-vinyl-record"></i>Albums</div>
         <div class="nav-item-mob" onclick="navTo('search')"><i class="ph-bold ph-magnifying-glass"></i>Search</div>
     </nav>
 
@@ -518,7 +529,7 @@
         const nadieSabePalette = [{ r: 218, g: 204, b: 193 },{ r: 217, g: 202, b: 193 },{ r: 98, g: 117, b: 144 },{ r: 117, g: 58, b: 45 },{ r: 64, g: 28, b: 24 },{ r: 218, g: 204, b: 193 }];
         const moonlightPalette = [{ r: 0, g: 11, b: 240 },{ r: 255, g: 25, b: 181 },{ r: 42, g: 245, b: 152 },{ r: 255, g: 15, b: 87 },{ r: 2, g: 8, b: 46 }];
 
-        // Base de datos de canciones comprimidas
+        // Base de datos de canciones de los álbumes (Comprimidas para ahorrar código de forma segura)
         const nadieSabeTracksRaw = [
             ["NADIE SABE", "https://files.catbox.moe/81i5i9.mp3"],
             ["MONACO", "https://files.catbox.moe/i3k4mg.mp3"],
@@ -605,8 +616,24 @@
             ["POR SI MAÑANA NO ESTOY", "https://files.catbox.moe/f67tpy.mp3", "Omar Courtz"]
         ];
 
-        // Construcción limpia de base de datos
-        const cancionesData = [];
+        // Sencillos del Home (Sección Solicitada de Singles) [5]
+        // Se agrega "Las mas bonitas son p#tas" de Anuel AA como primer sencillo
+        const baseSingles = [
+            { 
+                title: "Las mas bonitas son p#tas", 
+                artist: "Anuel AA", 
+                url: "https://files.catbox.moe/h3ov3e.mp3", 
+                cover: "https://files.catbox.moe/qd91kk.jpg", 
+                album: "", 
+                trackNum: 1, 
+                coverLoaded: true, 
+                palette: [{ r: 15, g: 0, b: 0 },{ r: 120, g: 10, b: 10 },{ r: 200, g: 15, b: 15 },{ r: 40, g: 0, b: 0 }], 
+                bgImage: "https://files.catbox.moe/f755oj.png" 
+            }
+        ];
+
+        // Base de datos principal de canciones
+        const cancionesData = [...baseSingles];
 
         function addAlbumTracks(albumId, cover, bg, palette, artistDefault, tracksRaw) {
             tracksRaw.forEach((t, idx) => {
@@ -635,6 +662,7 @@
         let currentPlayingIndex = 0;
         let isNPOpen = false;
 
+        // Declaración inicial de instancias de audio mapeadas de forma segura al DOM
         const audio1 = new Audio(); audio1.crossOrigin = "anonymous";
         const audio2 = new Audio(); audio2.crossOrigin = "anonymous";
         let activeAudio = audio1, fadingAudio = null, isCrossfading = false, mixTimingHumanized = 0;
@@ -683,9 +711,18 @@
             deck.feedback.gain.cancelScheduledValues(now); deck.feedback.gain.setValueAtTime(0, now);
         }
 
+        // Habilitación nativa y bypass de restricciones del sistema de audio para móviles (iOS/Safari) [5]
         function ensureAudioContext() {
             initAudioEngine();
             if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+            
+            // Unlocking de hilos de audio para iOS/Background Playback en móviles [5]
+            if (!audio1.dataset.blessed) {
+                audio1.play().then(() => { audio1.pause(); audio1.dataset.blessed = "true"; }).catch(() => {});
+            }
+            if (!audio2.dataset.blessed) {
+                audio2.play().then(() => { audio2.pause(); audio2.dataset.blessed = "true"; }).catch(() => {});
+            }
         }
 
         function haptic() { if (navigator.vibrate) navigator.vibrate(10); }
@@ -722,7 +759,7 @@
         }
 
         /* ==================================================================
-           BACKGROUND ANALYSIS, AUTOMIX & CROSSFADE
+           BACKGROUND ANALYSIS, AUTOMIX & CROSSFADE (12s)
            ================================================================== */
         async function runAnalysisQueue() {
             if (!analysisQueue.length) return;
@@ -761,7 +798,6 @@
         function getBestNextTrack(currIdx) { return (currIdx + 1) % cancionesData.length; }
         
         function startAutoMix() { 
-            // Inicia la mezcla sin forzar cambio inmediato para permitir crossfade [5]
             playSong(getBestNextTrack(currentPlayingIndex), false); 
         }
 
@@ -800,7 +836,7 @@
                 
                 if (type === 'song' && currentPlayingIndex === realIndex) card.classList.add('active');
                 
-                // Forzar reproducción inmediata en interacciones manuales
+                // Forzar reproducción inmediata en interacciones manuales [5]
                 if (type === 'song') card.onclick = () => playSong(realIndex, true);
                 else if (type === 'album') card.onclick = () => openAlbumDetail(item.id);
 
@@ -852,8 +888,7 @@
                 const row = document.createElement('div'); row.className = `track-row track-row-${realIndex}`;
                 if(currentPlayingIndex === realIndex) row.classList.add('active');
                 
-                // Forzar reproducción inmediata en interacciones manuales
-                row.onclick = () => playSong(realIndex, true);
+                row.onclick = () => playSong(realIndex, true); // Forzar reproducción inmediata manual [5]
                 row.innerHTML = `
                     <div class="track-num">${song.trackNum}</div>
                     <div class="track-info">
@@ -892,7 +927,7 @@
             const albumTracks = cancionesData.filter(s => s.album === currentAlbumId).sort((a,b) => a.trackNum - b.trackNum);
             if (albumTracks.length > 0) {
                 const targetIndex = cancionesData.findIndex(s => s.title === albumTracks[0].title);
-                if (targetIndex !== -1) playSong(targetIndex, true); // Forzar cambio manual inmediato
+                if (targetIndex !== -1) playSong(targetIndex, true); 
             }
         }
 
@@ -922,7 +957,7 @@
             const nextSongObj = cancionesData[idx];
             if (!nextSongObj) return;
 
-            // Reproducción inmediata para saltos manuales del usuario [5]
+            // Transición forzada (manual) o saltos directos del usuario [5]
             if (forceImmediate) {
                 cleanupCrossfade();
                 activeAudio.pause();
@@ -936,7 +971,7 @@
                 return;
             }
 
-            // Transición por crossfade suave de 12 segundos para reproducción automática [5]
+            // Crossfade automático de 12 segundos (siguiente pista) [5]
             const nextAudio = (activeAudio === audio1) ? audio2 : audio1;
             const nextDeck = (activeDeck === deck1) ? deck2 : deck1;
             const prevAudio = activeAudio;
@@ -954,13 +989,11 @@
             nextAudio.src = nextSongObj.url;
             
             const now = audioCtx.currentTime;
-            const fadeDuration = 12; // 12 segundos de mezcla [5]
+            const fadeDuration = 12; // 12 segundos de desvanecimiento entre pistas [5]
 
-            // Atenuación de volumen para deck saliente en hilo nativo [5]
             prevDeck.deckGain.gain.setValueAtTime(prevDeck.deckGain.gain.value, now);
             prevDeck.deckGain.gain.linearRampToValueAtTime(0, now + fadeDuration);
 
-            // Aumento de volumen para deck entrante en hilo nativo [5]
             nextDeck.deckGain.gain.setValueAtTime(0, now);
             nextDeck.deckGain.gain.linearRampToValueAtTime(1, now + fadeDuration);
 
@@ -971,7 +1004,6 @@
             triggerUIForSong(idx);
             setPlayIcon(true);
 
-            // Limpieza y pausado de recurso previo tras finalizar crossfade [5]
             const fadeTimeoutId = setTimeout(() => {
                 if (fadingAudio === prevAudio) {
                     prevAudio.pause();
@@ -997,13 +1029,13 @@
             fadingDeck = null;
         }
 
-        // Listener nativo 'timeupdate' que funciona sin bloqueos en pestañas en segundo plano (background) [5]
+        // Listener nativo resistente a pestañas en segundo plano (Background tab execution) [5]
         function handleTimeUpdate(audioEl) {
             if (audioEl !== activeAudio || isCrossfading) return;
             
             if (audioEl.duration && !isNaN(audioEl.duration)) {
                 const rem = audioEl.duration - audioEl.currentTime;
-                const fadeThreshold = 12; // Iniciar crossfade exactamente a los 12 segundos restantes [5]
+                const fadeThreshold = 12; // Umbral de 12 segundos para iniciar transición [5]
                 
                 if (rem <= fadeThreshold && rem > 0.5) {
                     startAutoMix();
@@ -1107,13 +1139,23 @@
            INITIALIZATION & EVENTS
            ================================================================== */
         function init() {
+            // Adjuntar elementos de audio al DOM de forma invisible para prevenir bloqueos de reproducción en Safari/iOS [5]
+            audio1.style.display = 'none';
+            audio2.style.display = 'none';
+            document.body.appendChild(audio1);
+            document.body.appendChild(audio2);
+
+            // Filtrar y renderizar sencillos (Singles) en Home
+            const singles = cancionesData.filter(song => !song.album || song.album === "");
+            renderGrid(singles, 'grid-songs', 'song');
+
             renderGrid(albumsData, 'grid-albums', 'album');
             
             document.getElementById('search-input').addEventListener('input', handleSearch);
             document.body.addEventListener('click', ensureAudioContext, { once: true });
             document.body.addEventListener('touchstart', ensureAudioContext, { once: true });
 
-            // Vincular observadores nativos de tiempo y eventos de finalización (Resistentes a background) [5]
+            // Vincular observadores nativos de tiempo y finalización (Background Tab Friendly) [5]
             audio1.addEventListener('timeupdate', () => handleTimeUpdate(audio1));
             audio2.addEventListener('timeupdate', () => handleTimeUpdate(audio2));
             audio1.addEventListener('ended', () => handleTrackEnded(audio1));
@@ -1127,6 +1169,7 @@
             setupGestures();
             document.getElementById('vol-fill-desk').style.width = `${globalVolume*100}%`;
             
+            // Carga por defecto el nuevo sencillo de Anuel AA en la barra inferior al cargar la aplicación [5]
             triggerUIForSong(0);
         }
 
