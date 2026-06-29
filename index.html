@@ -174,6 +174,7 @@
         .card:active { transform: scale(0.95); transition: 0.2s; }
         
         .card-img-wrapper { position: relative; width: 100%; aspect-ratio: 1; border-radius: 20px; overflow: hidden; box-shadow: var(--shadow-float); background: transparent; z-index: 2; }
+        .card-img-wrapper.is-circle { border-radius: 50%; }
         .card-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.7s var(--ease-fluid); }
         .card:hover .card-img { transform: scale(1.1); }
         
@@ -210,6 +211,7 @@
         .hero-section { display: flex; align-items: flex-end; gap: 56px; margin-bottom: 64px; position: relative; }
         .hero-img { width: 300px; height: 300px; border-radius: 24px; object-fit: cover; box-shadow: 0 40px 80px rgba(0,0,0,0.8); transition: transform 0.5s var(--ease-snappy); }
         .hero-img:hover { transform: scale(1.02); }
+        .hero-img.is-circle { border-radius: 50%; box-shadow: 0 30px 60px rgba(0,0,0,0.6); }
         .hero-meta { display: flex; flex-direction: column; gap: 10px; padding-bottom: 12px; z-index: 2; }
         .hero-label { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; color: var(--text-secondary); }
         .hero-title { font-family: var(--font-display); font-size: 56px; font-weight: 900; letter-spacing: -0.04em; line-height: 1.1; margin-bottom: 8px; text-shadow: 0 10px 40px rgba(0,0,0,0.6); background: linear-gradient(to bottom right, #fff, #bbb); -webkit-background-clip: text; color: transparent; }
@@ -376,7 +378,7 @@
         <aside id="sidebar">
             <div class="brand"><i class="ph-fill ph-waveform"></i> VIVETMP</div>
             <nav class="nav-menu">
-                <!-- Se añade de nuevo la pestaña Home (Sencillos) como vista inicial [5] -->
+                <!-- Se añade de nuevo la pestaña Home (Sencillos) como vista inicial -->
                 <div class="nav-item active" onclick="navTo('songs')"><i class="ph-fill ph-house"></i> Home</div>
                 <div class="nav-item" onclick="navTo('albums')"><i class="ph-fill ph-vinyl-record"></i> Albums</div>
                 <div class="nav-item" onclick="navTo('search')"><i class="ph-bold ph-magnifying-glass"></i> Search</div>
@@ -385,16 +387,16 @@
 
         <!-- MAIN SCROLLING CONTENT -->
         <main id="main-content">
-
-            <!-- SONGS VIEW (HOME: Sencillos únicamente) -->
+            
+            <!-- SONGS VIEW (HOME: Únicamente Sencillos) -->
             <section id="view-songs" class="view-section active">
                 <div class="page-header">
                     <h1>Listen Now</h1>
-                    <p>Discover the latest standalone premium singles.</p>
+                    <p>Standalone essential singles and standout releases.</p>
                 </div>
                 <div class="grid-container" id="grid-songs"></div>
             </section>
-            
+
             <!-- ALBUMS VIEW -->
             <section id="view-albums" class="view-section">
                 <div class="page-header">
@@ -413,7 +415,7 @@
                         <i class="ph-bold ph-magnifying-glass"></i>
                     </div>
                 </div>
-                <!-- Se ha retirado la sección de Artistas del buscador de acuerdo con tus instrucciones [5] -->
+                <!-- Se ha retirado la sección de Artistas del buscador de acuerdo con tus instrucciones -->
                 <h2 class="section-title" id="title-search-albums" style="display:none;">Albums</h2>
                 <div class="grid-container" id="grid-search-albums" style="margin-bottom:48px;"></div>
                 <h2 class="section-title" id="title-search-songs" style="display:none;">Songs</h2>
@@ -441,6 +443,7 @@
 
     <!-- MOBILE BOTTOM NAV -->
     <nav class="mobile-nav">
+        <!-- Pestaña Home de sencillos añadida -->
         <div class="nav-item-mob active" onclick="navTo('songs')"><i class="ph-fill ph-house"></i>Home</div>
         <div class="nav-item-mob" onclick="navTo('albums')"><i class="ph-fill ph-vinyl-record"></i>Albums</div>
         <div class="nav-item-mob" onclick="navTo('search')"><i class="ph-bold ph-magnifying-glass"></i>Search</div>
@@ -534,7 +537,11 @@
         // Paleta y canción única de Anuel AA como primer Sencillo [5]
         const lasMasBonitasPalette2 = [{ r: 0, g: 41, b: 87 },{ r: 0, g: 53, b: 101 },{ r: 2, g: 38, b: 67 },{ r: 0, g: 61, b: 121 },{ r: 1, g: 21, b: 37 }];
 
-        // Base de datos de canciones de los álbumes (Comprimidas para ahorrar código de forma segura)
+        // Nuevas paletas asignadas a los sencillos solicitados
+        const dreamTeam_640x640Palette = [{ r: 255, g: 0, b: 7 },{ r: 11, g: 39, b: 64 },{ r: 247, g: 201, b: 122 },{ r: 10, g: 14, b: 18 },{ r: 1, g: 2, b: 3 }];
+        const _222_640x640Palette = [{ r: 219, g: 114, b: 34 },{ r: 104, g: 140, b: 122 },{ r: 41, g: 25, b: 29 },{ r: 16, g: 14, b: 18 },{ r: 161, g: 73, b: 45 }];
+
+        // Base de datos comprimida de canciones de los álbumes
         const nadieSabeTracksRaw = [
             ["NADIE SABE", "https://files.catbox.moe/81i5i9.mp3"],
             ["MONACO", "https://files.catbox.moe/i3k4mg.mp3"],
@@ -621,8 +628,9 @@
             ["POR SI MAÑANA NO ESTOY", "https://files.catbox.moe/f67tpy.mp3", "Omar Courtz"]
         ];
 
-        // Sencillos del Home (Sección Solicitada de Sencillos) [5]
-        const baseSingles = [
+        // Estructura de base de datos (con Sencillos/Singles declarados de manera nativa)
+        const cancionesData = [
+            // Single de Anuel AA
             { 
                 title: "Las mas bonitas son p#tas", 
                 artist: "Anuel AA", 
@@ -633,11 +641,32 @@
                 coverLoaded: true, 
                 palette: lasMasBonitasPalette2, 
                 bgImage: "https://files.catbox.moe/f755oj.png" 
+            },
+            // Nuevo Sencillo: Dream Team
+            {
+                title: "Dream Team",
+                artist: "Young Miko & De La Rose",
+                url: "https://files.catbox.moe/492n0u.mp3",
+                cover: "https://files.catbox.moe/wpiz1a.jpg",
+                album: "",
+                trackNum: 1,
+                coverLoaded: true,
+                palette: dreamTeam_640x640Palette,
+                bgImage: "https://files.catbox.moe/vl17c9.png"
+            },
+            // Nuevo Sencillo: 222
+            {
+                title: "222",
+                artist: "Yan Block",
+                url: "https://files.catbox.moe/ovb0v9.mp3",
+                cover: "https://files.catbox.moe/231x9h.jpg",
+                album: "",
+                trackNum: 1,
+                coverLoaded: true,
+                palette: _222_640x640Palette,
+                bgImage: "https://files.catbox.moe/36yq5u.png"
             }
         ];
-
-        // Base de datos principal de canciones
-        const cancionesData = [...baseSingles];
 
         function addAlbumTracks(albumId, cover, bg, palette, artistDefault, tracksRaw) {
             tracksRaw.forEach((t, idx) => {
@@ -1084,7 +1113,7 @@
            INITIALIZATION
            ================================================================== */
         function init() {
-            // Renderizar los sencillos del Home en su contenedor [5]
+            // Renderizar los sencillos del Home en su contenedor
             const singles = cancionesData.filter(song => !song.album || song.album === "");
             renderGrid(singles, 'grid-songs', 'song');
 
@@ -1103,7 +1132,7 @@
             setupGestures();
             document.getElementById('vol-fill-desk').style.width = `${globalVolume*100}%`;
             
-            // Carga por defecto la primera pista del sistema (el nuevo sencillo de Anuel AA) [5]
+            // Carga por defecto la primera pista del sistema
             triggerUIForSong(0);
         }
 
