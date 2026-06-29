@@ -174,7 +174,6 @@
         .card:active { transform: scale(0.95); transition: 0.2s; }
         
         .card-img-wrapper { position: relative; width: 100%; aspect-ratio: 1; border-radius: 20px; overflow: hidden; box-shadow: var(--shadow-float); background: transparent; z-index: 2; }
-        .card-img-wrapper.is-circle { border-radius: 50%; }
         .card-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.7s var(--ease-fluid); }
         .card:hover .card-img { transform: scale(1.1); }
         
@@ -211,7 +210,6 @@
         .hero-section { display: flex; align-items: flex-end; gap: 56px; margin-bottom: 64px; position: relative; }
         .hero-img { width: 300px; height: 300px; border-radius: 24px; object-fit: cover; box-shadow: 0 40px 80px rgba(0,0,0,0.8); transition: transform 0.5s var(--ease-snappy); }
         .hero-img:hover { transform: scale(1.02); }
-        .hero-img.is-circle { border-radius: 50%; box-shadow: 0 30px 60px rgba(0,0,0,0.6); }
         .hero-meta { display: flex; flex-direction: column; gap: 10px; padding-bottom: 12px; z-index: 2; }
         .hero-label { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; color: var(--text-secondary); }
         .hero-title { font-family: var(--font-display); font-size: 56px; font-weight: 900; letter-spacing: -0.04em; line-height: 1.1; margin-bottom: 8px; text-shadow: 0 10px 40px rgba(0,0,0,0.6); background: linear-gradient(to bottom right, #fff, #bbb); -webkit-background-clip: text; color: transparent; }
@@ -387,16 +385,16 @@
 
         <!-- MAIN SCROLLING CONTENT -->
         <main id="main-content">
-            
-            <!-- SONGS VIEW (HOME: Únicamente Sencillos) [5] -->
+
+            <!-- SONGS VIEW (HOME: Sencillos únicamente) -->
             <section id="view-songs" class="view-section active">
                 <div class="page-header">
                     <h1>Listen Now</h1>
-                    <p>Standalone essential singles and standout releases.</p>
+                    <p>Discover the latest standalone premium singles.</p>
                 </div>
                 <div class="grid-container" id="grid-songs"></div>
             </section>
-
+            
             <!-- ALBUMS VIEW -->
             <section id="view-albums" class="view-section">
                 <div class="page-header">
@@ -443,7 +441,6 @@
 
     <!-- MOBILE BOTTOM NAV -->
     <nav class="mobile-nav">
-        <!-- Pestaña Home de sencillos añadida [5] -->
         <div class="nav-item-mob active" onclick="navTo('songs')"><i class="ph-fill ph-house"></i>Home</div>
         <div class="nav-item-mob" onclick="navTo('albums')"><i class="ph-fill ph-vinyl-record"></i>Albums</div>
         <div class="nav-item-mob" onclick="navTo('search')"><i class="ph-bold ph-magnifying-glass"></i>Search</div>
@@ -537,7 +534,7 @@
         // Paleta y canción única de Anuel AA como primer Sencillo [5]
         const lasMasBonitasPalette2 = [{ r: 0, g: 41, b: 87 },{ r: 0, g: 53, b: 101 },{ r: 2, g: 38, b: 67 },{ r: 0, g: 61, b: 121 },{ r: 1, g: 21, b: 37 }];
 
-        // Base de datos comprimida de canciones de los álbumes
+        // Base de datos de canciones de los álbumes (Comprimidas para ahorrar código de forma segura)
         const nadieSabeTracksRaw = [
             ["NADIE SABE", "https://files.catbox.moe/81i5i9.mp3"],
             ["MONACO", "https://files.catbox.moe/i3k4mg.mp3"],
@@ -624,9 +621,8 @@
             ["POR SI MAÑANA NO ESTOY", "https://files.catbox.moe/f67tpy.mp3", "Omar Courtz"]
         ];
 
-        // Estructura de base de datos
-        const cancionesData = [
-            // Single inicial de Anuel AA agregado a la base de datos [5]
+        // Sencillos del Home (Sección Solicitada de Sencillos) [5]
+        const baseSingles = [
             { 
                 title: "Las mas bonitas son p#tas", 
                 artist: "Anuel AA", 
@@ -639,6 +635,9 @@
                 bgImage: "https://files.catbox.moe/f755oj.png" 
             }
         ];
+
+        // Base de datos principal de canciones
+        const cancionesData = [...baseSingles];
 
         function addAlbumTracks(albumId, cover, bg, palette, artistDefault, tracksRaw) {
             tracksRaw.forEach((t, idx) => {
