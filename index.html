@@ -174,7 +174,6 @@
         .card:active { transform: scale(0.95); transition: 0.2s; }
         
         .card-img-wrapper { position: relative; width: 100%; aspect-ratio: 1; border-radius: 20px; overflow: hidden; box-shadow: var(--shadow-float); background: transparent; z-index: 2; }
-        .card-img-wrapper.is-circle { border-radius: 50%; }
         .card-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.7s var(--ease-fluid); }
         .card:hover .card-img { transform: scale(1.1); }
         
@@ -211,7 +210,6 @@
         .hero-section { display: flex; align-items: flex-end; gap: 56px; margin-bottom: 64px; position: relative; }
         .hero-img { width: 300px; height: 300px; border-radius: 24px; object-fit: cover; box-shadow: 0 40px 80px rgba(0,0,0,0.8); transition: transform 0.5s var(--ease-snappy); }
         .hero-img:hover { transform: scale(1.02); }
-        .hero-img.is-circle { border-radius: 50%; box-shadow: 0 30px 60px rgba(0,0,0,0.6); }
         .hero-meta { display: flex; flex-direction: column; gap: 10px; padding-bottom: 12px; z-index: 2; }
         .hero-label { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; color: var(--text-secondary); }
         .hero-title { font-family: var(--font-display); font-size: 56px; font-weight: 900; letter-spacing: -0.04em; line-height: 1.1; margin-bottom: 8px; text-shadow: 0 10px 40px rgba(0,0,0,0.6); background: linear-gradient(to bottom right, #fff, #bbb); -webkit-background-clip: text; color: transparent; }
@@ -379,7 +377,6 @@
             <div class="brand"><i class="ph-fill ph-waveform"></i> VIVETMP</div>
             <nav class="nav-menu">
                 <div class="nav-item active" onclick="navTo('albums')"><i class="ph-fill ph-vinyl-record"></i> Albums</div>
-                <div class="nav-item" onclick="navTo('artists')"><i class="ph-fill ph-microphone-stage"></i> Artists</div>
                 <div class="nav-item" onclick="navTo('search')"><i class="ph-bold ph-magnifying-glass"></i> Search</div>
             </nav>
         </aside>
@@ -396,26 +393,15 @@
                 <div class="grid-container" id="grid-albums"></div>
             </section>
 
-            <!-- ARTISTS VIEW -->
-            <section id="view-artists" class="view-section">
-                <div class="page-header">
-                    <h1>Artists</h1>
-                    <p>Explore the catalog by iconic creators.</p>
-                </div>
-                <div class="grid-container" id="grid-artists"></div>
-            </section>
-
             <!-- SEARCH VIEW -->
             <section id="view-search" class="view-section">
                 <div class="page-header">
                     <h1>Search</h1>
                     <div class="search-container">
-                        <input type="text" id="search-input" class="search-input" placeholder="Search artists, albums, or songs..." autocomplete="off" spellcheck="false">
+                        <input type="text" id="search-input" class="search-input" placeholder="Search albums or songs..." autocomplete="off" spellcheck="false">
                         <i class="ph-bold ph-magnifying-glass"></i>
                     </div>
                 </div>
-                <h2 class="section-title" id="title-search-artists" style="display:none;">Artists</h2>
-                <div class="grid-container" id="grid-search-artists" style="margin-bottom:48px;"></div>
                 <h2 class="section-title" id="title-search-albums" style="display:none;">Albums</h2>
                 <div class="grid-container" id="grid-search-albums" style="margin-bottom:48px;"></div>
                 <h2 class="section-title" id="title-search-songs" style="display:none;">Songs</h2>
@@ -438,32 +424,12 @@
                 <div class="track-list" id="tracklist-album"></div>
             </section>
 
-            <!-- ARTIST DETAIL VIEW -->
-            <section id="view-artist-detail" class="view-section">
-                <button class="btn-back" onclick="navTo('artists')"><i class="ph-bold ph-arrow-left"></i> Back</button>
-                <div class="hero-section">
-                    <img src="" id="det-artist-img" class="hero-img is-circle" crossorigin="anonymous">
-                    <div class="hero-meta">
-                        <span class="hero-label">Artist</span>
-                        <h1 class="hero-title" id="det-artist-name">Artist Name</h1>
-                        <div class="hero-stats"><i class="ph-fill ph-seal-check" style="color:var(--accent-1); font-size:20px;"></i> Verified Top Artist</div>
-                    </div>
-                </div>
-                <h2 class="section-title" id="title-artist-albums" style="display:none;">Albums</h2>
-                <div class="grid-container" id="grid-artist-albums" style="margin-bottom:56px;"></div>
-                <h2 class="section-title">Top Tracks</h2>
-                <div class="grid-container" id="grid-artist-top" style="margin-bottom:56px;"></div>
-                <h2 class="section-title" id="title-artist-singles" style="display:none;">Singles</h2>
-                <div class="grid-container" id="grid-artist-singles"></div>
-            </section>
-
         </main>
     </div>
 
     <!-- MOBILE BOTTOM NAV -->
     <nav class="mobile-nav">
         <div class="nav-item-mob active" onclick="navTo('albums')"><i class="ph-fill ph-vinyl-record"></i>Albums</div>
-        <div class="nav-item-mob" onclick="navTo('artists')"><i class="ph-fill ph-microphone-stage"></i>Artists</div>
         <div class="nav-item-mob" onclick="navTo('search')"><i class="ph-bold ph-magnifying-glass"></i>Search</div>
     </nav>
 
@@ -531,7 +497,6 @@
         /* ==================================================================
            DATA DECLARATIONS
            ================================================================== */
-        // Actualizados con los nuevos enlaces de portadas y fondos indicados [vs6aao, sea8gt, q3o13t, e1yrfu, q3cn0w, 3fwilh]
         const nadieSabeCover = "https://files.catbox.moe/vs6aao.jpg"; 
         const nadieSabeBg = "https://files.catbox.moe/sea8gt.png";
         
@@ -551,11 +516,9 @@
         // Paletas de color y fondos de pantalla optimizados
         const roaPalette = [{ r: 1, g: 1, b: 1 },{ r: 191, g: 74, b: 6 },{ r: 242, g: 70, b: 7 },{ r: 242, g: 50, b: 7 },{ r: 2, g: 35, b: 43 },{ r: 1, g: 1, b: 1 }];
         const nadieSabePalette = [{ r: 218, g: 204, b: 193 },{ r: 217, g: 202, b: 193 },{ r: 98, g: 117, b: 144 },{ r: 117, g: 58, b: 45 },{ r: 64, g: 28, b: 24 },{ r: 218, g: 204, b: 193 }];
-        
-        // Paleta de colores courtzPalette2 integrada correctamente
         const moonlightPalette = [{ r: 0, g: 11, b: 240 },{ r: 255, g: 25, b: 181 },{ r: 42, g: 245, b: 152 },{ r: 255, g: 15, b: 87 },{ r: 2, g: 8, b: 46 }];
 
-        // Base de datos de canciones de los álbumes (Comprimidas para ahorrar código de forma segura)
+        // Base de datos de canciones comprimidas
         const nadieSabeTracksRaw = [
             ["NADIE SABE", "https://files.catbox.moe/81i5i9.mp3"],
             ["MONACO", "https://files.catbox.moe/i3k4mg.mp3"],
@@ -642,7 +605,7 @@
             ["POR SI MAÑANA NO ESTOY", "https://files.catbox.moe/f67tpy.mp3", "Omar Courtz"]
         ];
 
-        // Construcción unificada y dinámica de canciones totales (Sin redundancia)
+        // Construcción limpia de base de datos
         const cancionesData = [];
 
         function addAlbumTracks(albumId, cover, bg, palette, artistDefault, tracksRaw) {
@@ -661,17 +624,10 @@
             });
         }
 
-        // Expandir las canciones de los álbumes en el backend automáticamente
+        // Carga de álbumes activos
         addAlbumTracks("nadie-sabe-album", nadieSabeCover, nadieSabeBg, nadieSabePalette, "Bad Bunny", nadieSabeTracksRaw);
         addAlbumTracks("private-suite-complete", roaCover, roaBg, roaPalette, "ROA", roaTracksRaw);
         addAlbumTracks("por-si-manana", moonlightCover, moonlightBg, moonlightPalette, "Omar Courtz", moonlightTracksRaw);
-
-        // Artistas unificados para los álbumes cargados
-        const artistsData = [
-            { name: "Bad Bunny", img: nadieSabeCover, bgImage: nadieSabeBg },
-            { name: "ROA", img: roaCover, bgImage: roaBg },
-            { name: "Omar Courtz", img: moonlightCover, bgImage: moonlightBg }
-        ];
 
         /* ==================================================================
            CORE STATE & AUDIO ENGINE
@@ -682,7 +638,7 @@
         const audio1 = new Audio(); audio1.crossOrigin = "anonymous";
         const audio2 = new Audio(); audio2.crossOrigin = "anonymous";
         let activeAudio = audio1, fadingAudio = null, isCrossfading = false, mixTimingHumanized = 0;
-        let audioCtx, masterGain, masterCompressor, analyser, deck1, deck2, activeDeck;
+        let audioCtx, masterGain, masterCompressor, analyser, deck1, deck2, activeDeck, fadingDeck;
         let globalVolume = 0.75;
         let lastAudioTime = 0, lastTimeUpdate = 0;
 
@@ -766,7 +722,7 @@
         }
 
         /* ==================================================================
-           BACKGROUND ANALYSIS & AUTOMIX
+           BACKGROUND ANALYSIS, AUTOMIX & CROSSFADE
            ================================================================== */
         async function runAnalysisQueue() {
             if (!analysisQueue.length) return;
@@ -803,7 +759,11 @@
         }
 
         function getBestNextTrack(currIdx) { return (currIdx + 1) % cancionesData.length; }
-        function startAutoMix() { playSong(getBestNextTrack(currentPlayingIndex)); }
+        
+        function startAutoMix() { 
+            // Inicia la mezcla sin forzar cambio inmediato para permitir crossfade [5]
+            playSong(getBestNextTrack(currentPlayingIndex), false); 
+        }
 
         /* ==================================================================
            UI RENDERING & NAVIGATION
@@ -840,9 +800,9 @@
                 
                 if (type === 'song' && currentPlayingIndex === realIndex) card.classList.add('active');
                 
-                if (type === 'song') card.onclick = () => playSong(realIndex);
+                // Forzar reproducción inmediata en interacciones manuales
+                if (type === 'song') card.onclick = () => playSong(realIndex, true);
                 else if (type === 'album') card.onclick = () => openAlbumDetail(item.id);
-                else if (type === 'artist') card.onclick = () => openArtistDetail(item.name, item.img);
 
                 let badge = '';
                 if (type === 'song' && currentPlayingIndex === realIndex) badge = `<div class="card-badge playing">PLAYING</div>`;
@@ -850,17 +810,17 @@
                 const imgTag = `<img src="${item.cover || item.img}" loading="lazy" class="card-img ${type==='song'?`cover-song-${realIndex}`:''}" alt="${item.title || item.name}">`;
 
                 card.innerHTML = `
-                    <div class="card-img-wrapper ${type==='artist'?'is-circle':''}">
+                    <div class="card-img-wrapper">
                         ${badge}
                         ${imgTag}
-                        ${type!=='artist' ? `<div class="card-play-btn"><i class="ph-fill ph-play"></i></div>` : ''}
+                        <div class="card-play-btn"><i class="ph-fill ph-play"></i></div>
                     </div>
-                    <div class="card-info" style="${type==='artist'?'text-align:center':''}">
+                    <div class="card-info">
                         <div class="card-title">
                             <span>${item.title || item.name}</span>
                             ${type === 'song' ? '<span class="explicit-badge">E</span>' : ''}
                         </div>
-                        <div class="card-subtitle">${type==='artist' ? 'Artist' : (item.artist + (item.year ? ` • ${item.year}` : ''))}</div>
+                        <div class="card-subtitle">${item.artist + (item.year ? ` • ${item.year}` : '')}</div>
                     </div>
                 `;
                 container.appendChild(card);
@@ -891,7 +851,9 @@
                 
                 const row = document.createElement('div'); row.className = `track-row track-row-${realIndex}`;
                 if(currentPlayingIndex === realIndex) row.classList.add('active');
-                row.onclick = () => playSong(realIndex);
+                
+                // Forzar reproducción inmediata en interacciones manuales
+                row.onclick = () => playSong(realIndex, true);
                 row.innerHTML = `
                     <div class="track-num">${song.trackNum}</div>
                     <div class="track-info">
@@ -930,42 +892,8 @@
             const albumTracks = cancionesData.filter(s => s.album === currentAlbumId).sort((a,b) => a.trackNum - b.trackNum);
             if (albumTracks.length > 0) {
                 const targetIndex = cancionesData.findIndex(s => s.title === albumTracks[0].title);
-                if (targetIndex !== -1) playSong(targetIndex);
+                if (targetIndex !== -1) playSong(targetIndex, true); // Forzar cambio manual inmediato
             }
-        }
-
-        function openArtistDetail(name, img) {
-            document.getElementById('det-artist-name').innerText = name;
-            document.getElementById('det-artist-img').src = img;
-            
-            const songs = cancionesData.filter(s => s.artist.includes(name));
-            const albums = albumsData.filter(a => a.artist.includes(name));
-            
-            const titleAlbumsEl = document.getElementById('title-artist-albums');
-            const gridAlbumsEl = document.getElementById('grid-artist-albums');
-            if(albums.length > 0) {
-                titleAlbumsEl.style.display = 'flex'; gridAlbumsEl.style.display = 'grid';
-                renderGrid(albums, 'grid-artist-albums', 'album');
-            } else {
-                titleAlbumsEl.style.display = 'none'; gridAlbumsEl.style.display = 'none';
-            }
-
-            renderGrid(songs, 'grid-artist-top', 'song');
-            renderGrid(songs, 'grid-artist-latest', 'song');
-            renderGrid([], 'grid-artist-singles', 'song');
-
-            const artist = artistsData.find(a => a.name === name);
-            const ambientBg = document.getElementById('ambient-bg');
-            if (artist && artist.bgImage) {
-                ambientBg.style.backgroundImage = `url('${artist.bgImage}')`;
-                ambientBg.style.backgroundSize = 'cover'; ambientBg.style.backgroundPosition = 'center';
-            } else {
-                ambientBg.style.backgroundImage = '';
-            }
-
-            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
-            document.getElementById('view-artist-detail').classList.add('active');
-            document.getElementById('main-content').scrollTo({top: 0});
         }
 
         function handleSearch(e) {
@@ -973,77 +901,132 @@
             const hide = (id) => { const el = document.getElementById(id); if(el) el.style.display = 'none'; };
             const show = (id) => { const el = document.getElementById(id); if(el) el.style.display = 'flex'; };
             
-            if(!q) { ['title-search-artists', 'title-search-albums', 'title-search-songs'].forEach(hide); ['grid-search-artists', 'grid-search-albums', 'grid-search-songs'].forEach(el => document.getElementById(el).innerHTML = ''); return; }
+            if(!q) { ['title-search-albums', 'title-search-songs'].forEach(hide); ['grid-search-albums', 'grid-search-songs'].forEach(el => document.getElementById(el).innerHTML = ''); return; }
             
             const resSongs = cancionesData.filter(s => s.title.toLowerCase().includes(q) || s.artist.toLowerCase().includes(q));
-            const resArts = artistsData.filter(a => a.name.toLowerCase().includes(q));
             const resAlbs = albumsData.filter(a => a.title.toLowerCase().includes(q) || a.artist.toLowerCase().includes(q));
 
             resSongs.length ? show('title-search-songs') : hide('title-search-songs');
-            resArts.length ? show('title-search-artists') : hide('title-search-artists');
             resAlbs.length ? show('title-search-albums') : hide('title-search-albums');
 
             renderGrid(resSongs, 'grid-search-songs', 'song');
-            renderGrid(resArts, 'grid-search-artists', 'artist');
             renderGrid(resAlbs, 'grid-search-albums', 'album');
         }
 
         /* ==================================================================
-           PLAYBACK CONTROLS
+           PLAYBACK CONTROLS & CROSSFADE ENGINE (12s)
            ================================================================== */
-        function playSong(idx) {
+        function playSong(idx, forceImmediate = false) {
             ensureAudioContext(); haptic();
-            if(isCrossfading && fadingAudio) { fadingAudio.pause(); fadingAudio.src = ""; fadingAudio = null; isCrossfading = false; }
-            activeAudio.pause();
             
-            resetDeckFX(activeDeck); triggerUIForSong(idx);
-            
-            activeAudio.src = cancionesData[idx].url;
-            activeAudio.play().catch(e=>{}); setPlayIcon(true);
-        }
+            const nextSongObj = cancionesData[idx];
+            if (!nextSongObj) return;
 
-        function triggerUIForSong(idx) {
-            document.querySelectorAll('.card.active').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll(`.card-song-${idx}`).forEach(el => el.classList.add('active'));
-            document.querySelectorAll('.track-row.active').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll(`.track-row-${idx}`).forEach(el => el.classList.add('active'));
-            
-            currentPlayingIndex = idx; const song = cancionesData[idx];
-            updateCovers(song.cover);
-            
-            document.getElementById('player-title').innerHTML = `${song.title} <span class="explicit-badge">E</span>`;
-            document.getElementById('player-artist').innerText = song.artist;
-            document.getElementById('np-title-large').innerHTML = `${song.title} <span class="explicit-badge" style="font-size: 14px; width: 20px; height: 20px; margin-left: 10px;">E</span>`;
-            
-            const alb = albumsData.find(a => a.id === song.album);
-            const albumName = alb ? alb.title : "Single";
-            document.getElementById('np-artist-large').innerText = `${song.artist} — ${albumName}`;
-
-            const npFs = document.getElementById('np-fs');
-            if (song.bgImage) {
-                npFs.style.backgroundImage = `url('${song.bgImage}')`;
-                npFs.style.backgroundSize = 'cover'; npFs.style.backgroundPosition = 'center'; npFs.style.backgroundRepeat = 'no-repeat';
-            } else if (song.palette && song.palette.length > 0) {
-                const primaryColor = song.palette[0], secondaryColor = song.palette[2] || song.palette[1];
-                npFs.style.backgroundImage = `linear-gradient(135deg, rgb(${primaryColor.r}, ${primaryColor.g}, ${primaryColor.b}) 0%, rgb(${secondaryColor.r}, ${secondaryColor.g}, ${secondaryColor.b}) 100%)`;
+            // Reproducción inmediata para saltos manuales del usuario [5]
+            if (forceImmediate) {
+                cleanupCrossfade();
+                activeAudio.pause();
+                resetDeckFX(activeDeck);
+                
+                triggerUIForSong(idx);
+                activeAudio.src = nextSongObj.url;
+                activeDeck.deckGain.gain.setValueAtTime(1, audioCtx.currentTime);
+                activeAudio.play().catch(e => {});
+                setPlayIcon(true);
+                return;
             }
 
-            if (song.palette && song.palette.length > 0) {
-                const primaryColor = song.palette[0];
-                document.documentElement.style.setProperty('--bg-deep', `rgb(${primaryColor.r}, ${primaryColor.g}, ${primaryColor.b})`);
-                applyAccentFromPalette(song.palette);
+            // Transición por crossfade suave de 12 segundos para reproducción automática [5]
+            const nextAudio = (activeAudio === audio1) ? audio2 : audio1;
+            const nextDeck = (activeDeck === deck1) ? deck2 : deck1;
+            const prevAudio = activeAudio;
+            const prevDeck = activeDeck;
+
+            if (isCrossfading) {
+                cleanupCrossfade();
+            }
+
+            isCrossfading = true;
+            fadingAudio = prevAudio;
+            fadingDeck = prevDeck;
+
+            resetDeckFX(nextDeck);
+            nextAudio.src = nextSongObj.url;
+            
+            const now = audioCtx.currentTime;
+            const fadeDuration = 12; // 12 segundos de mezcla [5]
+
+            // Atenuación de volumen para deck saliente en hilo nativo [5]
+            prevDeck.deckGain.gain.setValueAtTime(prevDeck.deckGain.gain.value, now);
+            prevDeck.deckGain.gain.linearRampToValueAtTime(0, now + fadeDuration);
+
+            // Aumento de volumen para deck entrante en hilo nativo [5]
+            nextDeck.deckGain.gain.setValueAtTime(0, now);
+            nextDeck.deckGain.gain.linearRampToValueAtTime(1, now + fadeDuration);
+
+            nextAudio.play().catch(e => {});
+            
+            activeAudio = nextAudio;
+            activeDeck = nextDeck;
+            triggerUIForSong(idx);
+            setPlayIcon(true);
+
+            // Limpieza y pausado de recurso previo tras finalizar crossfade [5]
+            const fadeTimeoutId = setTimeout(() => {
+                if (fadingAudio === prevAudio) {
+                    prevAudio.pause();
+                    prevAudio.src = "";
+                    prevDeck.deckGain.gain.setValueAtTime(1, audioCtx.currentTime);
+                    isCrossfading = false;
+                    fadingAudio = null;
+                    fadingDeck = null;
+                }
+            }, fadeDuration * 1000 + 100);
+            
+            prevAudio.dataset.fadeTimeout = fadeTimeoutId;
+        }
+
+        function cleanupCrossfade() {
+            if (!isCrossfading || !fadingAudio) return;
+            clearTimeout(parseInt(fadingAudio.dataset.fadeTimeout));
+            fadingAudio.pause();
+            fadingAudio.src = "";
+            fadingDeck.deckGain.gain.setValueAtTime(1, audioCtx.currentTime);
+            isCrossfading = false;
+            fadingAudio = null;
+            fadingDeck = null;
+        }
+
+        // Listener nativo 'timeupdate' que funciona sin bloqueos en pestañas en segundo plano (background) [5]
+        function handleTimeUpdate(audioEl) {
+            if (audioEl !== activeAudio || isCrossfading) return;
+            
+            if (audioEl.duration && !isNaN(audioEl.duration)) {
+                const rem = audioEl.duration - audioEl.currentTime;
+                const fadeThreshold = 12; // Iniciar crossfade exactamente a los 12 segundos restantes [5]
+                
+                if (rem <= fadeThreshold && rem > 0.5) {
+                    startAutoMix();
+                }
+            }
+        }
+
+        function handleTrackEnded(audioEl) {
+            if (audioEl !== activeAudio) return;
+            if (!isCrossfading) {
+                startAutoMix();
             }
         }
 
         function togglePlay() {
             ensureAudioContext(); haptic();
-            if (!activeAudio.src) return playSong(0);
+            if (!activeAudio.src) return playSong(0, true);
             if (activeAudio.paused) { activeAudio.play(); setPlayIcon(true); } 
             else { activeAudio.pause(); setPlayIcon(false); }
         }
 
-        function nextSong() { haptic(); playSong((currentPlayingIndex + 1) % cancionesData.length); }
-        function prevSong() { haptic(); playSong((currentPlayingIndex - 1 + cancionesData.length) % cancionesData.length); }
+        function nextSong() { haptic(); playSong((currentPlayingIndex + 1) % cancionesData.length, true); }
+        function prevSong() { haptic(); playSong((currentPlayingIndex - 1 + cancionesData.length) % cancionesData.length, true); }
         
         function setPlayIcon(playing) {
             const icon = playing ? "ph-fill ph-pause" : "ph-fill ph-play";
@@ -1077,16 +1060,6 @@
 
         function fmt(s) { return `${Math.floor(s/60)}:${Math.floor(s%60).toString().padStart(2,'0')}`; }
 
-        function checkAutoMix() {
-            if(activeAudio.duration && !isNaN(activeAudio.duration)) {
-                const rem = activeAudio.duration - activeAudio.currentTime;
-                const analyserInfo = trackAnalysis[cancionesData[currentPlayingIndex]?.url];
-                let out = analyserInfo && analyserInfo.outroDuration ? analyserInfo.outroDuration : 8;
-                if(mixTimingHumanized === 0) mixTimingHumanized = (Math.random()-0.5)*1.5;
-                if(rem <= (out + mixTimingHumanized) && !isCrossfading && rem > 0.5) { startAutoMix(); mixTimingHumanized = 0; }
-            }
-        }
-
         function renderLoop() {
             if(activeAudio.duration && !isNaN(activeAudio.duration)) {
                 let cur = activeAudio.currentTime; 
@@ -1101,7 +1074,6 @@
                 document.getElementById('bar-fill-desk').style.width = `${pct}%`;
                 document.getElementById('time-curr-desk').innerText = fmt(cur);
                 document.getElementById('time-tot-desk').innerText = "-" + fmt(dur-cur);
-                checkAutoMix();
             }
             requestAnimationFrame(renderLoop);
         }
@@ -1132,16 +1104,20 @@
         }
 
         /* ==================================================================
-           INITIALIZATION
+           INITIALIZATION & EVENTS
            ================================================================== */
         function init() {
-            // Renderizar los álbumes como la cuadrícula principal
             renderGrid(albumsData, 'grid-albums', 'album');
-            renderGrid(artistsData, 'grid-artists', 'artist');
             
             document.getElementById('search-input').addEventListener('input', handleSearch);
             document.body.addEventListener('click', ensureAudioContext, { once: true });
             document.body.addEventListener('touchstart', ensureAudioContext, { once: true });
+
+            // Vincular observadores nativos de tiempo y eventos de finalización (Resistentes a background) [5]
+            audio1.addEventListener('timeupdate', () => handleTimeUpdate(audio1));
+            audio2.addEventListener('timeupdate', () => handleTimeUpdate(audio2));
+            audio1.addEventListener('ended', () => handleTrackEnded(audio1));
+            audio2.addEventListener('ended', () => handleTrackEnded(audio2));
 
             requestAnimationFrame(renderLoop);
             
@@ -1151,7 +1127,6 @@
             setupGestures();
             document.getElementById('vol-fill-desk').style.width = `${globalVolume*100}%`;
             
-            // Carga por defecto la primera pista del primer álbum de la base de datos ("NADIE SABE")
             triggerUIForSong(0);
         }
 
