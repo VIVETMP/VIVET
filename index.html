@@ -85,7 +85,6 @@
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
 
-        /* Explicit Badge Style */
         .explicit-badge {
             display: inline-flex;
             align-items: center;
@@ -268,7 +267,7 @@
         .btn-fullscreen:hover { background: rgba(255,255,255,0.15); transform: scale(1.1); color: #fff; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
 
         /* ==================================================================
-           FULLSCREEN NOW PLAYING (ULTRA-MINIMALIST APPLE TV DESIGN)
+           FULLSCREEN NOW PLAYING
            ================================================================== */
         #np-fs {
             position: fixed; inset: 0; z-index: 100; transform: translateY(100%); opacity: 0; visibility: hidden;
@@ -542,7 +541,7 @@
 
     <script>
         /* ==================================================================
-           DATA
+           DATA DECLARATIONS
            ================================================================== */
         const coverImgUrl = "https://4nemxki6k8.ucarecd.net/0455c685-6df4-4dca-ba77-16d7bf4135d6/PROBLEMAA.jpg";
         const sideBitchCoverUrl = "https://4nemxki6k8.ucarecd.net/edfb8894-b9a0-4a53-8287-4bb004257b3a/SIDEBITHC.jpg";
@@ -555,6 +554,12 @@
         const kloufrensCoverUrl = "https://3lxj8u72k3.ucarecd.net/b243cc5d-4af1-4ab9-bcd2-277fc7c44aab/kloufrens.png";
         const nuevaYorkCoverUrl = "https://3lxj8u72k3.ucarecd.net/33f2c293-13ee-40e1-bca3-4f2ef5045130/NUevaYork.jpg";
         const dreamTeamCoverUrl = "https://3lxj8u72k3.ucarecd.net/dbefa243-768c-4a48-9486-aa5e2a62fefa/Dreamteam.png";
+
+        // Declaradas correctamente para evitar errores de referencia (ReferenceError) [5]
+        const netflixCoverUrl = "https://3lxj8u72k3.ucarecd.net/8c9efcbf-d628-4320-b199-976e34d4a238/netflixxandchill.png";
+        const twoTwoTwoCoverUrl = "https://3lxj8u72k3.ucarecd.net/56131901-1dc5-47e6-bbdc-b63378346bc9/222.png";
+        const contigoNoMasRemixCoverUrl = "https://3lxj8u72k3.ucarecd.net/dc984730-d023-413a-9ea0-56b70e2d6932/contigonamasremix.png";
+        const emocionesCoverUrl = "https://3lxj8u72k3.ucarecd.net/5a17d10d-19e9-4402-8d1b-77f19cd2140b/EMOCIONES.png";
 
         const albumsData = [ 
             { id: "Underwater", title: "Underwater", artist: "Dei V", cover: coverImgUrl, year: "2024" },
@@ -572,22 +577,24 @@
             { id: "genesis", title: "GÉNESIS", artist: "Peso Pluma", cover: "https://cdn.discordapp.com/attachments/1243422250955182100/1519401333986431047/IMG_3306.png?ex=6a3d6c43&is=6a3c1ac3&hm=c1f32097df2ab22d020e9f1f02ee10fb55a2fd59e64ae3375ffde7dc859226ef&", year: "2023" }
         ];
 
-        // Shared metadata for consistent visuals
-        const roaCover = tuyyoCoverUrl; const roaBg = "https://69rxyf0ea9.ucarecd.net/3fc66e80-32ba-4fb1-affa-a95e5a3e6204/7A88FC1734644D74AFEFC808A54CB249.png";
+        // Paletas de color compartidas por los álbumes para ahorrar código
+        const roaCover = tuyyoCoverUrl; 
+        const roaBg = "https://69rxyf0ea9.ucarecd.net/3fc66e80-32ba-4fb1-affa-a95e5a3e6204/7A88FC1734644D74AFEFC808A54CB249.png";
         const roaPalette = [{ r: 1, g: 1, b: 1 },{ r: 191, g: 74, b: 6 },{ r: 242, g: 70, b: 7 },{ r: 242, g: 50, b: 7 },{ r: 2, g: 35, b: 43 },{ r: 1, g: 1, b: 1 }];
-        const moonlightCover = "https://3lxj8u72k3.ucarecd.net/e4fe0e30-48fd-41e8-a686-39c2ae860ddb/moonlight.png"; const moonlightBg = "https://69rxyf0ea9.ucarecd.net/2a82d23a-6d3f-45a1-a11d-ca42f2ab4cde/B3F943DBCA684424826974917FF841D0.png";
+        
+        const moonlightCover = "https://3lxj8u72k3.ucarecd.net/e4fe0e30-48fd-41e8-a686-39c2ae860ddb/moonlight.png"; 
+        const moonlightBg = "https://69rxyf0ea9.ucarecd.net/2a82d23a-6d3f-45a1-a11d-ca42f2ab4cde/B3F943DBCA684424826974917FF841D0.png";
         const moonlightPalette = [{ r: 10, g: 25, b: 45 },{ r: 40, g: 75, b: 115 },{ r: 80, g: 125, b: 175 },{ r: 150, g: 195, b: 235 },{ r: 10, g: 25, b: 45 },{ r: 10, g: 25, b: 45 }];
-        const nadieSabeCover = telefonoNuevoCoverUrl; const nadieSabeBg = "https://69rxyf0ea9.ucarecd.net/1d38da66-84c1-4b45-adb4-c83f3044eb7d/4F35CE85EF6B4CB5B3E7017AFFA079AD.png";
+        
+        const nadieSabeCover = telefonoNuevoCoverUrl; 
+        const nadieSabeBg = "https://69rxyf0ea9.ucarecd.net/1d38da66-84c1-4b45-adb4-c83f3044eb7d/4F35CE85EF6B4CB5B3E7017AFFA079AD.png";
         const nadieSabePalette = [{ r: 218, g: 204, b: 193 },{ r: 217, g: 202, b: 193 },{ r: 98, g: 117, b: 144 },{ r: 117, g: 58, b: 45 },{ r: 64, g: 28, b: 24 },{ r: 218, g: 204, b: 193 }];
 
-        const cancionesData = [
-            // Singles
-            { title: "Problema", artist: "Dei V & Luar La L", url: "https://4nemxki6k8.ucarecd.net/32f380fe-a6e5-49de-ac5a-4f5f1e0e54b1/ProblemawithLuarLaL_spotdownorg.mp3", cover: coverImgUrl, album: "Underwater", trackNum: 3, coverLoaded: true, palette: [{ r: 7, g: 38, b: 38 },{ r: 46, g: 89, b: 85 },{ r: 81, g: 140, b: 134 },{ r: 136, g: 191, b: 186 },{ r: 217, g: 207, b: 72 },{ r: 7, g: 38, b: 38 }], bgImage: "https://3lxj8u72k3.ucarecd.net/e6cb90d7-495a-4282-b565-9f8349bafe9c/PROBLEMAAA.png" },
-            { title: "Side Bitch", artist: "Luar La L", url: "https://4nemxki6k8.ucarecd.net/96ecc174-aa34-4068-90ad-cfc1aa8de6ad/SideBitch_spotdownorg.mp3", cover: sideBitchCoverUrl, album: "L3tra-album", trackNum: 8, coverLoaded: true, palette: [{ r: 22, g: 52, b: 64 },{ r: 156, g: 164, b: 166 },{ r: 115, g: 2, b: 2 },{ r: 64, g: 1, b: 1 },{ r: 115, g: 81, b: 81 },{ r: 22, g: 52, b: 64 }], bgImage: "https://3lxj8u72k3.ucarecd.net/16c02f5d-46a7-41ed-acad-188195b3b8dd/SIDEBITHCIHI.png" },
+        // 1. Base Singles (Canciones sueltas y de referencia que SÍ aparecerán en Home)
+        const baseSingles = [
             { title: "Lately", artist: "Luar La L", url: "https://4nemxki6k8.ucarecd.net/96ecc174-aa34-4068-90ad-cfc1aa8de6ad/SideBitch_spotdownorg.mp3", cover: latelyCoverUrl, album: "", trackNum: 1, coverLoaded: true, palette: [{ r: 71, g: 50, b: 43 },{ r: 217, g: 180, b: 113 },{ r: 47, g: 39, b: 36 },{ r: 67, g: 46, b: 40 },{ r: 38, g: 37, b: 37 },{ r: 71, g: 50, b: 43 }], bgImage: "https://3lxj8u72k3.ucarecd.net/e94f5434-37c6-4d4c-84ed-579b7fdb9363/LATELY.png" },
-            { title: "She Like 2 Fuck", artist: "Jay Wheeler, TORRRES, Luar La L & Remers", url: "https://4nemxki6k8.ucarecd.net/c239864b-6c60-4301-a778-5c127cb06cd6/SpotiDownAppSheLike2FuckJayWheeler.mp3", cover: sheLike2FuckCoverUrl, album: "la-voz-favorita", trackNum: 4, coverLoaded: true, palette: [{ r: 117, g: 114, b: 109 },{ r: 98, g: 95, b: 90 },{ r: 96, g: 93, b: 88 },{ r: 38, g: 37, b: 35 },{ r: 31, g: 30, b: 28 },{ r: 117, g: 114, b: 109 }], bgImage: "https://3lxj8u72k3.ucarecd.net/f80832e9-95c5-4b70-8c77-4c548ed86dfd/SHELIKETOFUCK.png" },
             { title: "444 (Remix)", artist: "Yan Block, De La Rose, Hades66 & Ñengo Flow", url: "https://3lxj8u72k3.ucarecd.net/16aa377b-bce3-45b0-9a48-e1c5ec5a40ae/444Remix_spotdownorg.mp3", cover: "https://3lxj8u72k3.ucarecd.net/6fa38489-9140-4cfd-a6d1-a7e4399d83dd/444.png", album: "", trackNum: 1, coverLoaded: true, palette: [{ r: 12, g: 10, b: 10 },{ r: 162, g: 111, b: 104 },{ r: 102, g: 60, b: 57 },{ r: 73, g: 44, b: 42 },{ r: 13, g: 10, b: 10 },{ r: 12, g: 10, b: 10 }], bgImage: "https://3lxj8u72k3.ucarecd.net/c345f7c6-ed11-4947-858d-9e22b88fbd29/4444.png" },
-            { title: "Emociones", artist: "Hades66", url: "https://3lxj8u72k3.ucarecd.net/1a3215c1-e9b6-4b00-85c8-3850de69b58a/Emociones_spotdownorg.mp3", cover: "https://3lxj8u72k3.ucarecd.net/5a17d10d-19e9-4402-8d1b-77f19cd2140b/EMOCIONES.png", album: "", trackNum: 1, coverLoaded: true, palette: [{ r: 23, g: 42, b: 52 },{ r: 115, g: 129, b: 138 },{ r: 28, g: 50, b: 66 },{ r: 62, g: 78, b: 92 },{ r: 85, g: 101, b: 111 },{ r: 23, g: 42, b: 52 }], bgImage: "https://69rxyf0ea9.ucarecd.net/71577bc6-ee8d-4773-8195-e4f0f2d0baba/3B0E2EE9296C48AAB24B25387F4DBA95.png" },
+            { title: "Emociones", artist: "Hades66", url: "https://3lxj8u72k3.ucarecd.net/1a3215c1-e9b6-4b00-85c8-3850de69b58a/Emociones_spotdownorg.mp3", cover: emocionesCoverUrl, album: "", trackNum: 1, coverLoaded: true, palette: [{ r: 23, g: 42, b: 52 },{ r: 115, g: 129, b: 138 },{ r: 28, g: 50, b: 66 },{ r: 62, g: 78, b: 92 },{ r: 85, g: 101, b: 111 },{ r: 23, g: 42, b: 52 }], bgImage: "https://69rxyf0ea9.ucarecd.net/71577bc6-ee8d-4773-8195-e4f0f2d0baba/3B0E2EE9296C48AAB24B25387F4DBA95.png" },
             { title: "NETFLIX AND CHILL", artist: "Chris Jedi, Anuel AA & ROA", url: "https://3lxj8u72k3.ucarecd.net/e2b29c3f-adbb-4ec6-a7fa-5805dda307a2/NETFLIXANDCHILL_spotdownorg.mp3", cover: netflixCoverUrl, album: "", trackNum: 1, coverLoaded: true, palette: [{ r: 13, g: 13, b: 13 },{ r: 191, g: 17, b: 32 },{ r: 166, g: 5, b: 18 },{ r: 115, g: 2, b: 2 },{ r: 191, g: 186, b: 181 },{ r: 13, g: 13, b: 13 }], bgImage: "https://3lxj8u72k3.ucarecd.net/d4b3525b-e640-4328-a5ae-b13dfa190247/Netflixandchill.png" },
             { title: "222", artist: "Yan Block", url: "https://3lxj8u72k3.ucarecd.net/851fe865-2274-4ec3-a2b7-06a8752a7c15/222_spotdownorg.mp3", cover: twoTwoTwoCoverUrl, album: "", trackNum: 1, coverLoaded: true, palette: [{ r: 4, g: 4, b: 4 },{ r: 94, g: 140, b: 140 },{ r: 242, g: 117, b: 7 },{ r: 217, g: 82, b: 4 },{ r: 13, g: 13, b: 13 },{ r: 4, g: 4, b: 4 }], bgImage: "https://3lxj8u72k3.ucarecd.net/d3f1cf8c-1ba1-4fca-8191-640c6027d730/2222.png" },
             { title: "Contigo Na Más - Remix", artist: "Luar La L, Jay Wheeler, Hades66, Bryant Myers, Ozuna, Dei V & ROA", url: "https://3lxj8u72k3.ucarecd.net/0e0b76d9-67bd-4ac5-97bf-74bedcb432af/SpotiDownAppContigoNaMsRemix_featJayWheeler_Hades66_BryantMyers_LuarLaL.mp3", cover: contigoNoMasRemixCoverUrl, album: "", trackNum: 1, coverLoaded: true, palette: [{ r: 18, g: 18, b: 18 },{ r: 177, g: 118, b: 67 },{ r: 166, g: 96, b: 56 },{ r: 121, g: 31, b: 37 },{ r: 86, g: 58, b: 36 },{ r: 18, g: 18, b: 18 }], bgImage: "https://3lxj8u72k3.ucarecd.net/ac311f76-1a48-444a-986c-d3eff56723f4/CNM.png" },
@@ -597,95 +604,122 @@
             { title: "666", artist: "Panda Black, Yan Block & Cris MJ", url: "https://files.catbox.moe/7iew8a.mp3", cover: "https://cdn.discordapp.com/attachments/1243422250955182100/1519089030778720378/IMG_3280.png?ex=6a3c4968&is=6a3af7e8&hm=e5d635e7a43d9916a67828af99fb1fad60b57d72978a2abbf7d82276b5b9e9b3&", album: "", trackNum: 1, coverLoaded: true, palette: [{ r: 25, g: 15, b: 15 },{ r: 90, g: 45, b: 45 },{ r: 160, g: 80, b: 80 },{ r: 210, g: 110, b: 110 },{ r: 25, g: 15, b: 15 },{ r: 25, g: 15, b: 15 }], bgImage: "https://cdn.discordapp.com/attachments/1243422250955182100/1519089031093424291/9B346630-7863-4F24-8F4D-054D8192530A.png?ex=6a3c4968&is=6a3af7e8&hm=6679ab42e0506954f53b1f28cef799063202a58e2745f4dd24bbba27f1f8967c&" },
             { title: "333", artist: "Cris MJ & Yan Block", url: "https://files.catbox.moe/emg8d0.mp3", cover: "https://cdn.discordapp.com/attachments/1243422250955182100/1519089031428837427/IMG_3281.png?ex=6a3c4968&is=6a3af7e8&hm=08fdb418b52daf39ff40452677d84e5915d35d1b69bedc15352c5922d008848a&", album: "", trackNum: 1, coverLoaded: true, palette: [{ r: 20, g: 25, b: 35 },{ r: 70, g: 85, b: 110 },{ r: 110, g: 135, b: 175 },{ r: 180, g: 210, b: 245 },{ r: 20, g: 25, b: 35 },{ r: 20, g: 25, b: 35 }], bgImage: "https://cdn.discordapp.com/attachments/1243422250955182100/1519089031688880198/9CE3B035-650D-4EA9-B60A-245326FB2C25.png?ex=6a3c4968&is=6a3af7e8&hm=850a6c2d91cde2325f76ead551339e7fbad64cb73fa8f38ad2fc4992186f6294&" },
             { title: "Tu Boda", artist: "Oscar Maydon & Fuerza Regida", url: "https://files.catbox.moe/erl2fh.mp3", cover: "https://cdn.discordapp.com/attachments/1243422250955182100/1519397167008055407/IMG_3302.png?ex=6a3d6861&is=6a3c16e1&hm=e3e4cef19afac809fb6429e95e43e1acd935ed1f94ec7caedce203d3f7555f19&", album: "", trackNum: 1, coverLoaded: true, palette: [{ r: 40, g: 30, b: 20 },{ r: 120, g: 100, b: 80 },{ r: 180, g: 150, b: 120 },{ r: 230, g: 200, b: 170 },{ r: 40, g: 30, b: 20 },{ r: 40, g: 30, b: 20 }], bgImage: "https://cdn.discordapp.com/attachments/1243422250955182100/1519397166685360148/7B8386C5-A4B7-43CD-B89F-D9F85F32E006.png?ex=6a3d6861&is=6a3c16e1&hm=c19ff98fd19aa770a004e6d26ebe493e3bf1144ca6e8f9bfcad70c7fdfbae9ec&" },
-            { title: "LA INOCENTE", artist: "Mora & Feid", url: "https://files.catbox.moe/s3p1cu.mp3", cover: "https://cdn.discordapp.com/attachments/1243422250955182100/1519397167305986108/IMG_3304.png?ex=6a3d6861&is=6a3c16e1&hm=03d3225c603838795bbeee7e243f74adf7fa1ed6f650b780540a1df0b82717fd&", album: "microdosis", trackNum: 1, coverLoaded: true, palette: [{ r: 25, g: 20, b: 35 },{ r: 80, g: 70, b: 110 },{ r: 130, g: 110, b: 170 },{ r: 190, g: 170, b: 230 },{ r: 25, g: 20, b: 35 },{ r: 25, g: 20, b: 35 }], bgImage: "https://cdn.discordapp.com/attachments/1243422250955182100/1519397167612301532/50976DBE-8220-4819-A045-D69E23D648BC.png?ex=6a3d6861&is=6a3c16e1&hm=8d91d3a282661e3986da423f8f99f57888de9fe051ed85cc985eeffa135439cb&" },
-            { title: "LAGUNAS", artist: "Peso Pluma & Jasiel Nuñez", url: "https://files.catbox.moe/akhs75.mp3", cover: "https://cdn.discordapp.com/attachments/1243422250955182100/1519401333986431047/IMG_3306.png?ex=6a3d6c43&is=6a3c1ac3&hm=c1f32097df2ab22d020e9f1f02ee10fb55a2fd59e64ae3375ffde7dc859226ef&", album: "genesis", trackNum: 1, coverLoaded: true, palette: [{ r: 30, g: 30, b: 25 },{ r: 100, g: 100, b: 90 },{ r: 160, g: 160, b: 140 },{ r: 220, g: 220, b: 200 },{ r: 30, g: 30, b: 25 },{ r: 30, g: 30, b: 25 }], bgImage: "https://cdn.discordapp.com/attachments/1243422250955182100/1519401334288289823/26F8EA49-B85E-4027-8D2A-A03953CE94A5.png?ex=6a3d6c43&is=6a3c1ac3&hm=270537d09e644d32462e0ecd93e3a44f73847a735f77ea1aa71beeb74e3daf7e&" },
-            
-            // Singles from "POR SI MAÑANA NO ESTOY" album (Only include if they are singles)
-            // Assuming all tracks from this album are singles for this example, adjust if needed
-            { title: "OUTRO", artist: "Omar Courtz", url: "https://files.catbox.moe/4eqs0r.mp3", cover: moonlightCover, album: "por-si-manana", trackNum: 1, coverLoaded: true, palette: moonlightPalette, bgImage: moonlightBg },
-            { title: "EL MUNDO SE VA A ACABAR", artist: "Omar Courtz & KARBeats", url: "https://files.catbox.moe/ioux89.mp3", cover: moonlightCover, album: "por-si-manana", trackNum: 2, coverLoaded: true, palette: moonlightPalette, bgImage: moonlightBg },
-            { title: "FOREVER TU GANTEL", artist: "Omar Courtz & Ñengo Flow", url: "https://files.catbox.moe/cievb6.mp3", cover: moonlightCover, album: "por-si-manana", trackNum: 3, coverLoaded: true, palette: moonlightPalette, bgImage: moonlightBg },
-            { title: "L a k e n o s h i", artist: "Omar Courtz", url: "https://files.catbox.moe/9qorg7.mp3", cover: moonlightCover, album: "por-si-manana", trackNum: 4, coverLoaded: true, palette: moonlightPalette, bgImage: moonlightBg },
-            { title: "VAMOaCOCHI", artist: "Omar Courtz", url: "https://files.catbox.moe/wns3m6.mp3", cover: moonlightCover, album: "por-si-manana", trackNum: 5, coverLoaded: true, palette: moonlightPalette, bgImage: moonlightBg },
-            { title: "SUSU", artist: "Omar Courtz", url: "https://files.catbox.moe/kdv57b.mp3", cover: moonlightCover, album: "por-si-manana", trackNum: 6, coverLoaded: true, palette: moonlightPalette, bgImage: moonlightBg },
-            { title: "SIRENA", artist: "Omar Courtz", url: "https://files.catbox.moe/msloqo.mp3", cover: moonlightCover, album: "por-si-manana", trackNum: 7, coverLoaded: true, palette: moonlightPalette, bgImage: moonlightBg },
-            { title: "GANTEL y BELLAKz", artist: "Omar Courtz & Bassyy", url: "https://files.catbox.moe/eeqvne.mp3", cover: moonlightCover, album: "por-si-manana", trackNum: 8, coverLoaded: true, palette: moonlightPalette, bgImage: moonlightBg },
-            { title: "SI ESTÁS CON ALGUIEN", artist: "Omar Courtz", url: "https://files.catbox.moe/v21n97.mp3", cover: moonlightCover, album: "por-si-manana", trackNum: 9, coverLoaded: true, palette: moonlightPalette, bgImage: moonlightBg },
-            { title: "Dulces SueñoZzz (+INTERLUDIO)", artist: "Omar Courtz & Rubí", url: "https://files.catbox.moe/cktziy.mp3", cover: moonlightCover, album: "por-si-manana", trackNum: 10, coverLoaded: true, palette: moonlightPalette, bgImage: moonlightBg },
-            { title: "$UELTA GATITA $UELTA", artist: "Omar Courtz, Dei V, Clarent & Tito El Bambino", url: "https://files.catbox.moe/0qxd21.mp3", cover: moonlightCover, album: "por-si-manana", trackNum: 11, coverLoaded: true, palette: moonlightPalette, bgImage: moonlightBg },
-            { title: "WHAT U NEED? (SexPlaylist 2)", artist: "Omar Courtz & Myke Towers", url: "https://files.catbox.moe/qncan5.mp3", cover: moonlightCover, album: "por-si-manana", trackNum: 12, coverLoaded: true, palette: moonlightPalette, bgImage: moonlightBg },
-            { title: "WO OH OH", artist: "Omar Courtz & ROA", url: "https://files.catbox.moe/xx2wn3.mp3", cover: moonlightCover, album: "por-si-manana", trackNum: 13, coverLoaded: true, palette: moonlightPalette, bgImage: moonlightBg },
-            { title: "KOKO", artist: "Omar Courtz", url: "https://files.catbox.moe/n733ws.mp3", cover: moonlightCover, album: "por-si-manana", trackNum: 14, coverLoaded: true, palette: moonlightPalette, bgImage: moonlightBg },
-            { title: "COMERNOS", artist: "Omar Courtz & Bad Gyal", url: "https://files.catbox.moe/u9f6nl.mp3", cover: moonlightCover, album: "por-si-manana", trackNum: 15, coverLoaded: true, palette: moonlightPalette, bgImage: moonlightBg },
-            { title: "SKY", artist: "Omar Courtz", url: "https://files.catbox.moe/4868ct.mp3", cover: moonlightCover, album: "por-si-manana", trackNum: 16, coverLoaded: true, palette: moonlightPalette, bgImage: moonlightBg },
-            { title: "MOONLIGHT", artist: "Omar Courtz & Eladio Carrión", url: "https://files.catbox.moe/hlrw1i.mp3", cover: moonlightCover, album: "por-si-manana", trackNum: 17, coverLoaded: true, palette: moonlightPalette, bgImage: moonlightBg },
-            { title: "POR SI MAÑANA NO ESTOY", artist: "Omar Courtz", url: "https://files.catbox.moe/f67tpy.mp3", cover: moonlightCover, album: "por-si-manana", trackNum: 18, coverLoaded: true, palette: moonlightPalette, bgImage: moonlightBg },
-            
-            // Singles from "nadie sabe lo que va a pasar mañana" album
-            { title: "MONACO", artist: "Bad Bunny", url: "https://files.catbox.moe/i3k4mg.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 2, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
-            { title: "MR. OCTOBER", artist: "Bad Bunny", url: "https://files.catbox.moe/l8pkvo.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 5, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
-            { title: "CYBERTRUCK", artist: "Bad Bunny", url: "https://files.catbox.moe/lmyd81.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 6, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
-            { title: "SEDA", artist: "Bad Bunny & Bryant Myers", url: "https://files.catbox.moe/h9em77.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 8, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
-            { title: "GRACIAS POR NADA", artist: "Bad Bunny", url: "https://files.catbox.moe/0afdmi.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 9, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
-            { title: "TELÉFONO NUEVO", artist: "Bad Bunny & Luar La L", url: "https://files.catbox.moe/ocv1jn.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 10, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
-            { title: "BABY NUEVA", artist: "Bad Bunny", url: "https://files.catbox.moe/c494lg.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 11, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
-            { title: "MERCEDES CAROTA", artist: "Bad Bunny & YovngChimi", url: "https://files.catbox.moe/kbi3ng.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 12, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
-            { title: "LOS PITS", artist: "Bad Bunny", url: "https://files.catbox.moe/5hi9zw.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 13, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
-            { title: "VUELVE CANDY B", artist: "Bad Bunny", url: "https://files.catbox.moe/c7c2tw.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 14, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
-            { title: "BATICANO", artist: "Bad Bunny", url: "https://files.catbox.moe/0ioak8.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 15, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
-            { title: "NO ME QUIERO CASAR", artist: "Bad Bunny", url: "https://files.catbox.moe/z0pt1j.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 16, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
-            { title: "WHERE SHE GOES", artist: "Bad Bunny", url: "https://files.catbox.moe/lr48kr.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 17, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
-            { title: "THUNDER Y LIGHTNING", artist: "Bad Bunny & Eladio Carrión", url: "https://files.catbox.moe/lakqe7.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 18, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
-            { title: "PERRO NEGRO", artist: "Bad Bunny & Feid", url: "https://files.catbox.moe/9zbzhl.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 19, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
-            { title: "EUROPA :(", artist: "Bad Bunny", url: "https://files.catbox.moe/0w8v89.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 20, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
-            { title: "ACHO PR", artist: "Bad Bunny, Arcángel, De La Ghetto & Ñengo Flow", url: "https://files.catbox.moe/nxz1nf.mp3", cover: nadieSabeCover, album: "nadie-sabe-album", trackNum: 21, coverLoaded: true, palette: nadieSabePalette, bgImage: nadieSabeBg },
-            
-            // ROA Album Singles
-            { title: "Freelance", artist: "ROA", url: "https://43rdwl1h89.ucarecd.net/44b3c18e-6950-4083-8f54-c7a31c1233a7/Freelance_spotdownorg.mp3", cover: roaCover, album: "private-suite-complete", trackNum: 1, coverLoaded: true, palette: roaPalette, bgImage: roaBg },
-            { title: "UuU", artist: "ROA & Hades66", url: "https://43rdwl1h89.ucarecd.net/db1e054e-6a16-41b5-801e-cf0db8d09a40/UuU_spotdownorg.mp3", cover: roaCover, album: "private-suite-complete", trackNum: 2, coverLoaded: true, palette: roaPalette, bgImage: roaBg },
-            { title: "JETSKI", artist: "ROA", url: "https://43rdwl1h89.ucarecd.net/27529a31-a2fd-45a4-8198-4837e2a468cd/JETSKI_spotdownorg.mp3", cover: roaCover, album: "private-suite-complete", trackNum: 3, coverLoaded: true, palette: roaPalette, bgImage: roaBg },
-            { title: "11:11 (interlude)", artist: "ROA", url: "https://43rdwl1h89.ucarecd.net/8d268a23-9116-414a-87ed-57e378143bcb/11_11Interlude_spotdownorg.mp3", cover: roaCover, album: "private-suite-complete", trackNum: 4, coverLoaded: true, palette: roaPalette, bgImage: roaBg },
-            { title: "Bellakeame", artist: "ROA", url: "https://43rdwl1h89.ucarecd.net/d0d19a4c-9670-48fc-add5-55ffbdc30a53/Bellakeame_spotdownorg.mp3", cover: roaCover, album: "private-suite-complete", trackNum: 5, coverLoaded: true, palette: roaPalette, bgImage: roaBg },
-            { title: "Noche Pasajera", artist: "ROA", url: "https://43rdwl1h89.ucarecd.net/14c842db-a936-4605-9947-af6866b31346/NochePasajera_spotdownorg.mp3", cover: roaCover, album: "private-suite-complete", trackNum: 6, coverLoaded: true, palette: roaPalette, bgImage: roaBg },
-            { title: "LA CURA… coming soon (Outro)", artist: "ROA", url: "https://43rdwl1h89.ucarecd.net/b9aed547-543e-40f3-994f-2b61e87b3534/LACURAcomingsoonOutro_spotdownorg.mp3", cover: roaCover, album: "private-suite-complete", trackNum: 7, coverLoaded: true, palette: roaPalette, bgImage: roaBg },
-            { title: "La Cura", artist: "ROA", url: "https://43rdwl1h89.ucarecd.net/4fc37b60-e202-4ea6-ad68-46714eb54363/LaCura_spotdownorg.mp3", cover: roaCover, album: "private-suite-complete", trackNum: 8, coverLoaded: true, palette: roaPalette, bgImage: roaBg },
-            { title: "Y Si Te Llamo", artist: "ROA", url: "https://43rdwl1h89.ucarecd.net/ef74b9aa-c329-4a47-8f0e-2f6a5bcd45f6/YSiTeLlamo_spotdownorg.mp3", cover: roaCover, album: "private-suite-complete", trackNum: 9, coverLoaded: true, palette: roaPalette, bgImage: roaBg },
-            { title: "NOCHE PASAJERA II", artist: "ROA & Jay Wheeler", url: "https://43rdwl1h89.ucarecd.net/36b8f21a-ba5e-4174-a1ee-afc5ccbdde9b/NOCHEPASAJERAII_spotdownorg.mp3", cover: roaCover, album: "private-suite-complete", trackNum: 10, coverLoaded: true, palette: roaPalette, bgImage: roaBg },
-            { title: "JETSKI - Remix", artist: "ROA, Omar Courtz, Dei V & Bryant Myers", url: "https://43rdwl1h89.ucarecd.net/0a5c7e1a-f062-4ef8-b99c-dd1034da60f4/JETSKIRemix_spotdownorg1.mp3", cover: roaCover, album: "private-suite-complete", trackNum: 11, coverLoaded: true, palette: roaPalette, bgImage: roaBg },
-            { title: "11:12 (Interlude)", artist: "ROA & De La Rose", url: "https://43rdwl1h89.ucarecd.net/749dffe2-6e64-4f99-b596-b2496d4096c6/11_12Interlude_spotdownorg.mp3", cover: roaCover, album: "private-suite-complete", trackNum: 12, coverLoaded: true, palette: roaPalette, bgImage: roaBg },
-            { title: "UuU 2", artist: "ROA, Hades66 & Luar La L", url: "https://43rdwl1h89.ucarecd.net/a99ac52d-d2e7-4214-9a7f-ecdc1b585473/UuU2_spotdownorg.mp3", cover: roaCover, album: "private-suite-complete", trackNum: 13, coverLoaded: true, palette: roaPalette, bgImage: roaBg },
-            { title: "FREELANCE 2.0", artist: "ROA, CDobleta, Amarion, Ankhal & Anubiis", url: "https://43rdwl1h89.ucarecd.net/566b4669-7d4e-4f92-9b54-37eb40614929/FREELANCE20_spotdownorg.mp3", cover: roaCover, album: "private-suite-complete", trackNum: 14, coverLoaded: true, palette: roaPalette, bgImage: roaBg },
-            { title: "Eclipse... Coming Soon (Outro)", artist: "ROA", url: "https://43rdwl1h89.ucarecd.net/fd3612f0-8d53-4b85-ae50-bd883b398bfe/EclipseComingSoonOutro_spotdownorg.mp3", cover: roaCover, album: "private-suite-complete", trackNum: 15, coverLoaded: true, palette: roaPalette, bgImage: roaBg },
-            { title: "ETA", artist: "ROA", url: "https://43rdwl1h89.ucarecd.net/05ffac1c-63ec-4d3d-9ac8-4d321aeb28a7/ETA_spotdownorg.mp3", cover: roaCover, album: "private-suite-complete", trackNum: 16, coverLoaded: true, palette: roaPalette, bgImage: roaBg },
-            { title: "ECLIPSE", artist: "ROA, J Abdiel & Slayter", url: "https://43rdwl1h89.ucarecd.net/25a0018f-504a-49b3-8358-c38c62a548f4/ECLIPSE_spotdownorg.mp3", cover: roaCover, album: "private-suite-complete", trackNum: 17, coverLoaded: true, palette: roaPalette, bgImage: roaBg },
-            { title: "777", artist: "ROA", url: "https://43rdwl1h89.ucarecd.net/ba795269-fdb2-4938-90d4-6cca60aa7f14/777_spotdownorg.mp3", cover: roaCover, album: "private-suite-complete", trackNum: 18, coverLoaded: true, palette: roaPalette, bgImage: roaBg },
-            { title: "PETITE", artist: "ROA", url: "https://43rdwl1h89.ucarecd.net/202d26f3-9b1f-4f65-8152-449ce316eb09/PETITE_spotdownorg.mp3", cover: roaCover, album: "private-suite-complete", trackNum: 19, coverLoaded: true, palette: roaPalette, bgImage: roaBg },
-            { title: "MI DEMONIA... COMING SOON", artist: "ROA", url: "https://43rdwl1h89.ucarecd.net/37ae36d1-88ab-49f5-bb25-4736708577e7/MIDEMONIACOMINGSOON_spotdownorg.mp3", cover: roaCover, album: "private-suite-complete", trackNum: 20, coverLoaded: true, palette: roaPalette, bgImage: roaBg },
-            { title: "TATE QUIETA", artist: "ROA & CDobleta", url: "https://43rdwl1h89.ucarecd.net/84536705-8c96-4863-b707-56a85b7ef643/TATEQUIETA_spotdownorg.mp3", cover: roaCover, album: "private-suite-complete", trackNum: 21, coverLoaded: true, palette: roaPalette, bgImage: roaBg },
-            { title: "NEVER 2 LATE", artist: "ROA & Yan Block", url: "https://43rdwl1h89.ucarecd.net/be314035-f7e8-4396-add3-07e6c8e06417/NEVER2LATE_spotdownorg.mp3", cover: roaCover, album: "private-suite-complete", trackNum: 22, coverLoaded: true, palette: roaPalette, bgImage: roaBg },
-            { title: "ME GUSTAS CC", artist: "ROA", url: "https://43rdwl1h89.ucarecd.net/f97cd115-aa0b-4827-be03-ec4540f7be35/MEGUSTASCC_spotdownorg.mp3", cover: roaCover, album: "private-suite-complete", trackNum: 23, coverLoaded: true, palette: roaPalette, bgImage: roaBg },
-            { title: "ETA - Remix", artist: "ROA, De La Rose, Omar Courtz, Yan Block & Luar La L", url: "https://43rdwl1h89.ucarecd.net/ef2651fb-d382-411f-8557-d96c053e1a2d/ETARMX_spotdownorg.mp3", cover: roaCover, album: "private-suite-complete", trackNum: 24, coverLoaded: true, palette: roaPalette, bgImage: roaBg },
-            { title: "QUÉ TE PASA ?", artist: "ROA", url: "https://43rdwl1h89.ucarecd.net/ac319d64-229c-41c6-af4e-c79da4ec9fa7/QUETEPASA__spotdownorg.mp3", cover: roaCover, album: "private-suite-complete", trackNum: 25, coverLoaded: true, palette: roaPalette, bgImage: roaBg },
-            { title: "EENIMINIMAINIMOE", artist: "ROA", url: "https://43rdwl1h89.ucarecd.net/741bed09-b436-44d5-ac9a-228ff0b32f6c/EENIMINIMAINIMOE_spotdownorg.mp3", cover: roaCover, album: "private-suite-complete", trackNum: 26, coverLoaded: true, palette: roaPalette, bgImage: roaBg },
-            { title: "J's INTERLUDE", artist: "ROA", url: "https://43rdwl1h89.ucarecd.net/a1df7ad6-d0a2-4bd1-9d84-06a64eccaded/JsINTERLUDE_spotdownorg.mp3", cover: roaCover, album: "private-suite-complete", trackNum: 27, coverLoaded: true, palette: roaPalette, bgImage: roaBg },
-            { title: "MI DEMONIA", artist: "ROA", url: "https://43rdwl1h89.ucarecd.net/956f8423-913e-4239-a26c-a927a2857167/MIDEMONIA_spotdownorg.mp3", cover: roaCover, album: "private-suite-complete", trackNum: 28, coverLoaded: true, palette: roaPalette, bgImage: roaBg },
-            { title: "LA FAVORITA DE DIOS", artist: "ROA & Dei V", url: "https://43rdwl1h89.ucarecd.net/b6362bd6-cb26-4dab-8f48-9567da17e5dc/LAFAVORITADEDIOS_spotdownorg.mp3", cover: roaCover, album: "private-suite-complete", trackNum: 29, coverLoaded: true, palette: roaPalette, bgImage: roaBg },
-            { title: "11:11", artist: "ROA", url: "https://43rdwl1h89.ucarecd.net/e17efb10-5860-4bb3-b50d-2796d25679cc/11_11_spotdownorg.mp3", cover: roaCover, album: "private-suite-complete", trackNum: 30, coverLoaded: true, palette: roaPalette, bgImage: roaBg },
-            { title: "ARE YOU FEELING ME ? (OUTRO)", artist: "ROA", url: "https://43rdwl1h89.ucarecd.net/488ece66-43a9-45da-b67e-20a9a68e4734/AREYOUFEELINGME_OUTRO_spotdownorg.mp3", cover: roaCover, album: "private-suite-complete", trackNum: 31, coverLoaded: true, palette: roaPalette, bgImage: roaBg },
-            { title: "BABY HOY", artist: "ROA", url: "https://43rdwl1h89.ucarecd.net/735e39b9-1907-4600-8619-8e3034695ae1/BABYHOY_spotdownorg.mp3", cover: roaCover, album: "private-suite-complete", trackNum: 32, coverLoaded: true, palette: roaPalette, bgImage: roaBg },
-            { title: "MI PEOR ERROR", artist: "ROA & Botlok", url: "https://43rdwl1h89.ucarecd.net/20c9633c-95e1-48f7-82be-006ee84fbc7a/MIPEORERROR_spotdownorg.mp3", cover: roaCover, album: "private-suite-complete", trackNum: 33, coverLoaded: true, palette: roaPalette, bgImage: roaBg },
-            { title: "EL MALO... Coming soon", artist: "ROA", url: "https://43rdwl1h89.ucarecd.net/85290498-b4a1-461b-8f87-067e0eb353cd/ELMALOComingsoon_spotdownorg.mp3", cover: roaCover, album: "private-suite-complete", trackNum: 34, coverLoaded: true, palette: roaPalette, bgImage: roaBg },
-            { title: "TÚ Y YO", artist: "ROA", url: "https://43rdwl1h89.ucarecd.net/8ce4aec7-f400-4bd4-9060-ba8a6ecf231b/TUYYO_spotdownorg.mp3", cover: roaCover, album: "private-suite-complete", trackNum: 35, coverLoaded: true, palette: roaPalette, bgImage: roaBg },
-            { title: "MI CHIMBITA", artist: "ROA, Kris R, Hades66, GeezyDee & TopBoy TGR", url: "https://43rdwl1h89.ucarecd.net/9d5655b0-6576-49f3-9b6f-f3c91e3f753d/MICHIMBITA_spotdownorg.mp3", cover: roaCover, album: "private-suite-complete", trackNum: 36, coverLoaded: true, palette: roaPalette, bgImage: roaBg },
-            { title: "TATE QUIETA - Remix", artist: "ROA, CDobleta, Midnvght, Tutu, Luar La L & Almighty", url: "https://43rdwl1h89.ucarecd.net/5650fe3c-bb05-4cc5-848e-258118a4eb65/TATEQUIETARMX_spotdownorg.mp3", cover: roaCover, album: "private-suite-complete", trackNum: 37, coverLoaded: true, palette: roaPalette, bgImage: roaBg },
-            
-            // Singles from "Dream Team" album
-            { title: "Dream Team", artist: "Young Miko & De La Rose", url: "https://3lxj8u72k3.ucarecd.net/a31c3ec4-f70b-47b3-a6dc-ed24ab041c95/DreamTeam_spotdownorg.mp3", cover: dreamTeamCoverUrl, album: "do-not-disturb", trackNum: 3, coverLoaded: true, palette: [{ r: 0, g: 2, b: 6 },{ r: 255, g: 4, b: 2 },{ r: 2, g: 55, b: 90 },{ r: 0, g: 48, b: 86 },{ r: 0, g: 19, b: 49 },{ r: 0, g: 2, b: 6 }] },
+            { title: "PIN", artist: "TORRRES & Yan Block", url: "https://3lxj8u72k3.ucarecd.net/2d44df93-887b-4d1f-8598-16185c847ddf/PIN_spotdownorg.mp3", cover: "https://3lxj8u72k3.ucarecd.net/e8eb17d5-fb9b-4809-9669-b112a12fff62/pin.png", album: "", trackNum: 1, coverLoaded: true, palette: [{ r: 15, g: 15, b: 25 },{ r: 70, g: 70, b: 110 },{ r: 120, g: 120, b: 170 },{ r: 190, g: 190, b: 230 },{ r: 15, g: 15, b: 25 },{ r: 15, g: 15, b: 25 }], bgImage: "https://69rxyf0ea9.ucarecd.net/059cf688-0b68-461f-990b-57e60f1bbd6c/EF6D2C02DAD84839980B9C58215BE00C.png" },
             { title: "Deja Vu", artist: "Hades66 & ROA", url: "https://3lxj8u72k3.ucarecd.net/4aa40c6b-e073-4a51-8c13-d8989f8014b9/DejaVu_spotdownorg.mp3", cover: "https://3lxj8u72k3.ucarecd.net/52fa416d-48ae-433b-9802-1639b362c43b/dejavu.png", album: "", trackNum: 1, coverLoaded: true, palette: [{ r: 15, g: 20, b: 35 },{ r: 50, g: 70, b: 120 },{ r: 100, g: 130, b: 200 },{ r: 180, g: 210, b: 255 },{ r: 15, g: 20, b: 35 },{ r: 15, g: 20, b: 35 }], bgImage: "https://69rxyf0ea9.ucarecd.net/1d19a5e2-b909-4909-9680-eaef6486d3d1/7192FA09047C49B287FF556EFB3D9AE7.png" },
             { title: "Religión", artist: "Yan Block", url: "https://3lxj8u72k3.ucarecd.net/3b1162cd-c316-4b17-88dd-44f565d7780c/Religin_spotdownorg.mp3", cover: "https://3lxj8u72k3.ucarecd.net/109bd3fa-4a12-4a88-8b1d-9e948631c610/religion.png", album: "", trackNum: 1, coverLoaded: true, palette: [{ r: 20, g: 15, b: 15 },{ r: 80, g: 40, b: 40 },{ r: 150, g: 80, b: 80 },{ r: 220, g: 150, b: 150 },{ r: 20, g: 15, b: 15 },{ r: 20, g: 15, b: 15 }], bgImage: "https://69rxyf0ea9.ucarecd.net/bf86ea3d-ce5a-4dd1-9a12-dcb70f16f841/EDC88DBBE33A492D9FF6878A4D50FA37.png" },
-            { title: "Talento", artist: "Yan Block", url: "https://3lxj8u72k3.ucarecd.net/5b9f9504-3380-4ba7-b208-a0e234fb91dd/Talento_spotdownorg.mp3", cover: "https://3lxj8u72k3.ucarecd.net/46e48181-db40-4944-9a3f-bcfe5f7db78d/talento.png", album: "", trackNum: 1, coverLoaded: true, palette: [{ r: 20, g: 20, b: 20 },{ r: 100, g: 100, b: 100 },{ r: 150, g: 150, b: 150 },{ r: 200, g: 200, b: 200 },{ r: 20, g: 20, b: 20 },{ r: 20, g: 20, b: 20 }], bgImage: "https://69rxyf0ea9.ucarecd.net/3afd95e8-6746-406b-b78b-4674d0338fad/BFFD694F72D243A7ADB25DE1DFDCAD64.png" },
-            { title: "PIN", artist: "TORRRES & Yan Block", url: "https://3lxj8u72k3.ucarecd.net/2d44df93-887b-4d1f-8598-16185c847ddf/PIN_spotdownorg.mp3", cover: "https://3lxj8u72k3.ucarecd.net/e8eb17d5-fb9b-4809-9669-b112a12fff62/pin.png", album: "", trackNum: 1, coverLoaded: true, palette: [{ r: 15, g: 15, b: 25 },{ r: 70, g: 70, b: 110 },{ r: 120, g: 120, b: 170 },{ r: 190, g: 190, b: 230 },{ r: 15, g: 15, b: 25 },{ r: 15, g: 15, b: 25 }], bgImage: "https://69rxyf0ea9.ucarecd.net/059cf688-0b68-461f-990b-57e60f1bbd6c/EF6D2C02DAD84839980B9C58215BE00C.png" },
+            { title: "Talento", artist: "Yan Block", url: "https://3lxj8u72k3.ucarecd.net/5b9f9504-3380-4ba7-b208-a0e234fb91dd/Talento_spotdownorg.mp3", cover: "https://3lxj8u72k3.ucarecd.net/46e48181-db40-4944-9a3f-bcfe5f7db78d/talento.png", album: "", trackNum: 1, coverLoaded: true, palette: [{ r: 20, g: 20, b: 20 },{ r: 100, g: 100, b: 100 },{ r: 150, g: 150, b: 150 },{ r: 200, g: 200, b: 200 },{ r: 20, g: 20, b: 20 },{ r: 20, g: 20, b: 20 }], bgImage: "https://69rxyf0ea9.ucarecd.net/3afd95e8-6746-406b-b78b-4674d0338fad/BFFD694F72D243A7ADB25DE1DFDCAD64.png" }
         ];
+
+        // 2. Datos compactos de álbumes grandes para ahorrar bytes de código
+        const nadieSabeTracksRaw = [
+            ["NADIE SABE", "https://files.catbox.moe/81i5i9.mp3"],
+            ["MONACO", "https://files.catbox.moe/i3k4mg.mp3"],
+            ["FINA", "https://files.catbox.moe/t0kzte.mp3", "Bad Bunny & Young Miko"],
+            ["HIBIKI", "https://files.catbox.moe/ifxel2.mp3", "Bad Bunny & Mora"],
+            ["MR. OCTOBER", "https://files.catbox.moe/l8pkvo.mp3"],
+            ["CYBERTRUCK", "https://files.catbox.moe/lmyd81.mp3"],
+            ["VOU 787", "https://files.catbox.moe/j0ifz6.mp3"],
+            ["SEDA", "https://files.catbox.moe/h9em77.mp3", "Bad Bunny & Bryant Myers"],
+            ["GRACIAS POR NADA", "https://files.catbox.moe/0afdmi.mp3"],
+            ["TELÉFONO NUEVO", "https://files.catbox.moe/ocv1jn.mp3", "Bad Bunny & Luar La L"],
+            ["BABY NUEVA", "https://files.catbox.moe/c494lg.mp3"],
+            ["MERCEDES CAROTA", "https://files.catbox.moe/kbi3ng.mp3", "Bad Bunny & YovngChimi"],
+            ["LOS PITS", "https://files.catbox.moe/5hi9zw.mp3"],
+            ["VUELVE CANDY B", "https://files.catbox.moe/c7c2tw.mp3"],
+            ["BATICANO", "https://files.catbox.moe/0ioak8.mp3"],
+            ["NO ME QUIERO CASAR", "https://files.catbox.moe/z0pt1j.mp3"],
+            ["WHERE SHE GOES", "https://files.catbox.moe/lr48kr.mp3"],
+            ["THUNDER Y LIGHTNING", "https://files.catbox.moe/lakqe7.mp3", "Bad Bunny & Eladio Carrión"],
+            ["PERRO NEGRO", "https://files.catbox.moe/9zbzhl.mp3", "Bad Bunny & Feid"],
+            ["EUROPA :(", "https://files.catbox.moe/0w8v89.mp3"],
+            ["ACHO PR", "https://files.catbox.moe/nxz1nf.mp3", "Bad Bunny, Arcángel, De La Ghetto & Ñengo Flow"],
+            ["UN PREVIEW", "https://files.catbox.moe/ccfzeb.mp3"]
+        ];
+
+        const roaTracksRaw = [
+            ["Freelance", "https://43rdwl1h89.ucarecd.net/44b3c18e-6950-4083-8f54-c7a31c1233a7/Freelance_spotdownorg.mp3"],
+            ["UuU", "https://43rdwl1h89.ucarecd.net/db1e054e-6a16-41b5-801e-cf0db8d09a40/UuU_spotdownorg.mp3", "ROA & Hades66"],
+            ["JETSKI", "https://43rdwl1h89.ucarecd.net/27529a31-a2fd-45a4-8198-4837e2a468cd/JETSKI_spotdownorg.mp3"],
+            ["11:11 (interlude)", "https://43rdwl1h89.ucarecd.net/8d268a23-9116-414a-87ed-57e378143bcb/11_11Interlude_spotdownorg.mp3"],
+            ["Bellakeame", "https://43rdwl1h89.ucarecd.net/d0d19a4c-9670-48fc-add5-55ffbdc30a53/Bellakeame_spotdownorg.mp3"],
+            ["Noche Pasajera", "https://43rdwl1h89.ucarecd.net/14c842db-a936-4605-9947-af6866b31346/NochePasajera_spotdownorg.mp3"],
+            ["LA CURA… coming soon (Outro)", "https://43rdwl1h89.ucarecd.net/b9aed547-543e-40f3-994f-2b61e87b3534/LACURAcomingsoonOutro_spotdownorg.mp3"],
+            ["La Cura", "https://43rdwl1h89.ucarecd.net/4fc37b60-e202-4ea6-ad68-46714eb54363/LaCura_spotdownorg.mp3"],
+            ["Y Si Te Llamo", "https://43rdwl1h89.ucarecd.net/ef74b9aa-c329-4a47-8f0e-2f6a5bcd45f6/YSiTeLlamo_spotdownorg.mp3"],
+            ["NOCHE PASAJERA II", "https://43rdwl1h89.ucarecd.net/36b8f21a-ba5e-4174-a1ee-afc5ccbdde9b/NOCHEPASAJERAII_spotdownorg.mp3", "ROA & Jay Wheeler"],
+            ["JETSKI - Remix", "https://43rdwl1h89.ucarecd.net/0a5c7e1a-f062-4ef8-b99c-dd1034da60f4/JETSKIRemix_spotdownorg1.mp3", "ROA, Omar Courtz, Dei V & Bryant Myers"],
+            ["11:12 (Interlude)", "https://43rdwl1h89.ucarecd.net/749dffe2-6e64-4f99-b596-b2496d4096c6/11_12Interlude_spotdownorg.mp3", "ROA & De La Rose"],
+            ["UuU 2", "https://43rdwl1h89.ucarecd.net/a99ac52d-d2e7-4214-9a7f-ecdc1b585473/UuU2_spotdownorg.mp3", "ROA, Hades66 & Luar La L"],
+            ["FREELANCE 2.0", "https://43rdwl1h89.ucarecd.net/566b4669-7d4e-4f92-9b54-37eb40614929/FREELANCE20_spotdownorg.mp3", "ROA, CDobleta, Amarion, Ankhal & Anubiis"],
+            ["Eclipse... Coming Soon (Outro)", "https://43rdwl1h89.ucarecd.net/fd3612f0-8d53-4b85-ae50-bd883b398bfe/EclipseComingSoonOutro_spotdownorg.mp3"],
+            ["ETA", "https://43rdwl1h89.ucarecd.net/05ffac1c-63ec-4d3d-9ac8-4d321aeb28a7/ETA_spotdownorg.mp3"],
+            ["ECLIPSE", "https://43rdwl1h89.ucarecd.net/25a0018f-504a-49b3-8358-c38c62a548f4/ECLIPSE_spotdownorg.mp3", "ROA, J Abdiel & Slayter"],
+            ["777", "https://43rdwl1h89.ucarecd.net/ba795269-fdb2-4938-90d4-6cca60aa7f14/777_spotdownorg.mp3"],
+            ["PETITE", "https://43rdwl1h89.ucarecd.net/202d26f3-9b1f-4f65-8152-449ce316eb09/PETITE_spotdownorg.mp3"],
+            ["MI DEMONIA... COMING SOON", "https://43rdwl1h89.ucarecd.net/37ae36d1-88ab-49f5-bb25-4736708577e7/MIDEMONIACOMINGSOON_spotdownorg.mp3"],
+            ["TATE QUIETA", "https://43rdwl1h89.ucarecd.net/84536705-8c96-4863-b707-56a85b7ef643/TATEQUIETA_spotdownorg.mp3", "ROA & CDobleta"],
+            ["NEVER 2 LATE", "https://43rdwl1h89.ucarecd.net/be314035-f7e8-4396-add3-07e6c8e06417/NEVER2LATE_spotdownorg.mp3", "ROA & Yan Block"],
+            ["ME GUSTAS CC", "https://43rdwl1h89.ucarecd.net/f97cd115-aa0b-4827-be03-ec4540f7be35/MEGUSTASCC_spotdownorg.mp3"],
+            ["ETA - Remix", "https://43rdwl1h89.ucarecd.net/ef2651fb-d382-411f-8557-d96c053e1a2d/ETARMX_spotdownorg.mp3", "ROA, De La Rose, Omar Courtz, Yan Block & Luar La L"],
+            ["QUÉ TE PASA ?", "https://43rdwl1h89.ucarecd.net/ac319d64-229c-41c6-af4e-c79da4ec9fa7/QUETEPASA__spotdownorg.mp3"],
+            ["EENIMINIMAINIMOE", "https://43rdwl1h89.ucarecd.net/741bed09-b436-44d5-ac9a-228ff0b32f6c/EENIMINIMAINIMOE_spotdownorg.mp3"],
+            ["J's INTERLUDE", "https://43rdwl1h89.ucarecd.net/a1df7ad6-d0a2-4bd1-9d84-06a64eccaded/JsINTERLUDE_spotdownorg.mp3"],
+            ["MI DEMONIA", "https://43rdwl1h89.ucarecd.net/956f8423-913e-4239-a26c-a927a2857167/MIDEMONIA_spotdownorg.mp3"],
+            ["LA FAVORITA DE DIOS", "https://43rdwl1h89.ucarecd.net/b6362bd6-cb26-4dab-8f48-9567da17e5dc/LAFAVORITADEDIOS_spotdownorg.mp3", "ROA & Dei V"],
+            ["11:11", "https://43rdwl1h89.ucarecd.net/e17efb10-5860-4bb3-b50d-2796d25679cc/11_11_spotdownorg.mp3"],
+            ["ARE YOU FEELING ME ? (OUTRO)", "https://43rdwl1h89.ucarecd.net/488ece66-43a9-45da-b67e-20a9a68e4734/AREYOUFEELINGME_OUTRO_spotdownorg.mp3"],
+            ["BABY HOY", "https://43rdwl1h89.ucarecd.net/735e39b9-1907-4600-8619-8e3034695ae1/BABYHOY_spotdownorg.mp3"],
+            ["MI PEOR ERROR", "https://43rdwl1h89.ucarecd.net/20c9633c-95e1-48f7-82be-006ee84fbc7a/MIPEORERROR_spotdownorg.mp3", "ROA & Botlok"],
+            ["EL MALO... Coming soon", "https://43rdwl1h89.ucarecd.net/85290498-b4a1-461b-8f87-067e0eb353cd/ELMALOComingsoon_spotdownorg.mp3"],
+            ["TÚ Y YO", "https://43rdwl1h89.ucarecd.net/8ce4aec7-f400-4bd4-9060-ba8a6ecf231b/TUYYO_spotdownorg.mp3"],
+            ["MI CHIMBITA", "https://43rdwl1h89.ucarecd.net/9d5655b0-6576-49f3-9b6f-f3c91e3f753d/MICHIMBITA_spotdownorg.mp3", "ROA, Kris R, Hades66, GeezyDee & TopBoy TGR"],
+            ["TATE QUIETA - Remix", "https://43rdwl1h89.ucarecd.net/5650fe3c-bb05-4cc5-848e-258118a4eb65/TATEQUIETARMX_spotdownorg.mp3", "ROA, CDobleta, Midnvght, Tutu, Luar La L & Almighty"]
+        ];
+
+        const moonlightTracksRaw = [
+            ["OUTRO", "https://files.catbox.moe/4eqs0r.mp3", "Omar Courtz"],
+            ["EL MUNDO SE VA A ACABAR", "https://files.catbox.moe/ioux89.mp3", "Omar Courtz & KARBeats"],
+            ["FOREVER TU GANTEL", "https://files.catbox.moe/cievb6.mp3", "Omar Courtz & Ñengo Flow"],
+            ["L a k e n o s h i", "https://files.catbox.moe/9qorg7.mp3"],
+            ["VAMOaCOCHI", "https://files.catbox.moe/wns3m6.mp3"],
+            ["SUSU", "https://files.catbox.moe/kdv57b.mp3"],
+            ["SIRENA", "https://files.catbox.moe/msloqo.mp3"],
+            ["GANTEL y BELLAKz", "https://files.catbox.moe/eeqvne.mp3", "Omar Courtz & Bassyy"],
+            ["SI ESTÁS CON ALGUIEN", "https://files.catbox.moe/v21n97.mp3"],
+            ["Dulces SueñoZzz (+INTERLUDIO)", "https://files.catbox.moe/cktziy.mp3", "Omar Courtz & Rubí"],
+            ["$UELTA GATITA $UELTA", "https://files.catbox.moe/0qxd21.mp3", "Omar Courtz, Dei V, Clarent & Tito El Bambino"],
+            ["WHAT U NEED? (SexPlaylist 2)", "https://files.catbox.moe/qncan5.mp3", "Omar Courtz & Myke Towers"],
+            ["WO OH OH", "https://files.catbox.moe/xx2wn3.mp3", "Omar Courtz & ROA"],
+            ["KOKO", "https://files.catbox.moe/n733ws.mp3"],
+            ["COMERNOS", "https://files.catbox.moe/u9f6nl.mp3", "Omar Courtz & Bad Gyal"],
+            ["SKY", "https://files.catbox.moe/4868ct.mp3"],
+            ["MOONLIGHT", "https://files.catbox.moe/hlrw1i.mp3", "Omar Courtz & Eladio Carrión"],
+            ["POR SI MAÑANA NO ESTOY", "https://files.catbox.moe/f67tpy.mp3"]
+        ];
+
+        // Construcción unificada y dinámica de canciones totales (Sin redundancia)
+        const cancionesData = [...baseSingles];
+
+        function addAlbumTracks(albumId, cover, bg, palette, artistDefault, tracksRaw) {
+            tracksRaw.forEach((t, idx) => {
+                cancionesData.push({
+                    title: t[0],
+                    artist: t[2] || artistDefault,
+                    url: t[1],
+                    cover: cover,
+                    album: albumId,
+                    trackNum: idx + 1,
+                    coverLoaded: true,
+                    palette: palette,
+                    bgImage: bg
+                });
+            });
+        }
+
+        // Expandir las canciones de los álbumes en el backend automáticamente
+        addAlbumTracks("nadie-sabe-album", nadieSabeCover, nadieSabeBg, nadieSabePalette, "Bad Bunny", nadieSabeTracksRaw);
+        addAlbumTracks("private-suite-complete", roaCover, roaBg, roaPalette, "ROA", roaTracksRaw);
+        addAlbumTracks("por-si-manana", moonlightCover, moonlightBg, moonlightPalette, "Omar Courtz", moonlightTracksRaw);
 
         const artistsData = [
             { name: "Dei V", img: coverImgUrl },
@@ -788,7 +822,10 @@
             song.coverLoaded = true;
             document.querySelectorAll(`.cover-song-${i}`).forEach(img => img.src = song.cover);
             if (currentPlayingIndex === i) updateCovers(song.cover);
-            if (song.album && song.trackNum === 1) document.getElementById('det-album-img').src = song.cover;
+            if (song.album && song.trackNum === 1) {
+                const detImg = document.getElementById('det-album-img');
+                if (detImg) detImg.src = song.cover;
+            }
         }
 
         /* ==================================================================
@@ -836,7 +873,7 @@
            ================================================================== */
         function navTo(tabId) {
             haptic();
-            document.getElementById('ambient-bg').style.backgroundImage = ''; // Reset background
+            document.getElementById('ambient-bg').style.backgroundImage = ''; 
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-item, .nav-item-mob').forEach(el => el.classList.remove('active'));
             
@@ -847,7 +884,7 @@
             
             if (tabId === 'search') {
                 document.getElementById('search-input').focus();
-                handleSearch({target: document.getElementById('search-input')}); // Trigger initial clear/display logic
+                handleSearch({target: document.getElementById('search-input')}); 
             }
             document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -873,7 +910,6 @@
                 let badge = '';
                 if (type === 'song' && currentPlayingIndex === realIndex) badge = `<div class="card-badge playing">PLAYING</div>`;
                 
-                // Lazy loading for images
                 const imgTag = `<img src="${item.cover || item.img}" loading="lazy" class="card-img ${type==='song'?`cover-song-${realIndex}`:''}" alt="${item.title || item.name}">`;
 
                 card.innerHTML = `
@@ -892,7 +928,6 @@
                 `;
                 container.appendChild(card);
                 
-                // Ensure cover is loaded for currently playing song or first track of an album
                 if (type === 'song' && !item.coverLoaded && !item.coverLoading) loadSongCover(item, realIndex);
                 else if (type === 'song' && item.coverLoaded) document.querySelectorAll(`.cover-song-${realIndex}`).forEach(img => img.src = item.cover);
             });
@@ -903,7 +938,7 @@
             
             const titleEl = document.getElementById('det-album-title');
             titleEl.innerText = album.title;
-            titleEl.dataset.albumId = albumId; // Store album ID for playCurrentAlbum
+            titleEl.dataset.albumId = albumId; 
             
             document.getElementById('det-album-artist').innerText = album.artist;
             document.getElementById('det-album-img').src = album.cover;
@@ -915,7 +950,7 @@
             const tracklist = document.getElementById('tracklist-album'); tracklist.innerHTML = '';
             tracks.forEach(song => {
                 const realIndex = cancionesData.findIndex(s => s.title === song.title);
-                if(realIndex === -1) return; // Skip if song not found globally
+                if(realIndex === -1) return; 
                 
                 const row = document.createElement('div'); row.className = `track-row track-row-${realIndex}`;
                 if(currentPlayingIndex === realIndex) row.classList.add('active');
@@ -928,12 +963,10 @@
                     </div>
                 `;
                 tracklist.appendChild(row);
-                // Preload cover for the first track if not already loaded
                 if(song.trackNum === 1 && !song.coverLoaded && !song.coverLoading) loadSongCover(song, realIndex);
                 else if(song.trackNum === 1 && song.coverLoaded) document.getElementById('det-album-img').src = song.cover;
             });
 
-            // Dynamically set ambient background based on album
             const ambientBg = document.getElementById('ambient-bg');
             if (albumId === "private-suite-complete") {
                 ambientBg.style.backgroundImage = `url('${roaBg}')`;
@@ -1165,11 +1198,11 @@
            INITIALIZATION
            ================================================================== */
         function init() {
-            // Filter out songs that belong to albums for the home page grid
-            const singles = cancionesData.filter(song => !song.album || !albumsData.some(album => album.id === song.album));
+            // Filtrar SOLO sencillos verdaderos en la página de inicio (sin ningún álbum asociado)
+            const singles = cancionesData.filter(song => !song.album || song.album === "");
             renderGrid(singles, 'grid-songs', 'song');
             
-            // Render albums, but hide those that are empty after filtering singles
+            // Renderizar los álbumes en la sección correspondiente
             const albumsWithSongs = albumsData.filter(album => cancionesData.some(song => song.album === album.id));
             renderGrid(albumsWithSongs, 'grid-albums', 'album');
             
@@ -1181,13 +1214,16 @@
 
             requestAnimationFrame(renderLoop);
             
-            analysisQueue = [...cancionesData]; // Use all songs for analysis queue
+            analysisQueue = [...cancionesData]; 
             setTimeout(runAnalysisQueue, 1000);
             
             setupGestures();
             document.getElementById('vol-fill-desk').style.width = `${globalVolume*100}%`;
             
-            triggerUIForSong(0); // Load initial song UI
+            // Cargar por defecto el primer sencillo verdadero en la barra inferior para consistencia con la cuadrícula de inicio
+            const firstSingleIndex = cancionesData.findIndex(song => !song.album || song.album === "");
+            const initialIndex = firstSingleIndex !== -1 ? firstSingleIndex : 0;
+            triggerUIForSong(initialIndex);
         }
 
         window.onload = init;
