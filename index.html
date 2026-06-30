@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>VIVETMP Music - Clean Canvas Edition</title>
+    <title>VIVETMP Music - Sharp Canvas Edition</title>
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -21,8 +21,8 @@
         :root {
             --bg-dark: #030305;
             --text-primary: #ffffff;
-            --text-secondary: rgba(255, 255, 255, 0.6);
-            --text-tertiary: rgba(255, 255, 255, 0.35);
+            --text-secondary: rgba(255, 255, 255, 0.65);
+            --text-tertiary: rgba(255, 255, 255, 0.4);
             --border-subtle: rgba(255, 255, 255, 0.08);
             
             --accent-1: #ffffff;
@@ -51,20 +51,18 @@
         }
 
         /* ==================================================================
-           FULL SCREEN SHARP BACKGROUND LAYER
+           FULL SCREEN SHARP BACKGROUND LAYER (NO BLUR)
            ================================================================== */
         #global-bg {
             position: fixed; inset: 0; z-index: 1;
             background-size: cover; background-position: center;
-            filter: blur(2px); /* Mínimo desenfoque para conservar nitidez original */
-            transform: scale(1.02); /* Evita bordes blancos por desenfoque */
             transition: background-image 0.8s var(--ease-cinematic);
             pointer-events: none;
         }
-        /* Gradiente de viñeta para legibilidad impecable de tipografía */
+        /* Gradiente para mantener legible la tipografía sin desenfocar el fondo */
         #global-bg-overlay {
             position: fixed; inset: 0; z-index: 2;
-            background: radial-gradient(circle at center, rgba(3, 3, 5, 0.2) 0%, rgba(3, 3, 5, 0.85) 100%);
+            background: linear-gradient(135deg, rgba(3, 3, 5, 0.9) 0%, rgba(3, 3, 5, 0.3) 50%, rgba(3, 3, 5, 0.75) 100%);
             pointer-events: none;
         }
         .noise-overlay {
@@ -162,13 +160,13 @@
         .card-badge { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.7); color: #fff; font-size: 8px; font-weight: 800; padding: 4px 6px; border-radius: 3px; z-index: 3; }
 
         /* ==================================================================
-           UNBOXED IMMERSIVE ALBUMS VIEW
+           UNBOXED IMMERSIVE ALBUMS VIEW (NO BLUR ON LAYER)
            ================================================================== */
         .immersive-album-container {
             position: relative; width: 100%; height: 100%; display: flex; flex-direction: column; gap: 24px; z-index: 2;
         }
 
-        /* Dynamic album switcher (Underlined text only) */
+        /* Dynamic album switcher */
         .immersive-album-selector {
             display: flex; gap: 32px; align-self: flex-start; z-index: 10; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border-subtle); width: 100%;
         }
@@ -181,6 +179,19 @@
             content: ''; position: absolute; bottom: -1px; left: 0; width: 0; height: 2px; background: #fff; transition: width 0.3s;
         }
         .selector-pill.active::after { width: 100%; }
+
+        /* Capa de fondo del álbum sin blur y con alta nitidez */
+        .immersive-bg-layer {
+            position: absolute; inset: -40px;
+            background-size: cover; background-position: center;
+            z-index: -1; opacity: 0.85; border-radius: 16px;
+            transition: background-image 0.8s var(--ease-cinematic);
+        }
+        /* Viñeta inmersiva interna para asegurar legibilidad en el listado */
+        .immersive-bg-layer::before {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(90deg, rgba(3, 3, 5, 0.85) 0%, rgba(3, 3, 5, 0.4) 40%, rgba(3, 3, 5, 0.85) 100%);
+        }
 
         /* Two column flat presentation */
         .immersive-album-layout {
@@ -379,6 +390,9 @@
 
                     <!-- Immersive Detailed Two Column Layout (Borderless) -->
                     <div class="immersive-album-layout" id="imm-glass-panel">
+                        <!-- Realistic sharp full screen background layer inside Section -->
+                        <div class="immersive-bg-layer" id="imm-bg-layer"></div>
+                        
                         <!-- Left: Cover & Metadata -->
                         <div class="panel-left">
                             <img src="" id="imm-album-cover" class="album-cover-small" crossorigin="anonymous">
@@ -670,7 +684,6 @@
            ================================================================== */
         let currentPlayingIndex = 0;
         let isNPOpen = false;
-        let activeViewTab = 'songs';
 
         const audio1 = new Audio(); audio1.crossOrigin = "anonymous";
         const audio2 = new Audio(); audio2.crossOrigin = "anonymous";
@@ -866,7 +879,7 @@
                 if (type === 'song') {
                     card.onclick = () => playSong(realIndex);
                     
-                    // Interactividad: El cursor cambia dinámicamente la imagen de fondo nítida de la pantalla
+                    // Interactividad: El cursor cambia dinámicamente la imagen de fondo nítida de la pantalla sin blur
                     card.onmouseenter = () => {
                         updateGlobalBackground(item.bgImage);
                     };
@@ -919,7 +932,7 @@
                 else pill.classList.remove('active');
             });
 
-            // Sincronizar fondo limpio y nítido de pantalla
+            // Sincronizar fondo limpio y nítido de pantalla (sin blur)
             syncBackgroundToView();
 
             // Metadatos nítidos sin cajas contenedor
@@ -1125,7 +1138,7 @@
                 if(!isNPOpen || sY===0) return;
                 let d = cY - sY; sY = 0;
                 np.style.transition = ''; app.style.transition = '';
-                if(d > 120) toggleNP(); else { np.style.transform = ''; app.style.transform = 'scale(0.96)'; }
+                if(d > 120) toggleNP(); else { np.style.transform = ''; app.style.transform = 'scale(0.96) translateY(-1.5vh)'; }
             }, {passive:true});
         }
 
@@ -1152,7 +1165,7 @@
             setupGestures();
             document.getElementById('vol-fill-desk').style.width = `${globalVolume*100}%`;
             
-            // Cargar primera pista en el reproductor
+            // Carga por defecto la primera pista del sistema
             triggerUIForSong(0);
         }
 
