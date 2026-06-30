@@ -277,7 +277,9 @@
         }
         #np-fs.active { transform: translateY(0); opacity: 1; visibility: visible; }
 
-        .np-bg-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(3,3,5,0.95) 0%, rgba(3,3,5,0.3) 100%); z-index: 1; pointer-events: none; }
+        /* Se desactiva la sombra/máscara oscura de la parte inferior para mostrar el fondo nítido */
+        .np-bg-overlay { display: none; }
+        
         .np-grain { position: absolute; inset: 0; z-index: 2; opacity: 0.02; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency = '0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none;}
 
         .btn-collapse {
