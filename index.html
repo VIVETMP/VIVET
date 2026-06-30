@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>VIVETMP Music - Clean Edition</title>
+    <title>VIVETMP Music - Clean Canvas Edition</title>
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,33 +16,24 @@
     
     <style>
         /* ==================================================================
-           PREMIUM DESIGN SYSTEM & VARIABLES
+           DESIGN SYSTEM & VARIABLES
            ================================================================== */
         :root {
-            --bg-deep: #050507;
-            --bg-surface: rgba(10, 10, 14, 0.4);
-            
+            --bg-dark: #030305;
             --text-primary: #ffffff;
-            --text-secondary: rgba(255, 255, 255, 0.55);
-            --text-tertiary: rgba(255, 255, 255, 0.3);
+            --text-secondary: rgba(255, 255, 255, 0.6);
+            --text-tertiary: rgba(255, 255, 255, 0.35);
+            --border-subtle: rgba(255, 255, 255, 0.08);
             
-            --border-subtle: rgba(255, 255, 255, 0.05);
-            --border-highlight: rgba(255, 255, 255, 0.08);
-            --shadow-float: 0 15px 35px rgba(0, 0, 0, 0.4);
-            
-            --accent-1: #9d4edd;
-            --accent-2: #240046;
-            --accent-glow: rgba(157, 78, 221, 0.2);
+            --accent-1: #ffffff;
+            --accent-2: rgba(255, 255, 255, 0.2);
             
             --font-display: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
             --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
             
-            --ease-fluid: cubic-bezier(0.16, 1, 0.3, 1);
-            --ease-snappy: cubic-bezier(0.34, 1.56, 0.64, 1);
             --ease-cinematic: cubic-bezier(0.25, 1, 0.5, 1);
-            
-            --sidebar-width: 80px;
-            --player-height: 80px;
+            --sidebar-width: 90px;
+            --player-height: 88px;
             --nav-height-mob: 70px;
         }
 
@@ -50,160 +41,136 @@
         
         body {
             font-family: var(--font-main);
-            background-color: var(--bg-deep);
+            background-color: var(--bg-dark);
             color: var(--text-primary);
             height: 100vh; height: 100dvh;
             overflow: hidden;
             display: flex;
             user-select: none;
             -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
         }
 
         /* ==================================================================
-           AMBIENT BACKGROUND (DARK AURORA WITH TEXTURE)
+           FULL SCREEN SHARP BACKGROUND LAYER
            ================================================================== */
-        #ambient-bg {
-            position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
-            background: radial-gradient(circle at 15% 20%, #110922 0%, #050507 100%);
+        #global-bg {
+            position: fixed; inset: 0; z-index: 1;
+            background-size: cover; background-position: center;
+            filter: blur(2px); /* Mínimo desenfoque para conservar nitidez original */
+            transform: scale(1.02); /* Evita bordes blancos por desenfoque */
             transition: background-image 0.8s var(--ease-cinematic);
-            background-size: cover;
-            background-position: center;
+            pointer-events: none;
         }
-        #ambient-bg::before {
-            content: '';
-            position: absolute; inset: 0;
-            background: linear-gradient(180deg, rgba(5,5,7,0.3) 0%, rgba(5,5,7,0.85) 100%);
-            z-index: 1;
+        /* Gradiente de viñeta para legibilidad impecable de tipografía */
+        #global-bg-overlay {
+            position: fixed; inset: 0; z-index: 2;
+            background: radial-gradient(circle at center, rgba(3, 3, 5, 0.2) 0%, rgba(3, 3, 5, 0.85) 100%);
+            pointer-events: none;
         }
         .noise-overlay {
-            position: absolute; inset: 0; z-index: 2; opacity: 0.035; mix-blend-mode: overlay; pointer-events: none;
+            position: fixed; inset: 0; z-index: 3; opacity: 0.025; mix-blend-mode: overlay; pointer-events: none;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
 
-        /* Explicit Badge Style */
         .explicit-badge {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(255, 255, 255, 0.1);
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 8px;
-            font-weight: 800;
-            width: 12px;
-            height: 12px;
-            border-radius: 2px;
-            text-transform: uppercase;
-            margin-left: 6px;
-            vertical-align: middle;
-            flex-shrink: 0;
-            line-height: 1;
+            display: inline-flex; align-items: center; justify-content: center;
+            background: rgba(255, 255, 255, 0.15); color: #fff;
+            font-size: 8px; font-weight: 800; width: 12px; height: 12px;
+            border-radius: 2px; text-transform: uppercase; margin-left: 6px;
+            vertical-align: middle; flex-shrink: 0;
         }
 
         /* ==================================================================
            APP LAYOUT
            ================================================================== */
         #app-wrapper {
-            display: flex; width: 100vw; height: 100vh; position: relative; z-index: 10;
-            background: transparent;
-            transition: transform 0.8s var(--ease-cinematic), border-radius 0.8s var(--ease-cinematic), opacity 0.5s;
+            display: flex; width: 100vw; height: 100vh; position: relative; z-index: 10; background: transparent;
+            transition: transform 0.8s var(--ease-cinematic), opacity 0.5s;
         }
         #app-wrapper.scaled {
-            transform: scale(0.95) translateY(-1.5vh); border-radius: 30px; overflow: hidden; pointer-events: none; opacity: 0.5;
-            box-shadow: 0 30px 80px rgba(0,0,0,0.8);
+            transform: scale(0.96); opacity: 0.4; pointer-events: none;
         }
 
-        /* SIDEBAR (INTEGRATED MINIMALIST LINE BAR) */
+        /* SIDEBAR (INTEGRATED MINIMALIST BORDERLESS LINE) */
         #sidebar {
             width: var(--sidebar-width); height: 100vh;
-            margin: 0; padding: 40px 0;
-            display: flex; flex-direction: column; align-items: center; justify-content: space-between;
-            background: transparent; border-right: 1px solid var(--border-subtle);
+            padding: 40px 0; display: flex; flex-direction: column; align-items: center; justify-content: space-between;
+            border-right: 1px solid var(--border-subtle); background: rgba(3, 3, 5, 0.3);
             flex-shrink: 0; z-index: 20; position: relative;
         }
         
-        .brand { color: #fff; margin-bottom: 24px; }
-        .brand i { font-size: 24px; }
+        .brand i { font-size: 24px; color: #fff; }
         
-        .nav-menu { display: flex; flex-direction: column; gap: 32px; flex: 1; justify-content: center; z-index: 2; width: 100%; align-items: center; }
+        .nav-menu { display: flex; flex-direction: column; gap: 36px; flex: 1; justify-content: center; width: 100%; align-items: center; }
         .nav-item {
-            display: flex; align-items: center; justify-content: center; width: 40px; height: 40px;
-            color: var(--text-secondary); cursor: pointer; transition: all 0.3s var(--ease-fluid);
+            display: flex; align-items: center; justify-content: center; width: 44px; height: 44px;
+            color: var(--text-secondary); cursor: pointer; transition: all 0.3s ease;
         }
-        .nav-item i { font-size: 20px; transition: transform 0.3s var(--ease-snappy); }
-        .nav-item:hover { color: #fff; transform: scale(1.05); }
+        .nav-item i { font-size: 22px; transition: transform 0.3s ease; }
+        .nav-item:hover { color: #fff; }
         .nav-item.active { color: #fff; position: relative; }
         .nav-item.active::after {
             content: ''; position: absolute; left: 0; width: 3px; height: 16px; background: #fff; border-radius: 0 4px 4px 0;
         }
 
+        /* SCROLL CONTENT AREA */
         #main-content {
             flex: 1; height: 100%; position: relative; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth;
-            padding: 40px 4vw calc(var(--player-height) + 40px);
+            padding: 60px 5vw calc(var(--player-height) + 40px);
         }
         #main-content::-webkit-scrollbar { display: none; }
         
-        .view-section { display: none; flex-direction: column; width: 100%; max-width: 1400px; margin: 0 auto; position: relative; }
-        .view-section.active { display: flex; animation: viewEnter 0.6s var(--ease-cinematic) forwards; }
-        @keyframes viewEnter { 0% { opacity: 0; transform: translateY(10px); } 100% { opacity: 1; transform: translateY(0); } }
+        .view-section { display: none; flex-direction: column; width: 100%; max-width: 1200px; margin: 0 auto; }
+        .view-section.active { display: flex; animation: viewEnter 0.5s var(--ease-cinematic) forwards; }
+        @keyframes viewEnter { 0% { opacity: 0; transform: translateY(8px); } 100% { opacity: 1; transform: translateY(0); } }
 
-        .page-header { margin-bottom: 32px; position: relative; }
-        .page-header h1 { font-family: var(--font-display); font-size: 40px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 6px; line-height: 1.1; color: #fff; }
+        .page-header { margin-bottom: 40px; }
+        .page-header h1 { font-family: var(--font-display); font-size: 42px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 6px; color: #fff; }
         .page-header p { font-size: 14px; color: var(--text-secondary); }
-        .section-title { font-family: var(--font-display); font-size: 22px; font-weight: 700; margin: 40px 0 20px; }
+        .section-title { font-family: var(--font-display); font-size: 20px; font-weight: 700; margin: 32px 0 20px; }
 
-        .search-container { position: relative; width: 100%; max-width: 500px; margin-top: 16px; }
-        .search-input { width: 100%; padding: 14px 18px 14px 48px; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-subtle); border-radius: 8px; font-family: var(--font-main); font-size: 14px; color: #fff; outline: none; transition: all 0.3s ease; }
-        .search-input:focus { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); }
-        .search-container i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); font-size: 18px; color: var(--text-secondary); }
+        .search-container { position: relative; width: 100%; max-width: 450px; margin-top: 16px; }
+        .search-input { width: 100%; padding: 12px 16px 12px 44px; background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border-subtle); border-radius: 6px; font-family: var(--font-main); font-size: 14px; color: #fff; outline: none; transition: all 0.3s; }
+        .search-input:focus { border-color: rgba(255, 255, 255, 0.25); background: rgba(255, 255, 255, 0.08); }
+        .search-container i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); font-size: 16px; color: var(--text-secondary); }
 
-        .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 24px; width: 100%; }
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 32px; width: 100%; }
         
         /* CLEAN SINGLE CARD */
         .card { 
-            background: transparent; border: 1px solid transparent; padding: 8px; cursor: pointer; transition: all 0.3s var(--ease-fluid); position: relative; display: flex; flex-direction: column; gap: 12px; border-radius: 12px; 
+            background: transparent; border: none; padding: 0; cursor: pointer; transition: all 0.3s var(--ease-cinematic); position: relative; display: flex; flex-direction: column; gap: 12px;
         }
-        .card:hover { 
-            transform: translateY(-4px); 
-            background: rgba(255, 255, 255, 0.03);
-            border-color: var(--card-border);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2), 0 0 15px var(--card-glow);
-        }
-        
-        .card-img-wrapper { position: relative; width: 100%; aspect-ratio: 1; border-radius: 8px; overflow: hidden; }
+        .card-img-wrapper { position: relative; width: 100%; aspect-ratio: 1; border-radius: 6px; overflow: hidden; border: 1px solid transparent; transition: all 0.3s var(--ease-cinematic); }
         .card-img { width: 100%; height: 100%; object-fit: cover; }
         
-        .card-play-btn { position: absolute; bottom: 10px; right: 10px; width: 38px; height: 38px; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; opacity: 0; transform: scale(0.9); transition: all 0.25s var(--ease-fluid); z-index: 3; }
-        .card-play-btn i { margin-left: 2px; }
+        .card:hover .card-img-wrapper {
+            transform: translateY(-4px);
+            border-color: var(--card-border, #fff);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4), 0 0 15px var(--card-glow);
+        }
+        .card:active { transform: scale(0.97); }
+        
+        .card-play-btn { position: absolute; bottom: 10px; right: 10px; width: 36px; height: 36px; background: #fff; color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; opacity: 0; transform: scale(0.8); transition: all 0.25s var(--ease-cinematic); z-index: 3; }
+        .card-play-btn i { margin-left: 1px; }
         .card:hover .card-play-btn { opacity: 1; transform: scale(1); }
-        .card.active .card-play-btn { opacity: 1; transform: scale(1); background: var(--accent-1); border-color: var(--accent-1); }
+        .card.active .card-play-btn { opacity: 1; transform: scale(1); background: #fff; color: #000; }
 
         .card-info { padding: 0 2px; }
         .card-title { font-family: var(--font-display); font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-primary); margin-bottom: 2px; display: flex; align-items: center; justify-content: space-between; }
         .card-subtitle { font-size: 12px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .card.active .card-title { color: var(--accent-1); }
         
-        .card-badge { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.6); color: #fff; font-size: 9px; font-weight: 800; padding: 4px 8px; border-radius: 4px; z-index: 3; border: 1px solid rgba(255,255,255,0.05); }
+        .card-badge { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.7); color: #fff; font-size: 8px; font-weight: 800; padding: 4px 6px; border-radius: 3px; z-index: 3; }
 
         /* ==================================================================
-           IMMERSIVE DETAILED ALBUMS SECTION (CLEAN BACKGROUND-CENTERED)
+           UNBOXED IMMERSIVE ALBUMS VIEW
            ================================================================== */
         .immersive-album-container {
             position: relative; width: 100%; height: 100%; display: flex; flex-direction: column; gap: 24px; z-index: 2;
         }
 
-        /* Detailed realistic background layer (Lower blur for actual recognition) */
-        .immersive-bg-layer {
-            position: absolute; inset: -40px;
-            background-size: cover; background-position: center;
-            filter: blur(16px) brightness(0.25) saturate(1.1);
-            transition: background-image 0.8s var(--ease-cinematic);
-            z-index: -1; opacity: 0.85; border-radius: 16px;
-        }
-
-        /* Minimal Selector (Text Tab-Line) */
+        /* Dynamic album switcher (Underlined text only) */
         .immersive-album-selector {
-            display: flex; gap: 24px; align-self: flex-start; z-index: 10; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); width: 100%;
+            display: flex; gap: 32px; align-self: flex-start; z-index: 10; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border-subtle); width: 100%;
         }
         .selector-pill {
             font-size: 14px; font-weight: 500; color: var(--text-secondary); cursor: pointer; transition: all 0.3s ease; position: relative; padding-bottom: 8px;
@@ -215,79 +182,76 @@
         }
         .selector-pill.active::after { width: 100%; }
 
-        /* Borderless and containerless central presentation */
-        .immersive-glass-panel {
-            flex: 1; max-width: 1100px; width: 100%; margin: 0 auto; display: grid; grid-template-columns: 260px 1fr; gap: 48px;
-            background: transparent; border: none; padding: 16px 0; box-shadow: none;
+        /* Two column flat presentation */
+        .immersive-album-layout {
+            display: grid; grid-template-columns: 280px 1fr; gap: 64px; width: 100%; margin: 0 auto; padding: 12px 0;
         }
 
         .panel-left {
-            display: flex; flex-direction: column; align-items: flex-start; text-align: left; gap: 16px;
-            border-right: 1px solid rgba(255, 255, 255, 0.08); padding-right: 32px;
+            display: flex; flex-direction: column; align-items: flex-start; text-align: left; gap: 20px;
+            border-right: 1px solid var(--border-subtle); padding-right: 48px;
         }
         .panel-left .album-cover-small {
-            width: 140px; height: 140px; border-radius: 8px; object-fit: cover; box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            width: 140px; height: 140px; border-radius: 6px; object-fit: cover; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
         }
         .panel-left .album-meta { display: flex; flex-direction: column; gap: 4px; }
-        .panel-left .album-title { font-family: var(--font-display); font-size: 22px; font-weight: 800; line-height: 1.2; color: #fff; }
+        .panel-left .album-title { font-family: var(--font-display); font-size: 20px; font-weight: 800; line-height: 1.25; color: #fff; }
         .panel-left .album-artist { font-size: 14px; font-weight: 500; color: var(--text-secondary); }
         .panel-left .album-stats { font-size: 12px; color: var(--text-tertiary); }
         .panel-left .btn-play-album {
-            margin-top: 12px; background: #fff; color: #000; font-family: var(--font-display); font-weight: 700; font-size: 13px; padding: 10px 24px; border-radius: 6px; border: none; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px;
+            margin-top: 8px; background: #fff; color: #000; font-family: var(--font-display); font-weight: 700; font-size: 13px; padding: 10px 24px; border-radius: 4px; border: none; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px;
         }
-        .panel-left .btn-play-album:hover { transform: translateY(-2px); opacity: 0.95; }
+        .panel-left .btn-play-album:hover { transform: translateY(-2px); opacity: 0.9; }
 
         .panel-right { display: flex; flex-direction: column; overflow: hidden; height: 100%; max-height: 400px; }
-        .panel-right-scroll { flex: 1; overflow-y: auto; padding-right: 8px; }
-        .panel-right-scroll::-webkit-scrollbar { width: 4px; }
-        .panel-right-scroll::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 4px; }
+        .panel-right-scroll { flex: 1; overflow-y: auto; padding-right: 12px; }
+        .panel-right-scroll::-webkit-scrollbar { width: 2px; }
+        .panel-right-scroll::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); }
 
-        /* Minimal text track row */
+        /* Thin/fine text track list style */
         .immersive-track-row {
-            display: flex; align-items: center; gap: 16px; padding: 10px 12px; border-radius: 6px; cursor: pointer; transition: all 0.2s ease;
+            display: flex; align-items: center; gap: 16px; padding: 10px 12px; border-radius: 4px; cursor: pointer; transition: all 0.2s ease;
             font-size: 13px; font-weight: 300; color: rgba(255, 255, 255, 0.7);
         }
-        .immersive-track-row:hover { background: rgba(255, 255, 255, 0.04); color: #fff; }
-        .immersive-track-row.active { background: rgba(255, 255, 255, 0.06); color: var(--accent-1); font-weight: 500; }
+        .immersive-track-row:hover { background: rgba(255, 255, 255, 0.05); color: #fff; }
+        .immersive-track-row.active { background: rgba(255, 255, 255, 0.08); color: #fff; font-weight: 600; }
         .immersive-track-num { width: 20px; color: var(--text-tertiary); font-size: 11px; text-align: center; }
-        .immersive-track-row.active .immersive-track-num { color: var(--accent-1); }
         .immersive-track-title { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; }
         .immersive-track-artist { color: var(--text-secondary); font-size: 12px; }
 
         /* ==================================================================
            PERSISTENT FULL-WIDTH BOTTOM PLAYER
            ================================================================== */
-        .player-wrapper { position: fixed; bottom: 0; left: 0; width: 100%; display: flex; justify-content: center; z-index: 50; }
+        .player-wrapper { position: fixed; bottom: 0; left: var(--sidebar-width); right: 0; height: var(--player-height); z-index: 50; }
         .player-pill { 
-            width: 100%; height: var(--player-height); background: rgba(5, 5, 8, 0.9); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); 
-            border-top: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: space-between; padding: 12px 40px; box-shadow: 0 -10px 30px rgba(0,0,0,0.4); position: relative; overflow: hidden; 
+            width: 100%; height: 100%; background: rgba(3, 3, 5, 0.85); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); 
+            border-top: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: space-between; padding: 12px 40px; position: relative; overflow: hidden; 
         }
         .progress-mini-wrapper { position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: rgba(255,255,255,0.03); }
         .progress-mini-fill { height: 100%; width: 0%; background: #fff; transition: width 0.1s linear; }
 
         .player-info { display: flex; align-items: center; gap: 12px; width: 30%; cursor: pointer; }
-        .player-img { width: 42px; height: 42px; border-radius: 4px; object-fit: cover; }
+        .player-img { width: 44px; height: 44px; border-radius: 4px; object-fit: cover; }
         .player-meta { display: flex; flex-direction: column; gap: 2px; overflow: hidden; }
-        .player-title { font-family: var(--font-display); font-size: 14px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 6px;}
+        .player-title { font-family: var(--font-display); font-size: 14px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .player-artist { font-size: 12px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
         .player-controls { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 40%; gap: 8px; }
-        .controls-buttons { display: flex; align-items: center; gap: 24px; font-size: 18px; color: var(--text-secondary); }
+        .controls-buttons { display: flex; align-items: center; gap: 28px; font-size: 18px; color: var(--text-secondary); }
         .controls-buttons i { cursor: pointer; transition: all 0.2s; }
         .controls-buttons i:hover { color: #fff; }
-        .btn-play-circle { width: 38px; height: 38px; background: #fff; color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; cursor: pointer; transition: all 0.2s; }
+        .btn-play-circle { width: 36px; height: 36px; background: #fff; color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; cursor: pointer; transition: all 0.2s; }
         .btn-play-circle i { margin-left: 1px; }
-        .btn-play-circle:hover { transform: scale(1.05); }
 
-        .scrubber-container { display: flex; align-items: center; gap: 12px; width: 100%; max-width: 400px; font-size: 10px; color: rgba(255,255,255,0.4); font-variant-numeric: tabular-nums; }
-        .scrubber-bg { flex: 1; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; cursor: pointer; position: relative; }
+        .scrubber-container { display: flex; align-items: center; gap: 12px; width: 100%; max-width: 420px; font-size: 10px; color: rgba(255,255,255,0.4); font-variant-numeric: tabular-nums; }
+        .scrubber-bg { flex: 1; height: 3px; background: rgba(255,255,255,0.1); border-radius: 2px; cursor: pointer; position: relative; }
         .scrubber-fill { width: 0%; height: 100%; background: #fff; border-radius: 2px; transition: width 0.1s linear; }
 
-        .player-actions { display: flex; align-items: center; justify-content: flex-end; width: 30%; gap: 14px; color: var(--text-secondary); font-size: 18px; }
+        .player-actions { display: flex; align-items: center; justify-content: flex-end; width: 30%; gap: 16px; color: var(--text-secondary); font-size: 18px; }
         .player-actions i { cursor: pointer; }
-        .vol-slider { width: 70px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; cursor: pointer; position: relative;}
+        .vol-slider { width: 70px; height: 3px; background: rgba(255,255,255,0.1); border-radius: 2px; cursor: pointer; position: relative;}
         .vol-fill { width: 75%; height: 100%; background: #fff; border-radius: 2px; }
-        .btn-fullscreen { width: 32px; height: 32px; border-radius: 6px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
+        .btn-fullscreen { width: 30px; height: 30px; border-radius: 4px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
         .btn-fullscreen:hover { background: rgba(255,255,255,0.08); color: #fff; }
 
         /* ==================================================================
@@ -296,16 +260,12 @@
         #np-fs {
             position: fixed; inset: 0; z-index: 100; transform: translateY(100%); opacity: 0; visibility: hidden;
             transition: transform 0.8s var(--ease-cinematic), opacity 0.5s; display: flex; 
-            overflow: hidden; 
-            background: #050507;
-            font-family: var(--font-display);
-            align-items: flex-end;
-            justify-content: flex-start;
-            padding: 80px;
+            overflow: hidden; background: #030305;
+            font-family: var(--font-display); align-items: flex-end; justify-content: flex-start; padding: 80px;
         }
         #np-fs.active { transform: translateY(0); opacity: 1; visibility: visible; }
 
-        .np-bg-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(5,5,7,0.9) 0%, rgba(5,5,7,0.4) 100%); z-index: 1; pointer-events: none; }
+        .np-bg-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(3,3,5,0.95) 0%, rgba(3,3,5,0.3) 100%); z-index: 1; pointer-events: none; }
         .np-grain { position: absolute; inset: 0; z-index: 2; opacity: 0.02; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency = '0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none;}
 
         .btn-collapse {
@@ -317,18 +277,8 @@
         .btn-collapse:hover { color: #fff; background: rgba(255,255,255,0.08); transform: scale(1.05); }
         .btn-collapse-mob { display: none; }
 
-        .np-minimal-container {
-            position: relative; z-index: 10; display: flex; align-items: center; gap: 32px;
-        }
-
-        .np-art-wrap { 
-            width: 140px; height: 140px; border-radius: 8px; 
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5); 
-            overflow: hidden; transition: transform 0.5s var(--ease-snappy); 
-            background: transparent; cursor: pointer;
-            flex-shrink: 0;
-        }
-        .np-art-wrap:hover { transform: scale(1.02); }
+        .np-minimal-container { position: relative; z-index: 10; display: flex; align-items: center; gap: 32px; }
+        .np-art-wrap { width: 140px; height: 140px; border-radius: 6px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); overflow: hidden; transition: transform 0.5s var(--ease-snappy); background: transparent; cursor: pointer; flex-shrink: 0; }
         .np-art { width: 100%; height: 100%; object-fit: cover; }
 
         .np-metadata-wrap { display: flex; flex-direction: column; gap: 6px; }
@@ -342,20 +292,19 @@
         
         @media (max-width: 1024px) {
             #sidebar { display: none; }
-            #main-content { padding: 32px 5vw calc(var(--player-height) + var(--nav-height-mob) + 16px); }
+            #main-content { padding: 32px 5vw calc(var(--player-height) + var(--nav-height-mob) + 16px); margin-left: 0; }
             
             .mobile-nav {
                 display: flex; position: fixed; bottom: 0; left: 0; width: 100%; height: var(--nav-height-mob);
-                background: rgba(5, 5, 8, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-                border-top: 1px solid var(--border-subtle); z-index: 60;
+                background: rgba(3, 3, 5, 0.95); border-top: 1px solid var(--border-subtle); z-index: 60;
                 justify-content: space-around; align-items: center; padding-bottom: env(safe-area-inset-bottom);
             }
             .nav-item-mob { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 44px; height: 44px; color: var(--text-secondary); cursor: pointer; border-radius: 50%; transition: 0.3s; }
             .nav-item-mob i { font-size: 22px; transition: 0.3s var(--ease-snappy); }
             .nav-item-mob.active { color: #fff; background: rgba(255, 255, 255, 0.04); }
 
-            .player-wrapper { bottom: calc(var(--nav-height-mob)); padding: 0; }
-            .player-pill { height: 64px; padding: 8px 20px; border-top: 1px solid var(--border-subtle); background: rgba(5, 5, 8, 0.98); }
+            .player-wrapper { bottom: calc(var(--nav-height-mob)); left: 0; }
+            .player-pill { height: 64px; padding: 8px 20px; border-top: 1px solid var(--border-subtle); background: rgba(3, 3, 5, 0.98); }
             .player-img { width: 36px; height: 36px; border-radius: 4px; }
             .player-controls, .player-actions { display: none; }
             .player-info { width: 85%; }
@@ -365,7 +314,7 @@
             .page-header h1 { font-size: 32px; }
             
             /* Immersive Album Mobile */
-            .immersive-glass-panel { grid-template-columns: 1fr; gap: 24px; padding: 16px 0; max-height: 480px; overflow-y: auto; }
+            .immersive-album-layout { grid-template-columns: 1fr; gap: 24px; padding: 16px 0; max-height: 480px; overflow-y: auto; }
             .panel-left { border-right: none; border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding-right: 0; padding-bottom: 24px; }
             .panel-left .album-cover-small { width: 100px; height: 100px; }
             .panel-right { max-height: 240px; }
@@ -388,10 +337,10 @@
 </head>
 <body>
 
-    <!-- AMBIENT BACKGROUND -->
-    <div id="ambient-bg">
-        <div class="noise-overlay"></div>
-    </div>
+    <!-- SHARP GLOBAL BACKGROUND -->
+    <div id="global-bg"></div>
+    <div id="global-bg-overlay"></div>
+    <div class="noise-overlay"></div>
 
     <!-- MAIN APP SHELL -->
     <div id="app-wrapper">
@@ -421,18 +370,15 @@
             <!-- ALBUMS VIEW (DETAILED IMMERSIVE SCENE) -->
             <section id="view-albums" class="view-section">
                 <div class="immersive-album-container">
-                    <!-- Realistic blurred full screen background layer -->
-                    <div class="immersive-bg-layer" id="imm-bg-layer"></div>
-                    
-                    <!-- Clean Text Swiper -->
+                    <!-- Clean Text Tab Selector -->
                     <div class="immersive-album-selector" id="imm-album-selector">
-                        <span class="selector-pill active" onclick="switchImmersiveAlbum(0)">nadie sabe</span>
+                        <span class="selector-pill active" onclick="switchImmersiveAlbum(0)">nadie sabe lo que va a pasar mañana</span>
                         <span class="selector-pill" onclick="switchImmersiveAlbum(1)">PRIVATE SUITE</span>
-                        <span class="selector-pill" onclick="switchImmersiveAlbum(2)">POR SI MAÑANA</span>
+                        <span class="selector-pill" onclick="switchImmersiveAlbum(2)">POR SI MAÑANA NO ESTOY</span>
                     </div>
 
-                    <!-- Immersive Detailed Panel -->
-                    <div class="immersive-glass-panel" id="imm-glass-panel">
+                    <!-- Immersive Detailed Two Column Layout (Borderless) -->
+                    <div class="immersive-album-layout" id="imm-glass-panel">
                         <!-- Left: Cover & Metadata -->
                         <div class="panel-left">
                             <img src="" id="imm-album-cover" class="album-cover-small" crossorigin="anonymous">
@@ -652,7 +598,7 @@
             ["POR SI MAÑANA NO ESTOY", "https://files.catbox.moe/f67tpy.mp3", "Omar Courtz"]
         ];
 
-        // Estructura de base de datos con acentos de color predefinidos en CSS para los Sencillos
+        // Base de datos de canciones (Sencillos / Singles)
         const cancionesData = [
             // Single de Anuel AA
             { 
@@ -665,8 +611,8 @@
                 coverLoaded: true, 
                 palette: lasMasBonitasPalette2, 
                 bgImage: "https://files.catbox.moe/f755oj.png",
-                borderColor: "rgba(0, 120, 255, 0.35)",
-                glowColor: "rgba(0, 120, 255, 0.2)"
+                borderColor: "rgba(0, 120, 255, 0.45)",
+                glowColor: "rgba(0, 120, 255, 0.25)"
             },
             // Nuevo Sencillo: Dream Team
             {
@@ -679,8 +625,8 @@
                 coverLoaded: true,
                 palette: dreamTeam_640x640Palette,
                 bgImage: "https://files.catbox.moe/vl17c9.png",
-                borderColor: "rgba(255, 0, 80, 0.4)",
-                glowColor: "rgba(255, 0, 80, 0.25)"
+                borderColor: "rgba(255, 0, 80, 0.55)",
+                glowColor: "rgba(255, 0, 80, 0.3)"
             },
             // Nuevo Sencillo: 222
             {
@@ -693,8 +639,8 @@
                 coverLoaded: true,
                 palette: _222_640x640Palette,
                 bgImage: "https://files.catbox.moe/36yq5u.png",
-                borderColor: "rgba(219, 114, 34, 0.4)",
-                glowColor: "rgba(219, 114, 34, 0.25)"
+                borderColor: "rgba(219, 114, 34, 0.55)",
+                glowColor: "rgba(219, 114, 34, 0.3)"
             }
         ];
 
@@ -724,6 +670,7 @@
            ================================================================== */
         let currentPlayingIndex = 0;
         let isNPOpen = false;
+        let activeViewTab = 'songs';
 
         const audio1 = new Audio(); audio1.crossOrigin = "anonymous";
         const audio2 = new Audio(); audio2.crossOrigin = "anonymous";
@@ -793,7 +740,6 @@
             const a = palette[bestIdx], b = palette[(bestIdx + 2) % palette.length] || palette[0];
             document.documentElement.style.setProperty('--accent-1', `rgb(${a.r},${a.g},${a.b})`);
             document.documentElement.style.setProperty('--accent-2', `rgb(${b.r},${b.g},${b.b})`);
-            document.documentElement.style.setProperty('--accent-glow', `rgba(${a.r},${a.g},${a.b},0.42)`);
         }
 
         function updateCovers(imgUrl) {
@@ -805,6 +751,35 @@
             song.coverLoaded = true;
             document.querySelectorAll(`.cover-song-${i}`).forEach(img => img.src = song.cover);
             if (currentPlayingIndex === i) updateCovers(song.cover);
+        }
+
+        /* ==================================================================
+           BACKGROUND LAYER DYNAMIC TRANSITIONS
+           ================================================================== */
+        function updateGlobalBackground(url) {
+            const bg = document.getElementById('global-bg');
+            if (bg && url) {
+                bg.style.backgroundImage = `url('${url}')`;
+            }
+        }
+
+        function syncBackgroundToView() {
+            if (activeViewTab === 'songs') {
+                // Sincronizar con el sencillo en reproducción o el primero por defecto
+                const activeSong = cancionesData[currentPlayingIndex];
+                if (activeSong && activeSong.bgImage) updateGlobalBackground(activeSong.bgImage);
+            } else if (activeViewTab === 'albums') {
+                const activeAlbum = albumsData[activeImmersiveAlbumIndex];
+                if (activeAlbum) {
+                    let bgUrl = '';
+                    if (activeAlbum.id === "nadie-sabe-album") bgUrl = nadieSabeBg;
+                    else if (activeAlbum.id === "private-suite-complete") bgUrl = roaBg;
+                    else if (activeAlbum.id === "por-si-manana") bgUrl = moonlightBg;
+                    updateGlobalBackground(bgUrl);
+                }
+            } else {
+                updateGlobalBackground(nadieSabeBg);
+            }
         }
 
         /* ==================================================================
@@ -852,6 +827,7 @@
            ================================================================== */
         function navTo(tabId) {
             haptic();
+            activeViewTab = tabId;
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-item, .nav-item-mob').forEach(el => el.classList.remove('active'));
             
@@ -864,6 +840,7 @@
                 document.getElementById('search-input').focus();
                 handleSearch({target: document.getElementById('search-input')}); 
             }
+            syncBackgroundToView();
             document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -880,14 +857,25 @@
                 card.className = `card ${type === 'song' ? `card-song-${realIndex}` : ''}`;
                 
                 if (type === 'song') {
-                    card.style.setProperty('--card-border', item.borderColor || 'rgba(255, 255, 255, 0.05)');
+                    card.style.setProperty('--card-border', item.borderColor || 'rgba(255, 255, 255, 0.15)');
                     card.style.setProperty('--card-glow', item.glowColor || 'rgba(255, 255, 255, 0.1)');
                 }
                 
                 if (type === 'song' && currentPlayingIndex === realIndex) card.classList.add('active');
                 
-                if (type === 'song') card.onclick = () => playSong(realIndex);
-                else if (type === 'album') card.onclick = () => openAlbumDetail(item.id);
+                if (type === 'song') {
+                    card.onclick = () => playSong(realIndex);
+                    
+                    // Interactividad: El cursor cambia dinámicamente la imagen de fondo nítida de la pantalla
+                    card.onmouseenter = () => {
+                        updateGlobalBackground(item.bgImage);
+                    };
+                    card.onmouseleave = () => {
+                        syncBackgroundToView();
+                    };
+                } else if (type === 'album') {
+                    card.onclick = () => openAlbumDetail(item.id);
+                }
 
                 let badge = '';
                 if (type === 'song' && currentPlayingIndex === realIndex) badge = `<div class="card-badge">PLAYING</div>`;
@@ -916,7 +904,7 @@
         }
 
         /* ==================================================================
-           IMMERSIVE ALBUMS MANAGEMENT
+           IMMERSIVE ALBUMS SYSTEM (TWO COLUMNS, CONTAINERLESS)
            ================================================================== */
         let activeImmersiveAlbumIndex = 0;
 
@@ -925,24 +913,16 @@
             const album = albumsData[idx];
             if(!album) return;
 
-            // Actualizar pestañas del selector
+            // Sincronizar selectores de texto
             document.querySelectorAll('#imm-album-selector .selector-pill').forEach((pill, i) => {
                 if(i === idx) pill.classList.add('active');
                 else pill.classList.remove('active');
             });
 
-            // Actualizar fondo realista de pantalla completa con menor blur
-            const bgLayer = document.getElementById('imm-bg-layer');
-            if (bgLayer) {
-                let bgUrl = '';
-                if (album.id === "nadie-sabe-album") bgUrl = nadieSabeBg;
-                else if (album.id === "private-suite-complete") bgUrl = roaBg;
-                else if (album.id === "por-si-manana") bgUrl = moonlightBg;
-                
-                bgLayer.style.backgroundImage = `url('${bgUrl || album.cover}')`;
-            }
+            // Sincronizar fondo limpio y nítido de pantalla
+            syncBackgroundToView();
 
-            // Actualizar portada y metadatos (Sin paneles pesados encima)
+            // Metadatos nítidos sin cajas contenedor
             document.getElementById('imm-album-cover').src = album.cover;
             document.getElementById('imm-album-title').innerText = album.title;
             document.getElementById('imm-album-artist').innerText = album.artist;
@@ -950,7 +930,7 @@
             const tracks = cancionesData.filter(s => s.album === album.id).sort((a,b) => a.trackNum - b.trackNum);
             document.getElementById('imm-album-stats').innerText = `${album.year} • ${tracks.length} Tracks • ${album.duration || ''}`;
 
-            // Renderizar lista de canciones (Texto fino blanco y limpio)
+            // Renderizar la lista de canciones en un formato de texto muy fino
             const trackContainer = document.getElementById('imm-tracklist');
             trackContainer.innerHTML = '';
             tracks.forEach(song => {
@@ -1024,7 +1004,7 @@
             document.querySelectorAll('.card.active').forEach(el => el.classList.remove('active'));
             document.querySelectorAll(`.card-song-${idx}`).forEach(el => el.classList.add('active'));
             
-            // Sincronizar clases activas en reproductor de álbum inmersivo
+            // Sincronizar tracklist del álbum inmersivo
             document.querySelectorAll('.immersive-track-row.active').forEach(el => el.classList.remove('active'));
             document.querySelectorAll(`.imm-track-row-${idx}`).forEach(el => el.classList.add('active'));
             
@@ -1043,16 +1023,14 @@
             if (song.bgImage) {
                 npFs.style.backgroundImage = `url('${song.bgImage}')`;
                 npFs.style.backgroundSize = 'cover'; npFs.style.backgroundPosition = 'center'; npFs.style.backgroundRepeat = 'no-repeat';
-            } else if (song.palette && song.palette.length > 0) {
-                const primaryColor = song.palette[0], secondaryColor = song.palette[2] || song.palette[1];
-                npFs.style.backgroundImage = `linear-gradient(135deg, rgb(${primaryColor.r}, ${primaryColor.g}, ${primaryColor.b}) 0%, rgb(${secondaryColor.r}, ${secondaryColor.g}, ${secondaryColor.b}) 100%)`;
             }
 
             if (song.palette && song.palette.length > 0) {
-                const primaryColor = song.palette[0];
-                document.documentElement.style.setProperty('--bg-deep', `rgb(${primaryColor.r}, ${primaryColor.g}, ${primaryColor.b})`);
                 applyAccentFromPalette(song.palette);
             }
+            
+            // Sincronizar la imagen de fondo clara
+            syncBackgroundToView();
         }
 
         function togglePlay() {
@@ -1140,14 +1118,14 @@
                 cY = e.touches[0].clientY; let d = cY - sY;
                 if(d > 0 && np.scrollTop <= 0) { 
                     np.style.transform = `translateY(${d}px)`;
-                    app.style.transform = `scale(${Math.min(1, 0.95 + (d/window.innerHeight)*0.05)}) translateY(${-1.5+(d/window.innerHeight)*1.5}vh)`;
+                    app.style.transform = `scale(${Math.min(1, 0.96 + (d/window.innerHeight)*0.04)})`;
                 }
             }, {passive:true});
             np.addEventListener('touchend', e => {
                 if(!isNPOpen || sY===0) return;
                 let d = cY - sY; sY = 0;
                 np.style.transition = ''; app.style.transition = '';
-                if(d > 120) toggleNP(); else { np.style.transform = ''; app.style.transform = 'scale(0.95) translateY(-1.5vh)'; }
+                if(d > 120) toggleNP(); else { np.style.transform = ''; app.style.transform = 'scale(0.96)'; }
             }, {passive:true});
         }
 
