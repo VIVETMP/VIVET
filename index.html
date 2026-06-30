@@ -273,6 +273,7 @@
             transition: transform 0.8s var(--ease-cinematic), opacity 0.5s; display: flex; 
             overflow: hidden; background: #030305;
             font-family: var(--font-display); align-items: flex-end; justify-content: flex-start; padding: 80px;
+            box-shadow: none; /* Se elimina cualquier sombra del contenedor principal */
         }
         #np-fs.active { transform: translateY(0); opacity: 1; visibility: visible; }
 
@@ -289,7 +290,14 @@
         .btn-collapse-mob { display: none; }
 
         .np-minimal-container { position: relative; z-index: 10; display: flex; align-items: center; gap: 32px; }
-        .np-art-wrap { width: 140px; height: 140px; border-radius: 6px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); overflow: hidden; transition: transform 0.5s var(--ease-snappy); background: transparent; cursor: pointer; flex-shrink: 0; }
+        
+        .np-art-wrap { 
+            width: 140px; height: 140px; border-radius: 6px; 
+            box-shadow: none; /* Se elimina la sombra de la portada en pantalla completa */
+            overflow: hidden; transition: transform 0.5s var(--ease-snappy); 
+            background: transparent; cursor: pointer; flex-shrink: 0; 
+        }
+        .np-art-wrap:hover { transform: scale(1.02); }
         .np-art { width: 100%; height: 100%; object-fit: cover; }
 
         .np-metadata-wrap { display: flex; flex-direction: column; gap: 6px; }
@@ -684,6 +692,7 @@
            ================================================================== */
         let currentPlayingIndex = 0;
         let isNPOpen = false;
+        let activeViewTab = 'songs';
 
         const audio1 = new Audio(); audio1.crossOrigin = "anonymous";
         const audio2 = new Audio(); audio2.crossOrigin = "anonymous";
@@ -1165,7 +1174,7 @@
             setupGestures();
             document.getElementById('vol-fill-desk').style.width = `${globalVolume*100}%`;
             
-            // Carga por defecto la primera pista del sistema
+            // Cargar primera pista en el reproductor
             triggerUIForSong(0);
         }
 
