@@ -160,75 +160,81 @@
         .card-badge { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.7); color: #fff; font-size: 8px; font-weight: 800; padding: 4px 6px; border-radius: 3px; z-index: 3; }
 
         /* ==================================================================
-           UNBOXED IMMERSIVE ALBUMS VIEW (NO BLUR ON LAYER)
+           IMPROVED IMMERSIVE ALBUMS VIEW (NO BLUR, LUXURY EDITORIAL STYLE)
            ================================================================== */
         .immersive-album-container {
-            position: relative; width: 100%; height: 100%; display: flex; flex-direction: column; gap: 24px; z-index: 2;
+            position: relative; width: 100%; height: 100%; display: flex; flex-direction: column; gap: 32px; z-index: 2;
         }
 
-        /* Dynamic album switcher */
+        /* Luxury Editorial Switcher */
         .immersive-album-selector {
-            display: flex; gap: 32px; align-self: flex-start; z-index: 10; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border-subtle); width: 100%;
+            display: flex; gap: 40px; align-self: flex-start; z-index: 10; margin-bottom: 24px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); width: 100%; padding-bottom: 16px;
         }
         .selector-pill {
-            font-size: 14px; font-weight: 500; color: var(--text-secondary); cursor: pointer; transition: all 0.3s ease; position: relative; padding-bottom: 8px;
+            font-family: var(--font-display); font-size: 13px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-secondary); cursor: pointer; transition: all 0.4s var(--ease-cinematic); position: relative; display: flex; align-items: center; gap: 8px;
         }
+        .selector-pill span { font-size: 10px; font-weight: 300; opacity: 0.5; font-feature-settings: "tnum"; }
         .selector-pill:hover { color: #fff; }
         .selector-pill.active { color: #fff; font-weight: 700; }
         .selector-pill::after {
-            content: ''; position: absolute; bottom: -1px; left: 0; width: 0; height: 2px; background: #fff; transition: width 0.3s;
+            content: ''; position: absolute; bottom: -17px; left: 0; width: 0; height: 2px; background: #fff; transition: width 0.4s var(--ease-cinematic);
         }
         .selector-pill.active::after { width: 100%; }
 
         /* Capa de fondo del álbum sin blur y con alta nitidez */
         .immersive-bg-layer {
             position: absolute; inset: -40px;
-            background-size: cover; background-position: center;
-            z-index: -1; opacity: 0.85; border-radius: 16px;
-            transition: background-image 0.8s var(--ease-cinematic);
+            background-size: cover; background-position: center 25%;
+            z-index: -1; opacity: 0.85; border-radius: 20px;
+            transition: background-image 1s var(--ease-cinematic);
         }
-        /* Viñeta inmersiva interna para asegurar legibilidad en el listado */
+        /* Viñeta interna multidireccional refinada para asegurar legibilidad */
         .immersive-bg-layer::before {
             content: ''; position: absolute; inset: 0;
-            background: linear-gradient(90deg, rgba(3, 3, 5, 0.85) 0%, rgba(3, 3, 5, 0.4) 40%, rgba(3, 3, 5, 0.85) 100%);
+            background: linear-gradient(to right, rgba(3,3,5,0.95) 0%, rgba(3,3,5,0.45) 55%, rgba(3,3,5,0.85) 100%),
+                        linear-gradient(to bottom, rgba(3,3,5,0.1) 0%, rgba(3,3,5,0.7) 100%);
         }
 
         /* Two column flat presentation */
         .immersive-album-layout {
-            display: grid; grid-template-columns: 280px 1fr; gap: 64px; width: 100%; margin: 0 auto; padding: 12px 0;
+            display: grid; grid-template-columns: 320px 1fr; gap: 80px; width: 100%; margin: 0 auto;
         }
 
         .panel-left {
-            display: flex; flex-direction: column; align-items: flex-start; text-align: left; gap: 20px;
-            border-right: 1px solid var(--border-subtle); padding-right: 48px;
+            display: flex; flex-direction: column; align-items: flex-start; text-align: left; gap: 28px;
+            border-right: 1px solid rgba(255, 255, 255, 0.05); padding-right: 60px;
         }
         .panel-left .album-cover-small {
-            width: 140px; height: 140px; border-radius: 6px; object-fit: cover; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            width: 180px; height: 180px; border-radius: 12px; object-fit: cover; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+            transition: transform 0.5s var(--ease-cinematic);
         }
-        .panel-left .album-meta { display: flex; flex-direction: column; gap: 4px; }
-        .panel-left .album-title { font-family: var(--font-display); font-size: 20px; font-weight: 800; line-height: 1.25; color: #fff; }
-        .panel-left .album-artist { font-size: 14px; font-weight: 500; color: var(--text-secondary); }
-        .panel-left .album-stats { font-size: 12px; color: var(--text-tertiary); }
+        .panel-left:hover .album-cover-small { transform: translateY(-4px) scale(1.02); }
+        .panel-left .album-meta { display: flex; flex-direction: column; gap: 8px; }
+        .panel-left .album-title { font-family: var(--font-display); font-size: 28px; font-weight: 800; line-height: 1.15; color: #fff; letter-spacing: -0.02em; }
+        .panel-left .album-artist { font-size: 15px; font-weight: 600; color: var(--text-secondary); }
+        .panel-left .album-stats { font-size: 12px; color: var(--text-tertiary); letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; }
         .panel-left .btn-play-album {
-            margin-top: 8px; background: #fff; color: #000; font-family: var(--font-display); font-weight: 700; font-size: 13px; padding: 10px 24px; border-radius: 4px; border: none; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px;
+            margin-top: 8px; background: #fff; color: #000; font-family: var(--font-display); font-weight: 700; font-size: 13px; padding: 12px 32px; border-radius: 100px; border: none; cursor: pointer; transition: all 0.3s var(--ease-cinematic); display: inline-flex; align-items: center; gap: 10px; box-shadow: 0 10px 20px rgba(255,255,255,0.1);
         }
-        .panel-left .btn-play-album:hover { transform: translateY(-2px); opacity: 0.9; }
+        .panel-left .btn-play-album:hover { transform: translateY(-2px); box-shadow: 0 15px 30px rgba(255,255,255,0.2); }
 
-        .panel-right { display: flex; flex-direction: column; overflow: hidden; height: 100%; max-height: 400px; }
-        .panel-right-scroll { flex: 1; overflow-y: auto; padding-right: 12px; }
+        .panel-right { display: flex; flex-direction: column; overflow: hidden; height: 100%; max-height: 440px; }
+        .panel-right-scroll { flex: 1; overflow-y: auto; padding-right: 16px; }
         .panel-right-scroll::-webkit-scrollbar { width: 2px; }
         .panel-right-scroll::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); }
 
-        /* Thin/fine text track list style */
+        /* Minimal text track row */
         .immersive-track-row {
-            display: flex; align-items: center; gap: 16px; padding: 10px 12px; border-radius: 4px; cursor: pointer; transition: all 0.2s ease;
-            font-size: 13px; font-weight: 300; color: rgba(255, 255, 255, 0.7);
+            display: flex; align-items: center; gap: 20px; padding: 14px 16px; border-radius: 8px; cursor: pointer; transition: all 0.25s var(--ease-cinematic);
+            font-size: 14px; font-weight: 300; color: rgba(255, 255, 255, 0.7); border-bottom: 1px solid rgba(255, 255, 255, 0.02);
         }
-        .immersive-track-row:hover { background: rgba(255, 255, 255, 0.05); color: #fff; }
-        .immersive-track-row.active { background: rgba(255, 255, 255, 0.08); color: #fff; font-weight: 600; }
-        .immersive-track-num { width: 20px; color: var(--text-tertiary); font-size: 11px; text-align: center; }
+        .immersive-track-row:hover { background: rgba(255, 255, 255, 0.04); color: #fff; }
+        .immersive-track-row.active { background: rgba(255, 255, 255, 0.06); color: #fff; font-weight: 600; }
+        .immersive-track-num { width: 24px; color: var(--text-tertiary); font-size: 11px; font-weight: 600; font-family: var(--font-display); }
+        .immersive-track-row.active .immersive-track-num { color: #fff; }
         .immersive-track-title { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; }
-        .immersive-track-artist { color: var(--text-secondary); font-size: 12px; }
+        .immersive-track-artist { color: var(--text-secondary); font-size: 13px; font-weight: 300; margin-right: 20px; }
+        .immersive-track-duration { font-size: 12px; color: var(--text-tertiary); font-feature-settings: "tnum"; font-weight: 400; width: 35px; text-align: right; }
 
         /* ==================================================================
            PERSISTENT FULL-WIDTH BOTTOM PLAYER
@@ -335,10 +341,12 @@
             .page-header h1 { font-size: 32px; }
             
             /* Immersive Album Mobile */
-            .immersive-album-layout { grid-template-columns: 1fr; gap: 24px; padding: 16px 0; max-height: 480px; overflow-y: auto; }
-            .panel-left { border-right: none; border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding-right: 0; padding-bottom: 24px; }
-            .panel-left .album-cover-small { width: 100px; height: 100px; }
-            .panel-right { max-height: 240px; }
+            .immersive-album-selector { gap: 20px; overflow-x: auto; width: 100%; white-space: nowrap; padding-bottom: 8px; }
+            .immersive-album-selector::-webkit-scrollbar { display: none; }
+            .immersive-album-layout { grid-template-columns: 1fr; gap: 40px; padding: 0; }
+            .panel-left { border-right: none; border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding-right: 0; padding-bottom: 24px; align-items: center; text-align: center; }
+            .panel-left .album-cover-small { width: 130px; height: 130px; }
+            .panel-right { max-height: 320px; }
 
             #np-fs { padding: 40px 24px; align-items: center; justify-content: center; } 
             .btn-collapse { display: none; }
@@ -393,9 +401,9 @@
                 <div class="immersive-album-container">
                     <!-- Clean Text Tab Selector -->
                     <div class="immersive-album-selector" id="imm-album-selector">
-                        <span class="selector-pill active" onclick="switchImmersiveAlbum(0)">nadie sabe lo que va a pasar mañana</span>
-                        <span class="selector-pill" onclick="switchImmersiveAlbum(1)">PRIVATE SUITE</span>
-                        <span class="selector-pill" onclick="switchImmersiveAlbum(2)">POR SI MAÑANA NO ESTOY</span>
+                        <span class="selector-pill active" onclick="switchImmersiveAlbum(0)"><span>01</span> nadie sabe lo que va a pasar mañana</span>
+                        <span class="selector-pill" onclick="switchImmersiveAlbum(1)"><span>02</span> PRIVATE SUITE</span>
+                        <span class="selector-pill" onclick="switchImmersiveAlbum(2)"><span>03</span> POR SI MAÑANA NO ESTOY</span>
                     </div>
 
                     <!-- Immersive Detailed Two Column Layout (Borderless) -->
@@ -535,94 +543,7 @@
         const dreamTeam_640x640Palette = [{ r: 255, g: 0, b: 7 },{ r: 11, g: 39, b: 64 },{ r: 247, g: 201, b: 122 },{ r: 10, g: 14, b: 18 },{ r: 1, g: 2, b: 3 }];
         const _222_640x640Palette = [{ r: 219, g: 114, b: 34 },{ r: 104, g: 140, b: 122 },{ r: 41, g: 25, b: 29 },{ r: 16, g: 14, b: 18 },{ r: 161, g: 73, b: 45 }];
 
-        // Base de datos comprimida de canciones de los álbumes
-        const nadieSabeTracksRaw = [
-            ["NADIE SABE", "https://files.catbox.moe/81i5i9.mp3"],
-            ["MONACO", "https://files.catbox.moe/i3k4mg.mp3"],
-            ["FINA", "https://files.catbox.moe/t0kzte.mp3", "Bad Bunny & Young Miko"],
-            ["HIBIKI", "https://files.catbox.moe/ifxel2.mp3", "Bad Bunny & Mora"],
-            ["MR. OCTOBER", "https://files.catbox.moe/l8pkvo.mp3"],
-            ["CYBERTRUCK", "https://files.catbox.moe/lmyd81.mp3"],
-            ["VOU 787", "https://files.catbox.moe/j0ifz6.mp3"],
-            ["SEDA", "https://files.catbox.moe/h9em77.mp3", "Bad Bunny & Bryant Myers"],
-            ["GRACIAS POR NADA", "https://files.catbox.moe/0afdmi.mp3"],
-            ["TELÉFONO NUEVO", "https://files.catbox.moe/ocv1jn.mp3", "Bad Bunny & Luar La L"],
-            ["BABY NUEVA", "https://files.catbox.moe/c494lg.mp3"],
-            ["MERCEDES CAROTA", "https://files.catbox.moe/kbi3ng.mp3", "Bad Bunny & YovngChimi"],
-            ["LOS PITS", "https://files.catbox.moe/5hi9zw.mp3"],
-            ["VUELVE CANDY B", "https://files.catbox.moe/c7c2tw.mp3"],
-            ["BATICANO", "https://files.catbox.moe/0ioak8.mp3"],
-            ["NO ME QUIERO CASAR", "https://files.catbox.moe/z0pt1j.mp3"],
-            ["WHERE SHE GOES", "https://files.catbox.moe/lr48kr.mp3"],
-            ["THUNDER Y LIGHTNING", "https://files.catbox.moe/lakqe7.mp3", "Bad Bunny & Eladio Carrión"],
-            ["PERRO NEGRO", "https://files.catbox.moe/9zbzhl.mp3", "Bad Bunny & Feid"],
-            ["EUROPA :(", "https://files.catbox.moe/0w8v89.mp3"],
-            ["ACHO PR", "https://files.catbox.moe/nxz1nf.mp3", "Bad Bunny, Arcángel, De La Ghetto & Ñengo Flow"],
-            ["UN PREVIEW", "https://files.catbox.moe/ccfzeb.mp3"]
-        ];
-
-        const roaTracksRaw = [
-            ["Freelance", "https://43rdwl1h89.ucarecd.net/44b3c18e-6950-4083-8f54-c7a31c1233a7/Freelance_spotdownorg.mp3"],
-            ["UuU", "https://43rdwl1h89.ucarecd.net/db1e054e-6a16-41b5-801e-cf0db8d09a40/UuU_spotdownorg.mp3", "ROA & Hades66"],
-            ["JETSKI", "https://43rdwl1h89.ucarecd.net/27529a31-a2fd-45a4-8198-4837e2a468cd/JETSKI_spotdownorg.mp3"],
-            ["11:11 (interlude)", "https://43rdwl1h89.ucarecd.net/8d268a23-9116-414a-87ed-57e378143bcb/11_11Interlude_spotdownorg.mp3"],
-            ["Bellakeame", "https://43rdwl1h89.ucarecd.net/d0d19a4c-9670-48fc-add5-55ffbdc30a53/Bellakeame_spotdownorg.mp3"],
-            ["Noche Pasajera", "https://43rdwl1h89.ucarecd.net/14c842db-a936-4605-9947-af6866b31346/NochePasajera_spotdownorg.mp3"],
-            ["LA CURA… coming soon (Outro)", "https://43rdwl1h89.ucarecd.net/b9aed547-543e-40f3-994f-2b61e87b3534/LACURAcomingsoonOutro_spotdownorg.mp3"],
-            ["La Cura", "https://43rdwl1h89.ucarecd.net/4fc37b60-e202-4ea6-ad68-46714eb54363/LaCura_spotdownorg.mp3"],
-            ["Y Si Te Llamo", "https://43rdwl1h89.ucarecd.net/ef74b9aa-c329-4a47-8f0e-2f6a5bcd45f6/YSiTeLlamo_spotdownorg.mp3"],
-            ["NOCHE PASAJERA II", "https://43rdwl1h89.ucarecd.net/36b8f21a-ba5e-4174-a1ee-afc5ccbdde9b/NOCHEPASAJERAII_spotdownorg.mp3", "ROA & Jay Wheeler"],
-            ["JETSKI - Remix", "https://43rdwl1h89.ucarecd.net/0a5c7e1a-f062-4ef8-b99c-dd1034da60f4/JETSKIRemix_spotdownorg1.mp3", "ROA, Omar Courtz, Dei V & Bryant Myers"],
-            ["11:12 (Interlude)", "https://43rdwl1h89.ucarecd.net/749dffe2-6e64-4f99-b596-b2496d4096c6/11_12Interlude_spotdownorg.mp3", "ROA & De La Rose"],
-            ["UuU 2", "https://43rdwl1h89.ucarecd.net/a99ac52d-d2e7-4214-9a7f-ecdc1b585473/UuU2_spotdownorg.mp3", "ROA, Hades66 & Luar La L"],
-            ["FREELANCE 2.0", "https://43rdwl1h89.ucarecd.net/566b4669-7d4e-4f92-9b54-37eb40614929/FREELANCE20_spotdownorg.mp3", "ROA, CDobleta, Amarion, Ankhal & Anubiis"],
-            ["Eclipse... Coming Soon (Outro)", "https://43rdwl1h89.ucarecd.net/fd3612f0-8d53-4b85-ae50-bd883b398bfe/EclipseComingSoonOutro_spotdownorg.mp3"],
-            ["ETA", "https://43rdwl1h89.ucarecd.net/05ffac1c-63ec-4d3d-9ac8-4d321aeb28a7/ETA_spotdownorg.mp3"],
-            ["ECLIPSE", "https://43rdwl1h89.ucarecd.net/25a0018f-504a-49b3-8358-c38c62a548f4/ECLIPSE_spotdownorg.mp3", "ROA, J Abdiel & Slayter"],
-            ["777", "https://43rdwl1h89.ucarecd.net/ba795269-fdb2-4938-90d4-6cca60aa7f14/777_spotdownorg.mp3"],
-            ["PETITE", "https://43rdwl1h89.ucarecd.net/202d26f3-9b1f-4f65-8152-449ce316eb09/PETITE_spotdownorg.mp3"],
-            ["MI DEMONIA... COMING SOON", "https://43rdwl1h89.ucarecd.net/37ae36d1-88ab-49f5-bb25-4736708577e7/MIDEMONIACOMINGSOON_spotdownorg.mp3"],
-            ["TATE QUIETA", "https://43rdwl1h89.ucarecd.net/84536705-8c96-4863-b707-56a85b7ef643/TATEQUIETA_spotdownorg.mp3", "ROA & CDobleta"],
-            ["NEVER 2 LATE", "https://43rdwl1h89.ucarecd.net/be314035-f7e8-4396-add3-07e6c8e06417/NEVER2LATE_spotdownorg.mp3", "ROA & Yan Block"],
-            ["ME GUSTAS CC", "https://43rdwl1h89.ucarecd.net/f97cd115-aa0b-4827-be03-ec4540f7be35/MEGUSTASCC_spotdownorg.mp3"],
-            ["ETA - Remix", "https://43rdwl1h89.ucarecd.net/ef2651fb-d382-411f-8557-d96c053e1a2d/ETARMX_spotdownorg.mp3", "ROA, De La Rose, Omar Courtz, Yan Block & Luar La L"],
-            ["QUÉ TE PASA ?", "https://43rdwl1h89.ucarecd.net/ac319d64-229c-41c6-af4e-c79da4ec9fa7/QUETEPASA__spotdownorg.mp3"],
-            ["EENIMINIMAINIMOE", "https://43rdwl1h89.ucarecd.net/741bed09-b436-44d5-ac9a-228ff0b32f6c/EENIMINIMAINIMOE_spotdownorg.mp3"],
-            ["J's INTERLUDE", "https://43rdwl1h89.ucarecd.net/a1df7ad6-d0a2-4bd1-9d84-06a64eccaded/JsINTERLUDE_spotdownorg.mp3"],
-            ["MI DEMONIA", "https://43rdwl1h89.ucarecd.net/956f8423-913e-4239-a26c-a927a2857167/MIDEMONIA_spotdownorg.mp3"],
-            ["LA FAVORITA DE DIOS", "https://43rdwl1h89.ucarecd.net/b6362bd6-cb26-4dab-8f48-9567da17e5dc/LAFAVORITADEDIOS_spotdownorg.mp3", "ROA & Dei V"],
-            ["11:11", "https://43rdwl1h89.ucarecd.net/e17efb10-5860-4bb3-b50d-2796d25679cc/11_11_spotdownorg.mp3"],
-            ["ARE YOU FEELING ME ? (OUTRO)", "https://43rdwl1h89.ucarecd.net/488ece66-43a9-45da-b67e-20a9a68e4734/AREYOUFEELINGME_OUTRO_spotdownorg.mp3"],
-            ["BABY HOY", "https://43rdwl1h89.ucarecd.net/735e39b9-1907-4600-8619-8e3034695ae1/BABYHOY_spotdownorg.mp3"],
-            ["MI PEOR ERROR", "https://43rdwl1h89.ucarecd.net/20c9633c-95e1-48f7-82be-006ee84fbc7a/MIPEORERROR_spotdownorg.mp3", "ROA & Botlok"],
-            ["EL MALO... Coming soon", "https://43rdwl1h89.ucarecd.net/85290498-b4a1-461b-8f87-067e0eb353cd/ELMALOComingsoon_spotdownorg.mp3"],
-            ["TÚ Y YO", "https://43rdwl1h89.ucarecd.net/8ce4aec7-f400-4bd4-9060-ba8a6ecf231b/TUYYO_spotdownorg.mp3"],
-            ["MI CHIMBITA", "https://43rdwl1h89.ucarecd.net/9d5655b0-6576-49f3-9b6f-f3c91e3f753d/MICHIMBITA_spotdownorg.mp3", "ROA, Kris R, Hades66, GeezyDee & TopBoy TGR"],
-            ["TATE QUIETA - Remix", "https://43rdwl1h89.ucarecd.net/5650fe3c-bb05-4cc5-848e-258118a4eb65/TATEQUIETARMX_spotdownorg.mp3", "ROA, CDobleta, Midnvght, Tutu, Luar La L & Almighty"]
-        ];
-
-        const moonlightTracksRaw = [
-            ["OUTRO", "https://files.catbox.moe/4eqs0r.mp3", "Omar Courtz"],
-            ["EL MUNDO SE VA A ACABAR", "https://files.catbox.moe/ioux89.mp3", "Omar Courtz & KARBeats"],
-            ["FOREVER TU GANTEL", "https://files.catbox.moe/cievb6.mp3", "Omar Courtz & Ñengo Flow"],
-            ["L a k e n o s h i", "https://files.catbox.moe/9qorg7.mp3", "Omar Courtz"],
-            ["VAMOaCOCHI", "https://files.catbox.moe/wns3m6.mp3", "Omar Courtz"],
-            ["SUSU", "https://files.catbox.moe/kdv57b.mp3", "Omar Courtz"],
-            ["SIRENA", "https://files.catbox.moe/msloqo.mp3", "Omar Courtz"],
-            ["GANTEL y BELLAKz", "https://files.catbox.moe/eeqvne.mp3", "Omar Courtz & Bassyy"],
-            ["SI ESTÁS CON ALGUIEN", "https://files.catbox.moe/v21n97.mp3", "Omar Courtz"],
-            ["Dulces SueñoZzz (+INTERLUDIO)", "https://files.catbox.moe/cktziy.mp3", "Omar Courtz & Rubí"],
-            ["$UELTA GATITA $UELTA", "https://files.catbox.moe/0qxd21.mp3", "Omar Courtz, Dei V, Clarent & Tito El Bambino"],
-            ["WHAT U NEED? (SexPlaylist 2)", "https://files.catbox.moe/qncan5.mp3", "Omar Courtz & Myke Towers"],
-            ["WO OH OH", "https://files.catbox.moe/xx2wn3.mp3", "Omar Courtz & ROA"],
-            ["KOKO", "https://files.catbox.moe/n733ws.mp3", "Omar Courtz"],
-            ["COMERNOS", "https://files.catbox.moe/u9f6nl.mp3", "Omar Courtz & Bad Gyal"],
-            ["SKY", "https://files.catbox.moe/4868ct.mp3", "Omar Courtz"],
-            ["MOONLIGHT", "https://files.catbox.moe/hlrw1i.mp3", "Omar Courtz & Eladio Carrión"],
-            ["POR SI MAÑANA NO ESTOY", "https://files.catbox.moe/f67tpy.mp3", "Omar Courtz"]
-        ];
-
-        // Base de datos de canciones (Sencillos / Singles)
+        // Base de datos de canciones
         const cancionesData = [
             // Single de Anuel AA
             { 
@@ -928,16 +849,23 @@
         }
 
         /* ==================================================================
-           IMMERSIVE ALBUMS SYSTEM (TWO COLUMNS, CONTAINERLESS)
+           IMMERSIVE ALBUMS SYSTEM (EDITORIAL REFINED DESIGN)
            ================================================================== */
         let activeImmersiveAlbumIndex = 0;
+
+        function getMockDuration(title) {
+            // Duraciones deterministas realistas basadas en la longitud del título
+            const base = (title.length % 3) + 2; 
+            const secs = (title.length * 7) % 60;
+            return `${base}:${secs.toString().padStart(2, '0')}`;
+        }
 
         function switchImmersiveAlbum(idx) {
             activeImmersiveAlbumIndex = idx;
             const album = albumsData[idx];
             if(!album) return;
 
-            // Sincronizar selectores de texto
+            // Sincronizar selectores de texto con número de índice
             document.querySelectorAll('#imm-album-selector .selector-pill').forEach((pill, i) => {
                 if(i === idx) pill.classList.add('active');
                 else pill.classList.remove('active');
@@ -966,10 +894,13 @@
                 if(currentPlayingIndex === realIndex) row.classList.add('active');
                 row.onclick = () => playSong(realIndex);
 
+                const duration = getMockDuration(song.title);
+
                 row.innerHTML = `
-                    <div class="immersive-track-num">${song.trackNum}</div>
+                    <div class="immersive-track-num">${song.trackNum.toString().padStart(2, '0')}</div>
                     <div class="immersive-track-title">${song.title} <span class="explicit-badge">E</span></div>
                     <div class="immersive-track-artist">${song.artist}</div>
+                    <div class="immersive-track-duration">${duration}</div>
                 `;
                 trackContainer.appendChild(row);
             });
