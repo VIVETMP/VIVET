@@ -1,72 +1,144 @@
 <!DOCTYPE html>
-<html lang="en">
+<html class="dark" lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>VIVETMP Music - Sharp Canvas Edition</title>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+    <title>Pulse Audio - Premium Edition</title>
     
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    
-    <!-- Icons & Tools -->
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Scripts & Fonts -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsmediatags/3.9.5/jsmediatags.min.js"></script>
-    
+
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-fixed-variant": "#005320",
+                        "on-tertiary-fixed-variant": "#454747",
+                        "outline-variant": "#444748",
+                        "surface-container-high": "#2a2a2a",
+                        "error": "#ffb4ab",
+                        "primary": "#ffffff",
+                        "secondary": "#53e076",
+                        "surface": "#131313",
+                        "tertiary-fixed": "#e2e2e2",
+                        "surface-bright": "#393939",
+                        "outline": "#8e9192",
+                        "on-secondary-fixed": "#002108",
+                        "inverse-surface": "#e5e2e1",
+                        "inverse-on-surface": "#313030",
+                        "surface-container-lowest": "#0e0e0e",
+                        "background": "#131313",
+                        "tertiary-container": "#e2e2e2",
+                        "on-tertiary": "#2f3131",
+                        "primary-fixed-dim": "#c6c6c7",
+                        "on-primary-fixed-variant": "#454747",
+                        "on-background": "#e5e2e1",
+                        "error-container": "#93000a",
+                        "primary-fixed": "#e2e2e2",
+                        "on-error": "#690005",
+                        "surface-container-highest": "#353534",
+                        "surface-tint": "#c6c6c7",
+                        "surface-dim": "#131313",
+                        "tertiary-fixed-dim": "#c6c6c7",
+                        "on-primary": "#2f3131",
+                        "on-error-container": "#ffdad6",
+                        "on-primary-container": "#636565",
+                        "on-surface-variant": "#c4c7c8",
+                        "surface-container": "#201f1f",
+                        "on-surface": "#e5e2e1",
+                        "surface-container-low": "#1c1b1b",
+                        "primary-container": "#e2e2e2",
+                        "secondary-container": "#02b04c",
+                        "on-tertiary-fixed": "#1a1c1c",
+                        "inverse-primary": "#5d5f5f",
+                        "tertiary": "#ffffff",
+                        "on-primary-fixed": "#1a1c1c",
+                        "secondary-fixed-dim": "#53e076",
+                        "on-secondary-container": "#003a14",
+                        "on-secondary": "#003914",
+                        "on-tertiary-container": "#636565",
+                        "secondary-fixed": "#72fe8f",
+                        "surface-variant": "#353534"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-md": "16px",
+                        "stack-sm": "8px",
+                        "container-margin-mobile": "16px",
+                        "gutter": "24px",
+                        "stack-lg": "32px",
+                        "section-gap": "48px",
+                        "container-margin-desktop": "40px",
+                        "unit": "8px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Outfit", "Inter"],
+                        "headline-lg": ["Outfit", "Inter"],
+                        "body-lg": ["Plus Jakarta Sans", "Inter"],
+                        "headline-lg-mobile": ["Outfit", "Inter"],
+                        "label-md": ["Plus Jakarta Sans", "Inter"],
+                        "headline-md": ["Outfit", "Inter"],
+                        "body-sm": ["Plus Jakarta Sans", "Inter"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-lg": ["16px", { "lineHeight": "1.5", "letterSpacing": "0", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-md": ["12px", { "lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "headline-md": ["20px", { "lineHeight": "1.4", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-sm": ["14px", { "lineHeight": "1.5", "letterSpacing": "0", "fontWeight": "400" }]
+                    }
+                },
+            },
+        }
+    </script>
     <style>
-        /* ==================================================================
-           DESIGN SYSTEM & VARIABLES
-           ================================================================== */
-        :root {
-            --bg-dark: #030305;
-            --text-primary: #ffffff;
-            --text-secondary: rgba(255, 255, 255, 0.65);
-            --text-tertiary: rgba(255, 255, 255, 0.4);
-            --border-subtle: rgba(255, 255, 255, 0.08);
-            
-            --accent-1: #ffffff;
-            --accent-2: rgba(255, 255, 255, 0.2);
-            
-            --font-display: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
-            --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-            
-            --ease-cinematic: cubic-bezier(0.25, 1, 0.5, 1);
-            --sidebar-width: 90px;
-            --player-height: 88px;
-            --nav-height-mob: 70px;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        
         body {
-            font-family: var(--font-main);
-            background-color: var(--bg-dark);
-            color: var(--text-primary);
-            height: 100vh; height: 100dvh;
-            overflow: hidden;
-            display: flex;
-            user-select: none;
-            -webkit-font-smoothing: antialiased;
+            background-color: theme('colors.background');
+            color: theme('colors.on-background');
+        }
+        
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 200, 'GRAD' 0, 'opsz' 24;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        /* ==================================================================
-           FULL SCREEN SHARP BACKGROUND LAYER (NO BLUR)
-           ================================================================== */
+        .ambient-glow {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at center, rgba(83, 224, 118, 0.1) 0%, transparent 70%);
+            filter: blur(100px);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* SHARP GLOBAL BACKGROUND LAYER */
         #global-bg {
             position: fixed; inset: 0; z-index: 1;
             background-size: cover; background-position: center;
-            transition: background-image 0.8s var(--ease-cinematic);
+            transition: background-image 0.8s cubic-bezier(0.25, 1, 0.5, 1);
             pointer-events: none;
         }
-        /* Gradiente para mantener legible la tipografía sin desenfocar el fondo */
         #global-bg-overlay {
             position: fixed; inset: 0; z-index: 2;
-            background: linear-gradient(135deg, rgba(3, 3, 5, 0.9) 0%, rgba(3, 3, 5, 0.3) 50%, rgba(3, 3, 5, 0.75) 100%);
+            background: linear-gradient(135deg, rgba(19, 19, 19, 0.95) 0%, rgba(19, 19, 19, 0.5) 50%, rgba(19, 19, 19, 0.85) 100%);
             pointer-events: none;
         }
         .noise-overlay {
-            position: fixed; inset: 0; z-index: 3; opacity: 0.025; mix-blend-mode: overlay; pointer-events: none;
+            position: fixed; inset: 0; z-index: 3; opacity: 0.02; mix-blend-mode: overlay; pointer-events: none;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
 
@@ -78,216 +150,56 @@
             vertical-align: middle; flex-shrink: 0;
         }
 
-        /* ==================================================================
-           APP LAYOUT
-           ================================================================== */
-        #app-wrapper {
-            display: flex; width: 100vw; height: 100vh; position: relative; z-index: 10; background: transparent;
-            transition: transform 0.8s var(--ease-cinematic), opacity 0.5s;
-        }
-        #app-wrapper.scaled {
-            transform: scale(0.96); opacity: 0.4; pointer-events: none;
-        }
-
-        /* SIDEBAR (INTEGRATED MINIMALIST BORDERLESS LINE) */
-        #sidebar {
-            width: var(--sidebar-width); height: 100vh;
-            padding: 40px 0; display: flex; flex-direction: column; align-items: center; justify-content: space-between;
-            border-right: 1px solid var(--border-subtle); background: rgba(3, 3, 5, 0.3);
-            flex-shrink: 0; z-index: 20; position: relative;
-        }
-        
-        .brand i { font-size: 24px; color: #fff; }
-        
-        .nav-menu { display: flex; flex-direction: column; gap: 36px; flex: 1; justify-content: center; width: 100%; align-items: center; }
-        .nav-item {
-            display: flex; align-items: center; justify-content: center; width: 44px; height: 44px;
-            color: var(--text-secondary); cursor: pointer; transition: all 0.3s ease;
-        }
-        .nav-item i { font-size: 22px; transition: transform 0.3s ease; }
-        .nav-item:hover { color: #fff; }
-        .nav-item.active { color: #fff; position: relative; }
-        .nav-item.active::after {
-            content: ''; position: absolute; left: 0; width: 3px; height: 16px; background: #fff; border-radius: 0 4px 4px 0;
-        }
-
-        /* SCROLL CONTENT AREA */
-        #main-content {
-            flex: 1; height: 100%; position: relative; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth;
-            padding: 60px 5vw calc(var(--player-height) + 40px);
-        }
-        #main-content::-webkit-scrollbar { display: none; }
-        
-        .view-section { display: none; flex-direction: column; width: 100%; max-width: 1200px; margin: 0 auto; }
-        .view-section.active { display: flex; animation: viewEnter 0.5s var(--ease-cinematic) forwards; }
-        @keyframes viewEnter { 0% { opacity: 0; transform: translateY(8px); } 100% { opacity: 1; transform: translateY(0); } }
-
-        .page-header { margin-bottom: 40px; }
-        .page-header h1 { font-family: var(--font-display); font-size: 42px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 6px; color: #fff; }
-        .page-header p { font-size: 14px; color: var(--text-secondary); }
-        .section-title { font-family: var(--font-display); font-size: 20px; font-weight: 700; margin: 32px 0 20px; }
-
-        .search-container { position: relative; width: 100%; max-width: 450px; margin-top: 16px; }
-        .search-input { width: 100%; padding: 12px 16px 12px 44px; background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border-subtle); border-radius: 6px; font-family: var(--font-main); font-size: 14px; color: #fff; outline: none; transition: all 0.3s; }
-        .search-input:focus { border-color: rgba(255, 255, 255, 0.25); background: rgba(255, 255, 255, 0.08); }
-        .search-container i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); font-size: 16px; color: var(--text-secondary); }
-
-        .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 32px; width: 100%; }
-        
-        /* CLEAN SINGLE CARD */
-        .card { 
-            background: transparent; border: none; padding: 0; cursor: pointer; transition: all 0.3s var(--ease-cinematic); position: relative; display: flex; flex-direction: column; gap: 12px;
-        }
-        .card-img-wrapper { position: relative; width: 100%; aspect-ratio: 1; border-radius: 6px; overflow: hidden; border: 1px solid transparent; transition: all 0.3s var(--ease-cinematic); }
-        .card-img { width: 100%; height: 100%; object-fit: cover; }
-        
-        .card:hover .card-img-wrapper {
-            transform: translateY(-4px);
-            border-color: var(--card-border, #fff);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.4), 0 0 15px var(--card-glow);
-        }
-        .card:active { transform: scale(0.97); }
-        
-        .card-play-btn { position: absolute; bottom: 10px; right: 10px; width: 36px; height: 36px; background: #fff; color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; opacity: 0; transform: scale(0.8); transition: all 0.25s var(--ease-cinematic); z-index: 3; }
-        .card-play-btn i { margin-left: 1px; }
-        .card:hover .card-play-btn { opacity: 1; transform: scale(1); }
-        .card.active .card-play-btn { opacity: 1; transform: scale(1); background: #fff; color: #000; }
-
-        .card-info { padding: 0 2px; }
-        .card-title { font-family: var(--font-display); font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-primary); margin-bottom: 2px; display: flex; align-items: center; justify-content: space-between; }
-        .card-subtitle { font-size: 12px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        
-        .card-badge { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.7); color: #fff; font-size: 8px; font-weight: 800; padding: 4px 6px; border-radius: 3px; z-index: 3; }
-
-        /* ==================================================================
-           IMPROVED IMMERSIVE ALBUMS VIEW (NO BLUR, LUXURY EDITORIAL STYLE)
-           ================================================================== */
-        .immersive-album-container {
-            position: relative; width: 100%; height: 100%; display: flex; flex-direction: column; gap: 32px; z-index: 2;
-        }
-
-        /* Luxury Editorial Switcher */
-        .immersive-album-selector {
-            display: flex; gap: 40px; align-self: flex-start; z-index: 10; margin-bottom: 24px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); width: 100%; padding-bottom: 16px;
-        }
-        .selector-pill {
-            font-family: var(--font-display); font-size: 13px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-secondary); cursor: pointer; transition: all 0.4s var(--ease-cinematic); position: relative; display: flex; align-items: center; gap: 8px;
-        }
-        .selector-pill span { font-size: 10px; font-weight: 300; opacity: 0.5; font-feature-settings: "tnum"; }
-        .selector-pill:hover { color: #fff; }
-        .selector-pill.active { color: #fff; font-weight: 700; }
-        .selector-pill::after {
-            content: ''; position: absolute; bottom: -17px; left: 0; width: 0; height: 2px; background: #fff; transition: width 0.4s var(--ease-cinematic);
-        }
-        .selector-pill.active::after { width: 100%; }
-
-        /* Capa de fondo del álbum sin blur y con alta nitidez */
-        .immersive-bg-layer {
-            position: absolute; inset: -40px;
-            background-size: cover; background-position: center 25%;
-            z-index: -1; opacity: 0.85; border-radius: 20px;
-            transition: background-image 1s var(--ease-cinematic);
-        }
-        /* Viñeta interna multidireccional refinada para asegurar legibilidad */
-        .immersive-bg-layer::before {
-            content: ''; position: absolute; inset: 0;
-            background: linear-gradient(to right, rgba(3,3,5,0.95) 0%, rgba(3,3,5,0.45) 55%, rgba(3,3,5,0.85) 100%),
-                        linear-gradient(to bottom, rgba(3,3,5,0.1) 0%, rgba(3,3,5,0.7) 100%);
-        }
-
-        /* Two column flat presentation */
-        .immersive-album-layout {
-            display: grid; grid-template-columns: 320px 1fr; gap: 80px; width: 100%; margin: 0 auto;
-        }
-
-        .panel-left {
-            display: flex; flex-direction: column; align-items: flex-start; text-align: left; gap: 28px;
-            border-right: 1px solid rgba(255, 255, 255, 0.05); padding-right: 60px;
-        }
-        .panel-left .album-cover-small {
-            width: 180px; height: 180px; border-radius: 12px; object-fit: cover; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
-            transition: transform 0.5s var(--ease-cinematic);
-        }
-        .panel-left:hover .album-cover-small { transform: translateY(-4px) scale(1.02); }
-        .panel-left .album-meta { display: flex; flex-direction: column; gap: 8px; }
-        .panel-left .album-title { font-family: var(--font-display); font-size: 28px; font-weight: 800; line-height: 1.15; color: #fff; letter-spacing: -0.02em; }
-        .panel-left .album-artist { font-size: 15px; font-weight: 600; color: var(--text-secondary); }
-        .panel-left .album-stats { font-size: 12px; color: var(--text-tertiary); letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; }
-        .panel-left .btn-play-album {
-            margin-top: 8px; background: #fff; color: #000; font-family: var(--font-display); font-weight: 700; font-size: 13px; padding: 12px 32px; border-radius: 100px; border: none; cursor: pointer; transition: all 0.3s var(--ease-cinematic); display: inline-flex; align-items: center; gap: 10px; box-shadow: 0 10px 20px rgba(255,255,255,0.1);
-        }
-        .panel-left .btn-play-album:hover { transform: translateY(-2px); box-shadow: 0 15px 30px rgba(255,255,255,0.2); }
-
-        .panel-right { display: flex; flex-direction: column; overflow: hidden; height: 100%; max-height: 440px; }
-        .panel-right-scroll { flex: 1; overflow-y: auto; padding-right: 16px; }
-        .panel-right-scroll::-webkit-scrollbar { width: 2px; }
-        .panel-right-scroll::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); }
-
-        /* Minimal text track row */
+        /* IMMERSIVE ALBUMS ELEMENTS */
         .immersive-track-row {
-            display: flex; align-items: center; gap: 20px; padding: 14px 16px; border-radius: 8px; cursor: pointer; transition: all 0.25s var(--ease-cinematic);
+            display: flex; align-items: center; gap: 20px; padding: 14px 16px; border-radius: 8px; cursor: pointer; transition: all 0.25s ease-in-out;
             font-size: 14px; font-weight: 300; color: rgba(255, 255, 255, 0.7); border-bottom: 1px solid rgba(255, 255, 255, 0.02);
         }
         .immersive-track-row:hover { background: rgba(255, 255, 255, 0.04); color: #fff; }
         .immersive-track-row.active { background: rgba(255, 255, 255, 0.06); color: #fff; font-weight: 600; }
-        .immersive-track-num { width: 24px; color: var(--text-tertiary); font-size: 11px; font-weight: 600; font-family: var(--font-display); }
-        .immersive-track-row.active .immersive-track-num { color: #fff; }
-        .immersive-track-title { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; }
-        .immersive-track-artist { color: var(--text-secondary); font-size: 13px; font-weight: 300; margin-right: 20px; }
-        .immersive-track-duration { font-size: 12px; color: var(--text-tertiary); font-feature-settings: "tnum"; font-weight: 400; width: 35px; text-align: right; }
 
-        /* ==================================================================
-           PERSISTENT FULL-WIDTH BOTTOM PLAYER
-           ================================================================== */
-        .player-wrapper { position: fixed; bottom: 0; left: var(--sidebar-width); right: 0; height: var(--player-height); z-index: 50; }
-        .player-pill { 
-            width: 100%; height: 100%; background: rgba(3, 3, 5, 0.85); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); 
-            border-top: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: space-between; padding: 12px 40px; position: relative; overflow: hidden; 
+        /* ALBUMS GRID STYLING FROM SECOND UI */
+        .album-card-img {
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-        .progress-mini-wrapper { position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: rgba(255,255,255,0.03); }
-        .progress-mini-fill { height: 100%; width: 0%; background: #fff; transition: width 0.1s linear; }
 
-        .player-info { display: flex; align-items: center; gap: 12px; width: 30%; cursor: pointer; }
-        .player-img { width: 44px; height: 44px; border-radius: 4px; object-fit: cover; }
-        .player-meta { display: flex; flex-direction: column; gap: 2px; overflow: hidden; }
-        .player-title { font-family: var(--font-display); font-size: 14px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .player-artist { font-size: 12px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .album-card-wrapper:hover .album-card-img {
+            transform: scale(1.02);
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1), 0 8px 24px rgba(0,0,0,0.4);
+        }
 
-        .player-controls { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 40%; gap: 8px; }
-        .controls-buttons { display: flex; align-items: center; gap: 28px; font-size: 18px; color: var(--text-secondary); }
-        .controls-buttons i { cursor: pointer; transition: all 0.2s; }
-        .controls-buttons i:hover { color: #fff; }
-        .btn-play-circle { width: 36px; height: 36px; background: #fff; color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; cursor: pointer; transition: all 0.2s; }
-        .btn-play-circle i { margin-left: 1px; }
+        .play-btn-overlay {
+            opacity: 0;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            transform: translateY(10px);
+        }
 
-        .scrubber-container { display: flex; align-items: center; gap: 12px; width: 100%; max-width: 420px; font-size: 10px; color: rgba(255,255,255,0.4); font-variant-numeric: tabular-nums; }
-        .scrubber-bg { flex: 1; height: 3px; background: rgba(255,255,255,0.1); border-radius: 2px; cursor: pointer; position: relative; }
-        .scrubber-fill { width: 0%; height: 100%; background: #fff; border-radius: 2px; transition: width 0.1s linear; }
+        .album-card-wrapper:hover .play-btn-overlay {
+            opacity: 1;
+            transform: translateY(0);
+        }
 
-        .player-actions { display: flex; align-items: center; justify-content: flex-end; width: 30%; gap: 16px; color: var(--text-secondary); font-size: 18px; }
-        .player-actions i { cursor: pointer; }
-        .vol-slider { width: 70px; height: 3px; background: rgba(255,255,255,0.1); border-radius: 2px; cursor: pointer; position: relative;}
-        .vol-fill { width: 75%; height: 100%; background: #fff; border-radius: 2px; }
-        .btn-fullscreen { width: 30px; height: 30px; border-radius: 4px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
-        .btn-fullscreen:hover { background: rgba(255,255,255,0.08); color: #fff; }
+        /* Ambient bleed effect classes */
+        .ambient-bleed-1 {
+            background: radial-gradient(circle at 50% 50%, rgba(83, 224, 118, 0.15) 0%, transparent 70%);
+        }
+        .ambient-bleed-2 {
+            background: radial-gradient(circle at 50% 50%, rgba(255, 180, 171, 0.15) 0%, transparent 70%);
+        }
+        .ambient-bleed-3 {
+            background: radial-gradient(circle at 50% 50%, rgba(198, 199, 200, 0.15) 0%, transparent 70%);
+        }
 
-        /* ==================================================================
-           FULLSCREEN NOW PLAYING
-           ================================================================== */
+        /* FULLSCREEN NOW PLAYING OVERLAY */
         #np-fs {
             position: fixed; inset: 0; z-index: 100; transform: translateY(100%); opacity: 0; visibility: hidden;
-            transition: transform 0.8s var(--ease-cinematic), opacity 0.5s; display: flex; 
-            overflow: hidden; background: #030305;
-            font-family: var(--font-display); align-items: flex-end; justify-content: flex-start; padding: 80px;
-            box-shadow: none; /* Se elimina cualquier sombra del contenedor principal */
+            transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.5s; display: flex; 
+            overflow: hidden; background: #0e0e0e;
+            font-family: 'Outfit', sans-serif; align-items: flex-end; justify-content: flex-start; padding: 80px;
+            box-shadow: none;
         }
         #np-fs.active { transform: translateY(0); opacity: 1; visibility: visible; }
-
-        /* Se desactiva la sombra/máscara oscura de la parte inferior para mostrar el fondo nítido */
-        .np-bg-overlay { display: none; }
-        
-        .np-grain { position: absolute; inset: 0; z-index: 2; opacity: 0.02; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency = '0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none;}
-
         .btn-collapse {
             position: absolute; top: 40px; right: 40px; width: 44px; height: 44px;
             background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); cursor: pointer; z-index: 10;
@@ -296,59 +208,14 @@
         }
         .btn-collapse:hover { color: #fff; background: rgba(255,255,255,0.08); transform: scale(1.05); }
         .btn-collapse-mob { display: none; }
-
         .np-minimal-container { position: relative; z-index: 10; display: flex; align-items: center; gap: 32px; }
-        
-        .np-art-wrap { 
-            width: 140px; height: 140px; border-radius: 6px; 
-            box-shadow: none; /* Se elimina la sombra de la portada en pantalla completa */
-            overflow: hidden; transition: transform 0.5s var(--ease-snappy); 
-            background: transparent; cursor: pointer; flex-shrink: 0; 
-        }
-        .np-art-wrap:hover { transform: scale(1.02); }
+        .np-art-wrap { width: 140px; height: 140px; border-radius: 6px; box-shadow: none; overflow: hidden; transition: transform 0.5s ease; background: transparent; cursor: pointer; flex-shrink: 0; }
         .np-art { width: 100%; height: 100%; object-fit: cover; }
-
         .np-metadata-wrap { display: flex; flex-direction: column; gap: 6px; }
         .np-track-title { font-size: clamp(26px, 3.5vw, 42px); font-weight: 800; color: #fff; letter-spacing: -0.02em; line-height: 1.1; margin: 0; display: flex; align-items: center; }
         .np-track-artist { font-size: clamp(15px, 1.5vw, 18px); color: rgba(255,255,255,0.6); font-weight: 500; margin: 0; }
 
-        /* ==================================================================
-           MOBILE RESPONSIVE
-           ================================================================== */
-        .mobile-nav { display: none; }
-        
         @media (max-width: 1024px) {
-            #sidebar { display: none; }
-            #main-content { padding: 32px 5vw calc(var(--player-height) + var(--nav-height-mob) + 16px); margin-left: 0; }
-            
-            .mobile-nav {
-                display: flex; position: fixed; bottom: 0; left: 0; width: 100%; height: var(--nav-height-mob);
-                background: rgba(3, 3, 5, 0.95); border-top: 1px solid var(--border-subtle); z-index: 60;
-                justify-content: space-around; align-items: center; padding-bottom: env(safe-area-inset-bottom);
-            }
-            .nav-item-mob { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 44px; height: 44px; color: var(--text-secondary); cursor: pointer; border-radius: 50%; transition: 0.3s; }
-            .nav-item-mob i { font-size: 22px; transition: 0.3s var(--ease-snappy); }
-            .nav-item-mob.active { color: #fff; background: rgba(255, 255, 255, 0.04); }
-
-            .player-wrapper { bottom: calc(var(--nav-height-mob)); left: 0; }
-            .player-pill { height: 64px; padding: 8px 20px; border-top: 1px solid var(--border-subtle); background: rgba(3, 3, 5, 0.98); }
-            .player-img { width: 36px; height: 36px; border-radius: 4px; }
-            .player-controls, .player-actions { display: none; }
-            .player-info { width: 85%; }
-            .mobile-play-btn { display: flex; position: absolute; right: 20px; width: 36px; height: 36px; background: #fff; color: #000; border-radius: 50%; align-items: center; justify-content: center; font-size: 16px; }
-            .mobile-play-btn i { margin-left: 1px; }
-
-            .page-header h1 { font-size: 32px; }
-            
-            /* Immersive Album Mobile */
-            .immersive-album-selector { gap: 20px; overflow-x: auto; width: 100%; white-space: nowrap; padding-bottom: 8px; }
-            .immersive-album-selector::-webkit-scrollbar { display: none; }
-            .immersive-album-layout { grid-template-columns: 1fr; gap: 40px; padding: 0; }
-            .panel-left { border-right: none; border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding-right: 0; padding-bottom: 24px; align-items: center; text-align: center; }
-            .panel-left .album-cover-small { width: 130px; height: 130px; }
-            .panel-right { max-height: 320px; }
-
-            #np-fs { padding: 40px 24px; align-items: center; justify-content: center; } 
             .btn-collapse { display: none; }
             .btn-collapse-mob { 
                 position: absolute; top: 16px; left: 50%; transform: translateX(-50%);
@@ -364,138 +231,214 @@
         }
     </style>
 </head>
-<body>
+<body class="antialiased min-h-screen flex flex-col md:flex-row relative overflow-x-hidden">
 
     <!-- SHARP GLOBAL BACKGROUND -->
     <div id="global-bg"></div>
     <div id="global-bg-overlay"></div>
     <div class="noise-overlay"></div>
 
+    <!-- SideNavBar (Web) -->
+    <nav id="sidebar" class="hidden md:flex flex-col h-full p-stack-lg bg-surface/40 backdrop-blur-xl border-r border-white/10 fixed left-0 top-0 h-full w-[280px] z-40 text-primary font-body-lg text-body-lg">
+        <div class="mb-stack-lg flex items-center gap-4">
+            <div class="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden">
+                <img alt="User profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAisALHLbLcsbC1dqoJFDvOpuu7XOKK_re7PaZ4uOBbRar8NmmblV_qDJ3QIAJ7F9zynNO8B2kczmnjZAxapHn-Z8U_zntrpj_khy94TgmrikLOmAz4eXCADC1EqXDx6-KwjsD9UeVgOw8x819HIlkSL8A4NvTwaTyVvYOQJ1vtSSm3r_rbrdqdWci6j_taFxA3yP-OMK_J_oPkYBzj4A5L90uQTc_5Mda5YvcRJqMWEHw3DQrH5zF1"/>
+            </div>
+            <div>
+                <h1 class="font-headline-md text-headline-md font-bold text-primary tracking-tight">Pulse Audio</h1>
+                <p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Premium Tier</p>
+            </div>
+        </div>
+        <ul class="flex flex-col gap-unit flex-grow">
+            <!-- Home -->
+            <li id="nav-songs" onclick="navTo('songs')" class="nav-item flex items-center gap-stack-md py-3 px-4 rounded-lg cursor-pointer transition-all duration-200 active:scale-95 text-on-surface-variant font-medium hover:bg-surface-container-highest transition-colors">
+                <span class="material-symbols-outlined">home</span>
+                Home
+            </li>
+            <!-- Albums -->
+            <li id="nav-albums" onclick="navTo('albums')" class="nav-item flex items-center gap-stack-md py-3 px-4 rounded-lg cursor-pointer transition-all duration-200 active:scale-95 text-on-surface-variant font-medium hover:bg-surface-container-highest transition-colors">
+                <span class="material-symbols-outlined">album</span>
+                Albums
+            </li>
+            <!-- Search -->
+            <li id="nav-search" onclick="navTo('search')" class="nav-item flex items-center gap-stack-md py-3 px-4 rounded-lg cursor-pointer transition-all duration-200 active:scale-95 text-on-surface-variant font-medium hover:bg-surface-container-highest transition-colors">
+                <span class="material-symbols-outlined">search</span>
+                Search
+            </li>
+        </ul>
+        <div class="mt-auto pt-section-gap">
+            <button class="w-full py-3 px-4 rounded-full border border-white/20 bg-white/5 backdrop-blur-sm text-primary font-label-md text-label-md uppercase tracking-wider hover:bg-white/10 transition-colors">
+                Upgrade to Lossless
+            </button>
+        </div>
+    </nav>
+
+    <!-- TopAppBar (Web) -->
+    <header class="hidden md:flex justify-between items-center px-container-margin-desktop py-stack-md z-30 bg-transparent fixed top-0 right-0 w-[calc(100%-280px)]">
+        <nav class="flex gap-gutter">
+            <a class="font-label-md text-label-md uppercase tracking-wider text-on-surface-variant hover:text-primary transition-colors cursor-pointer" href="#" onclick="navTo('songs')">New Releases</a>
+            <a class="font-label-md text-label-md uppercase tracking-wider text-on-surface-variant hover:text-primary transition-colors cursor-pointer" href="#" onclick="navTo('albums')">Radio</a>
+            <a class="font-label-md text-label-md uppercase tracking-wider text-on-surface-variant hover:text-primary transition-colors cursor-pointer" href="#" onclick="navTo('search')">Library</a>
+        </nav>
+        <div class="flex gap-4 items-center">
+            <button class="text-on-surface-variant hover:text-primary transition-colors">
+                <span class="material-symbols-outlined">account_circle</span>
+            </button>
+            <button class="text-on-surface-variant hover:text-primary transition-colors">
+                <span class="material-symbols-outlined">settings</span>
+            </button>
+        </div>
+    </header>
+
     <!-- MAIN APP SHELL -->
-    <div id="app-wrapper">
-        <!-- SIDEBAR (DESKTOP) -->
-        <aside id="sidebar">
-            <div class="brand"><i class="ph-fill ph-waveform"></i></div>
-            <nav class="nav-menu">
-                <div class="nav-item active" onclick="navTo('songs')"><i class="ph-fill ph-house"></i></div>
-                <div class="nav-item" onclick="navTo('albums')"><i class="ph-fill ph-vinyl-record"></i></div>
-                <div class="nav-item" onclick="navTo('search')"><i class="ph-bold ph-magnifying-glass"></i></div>
-            </nav>
-            <div style="height: 24px;"></div> 
-        </aside>
+    <div id="app-wrapper" class="w-full flex">
+        <!-- Main Content Area -->
+        <main id="main-content" class="flex-grow w-full md:pl-[280px] pt-stack-lg md:pt-24 pb-32 z-10 relative">
+            <div class="px-container-margin-mobile md:px-container-margin-desktop">
+                
+                <!-- SONGS VIEW (HOME) -->
+                <section id="view-songs" class="view-section active mb-section-gap">
+                    <h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-stack-lg">Featured Singles</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-gutter" id="grid-songs"></div>
+                </section>
 
-        <!-- MAIN SCROLLING CONTENT -->
-        <main id="main-content">
-            
-            <!-- SONGS VIEW (HOME: Sencillos) -->
-            <section id="view-songs" class="view-section active">
-                <div class="page-header">
-                    <h1>Listen Now</h1>
-                    <p>Standalone essential singles and standout releases.</p>
-                </div>
-                <div class="grid-container" id="grid-songs"></div>
-            </section>
-
-            <!-- ALBUMS VIEW (DETAILED IMMERSIVE SCENE) -->
-            <section id="view-albums" class="view-section">
-                <div class="immersive-album-container">
-                    <!-- Clean Text Tab Selector -->
-                    <div class="immersive-album-selector" id="imm-album-selector">
-                        <span class="selector-pill active" onclick="switchImmersiveAlbum(0)"><span>01</span> nadie sabe lo que va a pasar mañana</span>
-                        <span class="selector-pill" onclick="switchImmersiveAlbum(1)"><span>02</span> PRIVATE SUITE</span>
-                        <span class="selector-pill" onclick="switchImmersiveAlbum(2)"><span>03</span> POR SI MAÑANA NO ESTOY</span>
+                <!-- ALBUMS VIEW (GORGEOUS DYNAMIC GRID FROM THE ALBUMS UI) -->
+                <section id="view-albums" class="view-section hidden mb-section-gap">
+                    <div class="mb-section-gap">
+                        <h2 class="font-display-lg text-display-lg-mobile md:text-display-lg text-primary mb-2">Featured Albums</h2>
+                        <p class="font-body-lg text-body-lg text-on-surface-variant">Curated high-fidelity releases for focused listening.</p>
                     </div>
+                    <!-- Dynamic Albums Grid rendered via JS -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-gutter gap-y-section-gap" id="grid-albums"></div>
+                </section>
 
-                    <!-- Immersive Detailed Two Column Layout (Borderless) -->
-                    <div class="immersive-album-layout" id="imm-glass-panel">
-                        <!-- Realistic sharp full screen background layer inside Section -->
-                        <div class="immersive-bg-layer" id="imm-bg-layer"></div>
+                <!-- ALBUM DETAIL VIEW (IMMERSIVE EDITORIAL DESIGN) -->
+                <section id="view-album-detail" class="view-section hidden">
+                    <div class="relative w-full h-full flex flex-col gap-8 z-10">
+                        <!-- Capa de fondo del álbum sin blur y con alta nitidez -->
+                        <div class="absolute inset-[-40px] bg-cover bg-center z-0 opacity-85 rounded-2xl transition-all duration-1000 before:content-[''] before:absolute before:inset-0 before:bg-gradient-to-r before:from-[#131313]/95 before:via-[#131313]/45 before:to-[#131313]/85 after:content-[''] after:absolute after:inset-0 after:bg-gradient-to-t after:from-[#131313]/70 after:to-[#131313]/10" id="imm-bg-layer"></div>
                         
-                        <!-- Left: Cover & Metadata -->
-                        <div class="panel-left">
-                            <img src="" id="imm-album-cover" class="album-cover-small" crossorigin="anonymous">
-                            <div class="album-meta">
-                                <h1 class="album-title" id="imm-album-title">Title</h1>
-                                <h2 class="album-artist" id="imm-album-artist">Artist</h2>
-                                <div class="album-stats" id="imm-album-stats">2026 • 0 Tracks</div>
+                        <!-- Back Button -->
+                        <button class="z-10 flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors cursor-pointer text-sm font-semibold uppercase tracking-wider self-start" onclick="navTo('albums')">
+                            <span class="material-symbols-outlined text-lg">arrow_back</span> Back to Albums
+                        </button>
+
+                        <!-- Two Column Layout -->
+                        <div class="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-12 w-full z-10 mt-4">
+                            <!-- Left column -->
+                            <div class="flex flex-col items-start text-left gap-6 lg:border-r lg:border-white/10 lg:pr-12">
+                                <img id="imm-album-cover" src="" class="w-44 h-44 rounded-xl object-cover shadow-2xl transition-transform duration-500 hover:scale-105 hover:translate-y-[-4px]" crossorigin="anonymous">
+                                <div class="flex flex-col gap-2">
+                                    <h1 class="font-display-lg text-headline-lg font-extrabold text-primary leading-tight tracking-tight" id="imm-album-title">Title</h1>
+                                    <h2 class="text-body-lg font-semibold text-primary/60" id="imm-album-artist">Artist</h2>
+                                    <p class="text-xs uppercase tracking-wider text-primary/40 font-bold" id="imm-album-stats">Stats</p>
+                                </div>
+                                <button class="bg-primary text-background font-bold text-sm py-3 px-8 rounded-full hover:scale-105 hover:shadow-lg transition-all duration-300 flex items-center gap-2" id="btn-play-immersive">
+                                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">play_arrow</span> Play Album
+                                </button>
                             </div>
-                            <button class="btn-play-album" onclick="playImmersiveAlbum()"><i class="ph-fill ph-play"></i> Play Album</button>
-                        </div>
 
-                        <!-- Right: Clean Text Scrollable Tracklist -->
-                        <div class="panel-right">
-                            <div class="panel-right-scroll" id="imm-tracklist"></div>
+                            <!-- Right Column: List -->
+                            <div class="flex flex-col overflow-hidden max-h-[440px]">
+                                <div id="imm-tracklist" class="flex-grow overflow-y-auto pr-4 scrollbar-thin"></div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </section>
+                </section>
 
-            <!-- SEARCH VIEW -->
-            <section id="view-search" class="view-section">
-                <div class="page-header">
-                    <h1>Search</h1>
-                    <div class="search-container">
-                        <input type="text" id="search-input" class="search-input" placeholder="Search albums or songs..." autocomplete="off" spellcheck="false">
-                        <i class="ph-bold ph-magnifying-glass"></i>
+                <!-- SEARCH VIEW -->
+                <section id="view-search" class="view-section hidden mb-section-gap">
+                    <div class="page-header mb-8">
+                        <h1 class="font-headline-lg text-headline-lg text-primary mb-2">Search</h1>
+                        <div class="search-container">
+                            <input type="text" id="search-input" class="search-input" placeholder="Search albums or songs..." autocomplete="off" spellcheck="false">
+                            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+                        </div>
                     </div>
-                </div>
-                <h2 class="section-title" id="title-search-albums" style="display:none;">Albums</h2>
-                <div class="grid-container" id="grid-search-albums" style="margin-bottom:48px;"></div>
-                <h2 class="section-title" id="title-search-songs" style="display:none;">Songs</h2>
-                <div class="grid-container" id="grid-search-songs"></div>
-            </section>
+                    <h2 class="section-title text-headline-md font-bold mb-4" id="title-search-albums" style="display:none;">Albums</h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-gutter mb-8" id="grid-search-albums"></div>
+                    <h2 class="section-title text-headline-md font-bold mb-4" id="title-search-songs" style="display:none;">Songs</h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-gutter" id="grid-search-songs"></div>
+                </section>
 
+            </div>
         </main>
     </div>
 
-    <!-- MOBILE BOTTOM NAV -->
-    <nav class="mobile-nav">
-        <div class="nav-item-mob active" onclick="navTo('songs')"><i class="ph-fill ph-house"></i></div>
-        <div class="nav-item-mob" onclick="navTo('albums')"><i class="ph-fill ph-vinyl-record"></i></div>
-        <div class="nav-item-mob" onclick="navTo('search')"><i class="ph-bold ph-magnifying-glass"></i></div>
+    <!-- Mobile Navigation Bar -->
+    <nav class="mobile-nav md:hidden">
+        <div id="nav-mob-songs" onclick="navTo('songs')" class="nav-item-mob active">
+            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">home</span>
+        </div>
+        <div id="nav-mob-albums" onclick="navTo('albums')" class="nav-item-mob text-on-surface-variant">
+            <span class="material-symbols-outlined">album</span>
+        </div>
+        <div id="nav-mob-search" onclick="navTo('search')" class="nav-item-mob text-on-surface-variant">
+            <span class="material-symbols-outlined">search</span>
+        </div>
     </nav>
 
-    <!-- PERSISTENT FULL-WIDTH BOTTOM PLAYER -->
-    <div class="player-wrapper">
-        <div class="player-pill">
-            <div class="progress-mini-wrapper"><div class="progress-mini-fill" id="bar-fill-mini"></div></div>
-            
-            <div class="player-info" onclick="toggleNP()">
-                <img src="" id="player-img" class="player-img" crossorigin="anonymous">
-                <div class="player-meta">
-                    <div class="player-title"><span id="player-title">Loading...</span></div>
-                    <div class="player-artist" id="player-artist">Artist</div>
-                </div>
+    <!-- BottomNavBar (Player Control) -->
+    <nav class="fixed bottom-0 left-0 w-full z-50 bg-black/70 backdrop-blur-2xl border-t border-white/10 flex justify-between items-center px-container-margin-desktop py-4 h-24">
+        <!-- Now Playing Progress Line on Top -->
+        <div class="progress-mini-wrapper"><div class="progress-mini-fill" id="bar-fill-mini"></div></div>
+
+        <!-- Now Playing Info (Left) -->
+        <div class="flex items-center gap-stack-md w-1/3 cursor-pointer" onclick="toggleNP()">
+            <div class="w-14 h-14 rounded bg-surface-container-highest overflow-hidden flex-shrink-0">
+                <img alt="Now Playing Art" class="w-full h-full object-cover" id="player-img" crossorigin="anonymous" src=""/>
             </div>
-
-            <div class="mobile-play-btn" onclick="togglePlay()" id="btn-play-mob"><i class="ph-fill ph-play" id="icon-play-mob"></i></div>
-
-            <div class="player-controls">
-                <div class="controls-buttons">
-                    <i class="ph-fill ph-shuffle"></i>
-                    <i class="ph-fill ph-skip-back" onclick="prevSong()"></i>
-                    <div class="btn-play-circle" onclick="togglePlay()"><i class="ph-fill ph-play" id="icon-play-desk"></i></div>
-                    <i class="ph-fill ph-skip-forward" onclick="nextSong()"></i>
-                    <i class="ph-bold ph-repeat"></i>
-                </div>
-                <div class="scrubber-container">
-                    <span id="time-curr-desk">0:00</span>
-                    <div class="scrubber-bg" onclick="seek(event, this)"><div class="scrubber-fill" id="bar-fill-desk"></div></div>
-                    <span id="time-tot-desk">-0:00</span>
-                </div>
-            </div>
-
-            <div class="player-actions">
-                <i class="ph-fill ph-speaker-low"></i>
-                <div class="vol-slider" onclick="changeVolume(event, this)"><div class="vol-fill" id="vol-fill-desk"></div></div>
-                <div class="btn-fullscreen" onclick="toggleNP()"><i class="ph-bold ph-arrows-out-simple"></i></div>
+            <div class="hidden sm:block truncate">
+                <h4 class="font-body-sm text-body-sm font-bold text-primary truncate" id="player-title">Loading...</h4>
+                <p class="font-label-md text-label-md text-on-surface-variant truncate" id="player-artist">Artist</p>
             </div>
         </div>
-    </div>
+
+        <!-- Controls (Center) -->
+        <div class="flex flex-col items-center justify-center w-1/3">
+            <div class="flex items-center gap-stack-lg mb-2">
+                <button class="text-primary hover:text-white transition-colors">
+                    <span class="material-symbols-outlined">shuffle</span>
+                </button>
+                <button class="text-primary hover:scale-105 active:scale-90 transition-all" onclick="prevSong()">
+                    <span class="material-symbols-outlined text-3xl">skip_previous</span>
+                </button>
+                <button class="text-secondary scale-110 hover:scale-125 active:scale-95 transition-all" onclick="togglePlay()">
+                    <span class="material-symbols-outlined text-5xl" id="icon-play-desk" style="font-variation-settings: 'FILL' 1;">play_circle</span>
+                </button>
+                <button class="text-primary hover:scale-105 active:scale-90 transition-all" onclick="nextSong()">
+                    <span class="material-symbols-outlined text-3xl">skip_next</span>
+                </button>
+                <button class="text-primary hover:text-white transition-colors">
+                    <span class="material-symbols-outlined">repeat</span>
+                </button>
+            </div>
+            <!-- Progress Bar -->
+            <div class="w-full max-w-md flex items-center gap-3 hidden md:flex">
+                <span class="font-label-md text-label-md text-on-surface-variant/60 text-[10px]" id="time-curr-desk">0:00</span>
+                <div class="flex-grow h-1 bg-white/20 rounded-full overflow-hidden cursor-pointer group relative" onclick="seek(event, this)">
+                    <div class="absolute top-0 left-0 h-full bg-secondary group-hover:bg-secondary-fixed transition-colors" id="bar-fill-desk" style="width: 0%"></div>
+                </div>
+                <span class="font-label-md text-label-md text-on-surface-variant/60 text-[10px]" id="time-tot-desk">-0:00</span>
+            </div>
+        </div>
+
+        <!-- Extra Controls (Right) -->
+        <div class="w-1/3 flex justify-end items-center gap-4 hidden sm:flex">
+            <button class="text-primary hover:text-white transition-colors">
+                <span class="material-symbols-outlined text-xl">volume_up</span>
+            </button>
+            <div class="w-24 h-1 bg-white/20 rounded-full overflow-hidden cursor-pointer" onclick="changeVolume(event, this)">
+                <div class="h-full bg-primary" id="vol-fill-desk" style="width: 75%"></div>
+            </div>
+            <button class="text-primary hover:text-white transition-colors" onclick="toggleNP()">
+                <span class="material-symbols-outlined text-xl">fullscreen</span>
+            </button>
+        </div>
+    </nav>
 
     <!-- FULLSCREEN NOW PLAYING OVERLAY -->
     <div id="np-fs">
-        <div class="np-bg-overlay"></div>
         <div class="np-grain"></div>
         
         <button class="btn-collapse" onclick="toggleNP()"><i class="ph ph-x"></i></button>
@@ -527,9 +470,9 @@
 
         // Filtro estricto de álbumes activos para renderizado limpio
         const albumsData = [ 
-            { id: "nadie-sabe-album", title: "nadie sabe lo que va a pasar mañana", artist: "Bad Bunny", cover: nadieSabeCover, year: "2023", duration: "1 hora y 21 minutos" },
-            { id: "private-suite-complete", title: "PRIVATE SUITE (COMPLETE EP EDITION)", artist: "ROA", cover: roaCover, year: "2026", duration: "1 hora y 58 minutos" },
-            { id: "por-si-manana", title: "POR SI MAÑANA NO ESTOY", artist: "Omar Courtz", cover: moonlightCover, year: "2026", duration: "51 minutos y 18 segundos" }
+            { id: "nadie-sabe-album", title: "nadie sabe lo que va a pasar mañana", artist: "Bad Bunny", cover: nadieSabeCover, year: "2023", duration: "1 hora y 21 minutos", bleedClass: "ambient-bleed-1" },
+            { id: "private-suite-complete", title: "PRIVATE SUITE (COMPLETE EP EDITION)", artist: "ROA", cover: roaCover, year: "2026", duration: "1 hora y 58 minutos", bleedClass: "ambient-bleed-2" },
+            { id: "por-si-manana", title: "POR SI MAÑANA NO ESTOY", artist: "Omar Courtz", cover: moonlightCover, year: "2026", duration: "51 minutos y 18 segundos", bleedClass: "ambient-bleed-3" }
         ];
 
         // Paletas de color optimizadas
@@ -543,7 +486,7 @@
         const dreamTeam_640x640Palette = [{ r: 255, g: 0, b: 7 },{ r: 11, g: 39, b: 64 },{ r: 247, g: 201, b: 122 },{ r: 10, g: 14, b: 18 },{ r: 1, g: 2, b: 3 }];
         const _222_640x640Palette = [{ r: 219, g: 114, b: 34 },{ r: 104, g: 140, b: 122 },{ r: 41, g: 25, b: 29 },{ r: 16, g: 14, b: 18 },{ r: 161, g: 73, b: 45 }];
 
-        // Base de datos de canciones
+        // Base de datos de canciones (Sencillos / Singles)
         const cancionesData = [
             // Single de Anuel AA
             { 
@@ -682,9 +625,8 @@
                 const score = sat * 0.7 + (1 - Math.abs(lum - 150) / 150) * 0.3;
                 if (score > bestScore) { bestScore = score; bestIdx = i; }
             });
-            const a = palette[bestIdx], b = palette[(bestIdx + 2) % palette.length] || palette[0];
+            const a = palette[bestIdx];
             document.documentElement.style.setProperty('--accent-1', `rgb(${a.r},${a.g},${a.b})`);
-            document.documentElement.style.setProperty('--accent-2', `rgb(${b.r},${b.g},${b.b})`);
         }
 
         function updateCovers(imgUrl) {
@@ -710,7 +652,6 @@
 
         function syncBackgroundToView() {
             if (activeViewTab === 'songs') {
-                // Sincronizar con el sencillo en reproducción o el primero por defecto
                 const activeSong = cancionesData[currentPlayingIndex];
                 if (activeSong && activeSong.bgImage) updateGlobalBackground(activeSong.bgImage);
             } else if (activeViewTab === 'albums') {
@@ -773,18 +714,39 @@
         function navTo(tabId) {
             haptic();
             activeViewTab = tabId;
-            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.nav-item, .nav-item-mob').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`view-${tabId}`).classList.remove('hidden');
             
-            document.getElementById(`view-${tabId}`).classList.add('active');
-            document.querySelectorAll(`.nav-item, .nav-item-mob`).forEach(el => {
-                if (el.getAttribute('onclick')?.includes(tabId)) el.classList.add('active');
+            // Sidebar desktop state updates
+            document.querySelectorAll('#sidebar .nav-item').forEach(el => {
+                el.classList.remove('text-primary', 'font-bold', 'bg-surface-container');
+                el.classList.add('text-on-surface-variant', 'font-medium', 'hover:bg-surface-container-highest');
+                const icon = el.querySelector('.material-symbols-outlined');
+                if (icon) icon.style.fontVariationSettings = "'FILL' 0";
             });
-            
-            if (tabId === 'search') {
-                document.getElementById('search-input').focus();
-                handleSearch({target: document.getElementById('search-input')}); 
+            const activeDesktopNav = document.getElementById(`nav-${tabId}`);
+            if (activeDesktopNav) {
+                activeDesktopNav.classList.remove('text-on-surface-variant', 'font-medium', 'hover:bg-surface-container-highest');
+                activeDesktopNav.classList.add('text-primary', 'font-bold', 'bg-surface-container');
+                const icon = activeDesktopNav.querySelector('.material-symbols-outlined');
+                if (icon) icon.style.fontVariationSettings = "'FILL' 1";
             }
+
+            // Mobile nav state updates
+            document.querySelectorAll('.mobile-nav .nav-item-mob').forEach(el => {
+                el.classList.remove('active', 'bg-surface-container-highest', 'text-primary');
+                el.classList.add('text-on-surface-variant');
+                const icon = el.querySelector('.material-symbols-outlined');
+                if (icon) icon.style.fontVariationSettings = "'FILL' 0";
+            });
+            const activeMobileNav = document.getElementById(`nav-mob-${tabId}`);
+            if (activeMobileNav) {
+                activeMobileNav.classList.add('active', 'bg-surface-container-highest', 'text-primary');
+                activeMobileNav.classList.remove('text-on-surface-variant');
+                const icon = activeMobileNav.querySelector('.material-symbols-outlined');
+                if (icon) icon.style.fontVariationSettings = "'FILL' 1";
+            }
+            
             syncBackgroundToView();
             document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -799,48 +761,87 @@
                 if(type === 'song' && realIndex === -1) return;
                 
                 const card = document.createElement('div');
-                card.className = `card ${type === 'song' ? `card-song-${realIndex}` : ''}`;
+                
+                if (type === 'song' && containerId === 'grid-songs') {
+                    if (index === 0) {
+                        card.className = `col-span-1 md:col-span-2 lg:col-span-2 group relative overflow-hidden rounded-xl aspect-[2/1] md:aspect-square lg:aspect-[2/1] cursor-pointer bg-surface-container card-song-${realIndex}`;
+                    } else {
+                        card.className = `col-span-1 group relative overflow-hidden rounded-xl aspect-square cursor-pointer bg-surface-container card-song-${realIndex}`;
+                    }
+                } else if (type === 'album') {
+                    // Diseño premium de tarjetas de álbum con ambient-bleed de la nueva interfaz
+                    card.className = `album-card-wrapper group cursor-pointer relative col-span-1`;
+                } else {
+                    card.className = `col-span-1 group relative overflow-hidden rounded-xl aspect-square cursor-pointer bg-surface-container ${type === 'song' ? `card-song-${realIndex}` : ''}`;
+                }
                 
                 if (type === 'song') {
                     card.style.setProperty('--card-border', item.borderColor || 'rgba(255, 255, 255, 0.15)');
                     card.style.setProperty('--card-glow', item.glowColor || 'rgba(255, 255, 255, 0.1)');
-                }
-                
-                if (type === 'song' && currentPlayingIndex === realIndex) card.classList.add('active');
-                
-                if (type === 'song') {
-                    card.onclick = () => playSong(realIndex);
-                    
-                    // Interactividad: El cursor cambia dinámicamente la imagen de fondo nítida de la pantalla sin blur
-                    card.onmouseenter = () => {
-                        updateGlobalBackground(item.bgImage);
-                    };
-                    card.onmouseleave = () => {
-                        syncBackgroundToView();
-                    };
-                } else if (type === 'album') {
-                    card.onclick = () => openAlbumDetail(item.id);
+                    if (currentPlayingIndex === realIndex) card.classList.add('ring-2', 'ring-secondary');
                 }
 
                 let badge = '';
-                if (type === 'song' && currentPlayingIndex === realIndex) badge = `<div class="card-badge">PLAYING</div>`;
+                if (type === 'song' && currentPlayingIndex === realIndex) {
+                    badge = `<div class="card-badge absolute top-4 left-4 bg-secondary text-background font-bold text-xs px-3 py-1 rounded">PLAYING</div>`;
+                }
                 
-                const imgTag = `<img src="${item.cover || item.img}" loading="lazy" class="card-img ${type==='song'?`cover-song-${realIndex}`:''}" alt="${item.title || item.name}">`;
+                const imgTag = `<img src="${item.cover || item.img}" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 cover-song-${realIndex}" alt="${item.title || item.name}">`;
 
-                card.innerHTML = `
-                    <div class="card-img-wrapper">
-                        ${badge}
-                        ${imgTag}
-                        <div class="card-play-btn"><i class="ph-fill ph-play"></i></div>
-                    </div>
-                    <div class="card-info">
-                        <div class="card-title">
-                            <span>${item.title || item.name}</span>
-                            ${type === 'song' ? '<span class="explicit-badge">E</span>' : ''}
+                if (type === 'song' && containerId === 'grid-songs' && index === 0) {
+                    card.innerHTML = `
+                        <div class="absolute inset-0 bg-surface-container-highest">
+                            ${imgTag}
                         </div>
-                        <div class="card-subtitle">${item.artist + (item.year ? ` • ${item.year}` : '')}</div>
-                    </div>
-                `;
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent"></div>
+                        <div class="absolute inset-0 border border-white/5 rounded-xl pointer-events-none"></div>
+                        <div class="absolute bottom-0 left-0 p-stack-lg w-full flex justify-between items-end">
+                            <div class="truncate pr-4">
+                                <h3 class="font-headline-md text-headline-md text-primary mb-1 truncate">${item.title} <span class="explicit-badge">E</span></h3>
+                                <p class="font-body-sm text-body-sm text-primary/60">${item.artist}</p>
+                            </div>
+                            <button class="w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-y-2 group-hover:translate-y-0 hover:bg-white/20 hover:scale-105 text-primary flex-shrink-0">
+                                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+                            </button>
+                        </div>
+                    `;
+                } else if (type === 'album') {
+                    // Estructura de tarjeta con ambient bleed y overlay de la nueva interfaz
+                    card.onclick = () => openAlbumDetail(item.id);
+                    card.innerHTML = `
+                        <div class="absolute inset-[-20%] ${item.bleedClass || 'ambient-bleed-1'} z-0 pointer-events-none rounded-full blur-3xl opacity-50 transition-opacity group-hover:opacity-100"></div>
+                        <div class="relative z-10 w-full aspect-square rounded-lg overflow-hidden album-card-img bg-surface-container-high mb-stack-md">
+                            ${imgTag}
+                            <div class="absolute inset-0 bg-black/40 flex items-center justify-center play-btn-overlay">
+                                <button class="w-14 h-14 bg-secondary text-on-secondary rounded-full flex items-center justify-center hover:scale-105 transition-transform shadow-lg">
+                                    <span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="relative z-10">
+                            <h3 class="font-body-lg text-body-lg font-bold text-primary truncate">${item.title}</h3>
+                            <p class="font-body-sm text-body-sm text-on-surface-variant/60 truncate mt-1">${item.artist} • ${item.year}</p>
+                        </div>
+                    `;
+                } else {
+                    card.innerHTML = `
+                        <div class="absolute inset-0">
+                            ${imgTag}
+                        </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/20 to-transparent"></div>
+                        ${badge}
+                        <div class="absolute bottom-0 left-0 p-stack-md w-full">
+                            <h3 class="font-body-lg text-body-lg font-bold text-primary mb-1 truncate">${item.title || item.name} ${type === 'song' ? '<span class="explicit-badge">E</span>' : ''}</h3>
+                            <p class="font-body-sm text-body-sm text-primary/60 truncate">${item.artist}</p>
+                        </div>
+                        <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40 backdrop-blur-sm">
+                            <button class="w-14 h-14 rounded-full bg-white text-black flex items-center justify-center hover:scale-105 transition-transform">
+                                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+                            </button>
+                        </div>
+                    `;
+                }
+                
                 container.appendChild(card);
                 
                 if (type === 'song' && !item.coverLoaded && !item.coverLoading) loadSongCover(item, realIndex);
@@ -854,7 +855,6 @@
         let activeImmersiveAlbumIndex = 0;
 
         function getMockDuration(title) {
-            // Duraciones deterministas realistas basadas en la longitud del título
             const base = (title.length % 3) + 2; 
             const secs = (title.length * 7) % 60;
             return `${base}:${secs.toString().padStart(2, '0')}`;
@@ -864,12 +864,6 @@
             activeImmersiveAlbumIndex = idx;
             const album = albumsData[idx];
             if(!album) return;
-
-            // Sincronizar selectores de texto con número de índice
-            document.querySelectorAll('#imm-album-selector .selector-pill').forEach((pill, i) => {
-                if(i === idx) pill.classList.add('active');
-                else pill.classList.remove('active');
-            });
 
             // Sincronizar fondo limpio y nítido de pantalla (sin blur)
             syncBackgroundToView();
@@ -920,7 +914,10 @@
             const albIdx = albumsData.findIndex(a => a.id === albumId);
             if (albIdx !== -1) {
                 switchImmersiveAlbum(albIdx);
-                navTo('albums');
+                // Mostrar vista detalle del álbum
+                document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+                document.getElementById('view-album-detail').classList.remove('hidden');
+                document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
             }
         }
 
@@ -956,8 +953,8 @@
         }
 
         function triggerUIForSong(idx) {
-            document.querySelectorAll('.card.active').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll(`.card-song-${idx}`).forEach(el => el.classList.add('active'));
+            document.querySelectorAll('.card.active').forEach(el => el.classList.remove('ring-2', 'ring-secondary'));
+            document.querySelectorAll(`.card-song-${idx}`).forEach(el => el.classList.add('ring-2', 'ring-secondary'));
             
             // Sincronizar tracklist del álbum inmersivo
             document.querySelectorAll('.immersive-track-row.active').forEach(el => el.classList.remove('active'));
@@ -999,9 +996,17 @@
         function prevSong() { haptic(); playSong((currentPlayingIndex - 1 + cancionesData.length) % cancionesData.length); }
         
         function setPlayIcon(playing) {
-            const icon = playing ? "ph-fill ph-pause" : "ph-fill ph-play";
-            document.getElementById('icon-play-mob').className = icon;
-            document.getElementById('icon-play-desk').className = icon;
+            const icon = playing ? "pause_circle" : "play_circle";
+            const iconDesk = document.getElementById('icon-play-desk');
+            const iconMob = document.getElementById('icon-play-mob');
+            if (iconDesk) {
+                iconDesk.innerText = icon;
+                iconDesk.style.fontVariationSettings = "'FILL' 1";
+            }
+            if (iconMob) {
+                iconMob.innerText = playing ? "pause" : "play_arrow";
+                iconMob.style.fontVariationSettings = "'FILL' 1";
+            }
         }
 
         function seek(e, el) { 
@@ -1080,7 +1085,7 @@
                 if(!isNPOpen || sY===0) return;
                 let d = cY - sY; sY = 0;
                 np.style.transition = ''; app.style.transition = '';
-                if(d > 120) toggleNP(); else { np.style.transform = ''; app.style.transform = 'scale(0.96) translateY(-1.5vh)'; }
+                if(d > 120) toggleNP(); else { np.style.transform = ''; app.style.transform = 'scale(0.96)'; }
             }, {passive:true});
         }
 
@@ -1088,9 +1093,12 @@
            INITIALIZATION
            ================================================================== */
         function init() {
-            // Renderizar los sencillos del Home en su contenedor
+            // Renderizar los sencillos del Home
             const singles = cancionesData.filter(song => !song.album || song.album === "");
             renderGrid(singles, 'grid-songs', 'song');
+
+            // Renderizar los álbumes utilizando la nueva cuadrícula premium
+            renderGrid(albumsData, 'grid-albums', 'album');
 
             // Cargar por defecto el primer álbum en la vista inmersiva
             switchImmersiveAlbum(0);
