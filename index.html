@@ -580,48 +580,44 @@
             padding-bottom: 300px; /* enables scrolling last line to center */
         }
 
-        /* Oración lírica con desenfoque de fondo Apple Music */
+        /* Oración lírica con opacidad en lugar de desenfoques inestables */
         .lyric-line {
             font-size: clamp(24px, 2.5vw, 36px);
             font-weight: 800;
             line-height: 1.4;
-            transition: transform 0.4s var(--ease-snappy), filter 0.3s ease;
+            transition: transform 0.4s var(--ease-snappy), opacity 0.4s ease;
             cursor: pointer;
             text-align: left;
             transform-origin: left center;
             user-select: none;
             display: flex;
             flex-wrap: wrap;
+            opacity: 0.25; /* Líneas inactivas atenuadas */
         }
 
         .lyric-line.active {
             transform: scale(1.04);
-            filter: blur(0);
+            opacity: 1; /* Línea activa totalmente iluminada */
         }
 
         /* 
           RELLENO PROGRESIVO INDIVIDUAL (SMOOTH SWEEP) [1.1]
-          Usa un gradiente recortado al texto controlado vía variable CSS (--progress) 
+          Usa un gradiente recortado al texto. Se eliminaron filtros complejos para evitar bugs de Chrome/Safari.
         */
         .lyric-word {
             display: inline-block;
-            background: linear-gradient(to right, #ffffff var(--progress, 0%), rgba(255, 255, 255, 0.25) var(--progress, 0%));
+            background-image: linear-gradient(to right, rgb(255, 255, 255) 0%, rgba(255, 255, 255, 0.25) 0%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            color: transparent;
+            color: rgba(255, 255, 255, 0.25); /* Fallback compatible */
             margin-right: 12px;
-            filter: blur(1px);
-            transition: filter 0.4s ease;
+            transition: transform 0.2s ease, opacity 0.3s ease;
         }
 
-        .lyric-line.active .lyric-word {
-            filter: blur(0px);
-        }
-
-        /* Reflejo brillante y fluido de las palabras activas utilizando drop-shadow nativo */
+        /* Efecto de brillo limpio compatible mediante filtros externos en la línea activa */
         .lyric-line.active .lyric-word.highlighted {
-            filter: drop-shadow(0 0 10px var(--accent-glow)) blur(0px);
+            filter: drop-shadow(0 0 10px var(--accent-glow));
         }
 
         /* Apple Music Glowing & Moving Ambient Background blobs */
@@ -1285,17 +1281,6 @@
             }
         }
 
-        // Genera duraciones deterministas para dotar de realismo a la lista de canciones
-        function getDeterministicDuration(title) {
-            let hash = 0;
-            for (let i = 0; i < title.length; i++) {
-                hash = title.charCodeAt(i) + ((hash << 5) - hash);
-            }
-            const min = 2 + Math.abs(hash % 3); 
-            const sec = Math.abs(hash % 60).toString().padStart(2, '0');
-            return `${min}:${sec}`;
-        }
-
         /* ==================================================================
            BACKGROUND ANALYSIS & AUTOMIX
            ================================================================== */
@@ -1430,7 +1415,7 @@
                     line.words.forEach((word, wIdx) => {
                         const wordSpan = document.createElement('span');
                         wordSpan.className = 'lyric-word';
-                        wordSpan.style.setProperty('--progress', '0%');
+                        wordSpan.style.backgroundImage = 'linear-gradient(to right, rgb(255, 255, 255) 0%, rgba(255, 255, 255, 0.25) 0%)';
                         wordSpan.innerText = word.text;
                         lineEl.appendChild(wordSpan);
                     });
@@ -1453,7 +1438,7 @@
 
         /* 
            Sincronización progresiva de letras (Smooth Sweep Karaoke) [1.1]
-           Monitorea continuamente la reproducción y pinta gradualmente las letras en cada frame.
+           Monitorea continuamente la reproducción y pinta gradualmente las letras de forma inline [1.1].
         */
         function updateLyricsSync() {
             if (!currentLyrics.length || !isNPOpen || !isLyricsMode) return;
@@ -1493,18 +1478,18 @@
                             if (wordEl) {
                                 if (curTime < word.begin) {
                                     // Palabra aún no alcanzada
-                                    wordEl.style.setProperty('--progress', '0%');
+                                    wordEl.style.backgroundImage = 'linear-gradient(to right, rgb(255, 255, 255) 0%, rgba(255, 255, 255, 0.25) 0%)';
                                     wordEl.classList.remove('highlighted');
                                 } else if (curTime >= word.begin && curTime <= word.end) {
-                                    // Barrido progresivo de la palabra en reproducción activa
+                                    // Barrido progresivo de la palabra en reproducción activa [1.1]
                                     const wordDuration = word.end - word.begin;
                                     const elapsed = curTime - word.begin;
                                     const pct = wordDuration > 0 ? (elapsed / wordDuration) * 100 : 100;
-                                    wordEl.style.setProperty('--progress', `${pct}%`);
+                                    wordEl.style.backgroundImage = `linear-gradient(to right, rgb(255, 255, 255) ${pct}%, rgba(255, 255, 255, 0.25) ${pct}%)`;
                                     wordEl.classList.add('highlighted');
                                 } else {
                                     // Palabra totalmente reproducida
-                                    wordEl.style.setProperty('--progress', '100%');
+                                    wordEl.style.backgroundImage = 'linear-gradient(to right, rgb(255, 255, 255) 100%, rgba(255, 255, 255, 0.25) 100%)';
                                     wordEl.classList.add('highlighted');
                                 }
                             }
@@ -1520,10 +1505,10 @@
                             const wordEls = lineEl.querySelectorAll('.lyric-word');
                             wordEls.forEach(wordEl => {
                                 if (lIdx < lyricIndex) {
-                                    wordEl.style.setProperty('--progress', '100%');
+                                    wordEl.style.backgroundImage = 'linear-gradient(to right, rgb(255, 255, 255) 100%, rgba(255, 255, 255, 0.25) 100%)';
                                     wordEl.classList.add('highlighted');
                                 } else {
-                                    wordEl.style.setProperty('--progress', '0%');
+                                    wordEl.style.backgroundImage = 'linear-gradient(to right, rgb(255, 255, 255) 0%, rgba(255, 255, 255, 0.25) 0%)';
                                     wordEl.classList.remove('highlighted');
                                 }
                             });
@@ -1533,7 +1518,7 @@
             } else {
                 // Si la canción está fuera de tiempos o pausada al inicio
                 document.querySelectorAll('.lyric-word').forEach(wordEl => {
-                    wordEl.style.setProperty('--progress', '0%');
+                    wordEl.style.backgroundImage = 'linear-gradient(to right, rgb(255, 255, 255) 0%, rgba(255, 255, 255, 0.25) 0%)';
                     wordEl.classList.remove('highlighted');
                 });
             }
@@ -1861,7 +1846,23 @@
                 applyAccentFromPalette(song.palette);
             }
 
-            // Manejo de actualización de letras cuando cambia de canción
+            // Evitar que la pantalla de la app quede completamente negra para los sencillos [1.1]
+            const ambientBg = document.getElementById('ambient-bg');
+            if (!song.album) { 
+                if (song.bgImage) {
+                    ambientBg.style.backgroundImage = `url('${song.bgImage}')`;
+                    ambientBg.style.backgroundSize = 'cover';
+                    ambientBg.style.backgroundPosition = 'center';
+                } else if (song.palette && song.palette.length > 0) {
+                    const primaryColor = song.palette[0], secondaryColor = song.palette[2] || song.palette[1];
+                    ambientBg.style.backgroundImage = `linear-gradient(135deg, rgb(${primaryColor.r}, ${primaryColor.g}, ${primaryColor.b}) 0%, rgb(${secondaryColor.r}, ${secondaryColor.g}, ${secondaryColor.b}) 100%)`;
+                }
+            } else {
+                // Si la canción pertenece a un álbum, el fondo dinámico se manejará al abrir el detalle de dicho álbum
+                ambientBg.style.backgroundImage = '';
+            }
+
+            // Manejo de letras al cambiar de track [1.1]
             if (isLyricsMode) {
                 if (song.lyricsUrl) {
                     loadLyrics(song.lyricsUrl);
@@ -1870,7 +1871,6 @@
                     renderLyricsUI();
                 }
             } else {
-                // Pre-cargar de forma silenciosa para que estén listas al abrir Now Playing
                 if (song.lyricsUrl) {
                     loadLyrics(song.lyricsUrl);
                 } else {
