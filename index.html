@@ -884,6 +884,16 @@
             }
         ];
 
+        // Definición de las canciones más famosas y exitosas de cada proyecto (no-random)
+        const popularSongs = new Set([
+            // Bad Bunny
+            "MONACO", "FINA", "HIBIKI", "WHERE SHE GOES", "PERRO NEGRO", "NO ME QUIERO CASAR", "UN PREVIEW",
+            // ROA
+            "JETSKI - Remix", "NOCHE PASAJERA II", "UuU 2", "LA FAVORITA DE DIOS", "JETSKI", "UuU",
+            // Omar Courtz
+            "MOONLIGHT", "WHAT U NEED? (SexPlaylist 2)", "COMERNOS", "$UELTA GATITA $UELTA", "SI ESTÁS CON ALGUIEN"
+        ]);
+
         // Paletas de color y fondos de pantalla optimizados
         const roaPalette = [{ r: 1, g: 1, b: 1 },{ r: 191, g: 74, b: 6 },{ r: 242, g: 70, b: 7 },{ r: 242, g: 50, b: 7 },{ r: 2, g: 35, b: 43 },{ r: 1, g: 1, b: 1 }];
         const nadieSabePalette = [{ r: 218, g: 204, b: 193 },{ r: 217, g: 202, b: 193 },{ r: 98, g: 117, b: 144 },{ r: 117, g: 58, b: 45 },{ r: 64, g: 28, b: 24 },{ r: 218, g: 204, b: 193 }];
@@ -1269,7 +1279,6 @@
             }
             
             const tracks = cancionesData.filter(s => s.album === albumId).sort((a,b) => a.trackNum - b.trackNum);
-            const durationStr = album.duration ? ` • ${album.duration}` : '';
             document.getElementById('det-album-info').innerText = `${tracks.length} canciones, ${album.duration || ''}`;
 
             const tracklist = document.getElementById('tracklist-album'); tracklist.innerHTML = '';
@@ -1282,8 +1291,8 @@
                 if(currentPlayingIndex === realIndex) row.classList.add('active');
                 row.onclick = () => playSong(realIndex);
 
-                // Estrella de popularidad inspirada en el diseño de Apple Music (activado en pistas 1, 2, 4 y 5)
-                const isPopular = [1, 2, 4, 5].includes(song.trackNum);
+                // Estrella de popularidad real de cada álbum (no-random)
+                const isPopular = popularSongs.has(song.title);
                 const starClass = isPopular ? 'ph-fill ph-star active' : 'ph ph-star';
                 const starStyle = isPopular ? 'color: rgba(255,255,255,0.6);' : 'opacity: 0; pointer-events: none;';
 
