@@ -504,179 +504,6 @@
         }
 
         /* ==================================================================
-           APPLE MUSIC WORD FOR WORD LYRICS STYLES (RELLENO SMOOTH)
-           ================================================================== */
-        .btn-lyrics-toggle {
-            position: absolute; top: 48px; right: 120px; width: 52px; height: 52px;
-            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); cursor: pointer; z-index: 10;
-            display: flex; align-items: center; justify-content: center; font-size: 24px; 
-            color: rgba(255,255,255,0.5); border-radius: 50%; transition: all 0.3s var(--ease-snappy); outline: none;
-        }
-        .btn-lyrics-toggle:hover { color: #fff; background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.2); transform: scale(1.08); }
-        .btn-lyrics-toggle.active {
-            background: var(--accent-1);
-            color: #fff;
-            border-color: var(--accent-1);
-            box-shadow: var(--shadow-glow);
-        }
-
-        .np-content-layout {
-            width: 100%;
-            max-width: 1200px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 80px;
-            transition: all 0.8s var(--ease-cinematic);
-            z-index: 10;
-            position: relative;
-        }
-
-        /* Lyrics Mode Fullscreen Transitions */
-        #np-fs.lyrics-mode .np-content-layout {
-            justify-content: space-between;
-            gap: 60px;
-            align-items: center;
-        }
-
-        #np-fs.lyrics-mode .np-minimal-container {
-            flex-direction: column;
-            align-items: flex-start;
-            text-align: left;
-            width: 40%;
-            gap: 32px;
-        }
-
-        #np-fs.lyrics-mode .np-art-wrap {
-            width: 320px;
-            height: 320px;
-            border-radius: 20px;
-        }
-
-        .np-lyrics-panel {
-            display: none;
-            width: 55%;
-            height: 70vh;
-            overflow-y: scroll;
-            mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
-            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
-            position: relative;
-            padding: 120px 0;
-            scroll-behavior: smooth;
-        }
-        .np-lyrics-panel::-webkit-scrollbar {
-            display: none;
-        }
-
-        #np-fs.lyrics-mode .np-lyrics-panel {
-            display: block;
-            animation: fadeIn 0.6s ease forwards;
-        }
-
-        .lyrics-scroller {
-            display: flex;
-            flex-direction: column;
-            gap: 36px;
-            padding-bottom: 300px; /* enables scrolling last line to center */
-        }
-
-        /* Oración lírica con opacidad en lugar de desenfoques inestables */
-        .lyric-line {
-            font-size: clamp(24px, 2.5vw, 36px);
-            font-weight: 800;
-            line-height: 1.4;
-            transition: transform 0.4s var(--ease-snappy), opacity 0.4s ease;
-            cursor: pointer;
-            text-align: left;
-            transform-origin: left center;
-            user-select: none;
-            display: flex;
-            flex-wrap: wrap;
-            opacity: 0.25; /* Líneas inactivas atenuadas */
-        }
-
-        .lyric-line.active {
-            transform: scale(1.04);
-            opacity: 1; /* Línea activa totalmente iluminada */
-        }
-
-        /* 
-          RELLENO PROGRESIVO INDIVIDUAL (SMOOTH SWEEP) [1.1]
-          Usa un gradiente recortado al texto. Se eliminaron filtros complejos para evitar bugs de Chrome/Safari.
-        */
-        .lyric-word {
-            display: inline-block;
-            background-image: linear-gradient(to right, rgb(255, 255, 255) 0%, rgba(255, 255, 255, 0.25) 0%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            color: rgba(255, 255, 255, 0.25); /* Fallback compatible */
-            margin-right: 12px;
-            transition: transform 0.2s ease, opacity 0.3s ease;
-        }
-
-        /* Efecto de brillo limpio compatible mediante filtros externos en la línea activa */
-        .lyric-line.active .lyric-word.highlighted {
-            filter: drop-shadow(0 0 10px var(--accent-glow));
-        }
-
-        /* Apple Music Glowing & Moving Ambient Background blobs */
-        .lyrics-blur-backplate {
-            position: absolute;
-            inset: 0;
-            z-index: 1;
-            overflow: hidden;
-            filter: blur(120px) saturate(220%);
-            opacity: 0;
-            transition: opacity 1s ease;
-            pointer-events: none;
-        }
-        #np-fs.lyrics-mode .lyrics-blur-backplate {
-            opacity: 0.65;
-        }
-        .blob {
-            position: absolute;
-            border-radius: 50%;
-            mix-blend-mode: screen;
-            animation: floatBlob 25s infinite alternate ease-in-out;
-        }
-        .blob-1 {
-            width: 700px;
-            height: 700px;
-            background: var(--accent-1);
-            top: -200px;
-            left: -100px;
-            opacity: 0.45;
-        }
-        .blob-2 {
-            width: 600px;
-            height: 600px;
-            background: var(--accent-2);
-            bottom: -150px;
-            right: -100px;
-            opacity: 0.4;
-            animation-delay: -6s;
-        }
-        .blob-3 {
-            width: 500px;
-            height: 500px;
-            background: #fff;
-            top: 40%;
-            left: 30%;
-            opacity: 0.1;
-            animation-delay: -12s;
-        }
-        @keyframes floatBlob {
-            0% { transform: translate(0, 0) scale(1) rotate(0deg); }
-            100% { transform: translate(120px, 90px) scale(1.15) rotate(360deg); }
-        }
-
-        @keyframes fadeIn {
-            0% { opacity: 0; transform: translateY(15px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-
-        /* ==================================================================
            PERSISTENT BOTTOM PLAYER
            ================================================================== */
         .player-wrapper { position: fixed; bottom: 32px; left: 0; width: 100%; display: flex; justify-content: center; z-index: 50; pointer-events: none; padding: 0 32px; }
@@ -712,10 +539,10 @@
         .scrubber-fill::after { content: ''; position: absolute; right: -8px; top: 50%; transform: translateY(-50%) scale(0); width: 16px; height: 16px; background: #fff; border-radius: 50%; transition: transform 0.3s var(--ease-snappy); box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
         .scrubber-bg:hover .scrubber-fill::after { transform: translateY(-50%) scale(1); }
 
-        .player-actions { display: flex; align-items: center; justify-content: flex-end; width: 30%; gap: 18px; color: var(--text-secondary); font-size: 20px; }
+        .player-actions { display: flex; align-items: center; justify-content: flex-end; width: 30%; gap: 24px; color: var(--text-secondary); font-size: 22px; }
         .player-actions i { cursor: pointer; transition: 0.3s; }
         .player-actions i:hover { color: #fff; transform: scale(1.1); }
-        .vol-slider { width: 90px; height: 6px; background: rgba(255,255,255,0.15); border-radius: 3px; cursor: pointer; transition: height 0.3s var(--ease-snappy); position: relative;}
+        .vol-slider { width: 100px; height: 6px; background: rgba(255,255,255,0.15); border-radius: 3px; cursor: pointer; transition: height 0.3s var(--ease-snappy); position: relative;}
         .vol-slider:hover { height: 10px; background: rgba(255,255,255,0.25); }
         .vol-fill { width: 75%; height: 100%; background: #fff; border-radius: 3px; box-shadow: 0 0 10px rgba(255,255,255,0.3);}
         .btn-fullscreen { width: 40px; height: 40px; border-radius: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.4s var(--ease-snappy); }
@@ -730,9 +557,9 @@
             overflow: hidden; 
             background: linear-gradient(135deg, #051319 0%, #021a24 100%); 
             font-family: var(--font-display);
-            align-items: center;
-            justify-content: center;
-            padding: 60px;
+            align-items: flex-end;
+            justify-content: flex-start;
+            padding: 96px;
         }
         #np-fs.active { transform: translateY(0); opacity: 1; visibility: visible; }
 
@@ -751,7 +578,6 @@
 
         .np-minimal-container {
             position: relative; z-index: 10; display: flex; align-items: center; gap: 40px;
-            transition: all 0.8s var(--ease-cinematic);
         }
 
         .np-art-wrap { 
@@ -764,7 +590,7 @@
         .np-art-wrap:hover { transform: scale(1.04); }
         .np-art { width: 100%; height: 100%; object-fit: cover; }
 
-        .np-metadata-wrap { display: flex; flex-direction: column; gap: 12px; transition: all 0.8s var(--ease-cinematic); }
+        .np-metadata-wrap { display: flex; flex-direction: column; gap: 12px; }
         .np-track-title { font-size: clamp(32px, 4vw, 56px); font-weight: 800; color: #fff; letter-spacing: -0.03em; line-height: 1.1; margin: 0; display: flex; align-items: center; }
         .np-track-artist { font-size: clamp(18px, 1.8vw, 24px); color: rgba(255,255,255,0.65); font-weight: 500; letter-spacing: -0.01em; margin: 0; }
 
@@ -843,42 +669,6 @@
             }
             .am-track-duration-col {
                 padding-right: 4px;
-            }
-
-            /* Responsive design lyrics mode */
-            #np-fs.lyrics-mode .np-content-layout {
-                flex-direction: column;
-                gap: 32px;
-                align-items: center;
-                height: 100%;
-                justify-content: flex-start;
-                padding-top: 40px;
-            }
-            #np-fs.lyrics-mode .np-minimal-container {
-                width: 100%;
-                align-items: center;
-                text-align: center;
-                gap: 16px;
-            }
-            #np-fs.lyrics-mode .np-art-wrap {
-                width: 140px;
-                height: 140px;
-            }
-            #np-fs.lyrics-mode .np-metadata-wrap {
-                display: none;
-            }
-            .np-lyrics-panel {
-                width: 100%;
-                height: 55vh;
-                padding: 40px 10px;
-            }
-            .lyric-line {
-                font-size: 22px;
-                text-align: center;
-                transform-origin: center center;
-            }
-            .btn-lyrics-toggle {
-                right: 24px;
             }
         }
     </style>
@@ -1018,8 +808,6 @@
             </div>
 
             <div class="player-actions">
-                <!-- AM Lyrics Button inside standard bar -->
-                <i class="ph-bold ph-chat-centered-text" id="pill-lyrics-btn" onclick="toggleLyricsFromPill(event)" title="Show synchronized lyrics"></i>
                 <i class="ph-fill ph-speaker-low"></i>
                 <div class="vol-slider" onclick="changeVolume(event, this)"><div class="vol-fill" id="vol-fill-desk"></div></div>
                 <div class="btn-fullscreen" onclick="toggleNP()"><i class="ph-bold ph-arrows-out-simple"></i></div>
@@ -1027,35 +815,21 @@
         </div>
     </div>
 
-    <!-- FULLSCREEN NOW PLAYING OVERLAY (REDISEÑADA PARA INCORPORAR LETRAS WORD BY WORD) -->
+    <!-- FULLSCREEN NOW PLAYING OVERLAY -->
     <div id="np-fs">
         <div class="np-bg-overlay"></div>
         <div class="np-grain"></div>
-        <div class="lyrics-blur-backplate">
-            <div class="blob blob-1"></div>
-            <div class="blob blob-2"></div>
-            <div class="blob blob-3"></div>
-        </div>
         
         <button class="btn-collapse" onclick="toggleNP()"><i class="ph ph-x"></i></button>
-        <button class="btn-lyrics-toggle" id="fs-lyrics-btn" onclick="toggleLyrics()"><i class="ph-bold ph-chat-centered-text"></i></button>
         <button class="btn-collapse-mob" onclick="toggleNP()"></button>
 
-        <div class="np-content-layout">
-            <div class="np-minimal-container">
-                <div class="np-art-wrap" onclick="togglePlay()">
-                    <img src="" id="np-img-large" class="np-art" crossorigin="anonymous">
-                </div>
-                <div class="np-metadata-wrap">
-                    <h2 class="np-track-title" id="np-title-large">Loading...</h2>
-                    <p class="np-track-artist" id="np-artist-large">Artist</p>
-                </div>
+        <div class="np-minimal-container">
+            <div class="np-art-wrap" onclick="togglePlay()">
+                <img src="" id="np-img-large" class="np-art" crossorigin="anonymous">
             </div>
-            
-            <div id="lyrics-panel" class="np-lyrics-panel">
-                <div id="lyrics-scroller" class="lyrics-scroller">
-                    <!-- Lyric lines will be loaded dynamically here -->
-                </div>
+            <div class="np-metadata-wrap">
+                <h2 class="np-track-title" id="np-title-large">Loading...</h2>
+                <p class="np-track-artist" id="np-artist-large">Artist</p>
             </div>
         </div>
     </div>
@@ -1128,36 +902,102 @@
         // Paleta y canción única de Anuel AA como primer Sencillo
         const lasMasBonitasPalette2 = [{ r: 0, g: 41, b: 87 },{ r: 0, g: 53, b: 101 },{ r: 2, g: 38, b: 67 },{ r: 0, g: 61, b: 121 },{ r: 1, g: 21, b: 37 }];
 
-        // Base de datos principal de canciones (Incluye el nuevo Sencillo "222" de Yan Block con letras TTML)
+        // Base de datos comprimida de canciones de los álbumes
+        const nadieSabeTracksRaw = [
+            ["NADIE SABE", "https://files.catbox.moe/81i5i9.mp3"],
+            ["MONACO", "https://files.catbox.moe/i3k4mg.mp3"],
+            ["FINA", "https://files.catbox.moe/t0kzte.mp3", "Bad Bunny & Young Miko"],
+            ["HIBIKI", "https://files.catbox.moe/ifxel2.mp3", "Bad Bunny & Mora"],
+            ["MR. OCTOBER", "https://files.catbox.moe/l8pkvo.mp3"],
+            ["CYBERTRUCK", "https://files.catbox.moe/lmyd81.mp3"],
+            ["VOU 787", "https://files.catbox.moe/j0ifz6.mp3"],
+            ["SEDA", "https://files.catbox.moe/h9em77.mp3", "Bad Bunny & Bryant Myers"],
+            ["GRACIAS POR NADA", "https://files.catbox.moe/0afdmi.mp3"],
+            ["TELÉFONO NUEVO", "https://files.catbox.moe/ocv1jn.mp3", "Bad Bunny & Luar La L"],
+            ["BABY NUEVA", "https://files.catbox.moe/c494lg.mp3"],
+            ["MERCEDES CAROTA", "https://files.catbox.moe/kbi3ng.mp3", "Bad Bunny & YovngChimi"],
+            ["LOS PITS", "https://files.catbox.moe/5hi9zw.mp3"],
+            ["VUELVE CANDY B", "https://files.catbox.moe/c7c2tw.mp3"],
+            ["BATICANO", "https://files.catbox.moe/0ioak8.mp3"],
+            ["NO ME QUIERO CASAR", "https://files.catbox.moe/z0pt1j.mp3"],
+            ["WHERE SHE GOES", "https://files.catbox.moe/lr48kr.mp3"],
+            ["THUNDER Y LIGHTNING", "https://files.catbox.moe/lakqe7.mp3", "Bad Bunny & Eladio Carrión"],
+            ["PERRO NEGRO", "https://files.catbox.moe/9zbzhl.mp3", "Bad Bunny & Feid"],
+            ["EUROPA :(", "https://files.catbox.moe/0w8v89.mp3"],
+            ["ACHO PR", "https://files.catbox.moe/nxz1nf.mp3", "Bad Bunny, Arcángel, De La Ghetto & Ñengo Flow"],
+            ["UN PREVIEW", "https://files.catbox.moe/ccfzeb.mp3"]
+        ];
+
+        const roaTracksRaw = [
+            ["Freelance", "https://43rdwl1h89.ucarecd.net/44b3c18e-6950-4083-8f54-c7a31c1233a7/Freelance_spotdownorg.mp3"],
+            ["UuU", "https://43rdwl1h89.ucarecd.net/db1e054e-6a16-41b5-801e-cf0db8d09a40/UuU_spotdownorg.mp3", "ROA & Hades66"],
+            ["JETSKI", "https://43rdwl1h89.ucarecd.net/27529a31-a2fd-45a4-8198-4837e2a468cd/JETSKI_spotdownorg.mp3"],
+            ["11:11 (interlude)", "https://43rdwl1h89.ucarecd.net/8d268a23-9116-414a-87ed-57e378143bcb/11_11Interlude_spotdownorg.mp3"],
+            ["Bellakeame", "https://43rdwl1h89.ucarecd.net/d0d19a4c-9670-48fc-add5-55ffbdc30a53/Bellakeame_spotdownorg.mp3"],
+            ["Noche Pasajera", "https://43rdwl1h89.ucarecd.net/14c842db-a936-4605-9947-af6866b31346/NochePasajera_spotdownorg.mp3"],
+            ["LA CURA… coming soon (Outro)", "https://43rdwl1h89.ucarecd.net/b9aed547-543e-40f3-994f-2b61e87b3534/LACURAcomingsoonOutro_spotdownorg.mp3"],
+            ["La Cura", "https://43rdwl1h89.ucarecd.net/4fc37b60-e202-4ea6-ad68-46714eb54363/LaCura_spotdownorg.mp3"],
+            ["Y Si Te Llamo", "https://43rdwl1h89.ucarecd.net/ef74b9aa-c329-4a47-8f0e-2f6a5bcd45f6/YSiTeLlamo_spotdownorg.mp3"],
+            ["NOCHE PASAJERA II", "https://43rdwl1h89.ucarecd.net/36b8f21a-ba5e-4174-a1ee-afc5ccbdde9b/NOCHEPASAJERAII_spotdownorg.mp3", "ROA & Jay Wheeler"],
+            ["JETSKI - Remix", "https://43rdwl1h89.ucarecd.net/0a5c7e1a-f062-4ef8-b99c-dd1034da60f4/JETSKIRemix_spotdownorg1.mp3", "ROA, Omar Courtz, Dei V & Bryant Myers"],
+            ["11:12 (Interlude)", "https://43rdwl1h89.ucarecd.net/749dffe2-6e64-4f99-b596-b2496d4096c6/11_12Interlude_spotdownorg.mp3", "ROA & De La Rose"],
+            ["UuU 2", "https://43rdwl1h89.ucarecd.net/a99ac52d-d2e7-4214-9a7f-ecdc1b585473/UuU2_spotdownorg.mp3", "ROA, Hades66 & Luar La L"],
+            ["FREELANCE 2.0", "https://43rdwl1h89.ucarecd.net/566b4669-7d4e-4f92-9b54-37eb40614929/FREELANCE20_spotdownorg.mp3", "ROA, CDobleta, Amarion, Ankhal & Anubiis"],
+            ["Eclipse... Coming Soon (Outro)", "https://43rdwl1h89.ucarecd.net/fd3612f0-8d53-4b85-ae50-bd883b398bfe/EclipseComingSoonOutro_spotdownorg.mp3"],
+            ["ETA", "https://43rdwl1h89.ucarecd.net/05ffac1c-63ec-4d3d-9ac8-4d321aeb28a7/ETA_spotdownorg.mp3"],
+            ["ECLIPSE", "https://43rdwl1h89.ucarecd.net/25a0018f-504a-49b3-8358-c38c62a548f4/ECLIPSE_spotdownorg.mp3", "ROA, J Abdiel & Slayter"],
+            ["777", "https://43rdwl1h89.ucarecd.net/ba795269-fdb2-4938-90d4-6cca60aa7f14/777_spotdownorg.mp3"],
+            ["PETITE", "https://43rdwl1h89.ucarecd.net/202d26f3-9b1f-4f65-8152-449ce316eb09/PETITE_spotdownorg.mp3"],
+            ["MI DEMONIA... COMING SOON", "https://43rdwl1h89.ucarecd.net/37ae36d1-88ab-49f5-bb25-4736708577e7/MIDEMONIACOMINGSOON_spotdownorg.mp3"],
+            ["TATE QUIETA", "https://43rdwl1h89.ucarecd.net/84536705-8c96-4863-b707-56a85b7ef643/TATEQUIETA_spotdownorg.mp3", "ROA & CDobleta"],
+            ["NEVER 2 LATE", "https://43rdwl1h89.ucarecd.net/be314035-f7e8-4396-add3-07e6c8e06417/NEVER2LATE_spotdownorg.mp3", "ROA & Yan Block"],
+            ["ME GUSTAS CC", "https://43rdwl1h89.ucarecd.net/f97cd115-aa0b-4827-be03-ec4540f7be35/MEGUSTASCC_spotdownorg.mp3"],
+            ["ETA - Remix", "https://43rdwl1h89.ucarecd.net/ef2651fb-d382-411f-8557-d96c053e1a2d/ETARMX_spotdownorg.mp3", "ROA, De La Rose, Omar Courtz, Yan Block & Luar La L"],
+            ["QUÉ TE PASA ?", "https://43rdwl1h89.ucarecd.net/ac319d64-229c-41c6-af4e-c79da4ec9fa7/QUETEPASA__spotdownorg.mp3"],
+            ["EENIMINIMAINIMOE", "https://43rdwl1h89.ucarecd.net/741bed09-b436-44d5-ac9a-228ff0b32f6c/EENIMINIMAINIMOE_spotdownorg.mp3"],
+            ["J's INTERLUDE", "https://43rdwl1h89.ucarecd.net/a1df7ad6-d0a2-4bd1-9d84-06a64eccaded/JsINTERLUDE_spotdownorg.mp3"],
+            ["MI DEMONIA", "https://43rdwl1h89.ucarecd.net/956f8423-913e-4239-a26c-a927a2857167/MIDEMONIA_spotdownorg.mp3"],
+            ["LA FAVORITA DE DIOS", "https://43rdwl1h89.ucarecd.net/b6362bd6-cb26-4dab-8f48-9567da17e5dc/LAFAVORITADEDIOS_spotdownorg.mp3", "ROA & Dei V"],
+            ["11:11", "https://43rdwl1h89.ucarecd.net/e17efb10-5860-4bb3-b50d-2796d25679cc/11_11_spotdownorg.mp3"],
+            ["ARE YOU FEELING ME ? (OUTRO)", "https://43rdwl1h89.ucarecd.net/488ece66-43a9-45da-b67e-20a9a68e4734/AREYOUFEELINGME_OUTRO_spotdownorg.mp3"],
+            ["BABY HOY", "https://43rdwl1h89.ucarecd.net/735e39b9-1907-4600-8619-8e3034695ae1/BABYHOY_spotdownorg.mp3"],
+            ["MI PEOR ERROR", "https://43rdwl1h89.ucarecd.net/20c9633c-95e1-48f7-82be-006ee84fbc7a/MIPEORERROR_spotdownorg.mp3", "ROA & Botlok"],
+            ["EL MALO... Coming soon", "https://43rdwl1h89.ucarecd.net/85290498-b4a1-461b-8f87-067e0eb353cd/ELMALOComingsoon_spotdownorg.mp3"],
+            ["TÚ Y YO", "https://43rdwl1h89.ucarecd.net/8ce4aec7-f400-4bd4-9060-ba8a6ecf231b/TUYYO_spotdownorg.mp3"],
+            ["MI CHIMBITA", "https://43rdwl1h89.ucarecd.net/9d5655b0-6576-49f3-9b6f-f3c91e3f753d/MICHIMBITA_spotdownorg.mp3", "ROA, Kris R, Hades66, GeezyDee & TopBoy TGR"],
+            ["TATE QUIETA - Remix", "https://43rdwl1h89.ucarecd.net/5650fe3c-bb05-4cc5-848e-258118a4eb65/TATEQUIETARMX_spotdownorg.mp3", "ROA, CDobleta, Midnvght, Tutu, Luar La L & Almighty"]
+        ];
+
+        const moonlightTracksRaw = [
+            ["OUTRO", "https://files.catbox.moe/4eqs0r.mp3", "Omar Courtz"],
+            ["EL MUNDO SE VA A ACABAR", "https://files.catbox.moe/ioux89.mp3", "Omar Courtz & KARBeats"],
+            ["FOREVER TU GANTEL", "https://files.catbox.moe/cievb6.mp3", "Omar Courtz & Ñengo Flow"],
+            ["L a k e n o s h i", "https://files.catbox.moe/9qorg7.mp3", "Omar Courtz"],
+            ["VAMOaCOCHI", "https://files.catbox.moe/wns3m6.mp3", "Omar Courtz"],
+            ["SUSU", "https://files.catbox.moe/kdv57b.mp3", "Omar Courtz"],
+            ["SIRENA", "https://files.catbox.moe/msloqo.mp3", "Omar Courtz"],
+            ["GANTEL y BELLAKz", "https://files.catbox.moe/eeqvne.mp3", "Omar Courtz & Bassyy"],
+            ["SI ESTÁS CON ALGUIEN", "https://files.catbox.moe/v21n97.mp3", "Omar Courtz"],
+            ["Dulces SueñoZzz (+INTERLUDIO)", "https://files.catbox.moe/cktziy.mp3", "Omar Courtz & Rubí"],
+            ["$UELTA GATITA $UELTA", "https://files.catbox.moe/0qxd21.mp3", "Omar Courtz, Dei V, Clarent & Tito El Bambino"],
+            ["WHAT U NEED? (SexPlaylist 2)", "https://files.catbox.moe/qncan5.mp3", "Omar Courtz & Myke Towers"],
+            ["WO OH OH", "https://files.catbox.moe/xx2wn3.mp3", "Omar Courtz & ROA"],
+            ["KOKO", "https://files.catbox.moe/n733ws.mp3", "Omar Courtz"],
+            ["COMERNOS", "https://files.catbox.moe/u9f6nl.mp3", "Omar Courtz & Bad Gyal"],
+            ["SKY", "https://files.catbox.moe/4868ct.mp3", "Omar Courtz"],
+            ["MOONLIGHT", "https://files.catbox.moe/hlrw1i.mp3", "Omar Courtz & Eladio Carrión"],
+            ["POR SI MAÑANA NO ESTOY", "https://files.catbox.moe/f67tpy.mp3", "Omar Courtz"]
+        ];
+
+        // Estructura de base de datos
         const cancionesData = [
-            { 
-                title: "222", 
-                artist: "Yan Block", 
-                url: "https://files.catbox.moe/lndr5r.mp3", 
-                cover: "https://files.catbox.moe/231x9h.jpg", 
-                album: "", 
-                trackNum: 1, 
-                coverLoaded: true, 
-                palette: [
-                    { r: 7, g: 6, b: 7 },     // #070607
-                    { r: 27, g: 31, b: 30 },   // #1b1f1e
-                    { r: 193, g: 94, b: 32 },  // #c15e20
-                    { r: 220, g: 96, b: 2 },   // #dc6002
-                    { r: 9, g: 9, b: 22 },     // #090916
-                    { r: 94, g: 133, b: 130 }, // #5e8582
-                    { r: 24, g: 10, b: 9 },    // #180a09
-                    { r: 191, g: 103, b: 58 }  // #bf673a
-                ], 
-                bgImage: "https://files.catbox.moe/36yq5u.png",
-                lyricsUrl: "https://files.catbox.moe/3mj7ym.ttml" // TTML Lyrics track [1.1]
-            },
             { 
                 title: "Las mas bonitas son p#tas", 
                 artist: "Anuel AA", 
                 url: "https://files.catbox.moe/h3ov3e.mp3", 
                 cover: "https://files.catbox.moe/qd91kk.jpg", 
                 album: "", 
-                trackNum: 2, 
+                trackNum: 1, 
                 coverLoaded: true, 
                 palette: lasMasBonitasPalette2, 
                 bgImage: "https://files.catbox.moe/f755oj.png" 
@@ -1191,9 +1031,6 @@
         let currentPlayingIndex = 0;
         let isNPOpen = false;
         let favoriteAlbums = {};
-        let currentLyrics = []; // Array que alojará el TTML parsed [1.1]
-        let lyricIndex = -1;
-        let isLyricsMode = false;
 
         const audio1 = new Audio(); audio1.crossOrigin = "anonymous";
         const audio2 = new Audio(); audio2.crossOrigin = "anonymous";
@@ -1281,6 +1118,17 @@
             }
         }
 
+        // Genera duraciones deterministas para dotar de realismo a la lista de canciones
+        function getDeterministicDuration(title) {
+            let hash = 0;
+            for (let i = 0; i < title.length; i++) {
+                hash = title.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            const min = 2 + Math.abs(hash % 3); 
+            const sec = Math.abs(hash % 60).toString().padStart(2, '0');
+            return `${min}:${sec}`;
+        }
+
         /* ==================================================================
            BACKGROUND ANALYSIS & AUTOMIX
            ================================================================== */
@@ -1320,274 +1168,6 @@
 
         function getBestNextTrack(currIdx) { return (currIdx + 1) % cancionesData.length; }
         function startAutoMix() { playSong(getBestNextTrack(currentPlayingIndex)); }
-
-        /* ==================================================================
-           LYRICS PARSING & SYNCHRONIZATION ENGINE (TTML FORMAT)
-           ================================================================== */
-        async function loadLyrics(ttmlUrl) {
-            try {
-                const response = await fetch(ttmlUrl);
-                const text = await response.text();
-                const parser = new DOMParser();
-                const xmlDoc = parser.parseFromString(text, "text/xml");
-                
-                const parserError = xmlDoc.querySelector('parsererror');
-                if (parserError) {
-                    console.error("XML Parser error:", parserError.textContent);
-                }
-
-                const paragraphs = xmlDoc.getElementsByTagName("p");
-                let parsed = [];
-                for (let p of paragraphs) {
-                    const beginStr = p.getAttribute("begin");
-                    const endStr = p.getAttribute("end");
-                    const begin = parseTimeToSeconds(beginStr);
-                    const end = parseTimeToSeconds(endStr);
-                    
-                    // Buscar spans para sincronización "word by word"
-                    const spans = p.getElementsByTagName("span");
-                    let words = [];
-                    if (spans.length > 0) {
-                        for (let span of spans) {
-                            const sb = span.getAttribute("begin");
-                            const se = span.getAttribute("end");
-                            words.push({
-                                begin: sb ? parseTimeToSeconds(sb) : begin,
-                                end: se ? parseTimeToSeconds(se) : end,
-                                text: span.textContent.trim()
-                            });
-                        }
-                    }
-                    
-                    parsed.push({
-                        begin,
-                        end,
-                        text: p.textContent.replace(/\s+/g, " ").trim(),
-                        words: words.length > 0 ? words : null
-                    });
-                }
-                currentLyrics = parsed;
-                renderLyricsUI();
-            } catch (e) {
-                console.error("Error loading lyrics:", e);
-                document.getElementById('lyrics-scroller').innerHTML = `<div class="lyric-line" style="text-align:center; opacity:0.5; width: 100%;">Failed to load lyrics.</div>`;
-            }
-        }
-
-        function parseTimeToSeconds(timeStr) {
-            if (!timeStr) return 0;
-            timeStr = timeStr.trim();
-            if (timeStr.endsWith('s')) {
-                return parseFloat(timeStr.slice(0, -1));
-            }
-            const parts = timeStr.split(':');
-            if (parts.length === 3) {
-                const hrs = parseInt(parts[0], 10);
-                const mins = parseInt(parts[1], 10);
-                const secs = parseFloat(parts[2]);
-                return (hrs * 3600) + (mins * 60) + secs;
-            } else if (parts.length === 2) {
-                const mins = parseInt(parts[0], 10);
-                const secs = parseFloat(parts[1]);
-                return (mins * 60) + secs;
-            } else {
-                return parseFloat(timeStr) || 0;
-            }
-        }
-
-        function renderLyricsUI() {
-            const scroller = document.getElementById('lyrics-scroller');
-            scroller.innerHTML = '';
-            
-            if (!currentLyrics.length) {
-                scroller.innerHTML = `<div class="lyric-line" style="text-align:center; opacity:0.5; width: 100%;">Letra no disponible para esta canción.</div>`;
-                return;
-            }
-            
-            currentLyrics.forEach((line, idx) => {
-                const lineEl = document.createElement('div');
-                lineEl.className = 'lyric-line';
-                lineEl.id = `lyric-line-${idx}`;
-                lineEl.onclick = () => jumpToLyric(line.begin);
-                
-                if (line.words) {
-                    // Renderizado de palabras individuales para Word-by-Word
-                    line.words.forEach((word, wIdx) => {
-                        const wordSpan = document.createElement('span');
-                        wordSpan.className = 'lyric-word';
-                        wordSpan.style.backgroundImage = 'linear-gradient(to right, rgb(255, 255, 255) 0%, rgba(255, 255, 255, 0.25) 0%)';
-                        wordSpan.innerText = word.text;
-                        lineEl.appendChild(wordSpan);
-                    });
-                } else {
-                    // Fallback para renderizado de oración completa
-                    lineEl.innerText = line.text;
-                }
-                
-                scroller.appendChild(lineEl);
-            });
-            
-            lyricIndex = -1; // Resetear índice de scroll
-        }
-
-        function jumpToLyric(seconds) {
-            haptic();
-            ensureAudioContext();
-            activeAudio.currentTime = seconds;
-        }
-
-        /* 
-           Sincronización progresiva de letras (Smooth Sweep Karaoke) [1.1]
-           Monitorea continuamente la reproducción y pinta gradualmente las letras de forma inline [1.1].
-        */
-        function updateLyricsSync() {
-            if (!currentLyrics.length || !isNPOpen || !isLyricsMode) return;
-            
-            const curTime = activeAudio.currentTime;
-            let activeIdx = -1;
-            
-            for (let i = 0; i < currentLyrics.length; i++) {
-                if (curTime >= currentLyrics[i].begin && curTime <= currentLyrics[i].end) {
-                    activeIdx = i;
-                    break;
-                }
-                // Manejar los tiempos de transición entre versos
-                if (i < currentLyrics.length - 1 && curTime >= currentLyrics[i].end && curTime < currentLyrics[i+1].begin) {
-                    activeIdx = i;
-                }
-            }
-            
-            if (curTime >= currentLyrics[currentLyrics.length - 1].end) {
-                activeIdx = currentLyrics.length - 1;
-            }
-            
-            if (activeIdx !== -1 && activeIdx !== lyricIndex) {
-                lyricIndex = activeIdx;
-                highlightActiveLyricLine(lyricIndex);
-            }
-            
-            // Lógica Word-for-Word para el barrido progresivo continuo (Smooth Fill) [1.1]
-            if (lyricIndex !== -1) {
-                const lineData = currentLyrics[lyricIndex];
-                if (lineData && lineData.words) {
-                    const lineEl = document.getElementById(`lyric-line-${lyricIndex}`);
-                    if (lineEl) {
-                        const wordEls = lineEl.querySelectorAll('.lyric-word');
-                        lineData.words.forEach((word, wIdx) => {
-                            const wordEl = wordEls[wIdx];
-                            if (wordEl) {
-                                if (curTime < word.begin) {
-                                    // Palabra aún no alcanzada
-                                    wordEl.style.backgroundImage = 'linear-gradient(to right, rgb(255, 255, 255) 0%, rgba(255, 255, 255, 0.25) 0%)';
-                                    wordEl.classList.remove('highlighted');
-                                } else if (curTime >= word.begin && curTime <= word.end) {
-                                    // Barrido progresivo de la palabra en reproducción activa [1.1]
-                                    const wordDuration = word.end - word.begin;
-                                    const elapsed = curTime - word.begin;
-                                    const pct = wordDuration > 0 ? (elapsed / wordDuration) * 100 : 100;
-                                    wordEl.style.backgroundImage = `linear-gradient(to right, rgb(255, 255, 255) ${pct}%, rgba(255, 255, 255, 0.25) ${pct}%)`;
-                                    wordEl.classList.add('highlighted');
-                                } else {
-                                    // Palabra totalmente reproducida
-                                    wordEl.style.backgroundImage = 'linear-gradient(to right, rgb(255, 255, 255) 100%, rgba(255, 255, 255, 0.25) 100%)';
-                                    wordEl.classList.add('highlighted');
-                                }
-                            }
-                        });
-                    }
-                }
-                
-                // Limpieza y resincronización en saltos de tiempo (Rewind / Fast Forward)
-                currentLyrics.forEach((line, lIdx) => {
-                    if (lIdx !== lyricIndex) {
-                        const lineEl = document.getElementById(`lyric-line-${lIdx}`);
-                        if (lineEl) {
-                            const wordEls = lineEl.querySelectorAll('.lyric-word');
-                            wordEls.forEach(wordEl => {
-                                if (lIdx < lyricIndex) {
-                                    wordEl.style.backgroundImage = 'linear-gradient(to right, rgb(255, 255, 255) 100%, rgba(255, 255, 255, 0.25) 100%)';
-                                    wordEl.classList.add('highlighted');
-                                } else {
-                                    wordEl.style.backgroundImage = 'linear-gradient(to right, rgb(255, 255, 255) 0%, rgba(255, 255, 255, 0.25) 0%)';
-                                    wordEl.classList.remove('highlighted');
-                                }
-                            });
-                        }
-                    }
-                });
-            } else {
-                // Si la canción está fuera de tiempos o pausada al inicio
-                document.querySelectorAll('.lyric-word').forEach(wordEl => {
-                    wordEl.style.backgroundImage = 'linear-gradient(to right, rgb(255, 255, 255) 0%, rgba(255, 255, 255, 0.25) 0%)';
-                    wordEl.classList.remove('highlighted');
-                });
-            }
-        }
-
-        function highlightActiveLyricLine(idx) {
-            document.querySelectorAll('.lyric-line').forEach(el => el.classList.remove('active'));
-            
-            const activeEl = document.getElementById(`lyric-line-${idx}`);
-            if (activeEl) {
-                activeEl.classList.add('active');
-                
-                // Centrar automáticamente la línea activa con efecto de arrastre suave de Apple Music
-                const panel = document.getElementById('lyrics-panel');
-                const offsetTop = activeEl.offsetTop;
-                const panelHeight = panel.clientHeight;
-                const lineHeight = activeEl.clientHeight;
-                
-                panel.scrollTo({
-                    top: offsetTop - (panelHeight / 2) + (lineHeight / 2),
-                    behavior: 'smooth'
-                });
-            }
-        }
-
-        function setLyricsMode(active) {
-            isLyricsMode = active;
-            const npFs = document.getElementById('np-fs');
-            const fsBtn = document.getElementById('fs-lyrics-btn');
-            const pillBtn = document.getElementById('pill-lyrics-btn');
-            
-            if (isLyricsMode) {
-                npFs.classList.add('lyrics-mode');
-                if (fsBtn) fsBtn.classList.add('active');
-                if (pillBtn) {
-                    pillBtn.style.color = "var(--accent-1)";
-                    pillBtn.style.filter = "drop-shadow(0 0 5px var(--accent-glow))";
-                }
-                
-                const song = cancionesData[currentPlayingIndex];
-                if (song.lyricsUrl) {
-                    loadLyrics(song.lyricsUrl);
-                } else {
-                    currentLyrics = [];
-                    renderLyricsUI();
-                }
-            } else {
-                npFs.classList.remove('lyrics-mode');
-                if (fsBtn) fsBtn.classList.remove('active');
-                if (pillBtn) {
-                    pillBtn.style.color = "";
-                    pillBtn.style.filter = "";
-                }
-            }
-        }
-
-        function toggleLyrics() {
-            haptic();
-            setLyricsMode(!isLyricsMode);
-        }
-
-        function toggleLyricsFromPill(e) {
-            e.stopPropagation(); 
-            haptic();
-            if (!isNPOpen) {
-                toggleNP();
-            }
-            setLyricsMode(true);
-        }
 
         /* ==================================================================
            UI RENDERING & NAVIGATION
@@ -1653,6 +1233,20 @@
             });
         }
 
+        // Control de bografía colapsable (MÁS / MENOS)
+        function toggleAlbumDescription(desc, elementId) {
+            haptic();
+            const descEl = document.getElementById(elementId);
+            if (!descEl) return;
+            if (descEl.classList.contains('expanded')) {
+                descEl.classList.remove('expanded');
+                descEl.innerHTML = `"${desc.substring(0, 100)}..." <span class="am-more-link" onclick="event.stopPropagation(); toggleAlbumDescription('${desc.replace(/'/g, "\\'")}', '${elementId}')">MÁS</span>`;
+            } else {
+                descEl.classList.add('expanded');
+                descEl.innerHTML = `"${desc}" <span class="am-more-link" onclick="event.stopPropagation(); toggleAlbumDescription('${desc.replace(/'/g, "\\'")}', '${elementId}')">MENOS</span>`;
+            }
+        }
+
         function openAlbumDetail(albumId) {
             const album = albumsData.find(a => a.id === albumId); if(!album) return;
             
@@ -1697,7 +1291,7 @@
                 if(currentPlayingIndex === realIndex) row.classList.add('active');
                 row.onclick = () => playSong(realIndex);
 
-                // Estrella de popularidad real de cada álbum
+                // Estrella de popularidad real de cada álbum (no-random)
                 const isPopular = popularSongs.has(song.title);
                 const starClass = isPopular ? 'ph-fill ph-star active' : 'ph ph-star';
                 const starStyle = isPopular ? 'color: rgba(255,255,255,0.6);' : 'opacity: 0; pointer-events: none;';
@@ -1845,38 +1439,6 @@
                 document.documentElement.style.setProperty('--bg-deep', `rgb(${primaryColor.r}, ${primaryColor.g}, ${primaryColor.b})`);
                 applyAccentFromPalette(song.palette);
             }
-
-            // Evitar que la pantalla de la app quede completamente negra para los sencillos [1.1]
-            const ambientBg = document.getElementById('ambient-bg');
-            if (!song.album) { 
-                if (song.bgImage) {
-                    ambientBg.style.backgroundImage = `url('${song.bgImage}')`;
-                    ambientBg.style.backgroundSize = 'cover';
-                    ambientBg.style.backgroundPosition = 'center';
-                } else if (song.palette && song.palette.length > 0) {
-                    const primaryColor = song.palette[0], secondaryColor = song.palette[2] || song.palette[1];
-                    ambientBg.style.backgroundImage = `linear-gradient(135deg, rgb(${primaryColor.r}, ${primaryColor.g}, ${primaryColor.b}) 0%, rgb(${secondaryColor.r}, ${secondaryColor.g}, ${secondaryColor.b}) 100%)`;
-                }
-            } else {
-                // Si la canción pertenece a un álbum, el fondo dinámico se manejará al abrir el detalle de dicho álbum
-                ambientBg.style.backgroundImage = '';
-            }
-
-            // Manejo de letras al cambiar de track [1.1]
-            if (isLyricsMode) {
-                if (song.lyricsUrl) {
-                    loadLyrics(song.lyricsUrl);
-                } else {
-                    currentLyrics = [];
-                    renderLyricsUI();
-                }
-            } else {
-                if (song.lyricsUrl) {
-                    loadLyrics(song.lyricsUrl);
-                } else {
-                    currentLyrics = [];
-                }
-            }
         }
 
         function togglePlay() {
@@ -1946,9 +1508,6 @@
                 document.getElementById('time-curr-desk').innerText = fmt(cur);
                 document.getElementById('time-tot-desk').innerText = "-" + fmt(dur-cur);
                 checkAutoMix();
-                
-                // Actualización sincronizada paso a paso de las letras [1.1]
-                updateLyricsSync();
             }
             requestAnimationFrame(renderLoop);
         }
@@ -1959,8 +1518,6 @@
         function setupGestures() {
             let sY=0, cY=0; const np = document.getElementById('np-fs'), app = document.getElementById('app-wrapper');
             np.addEventListener('touchstart', e => {
-                // Evitar colisión de arrastre al deslizarse por la letra
-                if (e.target.closest('#lyrics-panel')) return;
                 if(np.scrollTop > 0) return; 
                 sY = e.touches[0].clientY; np.style.transition = 'none'; app.style.transition = 'none';
             }, {passive:true});
@@ -2001,7 +1558,6 @@
             setupGestures();
             document.getElementById('vol-fill-desk').style.width = `${globalVolume*100}%`;
             
-            // Cargar de forma predeterminada el tema "222" de Yan Block
             triggerUIForSong(0);
         }
 
