@@ -504,7 +504,7 @@
         }
 
         /* ==================================================================
-           APPLE MUSIC WORD FOR WORD LYRICS STYLES
+           APPLE MUSIC WORD FOR WORD LYRICS STYLES (RELLENO SMOOTH)
            ================================================================== */
         .btn-lyrics-toggle {
             position: absolute; top: 48px; right: 120px; width: 52px; height: 52px;
@@ -580,44 +580,48 @@
             padding-bottom: 300px; /* enables scrolling last line to center */
         }
 
-        /* Individual line style with blur and opacity filter */
+        /* Oración lírica con desenfoque de fondo Apple Music */
         .lyric-line {
             font-size: clamp(24px, 2.5vw, 36px);
             font-weight: 800;
             line-height: 1.4;
-            color: rgba(255, 255, 255, 0.2);
-            transition: color 0.3s ease, transform 0.4s var(--ease-snappy), filter 0.3s ease;
+            transition: transform 0.4s var(--ease-snappy), filter 0.3s ease;
             cursor: pointer;
             text-align: left;
             transform-origin: left center;
-            filter: blur(1.5px);
             user-select: none;
             display: flex;
             flex-wrap: wrap;
         }
 
-        .lyric-line:hover {
-            color: rgba(255, 255, 255, 0.5);
+        .lyric-line.active {
+            transform: scale(1.04);
+            filter: blur(0);
+        }
+
+        /* 
+          RELLENO PROGRESIVO INDIVIDUAL (SMOOTH SWEEP) [1.1]
+          Usa un gradiente recortado al texto controlado vía variable CSS (--progress) 
+        */
+        .lyric-word {
+            display: inline-block;
+            background: linear-gradient(to right, #ffffff var(--progress, 0%), rgba(255, 255, 255, 0.25) var(--progress, 0%));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent;
+            margin-right: 12px;
+            filter: blur(1px);
+            transition: filter 0.4s ease;
+        }
+
+        .lyric-line.active .lyric-word {
             filter: blur(0px);
         }
 
-        .lyric-line.active {
-            color: rgba(255, 255, 255, 0.35); /* Base fallback if no spans */
-            transform: scale(1.04);
-            filter: blur(0);
-            text-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
-        }
-
-        /* Word-by-word highlighted style */
-        .lyric-word {
-            display: inline-block;
-            color: rgba(255, 255, 255, 0.25);
-            transition: color 0.15s ease, text-shadow 0.15s ease;
-            margin-right: 10px;
-        }
+        /* Reflejo brillante y fluido de las palabras activas utilizando drop-shadow nativo */
         .lyric-line.active .lyric-word.highlighted {
-            color: #fff;
-            text-shadow: 0 0 20px var(--accent-glow);
+            filter: drop-shadow(0 0 10px var(--accent-glow)) blur(0px);
         }
 
         /* Apple Music Glowing & Moving Ambient Background blobs */
@@ -1128,93 +1132,6 @@
         // Paleta y canción única de Anuel AA como primer Sencillo
         const lasMasBonitasPalette2 = [{ r: 0, g: 41, b: 87 },{ r: 0, g: 53, b: 101 },{ r: 2, g: 38, b: 67 },{ r: 0, g: 61, b: 121 },{ r: 1, g: 21, b: 37 }];
 
-        // Base de datos de canciones de los álbumes
-        const nadieSabeTracksRaw = [
-            ["NADIE SABE", "https://files.catbox.moe/81i5i9.mp3"],
-            ["MONACO", "https://files.catbox.moe/i3k4mg.mp3"],
-            ["FINA", "https://files.catbox.moe/t0kzte.mp3", "Bad Bunny & Young Miko"],
-            ["HIBIKI", "https://files.catbox.moe/ifxel2.mp3", "Bad Bunny & Mora"],
-            ["MR. OCTOBER", "https://files.catbox.moe/l8pkvo.mp3"],
-            ["CYBERTRUCK", "https://files.catbox.moe/lmyd81.mp3"],
-            ["VOU 787", "https://files.catbox.moe/j0ifz6.mp3"],
-            ["SEDA", "https://files.catbox.moe/h9em77.mp3", "Bad Bunny & Bryant Myers"],
-            ["GRACIAS POR NADA", "https://files.catbox.moe/0afdmi.mp3"],
-            ["TELÉFONO NUEVO", "https://files.catbox.moe/ocv1jn.mp3", "Bad Bunny & Luar La L"],
-            ["BABY NUEVA", "https://files.catbox.moe/c494lg.mp3"],
-            ["MERCEDES CAROTA", "https://files.catbox.moe/kbi3ng.mp3", "Bad Bunny & YovngChimi"],
-            ["LOS PITS", "https://files.catbox.moe/5hi9zw.mp3"],
-            ["VUELVE CANDY B", "https://files.catbox.moe/c7c2tw.mp3"],
-            ["BATICANO", "https://files.catbox.moe/0ioak8.mp3"],
-            ["NO ME QUIERO CASAR", "https://files.catbox.moe/z0pt1j.mp3"],
-            ["WHERE SHE GOES", "https://files.catbox.moe/lr48kr.mp3"],
-            ["THUNDER Y LIGHTNING", "https://files.catbox.moe/lakqe7.mp3", "Bad Bunny & Eladio Carrión"],
-            ["PERRO NEGRO", "https://files.catbox.moe/9zbzhl.mp3", "Bad Bunny & Feid"],
-            ["EUROPA :(", "https://files.catbox.moe/0w8v89.mp3"],
-            ["ACHO PR", "https://files.catbox.moe/nxz1nf.mp3", "Bad Bunny, Arcángel, De La Ghetto & Ñengo Flow"],
-            ["UN PREVIEW", "https://files.catbox.moe/ccfzeb.mp3"]
-        ];
-
-        const roaTracksRaw = [
-            ["Freelance", "https://43rdwl1h89.ucarecd.net/44b3c18e-6950-4083-8f54-c7a31c1233a7/Freelance_spotdownorg.mp3"],
-            ["UuU", "https://43rdwl1h89.ucarecd.net/db1e054e-6a16-41b5-801e-cf0db8d09a40/UuU_spotdownorg.mp3", "ROA & Hades66"],
-            ["JETSKI", "https://43rdwl1h89.ucarecd.net/27529a31-a2fd-45a4-8198-4837e2a468cd/JETSKI_spotdownorg.mp3"],
-            ["11:11 (interlude)", "https://43rdwl1h89.ucarecd.net/8d268a23-9116-414a-87ed-57e378143bcb/11_11Interlude_spotdownorg.mp3"],
-            ["Bellakeame", "https://43rdwl1h89.ucarecd.net/d0d19a4c-9670-48fc-add5-55ffbdc30a53/Bellakeame_spotdownorg.mp3"],
-            ["Noche Pasajera", "https://43rdwl1h89.ucarecd.net/14c842db-a936-4605-9947-af6866b31346/NochePasajera_spotdownorg.mp3"],
-            ["LA CURA… coming soon (Outro)", "https://43rdwl1h89.ucarecd.net/b9aed547-543e-40f3-994f-2b61e87b3534/LACURAcomingsoonOutro_spotdownorg.mp3"],
-            ["La Cura", "https://43rdwl1h89.ucarecd.net/4fc37b60-e202-4ea6-ad68-46714eb54363/LaCura_spotdownorg.mp3"],
-            ["Y Si Te Llamo", "https://43rdwl1h89.ucarecd.net/ef74b9aa-c329-4a47-8f0e-2f6a5bcd45f6/YSiTeLlamo_spotdownorg.mp3"],
-            ["NOCHE PASAJERA II", "https://43rdwl1h89.ucarecd.net/36b8f21a-ba5e-4174-a1ee-afc5ccbdde9b/NOCHEPASAJERAII_spotdownorg.mp3", "ROA & Jay Wheeler"],
-            ["JETSKI - Remix", "https://43rdwl1h89.ucarecd.net/0a5c7e1a-f062-4ef8-b99c-dd1034da60f4/JETSKIRemix_spotdownorg1.mp3", "ROA, Omar Courtz, Dei V & Bryant Myers"],
-            ["11:12 (Interlude)", "https://43rdwl1h89.ucarecd.net/749dffe2-6e64-4f99-b596-b2496d4096c6/11_12Interlude_spotdownorg.mp3", "ROA & De La Rose"],
-            ["UuU 2", "https://43rdwl1h89.ucarecd.net/a99ac52d-d2e7-4214-9a7f-ecdc1b585473/UuU2_spotdownorg.mp3", "ROA, Hades66 & Luar La L"],
-            ["FREELANCE 2.0", "https://43rdwl1h89.ucarecd.net/566b4669-7d4e-4f92-9b54-37eb40614929/FREELANCE20_spotdownorg.mp3", "ROA, CDobleta, Amarion, Ankhal & Anubiis"],
-            ["Eclipse... Coming Soon (Outro)", "https://43rdwl1h89.ucarecd.net/fd3612f0-8d53-4b85-ae50-bd883b398bfe/EclipseComingSoonOutro_spotdownorg.mp3"],
-            ["ETA", "https://43rdwl1h89.ucarecd.net/05ffac1c-63ec-4d3d-9ac8-4d321aeb28a7/ETA_spotdownorg.mp3"],
-            ["ECLIPSE", "https://43rdwl1h89.ucarecd.net/25a0018f-504a-49b3-8358-c38c62a548f4/ECLIPSE_spotdownorg.mp3", "ROA, J Abdiel & Slayter"],
-            ["777", "https://43rdwl1h89.ucarecd.net/ba795269-fdb2-4938-90d4-6cca60aa7f14/777_spotdownorg.mp3"],
-            ["PETITE", "https://43rdwl1h89.ucarecd.net/202d26f3-9b1f-4f65-8152-449ce316eb09/PETITE_spotdownorg.mp3"],
-            ["MI DEMONIA... COMING SOON", "https://43rdwl1h89.ucarecd.net/37ae36d1-88ab-49f5-bb25-4736708577e7/MIDEMONIACOMINGSOON_spotdownorg.mp3"],
-            ["TATE QUIETA", "https://43rdwl1h89.ucarecd.net/84536705-8c96-4863-b707-56a85b7ef643/TATEQUIETA_spotdownorg.mp3", "ROA & CDobleta"],
-            ["NEVER 2 LATE", "https://43rdwl1h89.ucarecd.net/be314035-f7e8-4396-add3-07e6c8e06417/NEVER2LATE_spotdownorg.mp3", "ROA & Yan Block"],
-            ["ME GUSTAS CC", "https://43rdwl1h89.ucarecd.net/f97cd115-aa0b-4827-be03-ec4540f7be35/MEGUSTASCC_spotdownorg.mp3"],
-            ["ETA - Remix", "https://43rdwl1h89.ucarecd.net/ef2651fb-d382-411f-8557-d96c053e1a2d/ETARMX_spotdownorg.mp3", "ROA, De La Rose, Omar Courtz, Yan Block & Luar La L"],
-            ["QUÉ TE PASA ?", "https://43rdwl1h89.ucarecd.net/ac319d64-229c-41c6-af4e-c79da4ec9fa7/QUETEPASA__spotdownorg.mp3"],
-            ["EENIMINIMAINIMOE", "https://43rdwl1h89.ucarecd.net/741bed09-b436-44d5-ac9a-228ff0b32f6c/EENIMINIMAINIMOE_spotdownorg.mp3"],
-            ["J's INTERLUDE", "https://43rdwl1h89.ucarecd.net/a1df7ad6-d0a2-4bd1-9d84-06a64eccaded/JsINTERLUDE_spotdownorg.mp3"],
-            ["MI DEMONIA", "https://43rdwl1h89.ucarecd.net/956f8423-913e-4239-a26c-a927a2857167/MIDEMONIA_spotdownorg.mp3"],
-            ["LA FAVORITA DE DIOS", "https://43rdwl1h89.ucarecd.net/b6362bd6-cb26-4dab-8f48-9567da17e5dc/LAFAVORITADEDIOS_spotdownorg.mp3", "ROA & Dei V"],
-            ["11:11", "https://43rdwl1h89.ucarecd.net/e17efb10-5860-4bb3-b50d-2796d25679cc/11_11_spotdownorg.mp3"],
-            ["ARE YOU FEELING ME ? (OUTRO)", "https://43rdwl1h89.ucarecd.net/488ece66-43a9-45da-b67e-20a9a68e4734/AREYOUFEELINGME_OUTRO_spotdownorg.mp3"],
-            ["BABY HOY", "https://43rdwl1h89.ucarecd.net/735e39b9-1907-4600-8619-8e3034695ae1/BABYHOY_spotdownorg.mp3"],
-            ["MI PEOR ERROR", "https://43rdwl1h89.ucarecd.net/20c9633c-95e1-48f7-82be-006ee84fbc7a/MIPEORERROR_spotdownorg.mp3", "ROA & Botlok"],
-            ["EL MALO... Coming soon", "https://43rdwl1h89.ucarecd.net/85290498-b4a1-461b-8f87-067e0eb353cd/ELMALOComingsoon_spotdownorg.mp3"],
-            ["TÚ Y YO", "https://43rdwl1h89.ucarecd.net/8ce4aec7-f400-4bd4-9060-ba8a6ecf231b/TUYYO_spotdownorg.mp3"],
-            ["MI CHIMBITA", "https://43rdwl1h89.ucarecd.net/9d5655b0-6576-49f3-9b6f-f3c91e3f753d/MICHIMBITA_spotdownorg.mp3", "ROA, Kris R, Hades66, GeezyDee & TopBoy TGR"],
-            ["TATE QUIETA - Remix", "https://43rdwl1h89.ucarecd.net/5650fe3c-bb05-4cc5-848e-258118a4eb65/TATEQUIETARMX_spotdownorg.mp3", "ROA, CDobleta, Midnvght, Tutu, Luar La L & Almighty"]
-        ];
-
-        const moonlightTracksRaw = [
-            ["OUTRO", "https://files.catbox.moe/4eqs0r.mp3", "Omar Courtz"],
-            ["EL MUNDO SE VA A ACABAR", "https://files.catbox.moe/ioux89.mp3", "Omar Courtz & KARBeats"],
-            ["FOREVER TU GANTEL", "https://files.catbox.moe/cievb6.mp3", "Omar Courtz & Ñengo Flow"],
-            ["L a k e n o s h i", "https://files.catbox.moe/9qorg7.mp3", "Omar Courtz"],
-            ["VAMOaCOCHI", "https://files.catbox.moe/wns3m6.mp3", "Omar Courtz"],
-            ["SUSU", "https://files.catbox.moe/kdv57b.mp3", "Omar Courtz"],
-            ["SIRENA", "https://files.catbox.moe/msloqo.mp3", "Omar Courtz"],
-            ["GANTEL y BELLAKz", "https://files.catbox.moe/eeqvne.mp3", "Omar Courtz & Bassyy"],
-            ["SI ESTÁS CON ALGUIEN", "https://files.catbox.moe/v21n97.mp3", "Omar Courtz"],
-            ["Dulces SueñoZzz (+INTERLUDIO)", "https://files.catbox.moe/cktziy.mp3", "Omar Courtz & Rubí"],
-            ["$UELTA GATITA $UELTA", "https://files.catbox.moe/0qxd21.mp3", "Omar Courtz, Dei V, Clarent & Tito El Bambino"],
-            ["WHAT U NEED? (SexPlaylist 2)", "https://files.catbox.moe/qncan5.mp3", "Omar Courtz & Myke Towers"],
-            ["WO OH OH", "https://files.catbox.moe/xx2wn3.mp3", "Omar Courtz & ROA"],
-            ["KOKO", "https://files.catbox.moe/n733ws.mp3", "Omar Courtz"],
-            ["COMERNOS", "https://files.catbox.moe/u9f6nl.mp3", "Omar Courtz & Bad Gyal"],
-            ["SKY", "https://files.catbox.moe/4868ct.mp3", "Omar Courtz"],
-            ["MOONLIGHT", "https://files.catbox.moe/hlrw1i.mp3", "Omar Courtz & Eladio Carrión"],
-            ["POR SI MAÑANA NO ESTOY", "https://files.catbox.moe/f67tpy.mp3", "Omar Courtz"]
-        ];
-
         // Base de datos principal de canciones (Incluye el nuevo Sencillo "222" de Yan Block con letras TTML)
         const cancionesData = [
             { 
@@ -1225,7 +1142,6 @@
                 album: "", 
                 trackNum: 1, 
                 coverLoaded: true, 
-                // Conversión hexadecimal a RGB solicitada por el usuario
                 palette: [
                     { r: 7, g: 6, b: 7 },     // #070607
                     { r: 27, g: 31, b: 30 },   // #1b1f1e
@@ -1369,6 +1285,17 @@
             }
         }
 
+        // Genera duraciones deterministas para dotar de realismo a la lista de canciones
+        function getDeterministicDuration(title) {
+            let hash = 0;
+            for (let i = 0; i < title.length; i++) {
+                hash = title.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            const min = 2 + Math.abs(hash % 3); 
+            const sec = Math.abs(hash % 60).toString().padStart(2, '0');
+            return `${min}:${sec}`;
+        }
+
         /* ==================================================================
            BACKGROUND ANALYSIS & AUTOMIX
            ================================================================== */
@@ -1503,6 +1430,7 @@
                     line.words.forEach((word, wIdx) => {
                         const wordSpan = document.createElement('span');
                         wordSpan.className = 'lyric-word';
+                        wordSpan.style.setProperty('--progress', '0%');
                         wordSpan.innerText = word.text;
                         lineEl.appendChild(wordSpan);
                     });
@@ -1523,6 +1451,10 @@
             activeAudio.currentTime = seconds;
         }
 
+        /* 
+           Sincronización progresiva de letras (Smooth Sweep Karaoke) [1.1]
+           Monitorea continuamente la reproducción y pinta gradualmente las letras en cada frame.
+        */
         function updateLyricsSync() {
             if (!currentLyrics.length || !isNPOpen || !isLyricsMode) return;
             
@@ -1549,7 +1481,7 @@
                 highlightActiveLyricLine(lyricIndex);
             }
             
-            // Lógica Word-for-Word para la línea activa
+            // Lógica Word-for-Word para el barrido progresivo continuo (Smooth Fill) [1.1]
             if (lyricIndex !== -1) {
                 const lineData = currentLyrics[lyricIndex];
                 if (lineData && lineData.words) {
@@ -1559,15 +1491,51 @@
                         lineData.words.forEach((word, wIdx) => {
                             const wordEl = wordEls[wIdx];
                             if (wordEl) {
-                                if (curTime >= word.begin) {
+                                if (curTime < word.begin) {
+                                    // Palabra aún no alcanzada
+                                    wordEl.style.setProperty('--progress', '0%');
+                                    wordEl.classList.remove('highlighted');
+                                } else if (curTime >= word.begin && curTime <= word.end) {
+                                    // Barrido progresivo de la palabra en reproducción activa
+                                    const wordDuration = word.end - word.begin;
+                                    const elapsed = curTime - word.begin;
+                                    const pct = wordDuration > 0 ? (elapsed / wordDuration) * 100 : 100;
+                                    wordEl.style.setProperty('--progress', `${pct}%`);
                                     wordEl.classList.add('highlighted');
                                 } else {
-                                    wordEl.classList.remove('highlighted');
+                                    // Palabra totalmente reproducida
+                                    wordEl.style.setProperty('--progress', '100%');
+                                    wordEl.classList.add('highlighted');
                                 }
                             }
                         });
                     }
                 }
+                
+                // Limpieza y resincronización en saltos de tiempo (Rewind / Fast Forward)
+                currentLyrics.forEach((line, lIdx) => {
+                    if (lIdx !== lyricIndex) {
+                        const lineEl = document.getElementById(`lyric-line-${lIdx}`);
+                        if (lineEl) {
+                            const wordEls = lineEl.querySelectorAll('.lyric-word');
+                            wordEls.forEach(wordEl => {
+                                if (lIdx < lyricIndex) {
+                                    wordEl.style.setProperty('--progress', '100%');
+                                    wordEl.classList.add('highlighted');
+                                } else {
+                                    wordEl.style.setProperty('--progress', '0%');
+                                    wordEl.classList.remove('highlighted');
+                                }
+                            });
+                        }
+                    }
+                });
+            } else {
+                // Si la canción está fuera de tiempos o pausada al inicio
+                document.querySelectorAll('.lyric-word').forEach(wordEl => {
+                    wordEl.style.setProperty('--progress', '0%');
+                    wordEl.classList.remove('highlighted');
+                });
             }
         }
 
