@@ -504,6 +504,179 @@
         }
 
         /* ==================================================================
+           APPLE MUSIC WORD FOR WORD LYRICS STYLES
+           ================================================================== */
+        .btn-lyrics-toggle {
+            position: absolute; top: 48px; right: 120px; width: 52px; height: 52px;
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); cursor: pointer; z-index: 10;
+            display: flex; align-items: center; justify-content: center; font-size: 24px; 
+            color: rgba(255,255,255,0.5); border-radius: 50%; transition: all 0.3s var(--ease-snappy); outline: none;
+        }
+        .btn-lyrics-toggle:hover { color: #fff; background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.2); transform: scale(1.08); }
+        .btn-lyrics-toggle.active {
+            background: var(--accent-1);
+            color: #fff;
+            border-color: var(--accent-1);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .np-content-layout {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 80px;
+            transition: all 0.8s var(--ease-cinematic);
+            z-index: 10;
+            position: relative;
+        }
+
+        /* Lyrics Mode Fullscreen Transitions */
+        #np-fs.lyrics-mode .np-content-layout {
+            justify-content: space-between;
+            gap: 60px;
+            align-items: center;
+        }
+
+        #np-fs.lyrics-mode .np-minimal-container {
+            flex-direction: column;
+            align-items: flex-start;
+            text-align: left;
+            width: 40%;
+            gap: 32px;
+        }
+
+        #np-fs.lyrics-mode .np-art-wrap {
+            width: 320px;
+            height: 320px;
+            border-radius: 20px;
+        }
+
+        .np-lyrics-panel {
+            display: none;
+            width: 55%;
+            height: 70vh;
+            overflow-y: scroll;
+            mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
+            position: relative;
+            padding: 120px 0;
+            scroll-behavior: smooth;
+        }
+        .np-lyrics-panel::-webkit-scrollbar {
+            display: none;
+        }
+
+        #np-fs.lyrics-mode .np-lyrics-panel {
+            display: block;
+            animation: fadeIn 0.6s ease forwards;
+        }
+
+        .lyrics-scroller {
+            display: flex;
+            flex-direction: column;
+            gap: 36px;
+            padding-bottom: 300px; /* enables scrolling last line to center */
+        }
+
+        /* Individual line style with blur and opacity filter */
+        .lyric-line {
+            font-size: clamp(24px, 2.5vw, 36px);
+            font-weight: 800;
+            line-height: 1.4;
+            color: rgba(255, 255, 255, 0.2);
+            transition: color 0.3s ease, transform 0.4s var(--ease-snappy), filter 0.3s ease;
+            cursor: pointer;
+            text-align: left;
+            transform-origin: left center;
+            filter: blur(1.5px);
+            user-select: none;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .lyric-line:hover {
+            color: rgba(255, 255, 255, 0.5);
+            filter: blur(0px);
+        }
+
+        .lyric-line.active {
+            color: rgba(255, 255, 255, 0.35); /* Base fallback if no spans */
+            transform: scale(1.04);
+            filter: blur(0);
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
+        }
+
+        /* Word-by-word highlighted style */
+        .lyric-word {
+            display: inline-block;
+            color: rgba(255, 255, 255, 0.25);
+            transition: color 0.15s ease, text-shadow 0.15s ease;
+            margin-right: 10px;
+        }
+        .lyric-line.active .lyric-word.highlighted {
+            color: #fff;
+            text-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        /* Apple Music Glowing & Moving Ambient Background blobs */
+        .lyrics-blur-backplate {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            overflow: hidden;
+            filter: blur(120px) saturate(220%);
+            opacity: 0;
+            transition: opacity 1s ease;
+            pointer-events: none;
+        }
+        #np-fs.lyrics-mode .lyrics-blur-backplate {
+            opacity: 0.65;
+        }
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            mix-blend-mode: screen;
+            animation: floatBlob 25s infinite alternate ease-in-out;
+        }
+        .blob-1 {
+            width: 700px;
+            height: 700px;
+            background: var(--accent-1);
+            top: -200px;
+            left: -100px;
+            opacity: 0.45;
+        }
+        .blob-2 {
+            width: 600px;
+            height: 600px;
+            background: var(--accent-2);
+            bottom: -150px;
+            right: -100px;
+            opacity: 0.4;
+            animation-delay: -6s;
+        }
+        .blob-3 {
+            width: 500px;
+            height: 500px;
+            background: #fff;
+            top: 40%;
+            left: 30%;
+            opacity: 0.1;
+            animation-delay: -12s;
+        }
+        @keyframes floatBlob {
+            0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+            100% { transform: translate(120px, 90px) scale(1.15) rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(15px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ==================================================================
            PERSISTENT BOTTOM PLAYER
            ================================================================== */
         .player-wrapper { position: fixed; bottom: 32px; left: 0; width: 100%; display: flex; justify-content: center; z-index: 50; pointer-events: none; padding: 0 32px; }
@@ -539,10 +712,10 @@
         .scrubber-fill::after { content: ''; position: absolute; right: -8px; top: 50%; transform: translateY(-50%) scale(0); width: 16px; height: 16px; background: #fff; border-radius: 50%; transition: transform 0.3s var(--ease-snappy); box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
         .scrubber-bg:hover .scrubber-fill::after { transform: translateY(-50%) scale(1); }
 
-        .player-actions { display: flex; align-items: center; justify-content: flex-end; width: 30%; gap: 24px; color: var(--text-secondary); font-size: 22px; }
+        .player-actions { display: flex; align-items: center; justify-content: flex-end; width: 30%; gap: 18px; color: var(--text-secondary); font-size: 20px; }
         .player-actions i { cursor: pointer; transition: 0.3s; }
         .player-actions i:hover { color: #fff; transform: scale(1.1); }
-        .vol-slider { width: 100px; height: 6px; background: rgba(255,255,255,0.15); border-radius: 3px; cursor: pointer; transition: height 0.3s var(--ease-snappy); position: relative;}
+        .vol-slider { width: 90px; height: 6px; background: rgba(255,255,255,0.15); border-radius: 3px; cursor: pointer; transition: height 0.3s var(--ease-snappy); position: relative;}
         .vol-slider:hover { height: 10px; background: rgba(255,255,255,0.25); }
         .vol-fill { width: 75%; height: 100%; background: #fff; border-radius: 3px; box-shadow: 0 0 10px rgba(255,255,255,0.3);}
         .btn-fullscreen { width: 40px; height: 40px; border-radius: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.4s var(--ease-snappy); }
@@ -557,9 +730,9 @@
             overflow: hidden; 
             background: linear-gradient(135deg, #051319 0%, #021a24 100%); 
             font-family: var(--font-display);
-            align-items: flex-end;
-            justify-content: flex-start;
-            padding: 96px;
+            align-items: center;
+            justify-content: center;
+            padding: 60px;
         }
         #np-fs.active { transform: translateY(0); opacity: 1; visibility: visible; }
 
@@ -578,6 +751,7 @@
 
         .np-minimal-container {
             position: relative; z-index: 10; display: flex; align-items: center; gap: 40px;
+            transition: all 0.8s var(--ease-cinematic);
         }
 
         .np-art-wrap { 
@@ -590,7 +764,7 @@
         .np-art-wrap:hover { transform: scale(1.04); }
         .np-art { width: 100%; height: 100%; object-fit: cover; }
 
-        .np-metadata-wrap { display: flex; flex-direction: column; gap: 12px; }
+        .np-metadata-wrap { display: flex; flex-direction: column; gap: 12px; transition: all 0.8s var(--ease-cinematic); }
         .np-track-title { font-size: clamp(32px, 4vw, 56px); font-weight: 800; color: #fff; letter-spacing: -0.03em; line-height: 1.1; margin: 0; display: flex; align-items: center; }
         .np-track-artist { font-size: clamp(18px, 1.8vw, 24px); color: rgba(255,255,255,0.65); font-weight: 500; letter-spacing: -0.01em; margin: 0; }
 
@@ -669,6 +843,42 @@
             }
             .am-track-duration-col {
                 padding-right: 4px;
+            }
+
+            /* Responsive design lyrics mode */
+            #np-fs.lyrics-mode .np-content-layout {
+                flex-direction: column;
+                gap: 32px;
+                align-items: center;
+                height: 100%;
+                justify-content: flex-start;
+                padding-top: 40px;
+            }
+            #np-fs.lyrics-mode .np-minimal-container {
+                width: 100%;
+                align-items: center;
+                text-align: center;
+                gap: 16px;
+            }
+            #np-fs.lyrics-mode .np-art-wrap {
+                width: 140px;
+                height: 140px;
+            }
+            #np-fs.lyrics-mode .np-metadata-wrap {
+                display: none;
+            }
+            .np-lyrics-panel {
+                width: 100%;
+                height: 55vh;
+                padding: 40px 10px;
+            }
+            .lyric-line {
+                font-size: 22px;
+                text-align: center;
+                transform-origin: center center;
+            }
+            .btn-lyrics-toggle {
+                right: 24px;
             }
         }
     </style>
@@ -808,6 +1018,8 @@
             </div>
 
             <div class="player-actions">
+                <!-- AM Lyrics Button inside standard bar -->
+                <i class="ph-bold ph-chat-centered-text" id="pill-lyrics-btn" onclick="toggleLyricsFromPill(event)" title="Show synchronized lyrics"></i>
                 <i class="ph-fill ph-speaker-low"></i>
                 <div class="vol-slider" onclick="changeVolume(event, this)"><div class="vol-fill" id="vol-fill-desk"></div></div>
                 <div class="btn-fullscreen" onclick="toggleNP()"><i class="ph-bold ph-arrows-out-simple"></i></div>
@@ -815,21 +1027,35 @@
         </div>
     </div>
 
-    <!-- FULLSCREEN NOW PLAYING OVERLAY -->
+    <!-- FULLSCREEN NOW PLAYING OVERLAY (REDISEÑADA PARA INCORPORAR LETRAS WORD BY WORD) -->
     <div id="np-fs">
         <div class="np-bg-overlay"></div>
         <div class="np-grain"></div>
+        <div class="lyrics-blur-backplate">
+            <div class="blob blob-1"></div>
+            <div class="blob blob-2"></div>
+            <div class="blob blob-3"></div>
+        </div>
         
         <button class="btn-collapse" onclick="toggleNP()"><i class="ph ph-x"></i></button>
+        <button class="btn-lyrics-toggle" id="fs-lyrics-btn" onclick="toggleLyrics()"><i class="ph-bold ph-chat-centered-text"></i></button>
         <button class="btn-collapse-mob" onclick="toggleNP()"></button>
 
-        <div class="np-minimal-container">
-            <div class="np-art-wrap" onclick="togglePlay()">
-                <img src="" id="np-img-large" class="np-art" crossorigin="anonymous">
+        <div class="np-content-layout">
+            <div class="np-minimal-container">
+                <div class="np-art-wrap" onclick="togglePlay()">
+                    <img src="" id="np-img-large" class="np-art" crossorigin="anonymous">
+                </div>
+                <div class="np-metadata-wrap">
+                    <h2 class="np-track-title" id="np-title-large">Loading...</h2>
+                    <p class="np-track-artist" id="np-artist-large">Artist</p>
+                </div>
             </div>
-            <div class="np-metadata-wrap">
-                <h2 class="np-track-title" id="np-title-large">Loading...</h2>
-                <p class="np-track-artist" id="np-artist-large">Artist</p>
+            
+            <div id="lyrics-panel" class="np-lyrics-panel">
+                <div id="lyrics-scroller" class="lyrics-scroller">
+                    <!-- Lyric lines will be loaded dynamically here -->
+                </div>
             </div>
         </div>
     </div>
@@ -902,7 +1128,7 @@
         // Paleta y canción única de Anuel AA como primer Sencillo
         const lasMasBonitasPalette2 = [{ r: 0, g: 41, b: 87 },{ r: 0, g: 53, b: 101 },{ r: 2, g: 38, b: 67 },{ r: 0, g: 61, b: 121 },{ r: 1, g: 21, b: 37 }];
 
-        // Base de datos comprimida de canciones de los álbumes
+        // Base de datos de canciones de los álbumes
         const nadieSabeTracksRaw = [
             ["NADIE SABE", "https://files.catbox.moe/81i5i9.mp3"],
             ["MONACO", "https://files.catbox.moe/i3k4mg.mp3"],
@@ -989,15 +1215,37 @@
             ["POR SI MAÑANA NO ESTOY", "https://files.catbox.moe/f67tpy.mp3", "Omar Courtz"]
         ];
 
-        // Estructura de base de datos
+        // Base de datos principal de canciones (Incluye el nuevo Sencillo "222" de Yan Block con letras TTML)
         const cancionesData = [
+            { 
+                title: "222", 
+                artist: "Yan Block", 
+                url: "https://files.catbox.moe/lndr5r.mp3", 
+                cover: "https://files.catbox.moe/231x9h.jpg", 
+                album: "", 
+                trackNum: 1, 
+                coverLoaded: true, 
+                // Conversión hexadecimal a RGB solicitada por el usuario
+                palette: [
+                    { r: 7, g: 6, b: 7 },     // #070607
+                    { r: 27, g: 31, b: 30 },   // #1b1f1e
+                    { r: 193, g: 94, b: 32 },  // #c15e20
+                    { r: 220, g: 96, b: 2 },   // #dc6002
+                    { r: 9, g: 9, b: 22 },     // #090916
+                    { r: 94, g: 133, b: 130 }, // #5e8582
+                    { r: 24, g: 10, b: 9 },    // #180a09
+                    { r: 191, g: 103, b: 58 }  // #bf673a
+                ], 
+                bgImage: "https://files.catbox.moe/36yq5u.png",
+                lyricsUrl: "https://files.catbox.moe/3mj7ym.ttml" // TTML Lyrics track [1.1]
+            },
             { 
                 title: "Las mas bonitas son p#tas", 
                 artist: "Anuel AA", 
                 url: "https://files.catbox.moe/h3ov3e.mp3", 
                 cover: "https://files.catbox.moe/qd91kk.jpg", 
                 album: "", 
-                trackNum: 1, 
+                trackNum: 2, 
                 coverLoaded: true, 
                 palette: lasMasBonitasPalette2, 
                 bgImage: "https://files.catbox.moe/f755oj.png" 
@@ -1031,6 +1279,9 @@
         let currentPlayingIndex = 0;
         let isNPOpen = false;
         let favoriteAlbums = {};
+        let currentLyrics = []; // Array que alojará el TTML parsed [1.1]
+        let lyricIndex = -1;
+        let isLyricsMode = false;
 
         const audio1 = new Audio(); audio1.crossOrigin = "anonymous";
         const audio2 = new Audio(); audio2.crossOrigin = "anonymous";
@@ -1118,17 +1369,6 @@
             }
         }
 
-        // Genera duraciones deterministas para dotar de realismo a la lista de canciones
-        function getDeterministicDuration(title) {
-            let hash = 0;
-            for (let i = 0; i < title.length; i++) {
-                hash = title.charCodeAt(i) + ((hash << 5) - hash);
-            }
-            const min = 2 + Math.abs(hash % 3); 
-            const sec = Math.abs(hash % 60).toString().padStart(2, '0');
-            return `${min}:${sec}`;
-        }
-
         /* ==================================================================
            BACKGROUND ANALYSIS & AUTOMIX
            ================================================================== */
@@ -1168,6 +1408,233 @@
 
         function getBestNextTrack(currIdx) { return (currIdx + 1) % cancionesData.length; }
         function startAutoMix() { playSong(getBestNextTrack(currentPlayingIndex)); }
+
+        /* ==================================================================
+           LYRICS PARSING & SYNCHRONIZATION ENGINE (TTML FORMAT)
+           ================================================================== */
+        async function loadLyrics(ttmlUrl) {
+            try {
+                const response = await fetch(ttmlUrl);
+                const text = await response.text();
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(text, "text/xml");
+                
+                const parserError = xmlDoc.querySelector('parsererror');
+                if (parserError) {
+                    console.error("XML Parser error:", parserError.textContent);
+                }
+
+                const paragraphs = xmlDoc.getElementsByTagName("p");
+                let parsed = [];
+                for (let p of paragraphs) {
+                    const beginStr = p.getAttribute("begin");
+                    const endStr = p.getAttribute("end");
+                    const begin = parseTimeToSeconds(beginStr);
+                    const end = parseTimeToSeconds(endStr);
+                    
+                    // Buscar spans para sincronización "word by word"
+                    const spans = p.getElementsByTagName("span");
+                    let words = [];
+                    if (spans.length > 0) {
+                        for (let span of spans) {
+                            const sb = span.getAttribute("begin");
+                            const se = span.getAttribute("end");
+                            words.push({
+                                begin: sb ? parseTimeToSeconds(sb) : begin,
+                                end: se ? parseTimeToSeconds(se) : end,
+                                text: span.textContent.trim()
+                            });
+                        }
+                    }
+                    
+                    parsed.push({
+                        begin,
+                        end,
+                        text: p.textContent.replace(/\s+/g, " ").trim(),
+                        words: words.length > 0 ? words : null
+                    });
+                }
+                currentLyrics = parsed;
+                renderLyricsUI();
+            } catch (e) {
+                console.error("Error loading lyrics:", e);
+                document.getElementById('lyrics-scroller').innerHTML = `<div class="lyric-line" style="text-align:center; opacity:0.5; width: 100%;">Failed to load lyrics.</div>`;
+            }
+        }
+
+        function parseTimeToSeconds(timeStr) {
+            if (!timeStr) return 0;
+            timeStr = timeStr.trim();
+            if (timeStr.endsWith('s')) {
+                return parseFloat(timeStr.slice(0, -1));
+            }
+            const parts = timeStr.split(':');
+            if (parts.length === 3) {
+                const hrs = parseInt(parts[0], 10);
+                const mins = parseInt(parts[1], 10);
+                const secs = parseFloat(parts[2]);
+                return (hrs * 3600) + (mins * 60) + secs;
+            } else if (parts.length === 2) {
+                const mins = parseInt(parts[0], 10);
+                const secs = parseFloat(parts[1]);
+                return (mins * 60) + secs;
+            } else {
+                return parseFloat(timeStr) || 0;
+            }
+        }
+
+        function renderLyricsUI() {
+            const scroller = document.getElementById('lyrics-scroller');
+            scroller.innerHTML = '';
+            
+            if (!currentLyrics.length) {
+                scroller.innerHTML = `<div class="lyric-line" style="text-align:center; opacity:0.5; width: 100%;">Letra no disponible para esta canción.</div>`;
+                return;
+            }
+            
+            currentLyrics.forEach((line, idx) => {
+                const lineEl = document.createElement('div');
+                lineEl.className = 'lyric-line';
+                lineEl.id = `lyric-line-${idx}`;
+                lineEl.onclick = () => jumpToLyric(line.begin);
+                
+                if (line.words) {
+                    // Renderizado de palabras individuales para Word-by-Word
+                    line.words.forEach((word, wIdx) => {
+                        const wordSpan = document.createElement('span');
+                        wordSpan.className = 'lyric-word';
+                        wordSpan.innerText = word.text;
+                        lineEl.appendChild(wordSpan);
+                    });
+                } else {
+                    // Fallback para renderizado de oración completa
+                    lineEl.innerText = line.text;
+                }
+                
+                scroller.appendChild(lineEl);
+            });
+            
+            lyricIndex = -1; // Resetear índice de scroll
+        }
+
+        function jumpToLyric(seconds) {
+            haptic();
+            ensureAudioContext();
+            activeAudio.currentTime = seconds;
+        }
+
+        function updateLyricsSync() {
+            if (!currentLyrics.length || !isNPOpen || !isLyricsMode) return;
+            
+            const curTime = activeAudio.currentTime;
+            let activeIdx = -1;
+            
+            for (let i = 0; i < currentLyrics.length; i++) {
+                if (curTime >= currentLyrics[i].begin && curTime <= currentLyrics[i].end) {
+                    activeIdx = i;
+                    break;
+                }
+                // Manejar los tiempos de transición entre versos
+                if (i < currentLyrics.length - 1 && curTime >= currentLyrics[i].end && curTime < currentLyrics[i+1].begin) {
+                    activeIdx = i;
+                }
+            }
+            
+            if (curTime >= currentLyrics[currentLyrics.length - 1].end) {
+                activeIdx = currentLyrics.length - 1;
+            }
+            
+            if (activeIdx !== -1 && activeIdx !== lyricIndex) {
+                lyricIndex = activeIdx;
+                highlightActiveLyricLine(lyricIndex);
+            }
+            
+            // Lógica Word-for-Word para la línea activa
+            if (lyricIndex !== -1) {
+                const lineData = currentLyrics[lyricIndex];
+                if (lineData && lineData.words) {
+                    const lineEl = document.getElementById(`lyric-line-${lyricIndex}`);
+                    if (lineEl) {
+                        const wordEls = lineEl.querySelectorAll('.lyric-word');
+                        lineData.words.forEach((word, wIdx) => {
+                            const wordEl = wordEls[wIdx];
+                            if (wordEl) {
+                                if (curTime >= word.begin) {
+                                    wordEl.classList.add('highlighted');
+                                } else {
+                                    wordEl.classList.remove('highlighted');
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+        }
+
+        function highlightActiveLyricLine(idx) {
+            document.querySelectorAll('.lyric-line').forEach(el => el.classList.remove('active'));
+            
+            const activeEl = document.getElementById(`lyric-line-${idx}`);
+            if (activeEl) {
+                activeEl.classList.add('active');
+                
+                // Centrar automáticamente la línea activa con efecto de arrastre suave de Apple Music
+                const panel = document.getElementById('lyrics-panel');
+                const offsetTop = activeEl.offsetTop;
+                const panelHeight = panel.clientHeight;
+                const lineHeight = activeEl.clientHeight;
+                
+                panel.scrollTo({
+                    top: offsetTop - (panelHeight / 2) + (lineHeight / 2),
+                    behavior: 'smooth'
+                });
+            }
+        }
+
+        function setLyricsMode(active) {
+            isLyricsMode = active;
+            const npFs = document.getElementById('np-fs');
+            const fsBtn = document.getElementById('fs-lyrics-btn');
+            const pillBtn = document.getElementById('pill-lyrics-btn');
+            
+            if (isLyricsMode) {
+                npFs.classList.add('lyrics-mode');
+                if (fsBtn) fsBtn.classList.add('active');
+                if (pillBtn) {
+                    pillBtn.style.color = "var(--accent-1)";
+                    pillBtn.style.filter = "drop-shadow(0 0 5px var(--accent-glow))";
+                }
+                
+                const song = cancionesData[currentPlayingIndex];
+                if (song.lyricsUrl) {
+                    loadLyrics(song.lyricsUrl);
+                } else {
+                    currentLyrics = [];
+                    renderLyricsUI();
+                }
+            } else {
+                npFs.classList.remove('lyrics-mode');
+                if (fsBtn) fsBtn.classList.remove('active');
+                if (pillBtn) {
+                    pillBtn.style.color = "";
+                    pillBtn.style.filter = "";
+                }
+            }
+        }
+
+        function toggleLyrics() {
+            haptic();
+            setLyricsMode(!isLyricsMode);
+        }
+
+        function toggleLyricsFromPill(e) {
+            e.stopPropagation(); 
+            haptic();
+            if (!isNPOpen) {
+                toggleNP();
+            }
+            setLyricsMode(true);
+        }
 
         /* ==================================================================
            UI RENDERING & NAVIGATION
@@ -1233,20 +1700,6 @@
             });
         }
 
-        // Control de bografía colapsable (MÁS / MENOS)
-        function toggleAlbumDescription(desc, elementId) {
-            haptic();
-            const descEl = document.getElementById(elementId);
-            if (!descEl) return;
-            if (descEl.classList.contains('expanded')) {
-                descEl.classList.remove('expanded');
-                descEl.innerHTML = `"${desc.substring(0, 100)}..." <span class="am-more-link" onclick="event.stopPropagation(); toggleAlbumDescription('${desc.replace(/'/g, "\\'")}', '${elementId}')">MÁS</span>`;
-            } else {
-                descEl.classList.add('expanded');
-                descEl.innerHTML = `"${desc}" <span class="am-more-link" onclick="event.stopPropagation(); toggleAlbumDescription('${desc.replace(/'/g, "\\'")}', '${elementId}')">MENOS</span>`;
-            }
-        }
-
         function openAlbumDetail(albumId) {
             const album = albumsData.find(a => a.id === albumId); if(!album) return;
             
@@ -1291,7 +1744,7 @@
                 if(currentPlayingIndex === realIndex) row.classList.add('active');
                 row.onclick = () => playSong(realIndex);
 
-                // Estrella de popularidad real de cada álbum (no-random)
+                // Estrella de popularidad real de cada álbum
                 const isPopular = popularSongs.has(song.title);
                 const starClass = isPopular ? 'ph-fill ph-star active' : 'ph ph-star';
                 const starStyle = isPopular ? 'color: rgba(255,255,255,0.6);' : 'opacity: 0; pointer-events: none;';
@@ -1439,6 +1892,23 @@
                 document.documentElement.style.setProperty('--bg-deep', `rgb(${primaryColor.r}, ${primaryColor.g}, ${primaryColor.b})`);
                 applyAccentFromPalette(song.palette);
             }
+
+            // Manejo de actualización de letras cuando cambia de canción
+            if (isLyricsMode) {
+                if (song.lyricsUrl) {
+                    loadLyrics(song.lyricsUrl);
+                } else {
+                    currentLyrics = [];
+                    renderLyricsUI();
+                }
+            } else {
+                // Pre-cargar de forma silenciosa para que estén listas al abrir Now Playing
+                if (song.lyricsUrl) {
+                    loadLyrics(song.lyricsUrl);
+                } else {
+                    currentLyrics = [];
+                }
+            }
         }
 
         function togglePlay() {
@@ -1508,6 +1978,9 @@
                 document.getElementById('time-curr-desk').innerText = fmt(cur);
                 document.getElementById('time-tot-desk').innerText = "-" + fmt(dur-cur);
                 checkAutoMix();
+                
+                // Actualización sincronizada paso a paso de las letras [1.1]
+                updateLyricsSync();
             }
             requestAnimationFrame(renderLoop);
         }
@@ -1518,6 +1991,8 @@
         function setupGestures() {
             let sY=0, cY=0; const np = document.getElementById('np-fs'), app = document.getElementById('app-wrapper');
             np.addEventListener('touchstart', e => {
+                // Evitar colisión de arrastre al deslizarse por la letra
+                if (e.target.closest('#lyrics-panel')) return;
                 if(np.scrollTop > 0) return; 
                 sY = e.touches[0].clientY; np.style.transition = 'none'; app.style.transition = 'none';
             }, {passive:true});
@@ -1558,6 +2033,7 @@
             setupGestures();
             document.getElementById('vol-fill-desk').style.width = `${globalVolume*100}%`;
             
+            // Cargar de forma predeterminada el tema "222" de Yan Block
             triggerUIForSong(0);
         }
 
