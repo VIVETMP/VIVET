@@ -539,7 +539,7 @@
         .scrubber-fill::after { content: ''; position: absolute; right: -8px; top: 50%; transform: translateY(-50%) scale(0); width: 16px; height: 16px; background: #fff; border-radius: 50%; transition: transform 0.3s var(--ease-snappy); box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
         .scrubber-bg:hover .scrubber-fill::after { transform: translateY(-50%) scale(1); }
 
-        .player-actions { display: flex; align-items: center; justify-content: flex-end; width: 30%; gap: 18px; color: var(--text-secondary); font-size: 22px; }
+        .player-actions { display: flex; align-items: center; justify-content: flex-end; width: 30%; gap: 24px; color: var(--text-secondary); font-size: 22px; }
         .player-actions i { cursor: pointer; transition: 0.3s; }
         .player-actions i:hover { color: #fff; transform: scale(1.1); }
         .vol-slider { width: 100px; height: 6px; background: rgba(255,255,255,0.15); border-radius: 3px; cursor: pointer; transition: height 0.3s var(--ease-snappy); position: relative;}
@@ -549,37 +549,17 @@
         .btn-fullscreen:hover { background: rgba(255,255,255,0.15); transform: scale(1.1); color: #fff; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
 
         /* ==================================================================
-           PREMIUM LYRICS TOGGLE BUTTON
-           ================================================================== */
-        .btn-lyrics-toggle {
-            width: 40px; height: 40px; border-radius: 12px;
-            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-            display: flex; align-items: center; justify-content: center; cursor: pointer;
-            transition: 0.4s var(--ease-snappy); color: var(--text-secondary); outline: none;
-            font-size: 20px;
-        }
-        .btn-lyrics-toggle:hover {
-            background: rgba(255,255,255,0.15); transform: scale(1.1); color: #fff;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-        }
-        .btn-lyrics-toggle.active {
-            background: var(--accent-1); border-color: var(--accent-1); color: #fff !important;
-            box-shadow: 0 0 15px var(--accent-glow);
-        }
-
-        /* ==================================================================
            FULLSCREEN NOW PLAYING
            ================================================================== */
         #np-fs {
             position: fixed; inset: 0; z-index: 100; transform: translateY(100%); opacity: 0; visibility: hidden;
-            transition: transform 0.8s var(--ease-cinematic), opacity 0.5s; 
-            display: flex; 
-            align-items: center;
-            justify-content: center;
+            transition: transform 0.8s var(--ease-cinematic), opacity 0.5s; display: flex; 
             overflow: hidden; 
             background: linear-gradient(135deg, #051319 0%, #021a24 100%); 
             font-family: var(--font-display);
-            padding: 64px 96px;
+            align-items: flex-end;
+            justify-content: flex-start;
+            padding: 96px;
         }
         #np-fs.active { transform: translateY(0); opacity: 1; visibility: visible; }
 
@@ -594,40 +574,10 @@
         }
         .btn-collapse:hover { color: #fff; background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.2); transform: scale(1.08); }
         .btn-collapse i { display: block; }
-        
-        /* Lyrics Toggle inside Now Playing */
-        .np-btn-lyrics {
-            position: absolute; top: 48px; right: 112px; width: 52px; height: 52px;
-            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); cursor: pointer; z-index: 10;
-            display: flex; align-items: center; justify-content: center; font-size: 24px; 
-            color: rgba(255,255,255,0.5); border-radius: 50%; transition: all 0.3s var(--ease-snappy); outline: none;
-        }
-        .np-btn-lyrics:hover { color: #fff; background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.2); transform: scale(1.08); }
-        .np-btn-lyrics.active { background: var(--accent-1); border-color: var(--accent-1); color: #fff; box-shadow: 0 0 15px var(--accent-glow); }
-        
         .btn-collapse-mob { display: none; }
 
-        /* Split layout container inside Now Playing */
-        .np-split-layout {
-            position: relative; 
-            z-index: 10; 
-            display: flex; 
-            width: 100%; 
-            height: 100%; 
-            max-width: 1400px;
-            margin: 0 auto;
-            align-items: center; 
-            justify-content: center; 
-            gap: 0px;
-            transition: all 0.8s var(--ease-cinematic);
-        }
-
-        .np-left-col {
-            display: flex; 
-            align-items: center; 
-            gap: 40px;
-            transition: all 0.8s var(--ease-cinematic);
-            transform: translateY(0);
+        .np-minimal-container {
+            position: relative; z-index: 10; display: flex; align-items: center; gap: 40px;
         }
 
         .np-art-wrap { 
@@ -643,246 +593,6 @@
         .np-metadata-wrap { display: flex; flex-direction: column; gap: 12px; }
         .np-track-title { font-size: clamp(32px, 4vw, 56px); font-weight: 800; color: #fff; letter-spacing: -0.03em; line-height: 1.1; margin: 0; display: flex; align-items: center; }
         .np-track-artist { font-size: clamp(18px, 1.8vw, 24px); color: rgba(255,255,255,0.65); font-weight: 500; letter-spacing: -0.01em; margin: 0; }
-
-        /* Lyrics Panel (Right Column) */
-        .np-right-col {
-            flex: 1.25;
-            height: 85%;
-            display: none;
-            flex-direction: column;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.8s var(--ease-cinematic);
-        }
-
-        /* Layout State: Lyrics Active */
-        #np-fs.lyrics-active .np-split-layout {
-            justify-content: space-between;
-            gap: 80px;
-            height: 85vh;
-        }
-        #np-fs.lyrics-active .np-left-col {
-            flex-direction: column;
-            align-items: flex-start;
-            text-align: left;
-            max-width: 420px;
-            gap: 24px;
-        }
-        #np-fs.lyrics-active .np-left-col .np-art-wrap {
-            width: 340px;
-            height: 340px;
-        }
-        #np-fs.lyrics-active .np-left-col .np-metadata-wrap {
-            align-items: flex-start;
-        }
-        #np-fs.lyrics-active .np-left-col .np-track-title {
-            font-size: 38px;
-            text-align: left;
-        }
-        #np-fs.lyrics-active .np-left-col .np-track-artist {
-            font-size: 19px;
-        }
-        #np-fs.lyrics-active .np-right-col {
-            display: flex;
-            animation: lyricsFadeIn 0.8s var(--ease-cinematic) forwards;
-        }
-
-        @keyframes lyricsFadeIn {
-            from { opacity: 0; transform: translateX(30px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        /* Header indicator inside desktop lyrics */
-        .lyrics-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 16px 16px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            margin-bottom: 24px;
-            opacity: 0.8;
-        }
-        .lyrics-title-indicator {
-            font-size: 13px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: var(--text-secondary);
-        }
-        .lyrics-badge {
-            font-size: 10px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            background: rgba(255, 255, 255, 0.08);
-            color: var(--text-secondary);
-            padding: 4px 8px;
-            border-radius: 6px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        /* Lyric scroll and lines styles */
-        .lyrics-scroll-container {
-            width: 100%;
-            height: 100%;
-            overflow-y: scroll;
-            scroll-behavior: smooth;
-            position: relative;
-            mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
-            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
-        }
-        .lyrics-scroll-container::-webkit-scrollbar {
-            display: none;
-        }
-        .lyrics-inner {
-            padding: 40vh 0;
-            display: flex;
-            flex-direction: column;
-            gap: 36px;
-            width: 100%;
-        }
-
-        /* Premium line styling with left play indicator spacing */
-        .lyric-line {
-            position: relative;
-            font-size: clamp(24px, 2.5vw, 36px);
-            font-weight: 800;
-            line-height: 1.35;
-            letter-spacing: -0.02em;
-            color: rgba(255, 255, 255, 0.25);
-            padding: 6px 16px 6px 48px;
-            margin-left: -48px;
-            border-radius: 12px;
-            cursor: pointer;
-            user-select: none;
-            transform-origin: left center;
-            transform: scale(0.95);
-            filter: blur(1px);
-            transition: background 0.3s ease, color 0.4s var(--ease-snappy), transform 0.4s var(--ease-snappy), filter 0.4s var(--ease-snappy);
-        }
-        .lyric-line:hover {
-            background: rgba(255, 255, 255, 0.03);
-            color: rgba(255, 255, 255, 0.65);
-            transform: scale(0.98) translateX(12px);
-            filter: blur(0);
-        }
-        .lyric-line.active {
-            color: #ffffff;
-            transform: scale(1.03);
-            filter: blur(0);
-        }
-
-        /* Hover Play Indicators */
-        .lyric-line::before {
-            content: '▶';
-            position: absolute;
-            left: 18px;
-            top: 50%;
-            transform: translateY(-50%) scale(0.6);
-            font-size: 14px;
-            color: var(--accent-1);
-            opacity: 0;
-            transition: opacity 0.3s var(--ease-snappy), transform 0.3s var(--ease-snappy);
-        }
-        .lyric-line:hover::before {
-            opacity: 1;
-            transform: translateY(-50%) scale(1);
-        }
-        .lyric-line.active:hover::before {
-            color: #fff;
-        }
-
-        /* ==================================================================
-           BACKGROUND VOCALS / COROS STYLE (NEW)
-           ================================================================== */
-        .lyric-line.background-vocal {
-            font-size: clamp(18px, 1.8vw, 26px);
-            font-style: italic;
-            padding-left: clamp(80px, 15vw, 220px);
-            padding-right: 48px;
-            text-align: right;
-            transform-origin: right center;
-        }
-        .lyric-line.background-vocal:hover {
-            transform: scale(0.98) translateX(-12px);
-        }
-        /* Put play arrow on the right side for coros */
-        .lyric-line.background-vocal::before {
-            left: auto;
-            right: 18px;
-            content: '◀';
-        }
-        .lyric-line.background-vocal .lyric-word-base {
-            color: rgba(255, 255, 255, 0.15);
-        }
-        .lyric-line.background-vocal.active .lyric-word-base {
-            color: rgba(255, 255, 255, 0.3);
-        }
-        /* Backing vocal filling glows in theme color rather than pure white */
-        .lyric-line.background-vocal .lyric-word-overlay {
-            color: var(--accent-1);
-            text-shadow: 0 0 12px var(--accent-glow);
-        }
-
-        /* Syllables / Word-for-word wrapper */
-        .lyric-word {
-            position: relative;
-            display: inline-block;
-            margin-right: 0.22em;
-            white-space: nowrap;
-        }
-        .lyric-word-base {
-            color: rgba(255, 255, 255, 0.25);
-            transition: color 0.4s ease;
-        }
-        .lyric-line.active .lyric-word-base {
-            color: rgba(255, 255, 255, 0.35);
-        }
-
-        /* Inline background vocal word overrides */
-        .lyric-word.bg-vocal-word {
-            font-style: italic;
-            font-size: 0.85em;
-            opacity: 0.85;
-            margin-right: 0.18em;
-        }
-        .lyric-word.bg-vocal-word .lyric-word-base {
-            color: rgba(255, 255, 255, 0.15);
-        }
-        .lyric-line.active .lyric-word.bg-vocal-word .lyric-word-base {
-            color: rgba(255, 255, 255, 0.25);
-        }
-        .lyric-word.bg-vocal-word .lyric-word-overlay {
-            color: var(--accent-1);
-            text-shadow: 0 0 10px rgba(255, 46, 147, 0.5);
-        }
-        
-        /* The Overlay mask containing the progressive left-to-right fill */
-        .lyric-word-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 0%;
-            height: 100%;
-            color: #ffffff;
-            overflow: hidden;
-            white-space: nowrap;
-            pointer-events: none;
-            transition: none;
-        }
-        .lyric-line.active .lyric-word-overlay {
-            text-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
-        }
-
-        /* Feedback for loading states */
-        .lyrics-loading, .lyrics-error, .lyrics-empty {
-            font-family: var(--font-display);
-            font-size: 24px;
-            font-weight: 600;
-            color: var(--text-secondary);
-            text-align: center;
-            padding: 40px 0;
-        }
 
         /* ==================================================================
            MOBILE RESPONSIVE
@@ -923,62 +633,6 @@
                 background: rgba(255,255,255,0.4); border: none; cursor: pointer; z-index: 10;
                 display: block; transition: 0.3s;
             }
-
-            /* Responsive overrides when lyrics are active on mobile */
-            #np-fs.lyrics-active .np-split-layout {
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                gap: 20px;
-                height: 90%;
-                padding-top: 24px;
-            }
-            #np-fs.lyrics-active .np-left-col {
-                flex-direction: row;
-                align-items: center;
-                justify-content: center;
-                max-width: 100%;
-                gap: 16px;
-                height: 60px;
-            }
-            #np-fs.lyrics-active .np-left-col .np-art-wrap {
-                width: 48px;
-                height: 48px;
-                border-radius: 8px;
-            }
-            #np-fs.lyrics-active .np-left-col .np-metadata-wrap {
-                align-items: flex-start;
-            }
-            #np-fs.lyrics-active .np-left-col .np-track-title {
-                font-size: 16px;
-            }
-            #np-fs.lyrics-active .np-left-col .np-track-artist {
-                font-size: 12px;
-            }
-            #np-fs.lyrics-active .np-right-col {
-                width: 100%;
-                height: calc(100% - 80px);
-            }
-            .lyrics-inner {
-                padding: 30vh 0;
-                gap: 24px;
-            }
-            .lyric-line {
-                font-size: 24px;
-                padding-left: 24px;
-                margin-left: 0;
-            }
-            .lyric-line.background-vocal {
-                padding-left: 20%;
-                padding-right: 0px;
-            }
-            .lyrics-header {
-                display: none; /* Hide header indicators on compact touch devices */
-            }
-            .np-btn-lyrics {
-                display: none;
-            }
-
             .np-minimal-container { flex-direction: column; text-align: center; gap: 24px; }
             .np-art-wrap { width: 220px; height: 220px; }
             .np-metadata-wrap { align-items: center; }
@@ -1154,8 +808,6 @@
             </div>
 
             <div class="player-actions">
-                <!-- LYRICS TOGGLE BUTTON -->
-                <button class="btn-lyrics-toggle" id="btn-player-lyrics" onclick="toggleLyrics()"><i class="ph-bold ph-chats-teardrop"></i></button>
                 <i class="ph-fill ph-speaker-low"></i>
                 <div class="vol-slider" onclick="changeVolume(event, this)"><div class="vol-fill" id="vol-fill-desk"></div></div>
                 <div class="btn-fullscreen" onclick="toggleNP()"><i class="ph-bold ph-arrows-out-simple"></i></div>
@@ -1169,33 +821,15 @@
         <div class="np-grain"></div>
         
         <button class="btn-collapse" onclick="toggleNP()"><i class="ph ph-x"></i></button>
-        <button class="np-btn-lyrics" id="np-lyrics-toggle-fs" onclick="toggleLyrics()"><i class="ph-bold ph-chats-teardrop"></i></button>
         <button class="btn-collapse-mob" onclick="toggleNP()"></button>
 
-        <!-- Redesigned Split Container Layout for Lyrics integration -->
-        <div class="np-split-layout">
-            <!-- Left Side Column -->
-            <div class="np-left-col">
-                <div class="np-art-wrap" onclick="togglePlay()">
-                    <img src="" id="np-img-large" class="np-art" crossorigin="anonymous">
-                </div>
-                <div class="np-metadata-wrap">
-                    <h2 class="np-track-title" id="np-title-large">Loading...</h2>
-                    <p class="np-track-artist" id="np-artist-large">Artist</p>
-                </div>
+        <div class="np-minimal-container">
+            <div class="np-art-wrap" onclick="togglePlay()">
+                <img src="" id="np-img-large" class="np-art" crossorigin="anonymous">
             </div>
-            
-            <!-- Right Side Column: Lyrics Scroll View -->
-            <div class="np-right-col">
-                <div class="lyrics-header">
-                    <span class="lyrics-title-indicator">Sincronización de Letras</span>
-                    <div class="lyrics-badge">Dolby Atmos</div>
-                </div>
-                <div class="lyrics-scroll-container" id="lyrics-scroll-container">
-                    <div class="lyrics-inner" id="lyrics-inner">
-                        <div class="lyrics-loading">Loading lyrics...</div>
-                    </div>
-                </div>
+            <div class="np-metadata-wrap">
+                <h2 class="np-track-title" id="np-title-large">Loading...</h2>
+                <p class="np-track-artist" id="np-artist-large">Artist</p>
             </div>
         </div>
     </div>
@@ -1338,7 +972,7 @@
             ["OUTRO", "https://files.catbox.moe/4eqs0r.mp3", "Omar Courtz"],
             ["EL MUNDO SE VA A ACABAR", "https://files.catbox.moe/ioux89.mp3", "Omar Courtz & KARBeats"],
             ["FOREVER TU GANTEL", "https://files.catbox.moe/cievb6.mp3", "Omar Courtz & Ñengo Flow"],
-            ["L a k e n o h i", "https://files.catbox.moe/9qorg7.mp3", "Omar Courtz"],
+            ["L a k e n o s h i", "https://files.catbox.moe/9qorg7.mp3", "Omar Courtz"],
             ["VAMOaCOCHI", "https://files.catbox.moe/wns3m6.mp3", "Omar Courtz"],
             ["SUSU", "https://files.catbox.moe/kdv57b.mp3", "Omar Courtz"],
             ["SIRENA", "https://files.catbox.moe/msloqo.mp3", "Omar Courtz"],
@@ -1366,8 +1000,7 @@
                 trackNum: 1, 
                 coverLoaded: true, 
                 palette: lasMasBonitasPalette2, 
-                bgImage: "https://files.catbox.moe/f755oj.png",
-                ttmlUrl: "https://files.catbox.moe/outddn.ttml" // <--- Sincronización oficial del sencillo
+                bgImage: "https://files.catbox.moe/f755oj.png" 
             }
         ];
 
@@ -1408,14 +1041,6 @@
 
         const trackAnalysis = {};
         let analysisQueue = [];
-
-        /* ==================================================================
-           LYRICS & TIMING STATE
-           ================================================================== */
-        let isLyricsOpen = false;
-        let currentLyrics = null;
-        let lastActiveLineIdx = -1;
-        let targetScrollTop = 0;
 
         function initAudioEngine() {
             if (audioCtx) return;
@@ -1493,6 +1118,7 @@
             }
         }
 
+        // Genera duraciones deterministas para dotar de realismo a la lista de canciones
         function getDeterministicDuration(title) {
             let hash = 0;
             for (let i = 0; i < title.length; i++) {
@@ -1607,6 +1233,7 @@
             });
         }
 
+        // Control de bografía colapsable (MÁS / MENOS)
         function toggleAlbumDescription(desc, elementId) {
             haptic();
             const descEl = document.getElementById(elementId);
@@ -1631,6 +1258,7 @@
             document.getElementById('det-album-img').src = album.cover;
             document.getElementById('det-album-genre-year').innerText = `${album.genre || 'Urbano Latino'} · ${album.year}`;
 
+            // Control de descripción dinámica interactiva
             const descEl = document.getElementById('det-album-description');
             const descText = album.description || "Exclusive concept release on VIVETMP.";
             if (descText.length > 100) {
@@ -1640,6 +1268,7 @@
                 descEl.innerHTML = `"${descText}"`;
             }
 
+            // Actualizar icono de favoritos
             const favIcon = document.getElementById('fav-album-icon');
             if (favoriteAlbums[albumId]) {
                 favIcon.className = "ph-fill ph-check-square";
@@ -1662,6 +1291,7 @@
                 if(currentPlayingIndex === realIndex) row.classList.add('active');
                 row.onclick = () => playSong(realIndex);
 
+                // Estrella de popularidad real de cada álbum (no-random)
                 const isPopular = popularSongs.has(song.title);
                 const starClass = isPopular ? 'ph-fill ph-star active' : 'ph ph-star';
                 const starStyle = isPopular ? 'color: rgba(255,255,255,0.6);' : 'opacity: 0; pointer-events: none;';
@@ -1809,11 +1439,6 @@
                 document.documentElement.style.setProperty('--bg-deep', `rgb(${primaryColor.r}, ${primaryColor.g}, ${primaryColor.b})`);
                 applyAccentFromPalette(song.palette);
             }
-
-            // Load and parse lyrics dynamically if the player lyrics window is active
-            if (isLyricsOpen) {
-                loadLyricsForSong(song);
-            }
         }
 
         function togglePlay() {
@@ -1852,18 +1477,8 @@
         function toggleNP() {
             haptic(); isNPOpen = !isNPOpen;
             const np = document.getElementById('np-fs'); const app = document.getElementById('app-wrapper');
-            if (isNPOpen) { 
-                np.classList.add('active'); 
-                app.classList.add('scaled'); 
-                if (isLyricsOpen) {
-                    const song = cancionesData[currentPlayingIndex];
-                    loadLyricsForSong(song);
-                }
-            } 
-            else { 
-                np.classList.remove('active'); 
-                app.classList.remove('scaled'); 
-            }
+            if (isNPOpen) { np.classList.add('active'); app.classList.add('scaled'); } 
+            else { np.classList.remove('active'); app.classList.remove('scaled'); }
         }
 
         function fmt(s) { return `${Math.floor(s/60)}:${Math.floor(s%60).toString().padStart(2,'0')}`; }
@@ -1875,373 +1490,6 @@
                 let out = analyserInfo && analyserInfo.outroDuration ? analyserInfo.outroDuration : 8;
                 if(mixTimingHumanized === 0) mixTimingHumanized = (Math.random()-0.5)*1.5;
                 if(rem <= (out + mixTimingHumanized) && !isCrossfading && rem > 0.5) { startAutoMix(); mixTimingHumanized = 0; }
-            }
-        }
-
-        /* ==================================================================
-           LYRICS PARSING, SCROLLING & HORIZONTAL FILL ENGINE
-           ================================================================== */
-        async function loadLyricsForSong(song) {
-            currentLyrics = null;
-            lastActiveLineIdx = -1;
-            const lyricsContainer = document.getElementById('lyrics-inner');
-            lyricsContainer.innerHTML = '<div class="lyrics-loading">Loading lyrics...</div>';
-            
-            if (!song.ttmlUrl) {
-                // Genera letras simuladas fluidas si la canción no tiene un TTML asignado
-                currentLyrics = generateMockLyrics(song);
-                renderLyrics(currentLyrics);
-                return;
-            }
-            
-            try {
-                const response = await fetch(song.ttmlUrl);
-                if (!response.ok) throw new Error("Could not fetch TTML");
-                const xmlText = await response.text();
-                
-                const parser = new DOMParser();
-                const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
-                
-                if (xmlDoc.getElementsByTagName('parsererror').length > 0) {
-                    throw new Error("XML Parsing failed");
-                }
-                
-                const pNodes = xmlDoc.getElementsByTagNameNS("*", "p");
-                const parsedLines = [];
-                
-                for (let i = 0; i < pNodes.length; i++) {
-                    const p = pNodes[i];
-                    const pBegin = parseTimeToSeconds(p.getAttribute("begin"));
-                    const pEnd = parseTimeToSeconds(p.getAttribute("end"));
-                    
-                    // Identifica de forma robusta si la frase es un coro / background vocal
-                    const pIsBG = isNodeBackgroundVocal(p);
-                    
-                    const spans = Array.from(p.getElementsByTagNameNS("*", "span"));
-                    const timedSpans = spans.filter(s => s.hasAttribute("begin") || s.hasAttribute("dur"));
-                    
-                    const words = [];
-                    if (timedSpans.length > 0) {
-                        timedSpans.forEach(span => {
-                            const wordText = span.textContent;
-                            if (wordText.trim().length === 0) return;
-                            
-                            const wBegin = span.hasAttribute("begin") 
-                                ? parseTimeToSeconds(span.getAttribute("begin")) 
-                                : pBegin;
-                            const wEnd = span.hasAttribute("end")
-                                ? parseTimeToSeconds(span.getAttribute("end"))
-                                : (span.hasAttribute("dur") ? wBegin + parseTimeToSeconds(span.getAttribute("dur")) : pEnd);
-                            
-                            // Si el párrafo completo es coro o el span individual tiene un rol de coros
-                            const isWordBG = pIsBG || isNodeBackgroundVocal(span);
-                            
-                            words.push({
-                                text: wordText,
-                                begin: wBegin,
-                                end: wEnd,
-                                isBG: isWordBG
-                            });
-                        });
-                    } else {
-                        // Interpolación lineal fallback si el elemento <p> no tiene spans asignados
-                        const rawText = p.textContent.trim();
-                        const splitWords = rawText.split(/\s+/);
-                        const duration = pEnd - pBegin;
-                        const wordDur = duration / Math.max(1, splitWords.length);
-                        splitWords.forEach((wordStr, idx) => {
-                            words.push({
-                                text: wordStr,
-                                begin: pBegin + idx * wordDur,
-                                end: pBegin + (idx + 1) * wordDur,
-                                isBG: pIsBG
-                            });
-                        });
-                    }
-                    
-                    if (words.length > 0) {
-                        parsedLines.push({
-                            begin: pBegin,
-                            end: pEnd,
-                            isBG: pIsBG,
-                            words: words
-                        });
-                    }
-                }
-                
-                currentLyrics = parsedLines;
-                renderLyrics(currentLyrics);
-            } catch (err) {
-                console.error("Error loading lyrics:", err);
-                lyricsContainer.innerHTML = '<div class="lyrics-error">Lyrics unavailable</div>';
-            }
-        }
-        
-        // Función de utilidad para rastrear de forma flexible si un elemento es coro en base a estilos/roles o sintaxis parentética
-        function isNodeBackgroundVocal(node) {
-            // 1. Evalúa si el rol o la definición de estilo hace referencia a vocalBackground
-            for (let i = 0; i < node.attributes.length; i++) {
-                const attr = node.attributes[i];
-                const val = attr.value.toLowerCase();
-                if (val.includes("vocalbackground") || val.includes("background") || val.includes("backing") || val === "bg") {
-                    return true;
-                }
-            }
-            // 2. Failsafe: Convención estándar en ficheros LRC y TTML para coros cerrados entre paréntesis (ej: "(Bonitas son p#tas)")
-            const text = node.textContent.trim();
-            if (text.startsWith("(") && text.endsWith(")")) {
-                return true;
-            }
-            return false;
-        }
-
-        function parseTimeToSeconds(timeStr) {
-            if (!timeStr) return 0;
-            timeStr = timeStr.trim();
-            if (!isNaN(timeStr)) return parseFloat(timeStr);
-            
-            const parts = timeStr.split(':');
-            if (parts.length === 3) {
-                return parseFloat(parts[0]) * 3600 + parseFloat(parts[1]) * 60 + parseFloat(parts[2]);
-            } else if (parts.length === 2) {
-                return parseFloat(parts[0]) * 60 + parseFloat(parts[1]);
-            }
-            
-            if (timeStr.endsWith('s')) {
-                return parseFloat(timeStr.slice(0, -1));
-            }
-            return parseFloat(timeStr) || 0;
-        }
-
-        function generateMockLyrics(song) {
-            const duration = activeAudio.duration || 180;
-            const linesCount = Math.floor(duration / 6);
-            const lines = [];
-            
-            const segments = [
-                "VIVETMP Premium Player",
-                "Disfrutando de la música urbana",
-                `Sonando ahora: ${song.title}`,
-                `(Vocal Background Test — De fondo)`,
-                `Por el artista exclusivo: ${song.artist}`,
-                "Sintiendo el ritmo en cada segundo",
-                "(Uniendo voces secundarias en estéreo)",
-                "Transición suave en vivo a 60 FPS",
-                "Apple Music Inspired Lyrics Interface",
-                "(Letras fluyendo en cascada dinámica)",
-                "Letras generadas para demostración",
-                "VIVETMP Premium Edition"
-            ];
-            
-            for (let i = 0; i < linesCount; i++) {
-                const start = i * 6 + 1;
-                const end = start + 5.5;
-                const text = segments[i % segments.length];
-                const isBG = text.startsWith("(") && text.endsWith(")");
-                const wordsStr = text.split(" ");
-                const wordDur = 5.5 / wordsStr.length;
-                
-                const words = wordsStr.map((w, idx) => ({
-                    text: w,
-                    begin: start + idx * wordDur,
-                    end: start + (idx + 1) * wordDur,
-                    isBG: isBG
-                }));
-                
-                lines.push({
-                    begin: start,
-                    end: end,
-                    isBG: isBG,
-                    words: words
-                });
-            }
-            return lines;
-        }
-
-        function renderLyrics(lines) {
-            const container = document.getElementById('lyrics-inner');
-            container.innerHTML = '';
-            
-            if (!lines || lines.length === 0) {
-                container.innerHTML = '<div class="lyrics-empty">No lyrics available</div>';
-                return;
-            }
-            
-            lines.forEach((line, lineIdx) => {
-                const lineDiv = document.createElement('div');
-                lineDiv.className = `lyric-line line-idx-${lineIdx}`;
-                
-                // Agrega clase especial si toda la línea representa coros
-                if (line.isBG) {
-                    lineDiv.classList.add('background-vocal');
-                }
-                
-                lineDiv.dataset.begin = line.begin;
-                lineDiv.dataset.end = line.end;
-                
-                // Seek interactivo al presionar una línea de tiempo
-                lineDiv.onclick = (e) => {
-                    e.stopPropagation();
-                    haptic();
-                    activeAudio.currentTime = line.begin;
-                };
-                
-                line.words.forEach((word, wordIdx) => {
-                    const wordSpan = document.createElement('span');
-                    wordSpan.className = `lyric-word word-idx-${wordIdx}`;
-                    
-                    // Soporte de palabras background individuales
-                    if (word.isBG) {
-                        wordSpan.classList.add('bg-vocal-word');
-                    }
-                    
-                    wordSpan.dataset.begin = word.begin;
-                    wordSpan.dataset.end = word.end;
-                    
-                    wordSpan.innerHTML = `
-                        <span class="lyric-word-base">${word.text}</span>
-                        <span class="lyric-word-overlay">${word.text}</span>
-                    `;
-                    
-                    lineDiv.appendChild(wordSpan);
-                });
-                
-                container.appendChild(lineDiv);
-            });
-        }
-
-        function toggleLyrics() {
-            haptic();
-            isLyricsOpen = !isLyricsOpen;
-            
-            const btnPlayer = document.getElementById('btn-player-lyrics');
-            const btnFs = document.getElementById('np-lyrics-toggle-fs');
-            const npFs = document.getElementById('np-fs');
-            
-            if (isLyricsOpen) {
-                btnPlayer?.classList.add('active');
-                btnFs?.classList.add('active');
-                npFs?.classList.add('lyrics-active');
-                
-                if (!isNPOpen) {
-                    toggleNP();
-                }
-                
-                const song = cancionesData[currentPlayingIndex];
-                loadLyricsForSong(song);
-            } else {
-                btnPlayer?.classList.remove('active');
-                btnFs?.classList.remove('active');
-                npFs?.classList.remove('lyrics-active');
-            }
-        }
-
-        function smoothScrollToLine(lineIdx) {
-            const container = document.getElementById('lyrics-scroll-container');
-            const lineEl = document.querySelector(`.lyric-line.line-idx-${lineIdx}`);
-            if (!container || !lineEl) return;
-            
-            const containerHeight = container.clientHeight;
-            const lineTop = lineEl.offsetTop;
-            const lineHeight = lineEl.clientHeight;
-            
-            targetScrollTop = lineTop - (containerHeight / 2) + (lineHeight / 2);
-        }
-
-        // Bucle de renderizado continuo para calcular el progreso horizontal y desplazamientos
-        function runScrollAndAnimationLerp() {
-            if (isLyricsOpen) {
-                const container = document.getElementById('lyrics-scroll-container');
-                if (container) {
-                    const diff = targetScrollTop - container.scrollTop;
-                    if (Math.abs(diff) > 0.5) {
-                        container.scrollTop += diff * 0.085; // Multiplicador de lerp fluido
-                    }
-                }
-            }
-            requestAnimationFrame(runScrollAndAnimationLerp);
-        }
-
-        function updateLyricsAnimation(currentTime) {
-            if (!currentLyrics || !isLyricsOpen) return;
-            
-            const linesContainer = document.getElementById('lyrics-inner');
-            const lineElements = linesContainer.children;
-            let primaryActiveIdx = -1;
-            
-            // 1. Recorremos todas las líneas para evaluar su estado y aplicar reajustes rápidos
-            for (let i = 0; i < currentLyrics.length; i++) {
-                const line = currentLyrics[i];
-                const lineEl = lineElements[i];
-                if (!lineEl) continue;
-                
-                const isLineActive = (currentTime >= line.begin && currentTime <= line.end);
-                
-                if (isLineActive) {
-                    lineEl.classList.add('active');
-                    
-                    // Priorizamos el enfoque de scroll en la línea principal si hay coincidencia simultánea
-                    if (primaryActiveIdx === -1) {
-                        primaryActiveIdx = i;
-                    } else if (line.isBG && !currentLyrics[primaryActiveIdx].isBG) {
-                        // Mantenemos enfocada la línea de voz principal si la actual es solo coro de fondo
-                    }
-                } else {
-                    lineEl.classList.remove('active');
-                    
-                    // Reseteamos limpiamente los overlays de frases pasadas (100%) y futuras (0%)
-                    const overlays = lineEl.querySelectorAll('.lyric-word-overlay');
-                    const fillPct = currentTime > line.end ? '100%' : '0%';
-                    overlays.forEach(ov => {
-                        if (ov.style.width !== fillPct) {
-                            ov.style.width = fillPct;
-                        }
-                    });
-                }
-                
-                // 2. Animación progresiva horizontal letra por letra a nivel sub-frame en líneas activas
-                if (isLineActive) {
-                    const words = line.words;
-                    const wordSpans = lineEl.querySelectorAll('.lyric-word');
-                    
-                    for (let j = 0; j < words.length; j++) {
-                        const word = words[j];
-                        const wordSpan = wordSpans[j];
-                        if (!wordSpan) continue;
-                        
-                        const overlay = wordSpan.querySelector('.lyric-word-overlay');
-                        if (!overlay) continue;
-                        
-                        if (currentTime < word.begin) {
-                            overlay.style.width = '0%';
-                        } else if (currentTime > word.end) {
-                            overlay.style.width = '100%';
-                        } else {
-                            const pct = ((currentTime - word.begin) / (word.end - word.begin)) * 100;
-                            overlay.style.width = `${pct}%`;
-                        }
-                    }
-                }
-            }
-            
-            // 3. Control de enfoque y dirección de scrolling programado
-            if (primaryActiveIdx !== -1 && primaryActiveIdx !== lastActiveLineIdx) {
-                smoothScrollToLine(primaryActiveIdx);
-                lastActiveLineIdx = primaryActiveIdx;
-            } else if (primaryActiveIdx === -1) {
-                // Alineación preventiva en silencios musicales para mantener el histórico de lectura
-                let lastPassedIdx = -1;
-                for (let i = 0; i < currentLyrics.length; i++) {
-                    if (currentTime >= currentLyrics[i].begin) {
-                        lastPassedIdx = i;
-                    } else {
-                        break;
-                    }
-                }
-                if (lastPassedIdx !== -1 && lastPassedIdx !== lastActiveLineIdx) {
-                    smoothScrollToLine(lastPassedIdx);
-                    lastActiveLineIdx = lastPassedIdx;
-                }
             }
         }
 
@@ -2259,10 +1507,6 @@
                 document.getElementById('bar-fill-desk').style.width = `${pct}%`;
                 document.getElementById('time-curr-desk').innerText = fmt(cur);
                 document.getElementById('time-tot-desk').innerText = "-" + fmt(dur-cur);
-                
-                // Sincronización continua de animación de palabras basada en sub-frames extrapolados
-                updateLyricsAnimation(cur);
-                
                 checkAutoMix();
             }
             requestAnimationFrame(renderLoop);
@@ -2313,9 +1557,6 @@
             
             setupGestures();
             document.getElementById('vol-fill-desk').style.width = `${globalVolume*100}%`;
-            
-            // Inicializar el ciclo de lerp para desplazamiento de las letras
-            requestAnimationFrame(runScrollAndAnimationLerp);
             
             triggerUIForSong(0);
         }
