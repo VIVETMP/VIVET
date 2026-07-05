@@ -646,8 +646,8 @@
 
         /* Lyrics Panel (Right Column) */
         .np-right-col {
-            flex: 1.2;
-            height: 80%;
+            flex: 1.25;
+            height: 85%;
             display: none;
             flex-direction: column;
             position: relative;
@@ -658,8 +658,8 @@
         /* Layout State: Lyrics Active */
         #np-fs.lyrics-active .np-split-layout {
             justify-content: space-between;
-            gap: 60px;
-            height: 80vh;
+            gap: 80px;
+            height: 85vh;
         }
         #np-fs.lyrics-active .np-left-col {
             flex-direction: column;
@@ -669,18 +669,18 @@
             gap: 24px;
         }
         #np-fs.lyrics-active .np-left-col .np-art-wrap {
-            width: 320px;
-            height: 320px;
+            width: 340px;
+            height: 340px;
         }
         #np-fs.lyrics-active .np-left-col .np-metadata-wrap {
             align-items: flex-start;
         }
         #np-fs.lyrics-active .np-left-col .np-track-title {
-            font-size: 36px;
+            font-size: 38px;
             text-align: left;
         }
         #np-fs.lyrics-active .np-left-col .np-track-artist {
-            font-size: 18px;
+            font-size: 19px;
         }
         #np-fs.lyrics-active .np-right-col {
             display: flex;
@@ -690,6 +690,35 @@
         @keyframes lyricsFadeIn {
             from { opacity: 0; transform: translateX(30px); }
             to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* Header indicator inside desktop lyrics */
+        .lyrics-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px 16px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            margin-bottom: 24px;
+            opacity: 0.8;
+        }
+        .lyrics-title-indicator {
+            font-size: 13px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-secondary);
+        }
+        .lyrics-badge {
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-secondary);
+            padding: 4px 8px;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         /* Lyric scroll and lines styles */
@@ -713,26 +742,86 @@
             width: 100%;
         }
 
+        /* Premium line styling with left play indicator spacing */
         .lyric-line {
+            position: relative;
             font-size: clamp(24px, 2.5vw, 36px);
             font-weight: 800;
             line-height: 1.35;
             letter-spacing: -0.02em;
             color: rgba(255, 255, 255, 0.25);
-            transition: color 0.4s ease, transform 0.4s ease, filter 0.4s ease;
+            padding: 6px 16px 6px 48px;
+            margin-left: -48px;
+            border-radius: 12px;
             cursor: pointer;
             user-select: none;
             transform-origin: left center;
             transform: scale(0.95);
             filter: blur(1px);
+            transition: background 0.3s ease, color 0.4s var(--ease-snappy), transform 0.4s var(--ease-snappy), filter 0.4s var(--ease-snappy);
         }
         .lyric-line:hover {
-            color: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.03);
+            color: rgba(255, 255, 255, 0.65);
+            transform: scale(0.98) translateX(12px);
+            filter: blur(0);
         }
         .lyric-line.active {
             color: #ffffff;
             transform: scale(1.03);
             filter: blur(0);
+        }
+
+        /* Hover Play Indicators */
+        .lyric-line::before {
+            content: '▶';
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%) scale(0.6);
+            font-size: 14px;
+            color: var(--accent-1);
+            opacity: 0;
+            transition: opacity 0.3s var(--ease-snappy), transform 0.3s var(--ease-snappy);
+        }
+        .lyric-line:hover::before {
+            opacity: 1;
+            transform: translateY(-50%) scale(1);
+        }
+        .lyric-line.active:hover::before {
+            color: #fff;
+        }
+
+        /* ==================================================================
+           BACKGROUND VOCALS / COROS STYLE (NEW)
+           ================================================================== */
+        .lyric-line.background-vocal {
+            font-size: clamp(18px, 1.8vw, 26px);
+            font-style: italic;
+            padding-left: clamp(80px, 15vw, 220px);
+            padding-right: 48px;
+            text-align: right;
+            transform-origin: right center;
+        }
+        .lyric-line.background-vocal:hover {
+            transform: scale(0.98) translateX(-12px);
+        }
+        /* Put play arrow on the right side for coros */
+        .lyric-line.background-vocal::before {
+            left: auto;
+            right: 18px;
+            content: '◀';
+        }
+        .lyric-line.background-vocal .lyric-word-base {
+            color: rgba(255, 255, 255, 0.15);
+        }
+        .lyric-line.background-vocal.active .lyric-word-base {
+            color: rgba(255, 255, 255, 0.3);
+        }
+        /* Backing vocal filling glows in theme color rather than pure white */
+        .lyric-line.background-vocal .lyric-word-overlay {
+            color: var(--accent-1);
+            text-shadow: 0 0 12px var(--accent-glow);
         }
 
         /* Syllables / Word-for-word wrapper */
@@ -748,6 +837,24 @@
         }
         .lyric-line.active .lyric-word-base {
             color: rgba(255, 255, 255, 0.35);
+        }
+
+        /* Inline background vocal word overrides */
+        .lyric-word.bg-vocal-word {
+            font-style: italic;
+            font-size: 0.85em;
+            opacity: 0.85;
+            margin-right: 0.18em;
+        }
+        .lyric-word.bg-vocal-word .lyric-word-base {
+            color: rgba(255, 255, 255, 0.15);
+        }
+        .lyric-line.active .lyric-word.bg-vocal-word .lyric-word-base {
+            color: rgba(255, 255, 255, 0.25);
+        }
+        .lyric-word.bg-vocal-word .lyric-word-overlay {
+            color: var(--accent-1);
+            text-shadow: 0 0 10px rgba(255, 46, 147, 0.5);
         }
         
         /* The Overlay mask containing the progressive left-to-right fill */
@@ -858,6 +965,15 @@
             }
             .lyric-line {
                 font-size: 24px;
+                padding-left: 24px;
+                margin-left: 0;
+            }
+            .lyric-line.background-vocal {
+                padding-left: 20%;
+                padding-right: 0px;
+            }
+            .lyrics-header {
+                display: none; /* Hide header indicators on compact touch devices */
             }
             .np-btn-lyrics {
                 display: none;
@@ -1071,6 +1187,10 @@
             
             <!-- Right Side Column: Lyrics Scroll View -->
             <div class="np-right-col">
+                <div class="lyrics-header">
+                    <span class="lyrics-title-indicator">Sincronización de Letras</span>
+                    <div class="lyrics-badge">Dolby Atmos</div>
+                </div>
                 <div class="lyrics-scroll-container" id="lyrics-scroll-container">
                     <div class="lyrics-inner" id="lyrics-inner">
                         <div class="lyrics-loading">Loading lyrics...</div>
@@ -1794,6 +1914,9 @@
                     const pBegin = parseTimeToSeconds(p.getAttribute("begin"));
                     const pEnd = parseTimeToSeconds(p.getAttribute("end"));
                     
+                    // Identifica de forma robusta si la frase es un coro / background vocal
+                    const pIsBG = isNodeBackgroundVocal(p);
+                    
                     const spans = Array.from(p.getElementsByTagNameNS("*", "span"));
                     const timedSpans = spans.filter(s => s.hasAttribute("begin") || s.hasAttribute("dur"));
                     
@@ -1801,18 +1924,24 @@
                     if (timedSpans.length > 0) {
                         timedSpans.forEach(span => {
                             const wordText = span.textContent;
-                            const wBegin = parseTimeToSeconds(span.getAttribute("begin") || p.getAttribute("begin"));
-                            let wEnd = span.hasAttribute("end") 
-                                ? parseTimeToSeconds(span.getAttribute("end")) 
+                            if (wordText.trim().length === 0) return;
+                            
+                            const wBegin = span.hasAttribute("begin") 
+                                ? parseTimeToSeconds(span.getAttribute("begin")) 
+                                : pBegin;
+                            const wEnd = span.hasAttribute("end")
+                                ? parseTimeToSeconds(span.getAttribute("end"))
                                 : (span.hasAttribute("dur") ? wBegin + parseTimeToSeconds(span.getAttribute("dur")) : pEnd);
                             
-                            if (wordText.trim().length > 0) {
-                                words.push({
-                                    text: wordText,
-                                    begin: wBegin,
-                                    end: wEnd
-                                });
-                            }
+                            // Si el párrafo completo es coro o el span individual tiene un rol de coros
+                            const isWordBG = pIsBG || isNodeBackgroundVocal(span);
+                            
+                            words.push({
+                                text: wordText,
+                                begin: wBegin,
+                                end: wEnd,
+                                isBG: isWordBG
+                            });
                         });
                     } else {
                         // Interpolación lineal fallback si el elemento <p> no tiene spans asignados
@@ -1824,7 +1953,8 @@
                             words.push({
                                 text: wordStr,
                                 begin: pBegin + idx * wordDur,
-                                end: pBegin + (idx + 1) * wordDur
+                                end: pBegin + (idx + 1) * wordDur,
+                                isBG: pIsBG
                             });
                         });
                     }
@@ -1833,6 +1963,7 @@
                         parsedLines.push({
                             begin: pBegin,
                             end: pEnd,
+                            isBG: pIsBG,
                             words: words
                         });
                     }
@@ -1846,6 +1977,24 @@
             }
         }
         
+        // Función de utilidad para rastrear de forma flexible si un elemento es coro en base a estilos/roles o sintaxis parentética
+        function isNodeBackgroundVocal(node) {
+            // 1. Evalúa si el rol o la definición de estilo hace referencia a vocalBackground
+            for (let i = 0; i < node.attributes.length; i++) {
+                const attr = node.attributes[i];
+                const val = attr.value.toLowerCase();
+                if (val.includes("vocalbackground") || val.includes("background") || val.includes("backing") || val === "bg") {
+                    return true;
+                }
+            }
+            // 2. Failsafe: Convención estándar en ficheros LRC y TTML para coros cerrados entre paréntesis (ej: "(Bonitas son p#tas)")
+            const text = node.textContent.trim();
+            if (text.startsWith("(") && text.endsWith(")")) {
+                return true;
+            }
+            return false;
+        }
+
         function parseTimeToSeconds(timeStr) {
             if (!timeStr) return 0;
             timeStr = timeStr.trim();
@@ -1873,14 +2022,13 @@
                 "VIVETMP Premium Player",
                 "Disfrutando de la música urbana",
                 `Sonando ahora: ${song.title}`,
+                `(Vocal Background Test — De fondo)`,
                 `Por el artista exclusivo: ${song.artist}`,
                 "Sintiendo el ritmo en cada segundo",
-                "Viviendo la experiencia completa",
-                "Transición suave en vivo",
-                "Automix activo a 60 FPS",
+                "(Uniendo voces secundarias en estéreo)",
+                "Transición suave en vivo a 60 FPS",
                 "Apple Music Inspired Lyrics Interface",
-                "Pulsaciones rítmicas de luz",
-                "Sincronización perfecta de audio",
+                "(Letras fluyendo en cascada dinámica)",
                 "Letras generadas para demostración",
                 "VIVETMP Premium Edition"
             ];
@@ -1889,18 +2037,21 @@
                 const start = i * 6 + 1;
                 const end = start + 5.5;
                 const text = segments[i % segments.length];
+                const isBG = text.startsWith("(") && text.endsWith(")");
                 const wordsStr = text.split(" ");
                 const wordDur = 5.5 / wordsStr.length;
                 
                 const words = wordsStr.map((w, idx) => ({
                     text: w,
                     begin: start + idx * wordDur,
-                    end: start + (idx + 1) * wordDur
+                    end: start + (idx + 1) * wordDur,
+                    isBG: isBG
                 }));
                 
                 lines.push({
                     begin: start,
                     end: end,
+                    isBG: isBG,
                     words: words
                 });
             }
@@ -1919,6 +2070,12 @@
             lines.forEach((line, lineIdx) => {
                 const lineDiv = document.createElement('div');
                 lineDiv.className = `lyric-line line-idx-${lineIdx}`;
+                
+                // Agrega clase especial si toda la línea representa coros
+                if (line.isBG) {
+                    lineDiv.classList.add('background-vocal');
+                }
+                
                 lineDiv.dataset.begin = line.begin;
                 lineDiv.dataset.end = line.end;
                 
@@ -1932,6 +2089,12 @@
                 line.words.forEach((word, wordIdx) => {
                     const wordSpan = document.createElement('span');
                     wordSpan.className = `lyric-word word-idx-${wordIdx}`;
+                    
+                    // Soporte de palabras background individuales
+                    if (word.isBG) {
+                        wordSpan.classList.add('bg-vocal-word');
+                    }
+                    
                     wordSpan.dataset.begin = word.begin;
                     wordSpan.dataset.end = word.end;
                     
@@ -2002,44 +2165,44 @@
         function updateLyricsAnimation(currentTime) {
             if (!currentLyrics || !isLyricsOpen) return;
             
-            let activeLineIdx = -1;
+            const linesContainer = document.getElementById('lyrics-inner');
+            const lineElements = linesContainer.children;
+            let primaryActiveIdx = -1;
+            
+            // 1. Recorremos todas las líneas para evaluar su estado y aplicar reajustes rápidos
             for (let i = 0; i < currentLyrics.length; i++) {
                 const line = currentLyrics[i];
-                if (currentTime >= line.begin) {
-                    activeLineIdx = i;
-                } else {
-                    break;
-                }
-            }
-            
-            if (activeLineIdx !== lastActiveLineIdx) {
-                const linesContainer = document.getElementById('lyrics-inner');
-                const lineElements = linesContainer.children;
+                const lineEl = lineElements[i];
+                if (!lineEl) continue;
                 
-                for (let i = 0; i < lineElements.length; i++) {
-                    const lineEl = lineElements[i];
-                    if (i === activeLineIdx) {
-                        lineEl.classList.add('active');
-                        smoothScrollToLine(i);
-                    } else {
-                        lineEl.classList.remove('active');
-                        
-                        const overlays = lineEl.querySelectorAll('.lyric-word-overlay');
-                        const fillPct = i < activeLineIdx ? '100%' : '0%';
-                        overlays.forEach(ov => {
-                            ov.style.width = fillPct;
-                        });
+                const isLineActive = (currentTime >= line.begin && currentTime <= line.end);
+                
+                if (isLineActive) {
+                    lineEl.classList.add('active');
+                    
+                    // Priorizamos el enfoque de scroll en la línea principal si hay coincidencia simultánea
+                    if (primaryActiveIdx === -1) {
+                        primaryActiveIdx = i;
+                    } else if (line.isBG && !currentLyrics[primaryActiveIdx].isBG) {
+                        // Mantenemos enfocada la línea de voz principal si la actual es solo coro de fondo
                     }
+                } else {
+                    lineEl.classList.remove('active');
+                    
+                    // Reseteamos limpiamente los overlays de frases pasadas (100%) y futuras (0%)
+                    const overlays = lineEl.querySelectorAll('.lyric-word-overlay');
+                    const fillPct = currentTime > line.end ? '100%' : '0%';
+                    overlays.forEach(ov => {
+                        if (ov.style.width !== fillPct) {
+                            ov.style.width = fillPct;
+                        }
+                    });
                 }
-                lastActiveLineIdx = activeLineIdx;
-            }
-            
-            // Animación palabra por palabra usando el ancho del overlay máscara en la línea activa
-            if (activeLineIdx !== -1) {
-                const activeLineEl = document.querySelector(`.lyric-line.line-idx-${activeLineIdx}`);
-                if (activeLineEl) {
-                    const words = currentLyrics[activeLineIdx].words;
-                    const wordSpans = activeLineEl.children;
+                
+                // 2. Animación progresiva horizontal letra por letra a nivel sub-frame en líneas activas
+                if (isLineActive) {
+                    const words = line.words;
+                    const wordSpans = lineEl.querySelectorAll('.lyric-word');
                     
                     for (let j = 0; j < words.length; j++) {
                         const word = words[j];
@@ -2058,6 +2221,26 @@
                             overlay.style.width = `${pct}%`;
                         }
                     }
+                }
+            }
+            
+            // 3. Control de enfoque y dirección de scrolling programado
+            if (primaryActiveIdx !== -1 && primaryActiveIdx !== lastActiveLineIdx) {
+                smoothScrollToLine(primaryActiveIdx);
+                lastActiveLineIdx = primaryActiveIdx;
+            } else if (primaryActiveIdx === -1) {
+                // Alineación preventiva en silencios musicales para mantener el histórico de lectura
+                let lastPassedIdx = -1;
+                for (let i = 0; i < currentLyrics.length; i++) {
+                    if (currentTime >= currentLyrics[i].begin) {
+                        lastPassedIdx = i;
+                    } else {
+                        break;
+                    }
+                }
+                if (lastPassedIdx !== -1 && lastPassedIdx !== lastActiveLineIdx) {
+                    smoothScrollToLine(lastPassedIdx);
+                    lastActiveLineIdx = lastPassedIdx;
                 }
             }
         }
