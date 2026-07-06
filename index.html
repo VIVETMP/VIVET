@@ -796,11 +796,13 @@
         const religionCoverUrl = "https://files.catbox.moe/bvfrst.jpg";
         const talentoCoverUrl  = "https://files.catbox.moe/bpjz9c.jpg";
         const yeyeCoverUrl     = "https://files.catbox.moe/jfktck.jpg";
+        const dosdosdosCoverUrl = "https://files.catbox.moe/bvfrst.jpg"; // Portada alternativa para "222" (Religión)
 
         const albumsData = [ 
             { id: "religion-single", title: "Religión", artist: "Yan Block", cover: religionCoverUrl, year: "2026" },
             { id: "talento-single", title: "Talento", artist: "Yan Block", cover: talentoCoverUrl, year: "2026" },
-            { id: "yeye-single", title: "YeYe", artist: "Yan Block", cover: yeyeCoverUrl, year: "2026" }
+            { id: "yeye-single", title: "YeYe", artist: "Yan Block", cover: yeyeCoverUrl, year: "2026" },
+            { id: "222-single", title: "222", artist: "Yan Block", cover: dosdosdosCoverUrl, year: "2026" }
         ];
 
         const cancionesData = [
@@ -831,6 +833,16 @@
                 lrc: "https://files.catbox.moe/rexdjg.ttml",
                 cover: yeyeCoverUrl,
                 album: "yeye-single",
+                trackNum: 1,
+                coverLoaded: true
+            },
+            { 
+                title: "222", 
+                artist: "Yan Block", 
+                url: "https://files.catbox.moe/ovb0v9.mp3", 
+                lrc: "https://files.catbox.moe/xjiqtq.ttml",
+                cover: dosdosdosCoverUrl,
+                album: "222-single",
                 trackNum: 1,
                 coverLoaded: true
             }
@@ -1295,7 +1307,7 @@
                 container.appendChild(card);
                 
                 if (type === 'song' && !item.coverLoaded && !item.coverLoading) loadSongCover(item, realIndex);
-                else if (type === 'song' && item.coverLoaded) document.querySelectorAll(`.cover-song-${realIndex}`).forEach(img => img.src = item.cover);
+                else if (type === 'song' && item.coverLoaded) document.querySelectorAll(`.cover-song-${realIndex}`).forEach(img => img.src = song.cover);
             });
         }
 
