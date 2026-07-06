@@ -452,6 +452,42 @@
             opacity: 0.72 !important;
         }
 
+        .lrc-line.interlude-line {
+            display: flex;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .lrc-dots {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 4px;
+        }
+        .lrc-dot {
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.25);
+            transform: scale(0.55);
+            transition: background 0.4s var(--ease-fluid);
+        }
+        .lrc-dots.dots-sung .lrc-dot {
+            background: rgba(255,255,255,0.85);
+            transform: scale(0.55);
+        }
+        .lrc-dots.breathing .lrc-dot {
+            animation: dotBreath var(--breath-dur, 1.2s) ease-in-out infinite;
+        }
+        .lrc-dots.breathing .lrc-dot:nth-child(1) { animation-delay: 0s; }
+        .lrc-dots.breathing .lrc-dot:nth-child(2) { animation-delay: calc(var(--breath-dur, 1.2s) * 0.16); }
+        .lrc-dots.breathing .lrc-dot:nth-child(3) { animation-delay: calc(var(--breath-dur, 1.2s) * 0.32); }
+
+        @keyframes dotBreath {
+            0%, 60%, 100% { transform: scale(0.55); background: rgba(255,255,255,0.3); }
+            30% { transform: scale(1); background: rgba(255,255,255,1); }
+        }
+
         /* WORD TOKEN */
         .lrc-word {
             display: inline;
@@ -1589,11 +1625,14 @@
                             const pDur = pEnd > pBegin ? pEnd - pBegin : 0;
                             if (cleanLine) {
                                 words.push({ time: pBegin, dur: pDur, text: cleanLine, el: null, fill: 0, lastRenderedFill: 0 });
+                            } else if (pDur > 0) {
+                                words.push({ time: pBegin, dur: pDur, text: "•••", el: null, fill: 0, lastRenderedFill: 0, isInterlude: true });
                             }
                         }
                         
                         if(words.length > 0) {
                             const cleanLine = words.map(w => w.text).join('').trim();
+                            const lineIsInterlude = words.length === 1 && !!words[0].isInterlude;
                             
                             const isBgVocal = (cleanLine.startsWith('(') && cleanLine.endsWith(')')) || 
                                               (cleanLine.startsWith('[') && cleanLine.endsWith(']')) ||
@@ -1607,7 +1646,9 @@
                                 words, 
                                 el: null, 
                                 dur: pEnd > pBegin ? pEnd - pBegin : 0,
-                                isBgVocal: isBgVocal
+                                isBgVocal: isBgVocal,
+                                isInterlude: lineIsInterlude,
+                                trueEnd: pEnd > pBegin ? pEnd : null
                             });
                         }
                     }
@@ -1624,7 +1665,7 @@
                             while((wm = wReg.exec(raw)) !== null) { hasW = true; words.push({ time: (parseInt(wm[1])*60)+parseFloat(wm[2]), text: wm[3], el: null, dur: 0, fill: 0, lastRenderedFill: 0 }); }
                             
                             const clean = raw.replace(/<\d{2,}:\d{2}(?:\.\d{1,3})?>/g, '').trim();
-                            if(clean === "" || clean === "♪") words =[{ time, text: "•••", el: null, dur: 0, fill: 0, lastRenderedFill: 0 }];
+                            if(clean === "" || clean === "♪") words =[{ time, text: "•••", el: null, dur: 0, fill: 0, lastRenderedFill: 0, isInterlude: true }];
                             else if(!hasW) words =[{ time, text: clean, el: null, dur: 0, fill: 0, lastRenderedFill: 0 }];
                             
                             const isBgVocal = (clean.startsWith('(') && clean.endsWith(')')) || 
@@ -1632,7 +1673,7 @@
                                               clean.startsWith('Coro:') || 
                                               clean.startsWith('(Coro)') ||
                                               /^[\(\[\{].*[\)\]\}]$/.test(clean);
-                            parsedLyrics.push({ time, text: clean, words, el: null, dur: 0, isBgVocal: isBgVocal });
+                            parsedLyrics.push({ time, text: clean, words, el: null, dur: 0, isBgVocal: isBgVocal, isInterlude: (words.length === 1 && !!words[0].isInterlude), trueEnd: null });
                         }
                     });
                 }
@@ -1648,6 +1689,36 @@
                         }
                     }
                 });
+
+                // Insert a breathing-dots indicator for long instrumental gaps that
+                // weren't explicitly marked in the lyrics file (matches the interlude
+                // indicator behavior used by Apple Music / AMLL-style lyric viewers).
+                const GAP_THRESHOLD = 6;
+                const makeInterludeLine = (start, dur) => ({
+                    time: start, text: "•••",
+                    words: [{ time: start, dur: dur, text: "•••", el: null, fill: 0, lastRenderedFill: 0, isInterlude: true }],
+                    el: null, dur: dur, isBgVocal: false, isInterlude: true, trueEnd: start + dur
+                });
+
+                const withGaps =[];
+                for(let i = 0; i < parsedLyrics.length; i++) {
+                    const cur = parsedLyrics[i];
+                    if(i === 0 && cur.time >= GAP_THRESHOLD && !cur.isInterlude) {
+                        const dotDur = Math.min(cur.time * 0.6, 4);
+                        withGaps.push(makeInterludeLine(Math.max(0, cur.time * 0.25), dotDur));
+                    }
+                    withGaps.push(cur);
+                    const next = parsedLyrics[i + 1];
+                    if(next && !cur.isInterlude && !next.isInterlude) {
+                        const curEnd = (cur.trueEnd != null) ? cur.trueEnd : (cur.time + cur.dur);
+                        const gap = next.time - curEnd;
+                        if(gap >= GAP_THRESHOLD) {
+                            const dotDur = Math.min(gap * 0.6, 4);
+                            withGaps.push(makeInterludeLine(curEnd + (gap - dotDur) * 0.4, dotDur));
+                        }
+                    }
+                }
+                parsedLyrics = withGaps;
 
                 container.innerHTML = ""; if(!parsedLyrics.length) throw new Error();
                 
@@ -1667,10 +1738,26 @@
                     if (l.isBgVocal) {
                         div.classList.add('bg-vocals');
                     }
+                    if (l.isInterlude) {
+                        div.classList.add('interlude-line');
+                    }
                     
                     div.onclick = () => { activeAudio.currentTime = l.time; activeAudio.play(); setPlayIcon(true); };
                     
                     l.words.forEach(w => {
+                        if (w.isInterlude) {
+                            const wrap = document.createElement('span');
+                            wrap.className = 'lrc-dots dots-idle';
+                            for(let d = 0; d < 3; d++) {
+                                const dot = document.createElement('span');
+                                dot.className = 'lrc-dot';
+                                wrap.appendChild(dot);
+                            }
+                            w.el = wrap;
+                            div.appendChild(wrap);
+                            return;
+                        }
+
                         let t = w.text;
                         let leadingSpace = false;
                         let trailingSpace = false;
@@ -1811,6 +1898,23 @@
                 ln.words.forEach(w => {
                     if(!w.el) return;
 
+                    if (w.isInterlude) {
+                        if(cur >= w.time + w.dur) {
+                            if(!w._sung) { w._sung = true; w.el.className = 'lrc-dots dots-sung'; }
+                        } else if(cur >= w.time) {
+                            w._sung = false;
+                            if(w.el.className !== 'lrc-dots breathing') {
+                                const cycle = Math.max(0.7, Math.min(2.2, w.dur / 4));
+                                w.el.style.setProperty('--breath-dur', `${cycle.toFixed(2)}s`);
+                                w.el.className = 'lrc-dots breathing';
+                            }
+                        } else if(w._sung) {
+                            w._sung = false;
+                            w.el.className = 'lrc-dots dots-idle';
+                        }
+                        return;
+                    }
+
                     let raw;
                     if(cur >= w.time + w.dur) {
                         if(!w._sung) {
@@ -1842,6 +1946,7 @@
                 ln.words.forEach(w => {
                     if(!w.el || w._sung) return;
                     w._sung = true;
+                    if (w.isInterlude) { w.el.className = 'lrc-dots dots-sung'; return; }
                     w.el.style.removeProperty('--wp');
                     w.el.className = ln.isBgVocal ? 'lrc-word bg-vocals-word sung' : 'lrc-word sung';
                 });
@@ -1852,6 +1957,7 @@
                 ln.words.forEach(w => {
                     if(!w.el || !w._sung) return;
                     w._sung = false;
+                    if (w.isInterlude) { w.el.className = 'lrc-dots dots-idle'; return; }
                     w.el.style.removeProperty('--wp');
                     w.el.className = ln.isBgVocal ? 'lrc-word bg-vocals-word idle' : 'lrc-word idle';
                 });
