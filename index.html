@@ -791,14 +791,16 @@
 
     <script>
         /* ==================================================================
-           DATA (Religion & Talento by Yan Block)
+           DATA (Religion, Talento & YeYe by Yan Block)
            ================================================================== */
         const religionCoverUrl = "https://files.catbox.moe/bvfrst.jpg";
         const talentoCoverUrl  = "https://files.catbox.moe/bpjz9c.jpg";
+        const yeyeCoverUrl     = "https://files.catbox.moe/jfktck.jpg";
 
         const albumsData = [ 
             { id: "religion-single", title: "Religión", artist: "Yan Block", cover: religionCoverUrl, year: "2026" },
-            { id: "talento-single", title: "Talento", artist: "Yan Block", cover: talentoCoverUrl, year: "2026" }
+            { id: "talento-single", title: "Talento", artist: "Yan Block", cover: talentoCoverUrl, year: "2026" },
+            { id: "yeye-single", title: "YeYe", artist: "Yan Block", cover: yeyeCoverUrl, year: "2026" }
         ];
 
         const cancionesData = [
@@ -819,6 +821,16 @@
                 lrc: "https://files.catbox.moe/uhpctn.ttml",
                 cover: talentoCoverUrl,
                 album: "talento-single",
+                trackNum: 1,
+                coverLoaded: true
+            },
+            { 
+                title: "YeYe", 
+                artist: "Yan Block", 
+                url: "https://files.catbox.moe/761o0r.mp3", 
+                lrc: "https://files.catbox.moe/rexdjg.ttml",
+                cover: yeyeCoverUrl,
+                album: "yeye-single",
                 trackNum: 1,
                 coverLoaded: true
             }
@@ -1558,7 +1570,6 @@
                         if(words.length > 0) {
                             const cleanLine = words.map(w => w.text).join('').trim();
                             
-                            // Advanced background vocal detection for lines wrapped in parentheses or square brackets
                             const isBgVocal = (cleanLine.startsWith('(') && cleanLine.endsWith(')')) || 
                                               (cleanLine.startsWith('[') && cleanLine.endsWith(']')) ||
                                               cleanLine.startsWith('Coro:') || 
