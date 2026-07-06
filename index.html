@@ -207,7 +207,7 @@
         .hero-stats { font-size: 15px; font-weight: 500; color: var(--text-secondary); margin-top: 8px; display: flex; align-items: center; gap: 12px;}
         .hero-actions { display: flex; gap: 16px; margin-top: 32px; }
         .btn-primary { background: #fff; color: #000; font-family: var(--font-display); font-weight: 700; font-size: 16px; padding: 16px 48px; border-radius: 100px; display: inline-flex; align-items: center; gap: 12px; cursor: pointer; transition: all 0.4s var(--ease-snappy); border: none; outline: none; box-shadow: 0 15px 30px rgba(255,255,255,0.2); }
-        .btn-primary:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 20px 40px rgba(255,255,255,0.3); box-shadow: 0 20px 40px rgba(255,255,255,0.3); }
+        .btn-primary:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 20px 40px rgba(255,255,255,0.3); }
         .btn-primary:active { transform: scale(0.96); }
 
         /* ==================================================================
@@ -452,23 +452,32 @@
             opacity: 0.72 !important;
         }
 
+        .lrc-line.active {
+            text-shadow: 0 0 36px rgba(255, 46, 147, 0.16);
+            transition: text-shadow 0.5s var(--ease-fluid);
+        }
+
         /* WORD TOKEN */
         .lrc-word {
-            display: inline;
+            display: inline-block;
             padding: 0;
             margin: 0;
             vertical-align: baseline;
+            transform: scale(1) translateZ(0);
+            transition: transform 0.35s var(--ease-snappy), text-shadow 0.35s var(--ease-snappy);
             background: linear-gradient(90deg,
-                rgba(255,255,255,1)   0%,
-                rgba(255,255,255,1)   calc(var(--wp, 0%) - 14%),
-                rgba(255,255,255,0.55) calc(var(--wp, 0%) - 2%),
+                #ffffff 0%,
+                #ffffff calc(var(--wp, 0%) - 24%),
+                rgba(255,255,255,0.92) calc(var(--wp, 0%) - 11%),
+                var(--accent-1) calc(var(--wp, 0%) - 5%),
+                rgba(255,255,255,0.6) calc(var(--wp, 0%) - 1%),
                 rgba(255,255,255,0.22) var(--wp, 0%),
                 rgba(255,255,255,0.22) 100%
             );
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            will-change: background;
+            will-change: background, transform;
         }
 
         /* Specialized styling for background words/tokens within parenthetical phrases */
@@ -476,13 +485,25 @@
             font-style: italic;
             background: linear-gradient(90deg,
                 rgba(255,255,255,0.85)  0%,
-                rgba(255,255,255,0.85)  calc(var(--wp, 0%) - 14%),
-                rgba(255,255,255,0.45)  calc(var(--wp, 0%) - 2%),
+                rgba(255,255,255,0.85)  calc(var(--wp, 0%) - 24%),
+                rgba(255,255,255,0.6)   calc(var(--wp, 0%) - 11%),
+                var(--accent-1)         calc(var(--wp, 0%) - 5%),
+                rgba(255,255,255,0.45)  calc(var(--wp, 0%) - 1%),
                 rgba(255,255,255,0.15)  var(--wp, 0%),
                 rgba(255,255,255,0.15)  100%
             );
             -webkit-background-clip: text;
             background-clip: text;
+        }
+
+        /* The word actively being sung right now (not idle, not finished) gets a subtle lift + glow */
+        .lrc-word:not(.idle):not(.sung) {
+            transform: scale(1.045) translateZ(0);
+            text-shadow: 0 0 22px rgba(255, 46, 147, 0.4), 0 0 10px rgba(255,255,255,0.3);
+        }
+        .lrc-word.bg-vocals-word:not(.idle):not(.sung) {
+            transform: scale(1.02) translateZ(0);
+            text-shadow: 0 0 14px rgba(255, 46, 147, 0.25);
         }
 
         .lrc-word.sung {
@@ -791,18 +812,16 @@
 
     <script>
         /* ==================================================================
-           DATA (Religion, Talento, YeYe & 222 by Yan Block)
+           DATA (Religion, Talento & YeYe by Yan Block)
            ================================================================== */
         const religionCoverUrl = "https://files.catbox.moe/bvfrst.jpg";
         const talentoCoverUrl  = "https://files.catbox.moe/bpjz9c.jpg";
         const yeyeCoverUrl     = "https://files.catbox.moe/jfktck.jpg";
-        const s222CoverUrl     = "https://files.catbox.moe/231x9h.jpg";
 
         const albumsData = [ 
             { id: "religion-single", title: "Religión", artist: "Yan Block", cover: religionCoverUrl, year: "2026" },
             { id: "talento-single", title: "Talento", artist: "Yan Block", cover: talentoCoverUrl, year: "2026" },
-            { id: "yeye-single", title: "YeYe", artist: "Yan Block", cover: yeyeCoverUrl, year: "2026" },
-            { id: "s222-single", title: "222", artist: "Yan Block", cover: s222CoverUrl, year: "2026" }
+            { id: "yeye-single", title: "YeYe", artist: "Yan Block", cover: yeyeCoverUrl, year: "2026" }
         ];
 
         const cancionesData = [
@@ -833,16 +852,6 @@
                 lrc: "https://files.catbox.moe/rexdjg.ttml",
                 cover: yeyeCoverUrl,
                 album: "yeye-single",
-                trackNum: 1,
-                coverLoaded: true
-            },
-            { 
-                title: "222", 
-                artist: "Yan Block", 
-                url: "https://files.catbox.moe/ovb0v9.mp3", 
-                lrc: "https://files.catbox.moe/xjiqtq.ttml",
-                cover: s222CoverUrl,
-                album: "s222-single",
                 trackNum: 1,
                 coverLoaded: true
             }
@@ -1053,7 +1062,6 @@
             let nr,ng,nb;
             if(s===0){ nr=ng=nb=l; }
             else {
-                const q2=l<0.5?l*(1+s):l+s-l*s, p2=2=l-q2; // Fixed evaluation symbol inside function scoping
                 const q2=l<0.5?l*(1+s):l+s-l*s, p2=2*l-q2;
                 nr=hue2rgb(p2,q2,h+1/3); ng=hue2rgb(p2,q2,h); nb=hue2rgb(p2,q2,h-1/3);
             }
@@ -1482,8 +1490,8 @@
         let _anchorPerfTime  = 0;       
         let _lastRawTime     = -1;      
 
-        const SPRING_K   = 170;   
-        const SPRING_D   = 26;    
+        const SPRING_K   = 205;   
+        const SPRING_D   = 27;    
         const SPRING_M   = 1;     
         const SPRING_DT  = 1/120; 
 
@@ -1808,7 +1816,8 @@
                         }
                         return;
                     } else if(cur >= w.time) {
-                        raw = w.dur > 0 ? (cur - w.time) / w.dur : 1;
+                        const linear = w.dur > 0 ? (cur - w.time) / w.dur : 1;
+                        raw = linear < 0.5 ? 2 * linear * linear : 1 - Math.pow(-2 * linear + 2, 2) / 2;
                     } else {
                         if(w._sung) {
                             w._sung = false;
