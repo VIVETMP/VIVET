@@ -791,12 +791,14 @@
 
     <script>
         /* ==================================================================
-           DATA (UPDATED: Religion - Yan Block)
+           DATA (Religion & Talento by Yan Block)
            ================================================================== */
         const religionCoverUrl = "https://files.catbox.moe/bvfrst.jpg";
+        const talentoCoverUrl  = "https://files.catbox.moe/bpjz9c.jpg";
 
         const albumsData = [ 
-            { id: "religion-single", title: "Religión", artist: "Yan Block", cover: religionCoverUrl, year: "2026" }
+            { id: "religion-single", title: "Religión", artist: "Yan Block", cover: religionCoverUrl, year: "2026" },
+            { id: "talento-single", title: "Talento", artist: "Yan Block", cover: talentoCoverUrl, year: "2026" }
         ];
 
         const cancionesData = [
@@ -807,6 +809,16 @@
                 lrc: "https://files.catbox.moe/i159h8.ttml",
                 cover: religionCoverUrl,
                 album: "religion-single",
+                trackNum: 1,
+                coverLoaded: true
+            },
+            { 
+                title: "Talento", 
+                artist: "Yan Block", 
+                url: "https://files.catbox.moe/jh0a8d.mp3", 
+                lrc: "https://files.catbox.moe/uhpctn.ttml",
+                cover: talentoCoverUrl,
+                album: "talento-single",
                 trackNum: 1,
                 coverLoaded: true
             }
@@ -1546,8 +1558,12 @@
                         if(words.length > 0) {
                             const cleanLine = words.map(w => w.text).join('').trim();
                             
-                            // Detect background vocals (frecuentemente envueltas en paréntesis en archivos TTML)
-                            const isBgVocal = (cleanLine.startsWith('(') && cleanLine.endsWith(')')) || cleanLine.startsWith('[');
+                            // Advanced background vocal detection for lines wrapped in parentheses or square brackets
+                            const isBgVocal = (cleanLine.startsWith('(') && cleanLine.endsWith(')')) || 
+                                              (cleanLine.startsWith('[') && cleanLine.endsWith(']')) ||
+                                              cleanLine.startsWith('Coro:') || 
+                                              cleanLine.startsWith('(Coro)') ||
+                                              /^[\(\[\{].*[\)\]\}]$/.test(cleanLine);
                             
                             parsedLyrics.push({ 
                                 time: pBegin, 
@@ -1575,7 +1591,11 @@
                             if(clean === "" || clean === "♪") words =[{ time, text: "•••", el: null, dur: 0, fill: 0, lastRenderedFill: 0 }];
                             else if(!hasW) words =[{ time, text: clean, el: null, dur: 0, fill: 0, lastRenderedFill: 0 }];
                             
-                            const isBgVocal = (clean.startsWith('(') && clean.endsWith(')')) || clean.startsWith('[');
+                            const isBgVocal = (clean.startsWith('(') && clean.endsWith(')')) || 
+                                              (clean.startsWith('[') && clean.endsWith(']')) ||
+                                              clean.startsWith('Coro:') || 
+                                              clean.startsWith('(Coro)') ||
+                                              /^[\(\[\{].*[\)\]\}]$/.test(clean);
                             parsedLyrics.push({ time, text: clean, words, el: null, dur: 0, isBgVocal: isBgVocal });
                         }
                     });
@@ -1608,7 +1628,6 @@
                     const div = document.createElement('div'); 
                     div.className = 'lrc-line';
                     
-                    // Apply visual treatment to background vocals
                     if (l.isBgVocal) {
                         div.classList.add('bg-vocals');
                     }
@@ -1628,8 +1647,7 @@
                         if(t) { 
                             const s = document.createElement('span'); 
                             
-                            // Check if this word is a background vocal component
-                            const isWordBg = l.isBgVocal || /[\(\)\[\]]/.test(t);
+                            const isWordBg = l.isBgVocal || /[\(\)\[\]\{\}]/.test(t);
                             s.className = isWordBg ? 'lrc-word bg-vocals-word idle' : 'lrc-word idle'; 
                             
                             s.textContent = t; 
@@ -1683,7 +1701,6 @@
                     const isActive = (i === activeIdx);
                     const isBg = parsedLyrics[i]?.isBgVocal;
                     
-                    // Different spring target bounds for background vocals versus main lead vocals
                     const tScale = isActive ? (isBg ? 1.02 : 1.08) : (isBg ? 0.90 : 0.95);
                     const tOpac  = isActive ? (isBg ? 0.75 : 1.0)  : (i < activeIdx ? 0.20 : (isBg ? 0.18 : 0.32));
                     const tBlur  = isActive ? 0.0  : (i < activeIdx ? (isBg ? 0.8 : 0.6)  : (isBg ? 1.0 : 0.7));
