@@ -88,7 +88,6 @@
             position: absolute; inset: 0; z-index: 2; opacity: 0.045; mix-blend-mode: overlay; pointer-events: none;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
-        /* Spicy-style: canvas renders blobs then CSS blur+saturate makes it fluid */
         #fluid-canvas {
             position: absolute; inset: -8%; width: 116%; height: 116%;
             filter: blur(70px) saturate(200%) brightness(0.9);
@@ -315,7 +314,7 @@
         .np-scrubber-group { display: flex; flex-direction: column; gap: 10px; width: 100%; }
         .np-time-row { display: flex; justify-content: space-between; font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.55); font-variant-numeric: tabular-nums; letter-spacing: 0.02em; margin-bottom: 2px;}
         
-        /* Beautiful Spicy-style progress bar */
+        /* Progress Bar */
         .np-progress-track {
             width: 100%;
             height: 5px;
@@ -354,7 +353,6 @@
         .np-progress-track:hover .np-progress-fill::after {
             transform: translateY(-50%) scale(1);
         }
-        /* Buffered/glow shimmer effect */
         .np-progress-fill::before {
             content: '';
             position: absolute;
@@ -378,7 +376,6 @@
         .np-track-title { font-size: 18px; font-weight: 700; color: #fff; letter-spacing: -0.01em;}
         .np-track-artist { font-size: 16px; color: rgba(255,255,255,0.6); font-weight: 500; letter-spacing: -0.01em;}
 
-        /* Controls visible only on hover on Desktop */
         .hidden-controls { 
             display: flex; justify-content: center; align-items: center; gap: 32px; 
             opacity: 0; pointer-events: none; transition: opacity 0.3s ease; 
@@ -394,7 +391,6 @@
         .np-right-pane { 
             flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: center; position: relative; 
             max-width: 800px;
-            /* Mask only on top/bottom — NOT left/right — so words never get clipped at edges */
             mask-image: linear-gradient(to bottom, 
                 transparent 0%, 
                 rgba(0,0,0,0.6) 8%, 
@@ -419,9 +415,8 @@
         .lyrics-scroll-area::-webkit-scrollbar { display: none; }
 
         /* ============================================================
-           SPRING-PHYSICS LYRICS ENGINE — CSS LAYER
+           LYRICS ENGINE & BACKGROUND VOCALS SUPPORT
            ============================================================ */
-
         .lrc-line {
             font-size: clamp(28px, 3.6vw, 52px);
             font-weight: 700;
@@ -440,9 +435,17 @@
             opacity: 0.32;
             transform: scale(0.95) translateZ(0);
             filter: blur(0px);
-            /* Critical: prevent transform clipping by giving overflow room */
             padding: 4px 6px 4px 2px;
             margin-left: -2px;
+        }
+
+        /* Style specifically configured for background vocals / coros */
+        .lrc-line.bg-vocals {
+            font-size: clamp(22px, 2.9vw, 42px);
+            font-weight: 500;
+            font-style: italic;
+            padding-left: 24px;
+            border-left: 2px solid rgba(255, 255, 255, 0.08);
         }
 
         .lrc-line:not(.active):hover {
@@ -468,8 +471,29 @@
             will-change: background;
         }
 
+        /* Specialized styling for background words/tokens within parenthetical phrases */
+        .lrc-word.bg-vocals-word {
+            font-style: italic;
+            background: linear-gradient(90deg,
+                rgba(255,255,255,0.85)  0%,
+                rgba(255,255,255,0.85)  calc(var(--wp, 0%) - 14%),
+                rgba(255,255,255,0.45)  calc(var(--wp, 0%) - 2%),
+                rgba(255,255,255,0.15)  var(--wp, 0%),
+                rgba(255,255,255,0.15)  100%
+            );
+            -webkit-background-clip: text;
+            background-clip: text;
+        }
+
         .lrc-word.sung {
             background: rgba(255,255,255,1);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .lrc-word.bg-vocals-word.sung {
+            background: rgba(255,255,255,0.85);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
@@ -477,6 +501,13 @@
 
         .lrc-word.idle {
             background: rgba(255,255,255,0.22);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .lrc-word.bg-vocals-word.idle {
+            background: rgba(255,255,255,0.12);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
@@ -518,7 +549,6 @@
             .track-row { padding: 12px; gap: 16px; }
             .search-container { max-width: 100%; }
 
-            /* Fullscreen NP Mobile */
             #np-fs { overflow-y: auto; overflow-x: hidden; } 
             
             .btn-collapse { display: none; }
@@ -545,6 +575,7 @@
             .np-right-pane { width: 100%; max-width: 400px; flex: none; height: 70vh; position: relative; margin-top: 10px; }
             .lyrics-scroll-area { padding: 10vh 4vw 30vh 4vw; }
             .lrc-line { font-size: 30px; margin-bottom: 22px; padding: 3px 4px 3px 2px; }
+            .lrc-line.bg-vocals { padding-left: 16px; }
             .np-progress-track { height: 4px; }
             .np-progress-track:hover { height: 7px; }
         }
@@ -672,10 +703,10 @@
             <div class="progress-mini-wrapper"><div class="progress-mini-fill" id="bar-fill-mini"></div></div>
             
             <div class="player-info" onclick="toggleNP()">
-                <img src="https://4nemxki6k8.ucarecd.net/257a4eab-8b91-4b27-93df-436a8c1acd5b/LOVE.png" id="player-img" class="player-img" crossorigin="anonymous">
+                <img src="https://files.catbox.moe/bvfrst.jpg" id="player-img" class="player-img" crossorigin="anonymous">
                 <div class="player-meta">
-                    <div class="player-title"><span id="player-title">LOVE</span> <div class="ai-badge" id="badge-pill">Mix</div></div>
-                    <div class="player-artist" id="player-artist">Clarent</div>
+                    <div class="player-title"><span id="player-title">Religión</span> <div class="ai-badge" id="badge-pill">Mix</div></div>
+                    <div class="player-artist" id="player-artist">Yan Block</div>
                 </div>
             </div>
 
@@ -704,7 +735,7 @@
         </div>
     </div>
 
-    <!-- FULLSCREEN NOW PLAYING OVERLAY (APPLE TV / MUSIC MAC REPLICA) -->
+    <!-- FULLSCREEN NOW PLAYING OVERLAY -->
     <div id="np-fs">
         <div class="np-bg-wrap">
             <canvas id="fluid-canvas-np"></canvas>
@@ -718,7 +749,7 @@
         <div class="np-layout">
             <!-- Left Pane: Info & Scrubber -->
             <div class="np-left-pane">
-                <div class="np-art-wrap" onclick="togglePlay()"><img src="https://4nemxki6k8.ucarecd.net/257a4eab-8b91-4b27-93df-436a8c1acd5b/LOVE.png" id="np-img-large" class="np-art" crossorigin="anonymous"></div>
+                <div class="np-art-wrap" onclick="togglePlay()"><img src="https://files.catbox.moe/bvfrst.jpg" id="np-img-large" class="np-art" crossorigin="anonymous"></div>
                 
                 <div class="np-info-block">
                     <div class="np-scrubber-group">
@@ -732,8 +763,8 @@
                     </div>
 
                     <div class="np-track-info-center">
-                        <h2 class="np-track-title"><span id="np-title-large">LOVE</span></h2>
-                        <p class="np-track-artist" id="np-artist-large">Clarent — LOVE (Single)</p>
+                        <h2 class="np-track-title"><span id="np-title-large">Religión</span></h2>
+                        <p class="np-track-artist" id="np-artist-large">Yan Block — Religión (Single)</p>
                     </div>
                 </div>
 
@@ -760,42 +791,29 @@
 
     <script>
         /* ==================================================================
-           DATA
+           DATA (UPDATED: Religion - Yan Block)
            ================================================================== */
-        const coverImgUrl = "https://4nemxki6k8.ucarecd.net/257a4eab-8b91-4b27-93df-436a8c1acd5b/LOVE.png";
-        const sideBitchCoverUrl = "https://4nemxki6k8.ucarecd.net/edfb8894-b9a0-4a53-8287-4bb004257b3a/SIDEBITHC.jpg";
+        const religionCoverUrl = "https://files.catbox.moe/bvfrst.jpg";
 
         const albumsData = [ 
-            { id: "love-single", title: "LOVE", artist: "Clarent", cover: coverImgUrl, year: "2026" },
-            { id: "side-bitch-single", title: "Side Bitch", artist: "Luar La L", cover: sideBitchCoverUrl, year: "2026" }
+            { id: "religion-single", title: "Religión", artist: "Yan Block", cover: religionCoverUrl, year: "2026" }
         ];
 
         const cancionesData = [
             { 
-                title: "LOVE", 
-                artist: "Clarent", 
-                url: "https://4nemxki6k8.ucarecd.net/e153e07f-fd5b-4046-ac32-e20e0234e8b3/LOVE_spotdownorg.mp3", 
-                lrc: "https://4nemxki6k8.ucarecd.net/eade5559-7e95-4a7c-8e81-1094b52e3915/LOVE_spotdownorg.ttml",
-                cover: coverImgUrl,
-                album: "love-single",
-                trackNum: 1,
-                coverLoaded: true
-            },
-            { 
-                title: "Side Bitch", 
-                artist: "Luar La L", 
-                url: "https://4nemxki6k8.ucarecd.net/96ecc174-aa34-4068-90ad-cfc1aa8de6ad/SideBitch_spotdownorg.mp3", 
-                lrc: "https://4nemxki6k8.ucarecd.net/5da249fc-b53a-47d4-af02-22323ced80a5/SideBitch_spotdownorg.ttml",
-                cover: sideBitchCoverUrl,
-                album: "side-bitch-single",
+                title: "Religión", 
+                artist: "Yan Block", 
+                url: "https://files.catbox.moe/1g4xcw.mp3", 
+                lrc: "https://files.catbox.moe/i159h8.ttml",
+                cover: religionCoverUrl,
+                album: "religion-single",
                 trackNum: 1,
                 coverLoaded: true
             }
         ];
 
         const artistsData = [
-            { name: "Clarent", img: coverImgUrl },
-            { name: "Luar La L", img: sideBitchCoverUrl }
+            { name: "Yan Block", img: religionCoverUrl }
         ];
 
         /* ==================================================================
@@ -876,29 +894,17 @@
         function haptic() { if (navigator.vibrate) navigator.vibrate(10); }
 
         /* ==================================================================
-           SPICY LYRICS-INSPIRED DYNAMIC BACKGROUND ENGINE
-           ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-           Replicates the kawarp/dynamic background from Spicy Lyrics:
-           • Color extraction from album art via offscreen canvas
-           • 6 organic radial gradient blobs per canvas, each with
-             independent sinusoidal motion paths (no two move alike)
-           • Smooth color lerp on track change (800ms transition)
-           • Separate canvases for main BG and fullscreen NP
-           • Renders at 1/4 resolution — CSS blur does the rest
+           DYNAMIC BACKGROUND ENGINE
            ================================================================== */
-        
-        // Canvas refs
         let fluidCanvas, fluidCtx;
         let npFluidCanvas, npFluidCtx;
         
-        // Extracted palette: array of {r,g,b,a} objects
-        let activePalette   = null;  // current displayed palette
-        let targetPalette   = null;  // palette we're lerping toward
-        let paletteProgress = 1.0;   // 0..1, 1 = transition complete
-        const PALETTE_LERP_DURATION = 800; // ms
+        let activePalette   = null;  
+        let targetPalette   = null;  
+        let paletteProgress = 1.0;   
+        const PALETTE_LERP_DURATION = 800; 
         let paletteLerpStart = 0;
         
-        // Default dark palette before first song loads
         let globalPalette = [
             {r:255, g:46,  b:147},
             {r:127, g:73,  b:180},
@@ -908,12 +914,7 @@
             {r:60,  g:30,  b:100}
         ];
         
-        // Blob definitions — 6 blobs per canvas
-        // Each has: x, y (current pos), tx/ty (target), t (time phase), 
-        // radius multiplier, speed multiplier, and a path function index
         let blobs = [];
-        
-        // ── OFFSCREEN: color extraction ─────────────────────────────
         let extractCanvas = null;
         let extractCtx    = null;
         
@@ -923,7 +924,6 @@
             npFluidCanvas = document.getElementById('fluid-canvas-np');
             npFluidCtx    = npFluidCanvas.getContext('2d');
             
-            // Tiny extract canvas
             extractCanvas = document.createElement('canvas');
             extractCanvas.width  = 64;
             extractCanvas.height = 64;
@@ -932,15 +932,13 @@
             resizeFluidCanvas();
             window.addEventListener('resize', resizeFluidCanvas);
             
-            // Init blobs with staggered phases
             blobs = Array.from({length: 6}, (_, i) => ({
-                x: 0.5, y: 0.5,           // normalized 0..1 position
-                vx: 0,  vy: 0,             // velocity
-                t:  (i / 6) * Math.PI * 2, // phase offset
+                x: 0.5, y: 0.5,           
+                vx: 0,  vy: 0,             
+                t:  (i / 6) * Math.PI * 2, 
                 speed: 0.00018 + i * 0.000035,
                 radMul: 0.55 + (i % 3) * 0.18,
                 colorIdx: i % 6,
-                // Unique Lissajous-style path coefficients
                 ax: 0.28 + (i * 0.13) % 0.4,
                 ay: 0.22 + (i * 0.17) % 0.4,
                 fx: 1 + (i % 3) * 0.5,
@@ -949,35 +947,27 @@
                 py: (i * 0.9) % (Math.PI * 2),
             }));
             
-            // Seed initial positions
             blobs.forEach(b => {
                 b.x = 0.1 + Math.random() * 0.8;
                 b.y = 0.1 + Math.random() * 0.8;
             });
             
             activePalette = [...globalPalette];
-            
             requestAnimationFrame(animateFluid);
         }
         
         function resizeFluidCanvas() {
-            // Render at 1/4 scale — CSS blur is the effect
             const w = Math.ceil(window.innerWidth  / 4);
             const h = Math.ceil(window.innerHeight / 4);
             if (fluidCanvas)   { fluidCanvas.width   = w; fluidCanvas.height   = h; }
             if (npFluidCanvas) { npFluidCanvas.width  = w; npFluidCanvas.height = h; }
         }
         
-        // ── COLOR EXTRACTION ──────────────────────────────────────────
-        // Inspired by kawarp: sample a grid of points on the cover art,
-        // cluster by hue, return 6 vivid representative colors
         function extractPaletteFromImage(img) {
             if (!img || !img.complete || img.naturalWidth === 0) return null;
-            
             try {
                 extractCtx.drawImage(img, 0, 0, 64, 64);
                 
-                // Sample at a 5×5 grid of positions for color variety
                 const positions = [
                     [4,4],[30,4],[56,4],
                     [4,30],[30,30],[56,30],
@@ -992,28 +982,22 @@
                     for (let i=0; i<d.length; i+=4) { r+=d[i]; g+=d[i+1]; b+=d[i+2]; n++; }
                     r=Math.round(r/n); g=Math.round(g/n); b=Math.round(b/n);
                     
-                    // Boost saturation for vivid results (like kawarp does)
                     const boosted = boostSaturation(r, g, b, 1.4);
                     colors.push(boosted);
                 }
                 
-                // Pick 6 most spread colors (skip near-black/near-white)
                 const vivid = colors.filter(c => {
                     const brightness = (c.r * 299 + c.g * 587 + c.b * 114) / 1000;
                     return brightness > 18 && brightness < 240;
                 });
                 
                 if (vivid.length < 3) return null;
-                
-                // Pad or trim to exactly 6
                 while (vivid.length < 6) vivid.push({...vivid[vivid.length-1]});
-                
                 return vivid.slice(0, 6);
             } catch (e) { return null; }
         }
         
         function boostSaturation(r, g, b, factor) {
-            // RGB → HSL, boost S, → RGB
             r/=255; g/=255; b/=255;
             const max=Math.max(r,g,b), min=Math.min(r,g,b);
             let h,s,l=(max+min)/2;
@@ -1029,7 +1013,6 @@
                 h/=6;
             }
             s = Math.min(1, s * factor);
-            // HSL → RGB
             function hue2rgb(p,q,t){ if(t<0)t+=1; if(t>1)t-=1; if(t<1/6)return p+(q-p)*6*t; if(t<1/2)return q; if(t<2/3)return p+(q-p)*(2/3-t)*6; return p; }
             let nr,ng,nb;
             if(s===0){ nr=ng=nb=l; }
@@ -1040,7 +1023,6 @@
             return { r:Math.round(nr*255), g:Math.round(ng*255), b:Math.round(nb*255) };
         }
         
-        // ── PALETTE TRANSITION ───────────────────────────────────────
         function startPaletteTransition(newPalette) {
             if (!newPalette) return;
             targetPalette    = newPalette;
@@ -1053,7 +1035,6 @@
             const elapsed = now - paletteLerpStart;
             paletteProgress = Math.min(1.0, elapsed / PALETTE_LERP_DURATION);
             
-            // Ease out cubic
             const t = 1 - Math.pow(1 - paletteProgress, 3);
             
             activePalette = activePalette.map((src, i) => {
@@ -1068,13 +1049,10 @@
             if (paletteProgress >= 1.0) activePalette = [...targetPalette];
         }
         
-        // ── DRAW ──────────────────────────────────────────────────────
         function animateFluid(now) {
             tickPaletteTransition(now);
-            
             if (fluidCanvas && fluidCtx) drawFluidFrame(fluidCanvas, fluidCtx, now);
             if (isNPOpen && npFluidCanvas && npFluidCtx) drawFluidFrame(npFluidCanvas, npFluidCtx, now);
-            
             requestAnimationFrame(animateFluid);
         }
         
@@ -1083,18 +1061,14 @@
             const H = canvas.height;
             const palette = activePalette || globalPalette;
             
-            // Dark base — prevents blobs from showing on pure white
             ctx.fillStyle = `rgb(4,4,7)`;
             ctx.fillRect(0, 0, W, H);
             
-            // Draw each blob as a fat radial gradient
             blobs.forEach((b, i) => {
-                // Update position on Lissajous-like path
                 b.t += b.speed;
                 const nx = 0.5 + b.ax * Math.sin(b.fx * b.t + b.px);
                 const ny = 0.5 + b.ay * Math.sin(b.fy * b.t + b.py);
                 
-                // Smooth lerp toward target (organic lag)
                 b.x += (nx - b.x) * 0.028;
                 b.y += (ny - b.y) * 0.028;
                 
@@ -1105,7 +1079,6 @@
                 
                 const c = palette[b.colorIdx] || palette[0];
                 
-                // Two-stop radial: vivid core → transparent edge
                 const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
                 grad.addColorStop(0,   `rgba(${c.r},${c.g},${c.b},0.88)`);
                 grad.addColorStop(0.4, `rgba(${c.r},${c.g},${c.b},0.55)`);
@@ -1116,7 +1089,6 @@
                 ctx.fillStyle = grad;
                 ctx.fillRect(0, 0, W, H);
             });
-            
             ctx.globalCompositeOperation = 'source-over';
         }
 
@@ -1128,14 +1100,12 @@
             const lg = document.getElementById('np-img-large'); 
             lg.src = imgUrl;
             
-            // Extract palette as soon as image loads
             if (!lg.complete) {
                 lg.addEventListener('load', () => {
                     const palette = extractPaletteFromImage(lg);
                     if (palette) {
                         globalPalette = palette;
                         startPaletteTransition(palette);
-                        // Also set accent from brightest color
                         applyAccentFromPalette(palette);
                     }
                 }, { once: true });
@@ -1150,7 +1120,6 @@
         }
         
         function applyAccentFromPalette(palette) {
-            // Find the most vivid/saturated color for accent
             let bestIdx = 0, bestSat = -1;
             palette.forEach((c, i) => {
                 const r=c.r/255, g=c.g/255, b=c.b/255;
@@ -1165,12 +1134,8 @@
             document.documentElement.style.setProperty('--accent-glow', `rgba(${a.r},${a.g},${a.b},0.45)`);
         }
 
-        // Legacy extractColor kept for backwards compat (no longer primary path)
-        function extractColor(img) { /* handled by extractPaletteFromImage now */ }
-
         async function processCoverQueue() {
             updateCovers(cancionesData[currentPlayingIndex].cover);
-            // Preload the image so palette extraction runs immediately
             const img = new Image();
             img.crossOrigin = "anonymous";
             img.onload = () => {
@@ -1288,7 +1253,7 @@
 
                 let badge = '';
                 if (type === 'song') {
-                    if(!item.cover) item.cover = coverImgUrl;
+                    if(!item.cover) item.cover = religionCoverUrl;
                     if(currentPlayingIndex === realIndex) badge = `<div class="card-badge playing">PLAYING</div>`;
                 }
 
@@ -1471,7 +1436,7 @@
         }
 
         /* ==================================================================
-           LYRICS ENGINE — SPRING-PHYSICS + SUB-MS TIMING
+           LYRICS ENGINE — SPRING-PHYSICS + BACKGROUND VOCALS PARSER
            ================================================================== */
         let parsedLyrics = [];
         let activeLyricIndex = -1;
@@ -1527,7 +1492,6 @@
                 const text = await res.text(); 
                 
                 if (url.endsWith('.ttml') || text.includes('http://www.w3.org/ns/ttml') || text.includes('<?xml')) {
-                    
                     const parser = new DOMParser();
                     const xmlDoc = parser.parseFromString(text, "text/xml");
                     const pTags = xmlDoc.getElementsByTagName('p');
@@ -1581,12 +1545,22 @@
                         
                         if(words.length > 0) {
                             const cleanLine = words.map(w => w.text).join('').trim();
-                            parsedLyrics.push({ time: pBegin, text: cleanLine, words, el: null, dur: pEnd > pBegin ? pEnd - pBegin : 0 });
+                            
+                            // Detect background vocals (frecuentemente envueltas en paréntesis en archivos TTML)
+                            const isBgVocal = (cleanLine.startsWith('(') && cleanLine.endsWith(')')) || cleanLine.startsWith('[');
+                            
+                            parsedLyrics.push({ 
+                                time: pBegin, 
+                                text: cleanLine, 
+                                words, 
+                                el: null, 
+                                dur: pEnd > pBegin ? pEnd - pBegin : 0,
+                                isBgVocal: isBgVocal
+                            });
                         }
                     }
 
                 } else {
-                    
                     const lines = text.split('\n');
                     lines.forEach(line => {
                         const lineMatch = line.match(/\[(\d{2,}):(\d{2}(?:\.\d{1,3})?)\](.*)/);
@@ -1601,7 +1575,8 @@
                             if(clean === "" || clean === "♪") words =[{ time, text: "•••", el: null, dur: 0, fill: 0, lastRenderedFill: 0 }];
                             else if(!hasW) words =[{ time, text: clean, el: null, dur: 0, fill: 0, lastRenderedFill: 0 }];
                             
-                            parsedLyrics.push({ time, text: clean, words, el: null, dur: 0 });
+                            const isBgVocal = (clean.startsWith('(') && clean.endsWith(')')) || clean.startsWith('[');
+                            parsedLyrics.push({ time, text: clean, words, el: null, dur: 0, isBgVocal: isBgVocal });
                         }
                     });
                 }
@@ -1620,14 +1595,24 @@
 
                 container.innerHTML = ""; if(!parsedLyrics.length) throw new Error();
                 
-                linePhysics = parsedLyrics.map(() => ({
-                    scalePos: 0.95, scaleVel: 0,   
-                    opacPos:  0.32, opacVel:  0,   
-                    blurPos:  0.8,  blurVel:  0,   
-                }));
+                linePhysics = parsedLyrics.map((l) => {
+                    const isBg = l.isBgVocal;
+                    return {
+                        scalePos: isBg ? 0.90 : 0.95, scaleVel: 0,   
+                        opacPos:  isBg ? 0.18 : 0.32, opacVel:  0,   
+                        blurPos:  isBg ? 1.0  : 0.8,  blurVel:  0,   
+                    };
+                });
 
                 parsedLyrics.forEach((l, lineIdx) => {
-                    const div = document.createElement('div'); div.className = 'lrc-line';
+                    const div = document.createElement('div'); 
+                    div.className = 'lrc-line';
+                    
+                    // Apply visual treatment to background vocals
+                    if (l.isBgVocal) {
+                        div.classList.add('bg-vocals');
+                    }
+                    
                     div.onclick = () => { activeAudio.currentTime = l.time; activeAudio.play(); setPlayIcon(true); };
                     
                     l.words.forEach(w => {
@@ -1642,7 +1627,11 @@
                         
                         if(t) { 
                             const s = document.createElement('span'); 
-                            s.className = 'lrc-word idle'; 
+                            
+                            // Check if this word is a background vocal component
+                            const isWordBg = l.isBgVocal || /[\(\)\[\]]/.test(t);
+                            s.className = isWordBg ? 'lrc-word bg-vocals-word idle' : 'lrc-word idle'; 
+                            
                             s.textContent = t; 
                             w.el = s; 
                             div.appendChild(s); 
@@ -1692,10 +1681,12 @@
                 for(let i = 0; i < linePhysics.length; i++) {
                     const sp = linePhysics[i];
                     const isActive = (i === activeIdx);
+                    const isBg = parsedLyrics[i]?.isBgVocal;
                     
-                    const tScale = isActive ? 1.08 : 0.95;
-                    const tOpac  = isActive ? 1.0  : (i < activeIdx ? 0.28 : 0.32);
-                    const tBlur  = isActive ? 0.0  : (i < activeIdx ? 0.6  : 0.7);
+                    // Different spring target bounds for background vocals versus main lead vocals
+                    const tScale = isActive ? (isBg ? 1.02 : 1.08) : (isBg ? 0.90 : 0.95);
+                    const tOpac  = isActive ? (isBg ? 0.75 : 1.0)  : (i < activeIdx ? 0.20 : (isBg ? 0.18 : 0.32));
+                    const tBlur  = isActive ? 0.0  : (i < activeIdx ? (isBg ? 0.8 : 0.6)  : (isBg ? 1.0 : 0.7));
                     
                     let r;
                     r = springStep(sp.scalePos, sp.scaleVel, tScale);
@@ -1734,6 +1725,7 @@
                     l.el.className = i < nIdx  ? 'lrc-line passed'
                                    : i === nIdx ? 'lrc-line active'
                                    :              'lrc-line';
+                    if (l.isBgVocal) l.el.classList.add('bg-vocals');
                 });
                 activeLyricIndex = nIdx;
 
@@ -1771,7 +1763,7 @@
                         if(!w._sung) {
                             w._sung = true;
                             w.el.style.removeProperty('--wp');
-                            w.el.className = 'lrc-word sung';
+                            w.el.className = ln.isBgVocal ? 'lrc-word bg-vocals-word sung' : 'lrc-word sung';
                         }
                         return;
                     } else if(cur >= w.time) {
@@ -1779,34 +1771,36 @@
                     } else {
                         if(w._sung) {
                             w._sung = false;
-                            w.el.className = 'lrc-word idle';
+                            w.el.className = ln.isBgVocal ? 'lrc-word bg-vocals-word idle' : 'lrc-word idle';
                             w.el.style.removeProperty('--wp');
                         }
                         return;
                     }
 
                     w._sung = false;
-                    w.el.className = 'lrc-word';
+                    w.el.className = ln.isBgVocal ? 'lrc-word bg-vocals-word' : 'lrc-word';
                     const wp = Math.min(115, raw * 115);
                     w.el.style.setProperty('--wp', `${wp.toFixed(2)}%`);
                 });
             }
 
             for(let i = 0; i < nIdx; i++) {
-                parsedLyrics[i].words.forEach(w => {
+                const ln = parsedLyrics[i];
+                ln.words.forEach(w => {
                     if(!w.el || w._sung) return;
                     w._sung = true;
                     w.el.style.removeProperty('--wp');
-                    w.el.className = 'lrc-word sung';
+                    w.el.className = ln.isBgVocal ? 'lrc-word bg-vocals-word sung' : 'lrc-word sung';
                 });
             }
 
             for(let i = nIdx + 1; i < parsedLyrics.length; i++) {
-                parsedLyrics[i].words.forEach(w => {
+                const ln = parsedLyrics[i];
+                ln.words.forEach(w => {
                     if(!w.el || !w._sung) return;
                     w._sung = false;
                     w.el.style.removeProperty('--wp');
-                    w.el.className = 'lrc-word idle';
+                    w.el.className = ln.isBgVocal ? 'lrc-word bg-vocals-word idle' : 'lrc-word idle';
                 });
             }
         }
