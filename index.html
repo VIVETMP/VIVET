@@ -741,13 +741,15 @@
         const yeyeCoverUrl     = "https://files.catbox.moe/jfktck.jpg";
         const veintidosCoverUrl = "https://files.catbox.moe/231x9h.jpg";
         const fourLifeCoverUrl = "https://files.catbox.moe/8byhnd.jpg";
+        const remix444CoverUrl = "https://files.catbox.moe/rlhr7h.jpg";
 
         const albumsData = [ 
             { id: "religion-single", title: "Religión", artist: "Yan Block", cover: religionCoverUrl, year: "2026" },
             { id: "talento-single", title: "Talento", artist: "Yan Block", cover: talentoCoverUrl, year: "2026" },
             { id: "yeye-single", title: "YeYe", artist: "Yan Block", cover: yeyeCoverUrl, year: "2026" },
             { id: "222-single", title: "222", artist: "Yan Block", cover: veintidosCoverUrl, year: "2026" },
-            { id: "4life-single", title: "4 Life", artist: "Kris R", cover: fourLifeCoverUrl, year: "2026" }
+            { id: "4life-single", title: "4 Life", artist: "Kris R", cover: fourLifeCoverUrl, year: "2026" },
+            { id: "444-remix-single", title: "444 - Remix", artist: "Yan Block, De La Rose, Hades66 & Ñengo Flow", cover: remix444CoverUrl, year: "2026" }
         ];
 
         const cancionesData = [
@@ -800,12 +802,25 @@
                 album: "4life-single",
                 trackNum: 1,
                 coverLoaded: true
+            },
+            { 
+                title: "444 - Remix", 
+                artist: "Yan Block, De La Rose, Hades66 & Ñengo Flow", 
+                url: "https://files.catbox.moe/8eh8pr.mp3", 
+                lrc: "https://files.catbox.moe/s93ecx.ttml",
+                cover: remix444CoverUrl,
+                album: "444-remix-single",
+                trackNum: 1,
+                coverLoaded: true
             }
         ];
 
         const artistsData = [
             { name: "Yan Block", img: religionCoverUrl },
-            { name: "Kris R", img: fourLifeCoverUrl }
+            { name: "Kris R", img: fourLifeCoverUrl },
+            { name: "De La Rose", img: remix444CoverUrl },
+            { name: "Hades66", img: remix444CoverUrl },
+            { name: "Ñengo Flow", img: remix444CoverUrl }
         ];
 
         /* ==================================================================
