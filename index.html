@@ -13,6 +13,13 @@
     <!-- Icons & Tools -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsmediatags/3.9.5/jsmediatags.min.js"></script>
+
+    <!-- Real Apple Music-like Lyrics engine (the same one used by the AMLL TTML Tool preview) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@applemusic-like-lyrics/core@0.5.1/dist/style.css">
+    <script type="module">
+        import { LyricPlayer } from "https://esm.sh/@applemusic-like-lyrics/core@0.5.1";
+        window.__AMLLReady = Promise.resolve(LyricPlayer);
+    </script>
     
     <style>
         /* ==================================================================
@@ -409,144 +416,33 @@
             );
         }
         .lyrics-scroll-area {
-            position: relative; height: 100%; overflow-y: auto; overflow-x: visible; 
-            padding: 40vh 2vw 50vh 2vw; margin: 0; scroll-behavior: smooth;
+            position: relative; height: 100%; overflow: hidden; 
+            padding: 0 2vw; margin: 0;
         }
-        .lyrics-scroll-area::-webkit-scrollbar { display: none; }
 
         /* ============================================================
-           LYRICS ENGINE & BACKGROUND VOCALS SUPPORT
+           REAL AMLL (Apple Music-like Lyrics) ENGINE
+           The actual @applemusic-like-lyrics/core player is mounted
+           here. Its own stylesheet (loaded in <head>) handles all
+           line/word layout, springs, blur, scale and interlude dots —
+           these are just the theme variables it exposes for styling.
            ============================================================ */
-        .lrc-line {
-            font-size: clamp(28px, 3.6vw, 52px);
+        #lyrics-content {
+            width: 100%;
+            height: 100%;
+        }
+        #lyrics-content .amll-lyric-player {
+            --amll-lp-color: #fff;
+            --amll-lp-font-size: clamp(28px, 3.6vw, 52px);
+            --amll-lp-hover-bg-color: rgba(255,255,255,0.08);
             font-weight: 700;
-            line-height: 1.42;
             letter-spacing: -0.01em;
-            margin-bottom: 28px;
-            cursor: pointer;
-            word-wrap: break-word;
-            word-break: break-word;
-            white-space: normal;
-            overflow-wrap: break-word;
-            color: #fff;
-            text-align: left;
-            transform-origin: left center;
-            will-change: transform, opacity, filter;
-            opacity: 0.32;
-            transform: scale(0.95) translateZ(0);
-            filter: blur(0px);
-            padding: 4px 6px 4px 2px;
-            margin-left: -2px;
         }
-
-        /* Style specifically configured for background vocals / coros */
-        .lrc-line.bg-vocals {
-            font-size: clamp(22px, 2.9vw, 42px);
-            font-weight: 500;
-            font-style: italic;
-            padding-left: 24px;
-            border-left: 2px solid rgba(255, 255, 255, 0.08);
+        .lyrics-empty-state {
+            height: 100%; display: flex; align-items: center; justify-content: center;
         }
-
-        .lrc-line:not(.active):hover {
-            opacity: 0.72 !important;
-        }
-
-        .lrc-line.interlude-line {
-            display: flex;
-            justify-content: center;
-            text-align: center;
-        }
-
-        .lrc-dots {
-            display: inline-flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 4px;
-        }
-        .lrc-dot {
-            width: 11px;
-            height: 11px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.25);
-            transform: scale(0.55);
-            transition: background 0.4s var(--ease-fluid);
-        }
-        .lrc-dots.dots-sung .lrc-dot {
-            background: rgba(255,255,255,0.85);
-            transform: scale(0.55);
-        }
-        .lrc-dots.breathing .lrc-dot {
-            animation: dotBreath var(--breath-dur, 1.2s) ease-in-out infinite;
-        }
-        .lrc-dots.breathing .lrc-dot:nth-child(1) { animation-delay: 0s; }
-        .lrc-dots.breathing .lrc-dot:nth-child(2) { animation-delay: calc(var(--breath-dur, 1.2s) * 0.16); }
-        .lrc-dots.breathing .lrc-dot:nth-child(3) { animation-delay: calc(var(--breath-dur, 1.2s) * 0.32); }
-
-        @keyframes dotBreath {
-            0%, 60%, 100% { transform: scale(0.55); background: rgba(255,255,255,0.3); }
-            30% { transform: scale(1); background: rgba(255,255,255,1); }
-        }
-
-        /* WORD TOKEN */
-        .lrc-word {
-            display: inline;
-            padding: 0;
-            margin: 0;
-            vertical-align: baseline;
-            background: linear-gradient(90deg,
-                rgba(255,255,255,1)    0%,
-                rgba(255,255,255,1)    calc(var(--wp, 0%) - 16%),
-                rgba(255,255,255,0.55) calc(var(--wp, 0%) - 3%),
-                rgba(255,255,255,0.22) var(--wp, 0%),
-                rgba(255,255,255,0.22) 100%
-            );
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            will-change: background;
-        }
-
-        /* Specialized styling for background words/tokens within parenthetical phrases */
-        .lrc-word.bg-vocals-word {
-            font-style: italic;
-            background: linear-gradient(90deg,
-                rgba(255,255,255,0.85) 0%,
-                rgba(255,255,255,0.85) calc(var(--wp, 0%) - 16%),
-                rgba(255,255,255,0.45) calc(var(--wp, 0%) - 3%),
-                rgba(255,255,255,0.15) var(--wp, 0%),
-                rgba(255,255,255,0.15) 100%
-            );
-            -webkit-background-clip: text;
-            background-clip: text;
-        }
-
-        .lrc-word.sung {
-            background: rgba(255,255,255,1);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-        
-        .lrc-word.bg-vocals-word.sung {
-            background: rgba(255,255,255,0.85);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
-        .lrc-word.idle {
-            background: rgba(255,255,255,0.22);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
-        .lrc-word.bg-vocals-word.idle {
-            background: rgba(255,255,255,0.12);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
+        .lyrics-empty-state p {
+            color: rgba(255,255,255,0.3); font-size: 32px; font-weight: 800;
         }
 
         /* ==================================================================
@@ -610,8 +506,7 @@
             
             .np-right-pane { width: 100%; max-width: 400px; flex: none; height: 70vh; position: relative; margin-top: 10px; }
             .lyrics-scroll-area { padding: 10vh 4vw 30vh 4vw; }
-            .lrc-line { font-size: 30px; margin-bottom: 22px; padding: 3px 4px 3px 2px; }
-            .lrc-line.bg-vocals { padding-left: 16px; }
+            #lyrics-content .amll-lyric-player { --amll-lp-font-size: 30px; }
             .np-progress-track { height: 4px; }
             .np-progress-track:hover { height: 7px; }
         }
@@ -1460,7 +1355,7 @@
             document.querySelectorAll('.track-row.active').forEach(el => el.classList.remove('active'));
             document.querySelectorAll(`.track-row-${idx}`).forEach(el => el.classList.add('active'));
             
-            currentPlayingIndex = idx; activeLyricIndex = -1; const song = cancionesData[idx];
+            currentPlayingIndex = idx; const song = cancionesData[idx];
             updateCovers(song.cover);
             
             document.getElementById('player-title').innerText = song.title;
@@ -1513,6 +1408,7 @@
                 np.classList.add('active'); 
                 app.classList.add('scaled'); 
                 resizeFluidCanvas(); 
+                if(lyricPlayer) lyricPlayer.calcLayout(true, true);
             } 
             else { 
                 np.classList.remove('active'); 
@@ -1521,29 +1417,35 @@
         }
 
         /* ==================================================================
-           LYRICS ENGINE — SPRING-PHYSICS + BACKGROUND VOCALS PARSER
+           LYRICS ENGINE — real @applemusic-like-lyrics/core player
+           (the same DomLyricPlayer engine used by the AMLL TTML Tool preview)
            ================================================================== */
-        let parsedLyrics = [];
-        let activeLyricIndex = -1;
+        let lyricPlayer = null;
 
-        let _anchorAudioTime = 0;       
-        let _anchorPerfTime  = 0;       
-        let _lastRawTime     = -1;      
+        async function ensureLyricPlayer() {
+            if (lyricPlayer) return lyricPlayer;
+            const LyricPlayerCtor = await window.__AMLLReady;
+            lyricPlayer = new LyricPlayerCtor();
+            lyricPlayer.setEnableSpring(true);
+            lyricPlayer.setEnableBlur(true);
+            lyricPlayer.setEnableScale(true);
 
-        const SPRING_K   = 170;   
-        const SPRING_D   = 26;    
-        const SPRING_M   = 1;     
-        const SPRING_DT  = 1/120; 
+            document.getElementById('lyrics-content').appendChild(lyricPlayer.getElement());
 
-        let linePhysics = [];
-        let scrollSpring = { pos: 0, vel: 0, target: 0 };
+            lyricPlayer.addEventListener('line-click', (evt) => {
+                const lines = lyricPlayer.getLyricLines();
+                const line = lines[evt.lineIndex];
+                if (line) {
+                    activeAudio.currentTime = line.startTime / 1000;
+                    activeAudio.play();
+                    setPlayIcon(true);
+                }
+            });
 
-        let isUserScrolling  = false;
-        let scrollTimeout    = null;
-        const USER_SCROLL_GRACE = 3000; 
+            window.addEventListener('resize', () => { lyricPlayer && lyricPlayer.calcLayout(true, true); });
 
-        let _physicsAccum = 0;
-        let _lastRafTime  = 0;
+            return lyricPlayer;
+        }
 
         function parseTTMLTime(str) {
             if(!str) return 0;
@@ -1560,410 +1462,172 @@
             return sec || 0;
         }
 
+        // Parses TTML or word-level LRC text into the LyricLine[] shape
+        // expected by DomLyricPlayer.setLyricLines() (all times in ms).
+        // Empty/instrumental markers are simply skipped — the real player
+        // detects the resulting gaps itself and shows its own interlude dots.
+        function parseToAMLLLines(text, url) {
+            const rawLines = [];
+
+            if (url.endsWith('.ttml') || text.includes('http://www.w3.org/ns/ttml') || text.includes('<?xml')) {
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(text, "text/xml");
+                const pTags = xmlDoc.getElementsByTagName('p');
+
+                for(let i=0; i<pTags.length; i++) {
+                    const p = pTags[i];
+                    const beginAttr = p.getAttribute('begin') || p.getAttribute('t');
+                    if (!beginAttr) continue;
+
+                    const pBegin = parseTTMLTime(beginAttr);
+                    const endAttr = p.getAttribute('end');
+                    const pEnd = endAttr ? parseTTMLTime(endAttr) : 0;
+
+                    let words = [];
+
+                    Array.from(p.childNodes).forEach(node => {
+                        if (node.nodeType === Node.TEXT_NODE) {
+                            let val = node.nodeValue;
+                            if(val) {
+                                val = val.replace(/[\r\n\t]+/g, ' ').replace(/\s{2,}/g, ' ');
+                                if(val === ' ') {
+                                    if(words.length > 0) words[words.length - 1].text += ' ';
+                                } else if (val.trim() !== '') {
+                                    words.push({ time: pBegin, dur: 0, text: val });
+                                }
+                            }
+                        } else if (node.nodeType === Node.ELEMENT_NODE && (node.nodeName.toLowerCase() === 'span' || node.nodeName.toLowerCase() === 's')) {
+                            const sBeginAttr = node.getAttribute('begin') || node.getAttribute('t');
+                            const sBegin = sBeginAttr ? parseTTMLTime(sBeginAttr) : pBegin;
+
+                            const sEndAttr = node.getAttribute('end');
+                            const sDurAttr = node.getAttribute('d');
+
+                            let dur = 0;
+                            if(sEndAttr) dur = parseTTMLTime(sEndAttr) - sBegin;
+                            else if(sDurAttr) dur = parseTTMLTime(sDurAttr);
+
+                            words.push({ time: sBegin, dur: dur, text: node.textContent || "" });
+                        }
+                    });
+
+                    if (words.length === 0) {
+                        const cleanLine = (p.textContent || "").trim();
+                        if (cleanLine) {
+                            words.push({ time: pBegin, dur: pEnd > pBegin ? pEnd - pBegin : 0, text: cleanLine });
+                        }
+                    }
+
+                    if(words.length > 0) {
+                        const cleanLine = words.map(w => w.text).join('').trim();
+                        if (!cleanLine) continue;
+
+                        const isBgVocal = (cleanLine.startsWith('(') && cleanLine.endsWith(')')) || 
+                                          (cleanLine.startsWith('[') && cleanLine.endsWith(']')) ||
+                                          cleanLine.startsWith('Coro:') || 
+                                          cleanLine.startsWith('(Coro)') ||
+                                          /^[\(\[\{].*[\)\]\}]$/.test(cleanLine);
+
+                        rawLines.push({ 
+                            time: pBegin, 
+                            words, 
+                            dur: pEnd > pBegin ? pEnd - pBegin : 0,
+                            isBgVocal: isBgVocal
+                        });
+                    }
+                }
+            } else {
+                const lines = text.split('\n');
+                lines.forEach(line => {
+                    const lineMatch = line.match(/\[(\d{2,}):(\d{2}(?:\.\d{1,3})?)\](.*)/);
+                    if(lineMatch) {
+                        const time = (parseInt(lineMatch[1])*60) + parseFloat(lineMatch[2]);
+                        const raw = lineMatch[3].replace('\r', '');
+
+                        let words = []; let wm; const wReg = /<(\d{2,}):(\d{2}(?:\.\d{1,3})?)>([^<]*)/g; let hasW = false;
+                        while((wm = wReg.exec(raw)) !== null) { hasW = true; words.push({ time: (parseInt(wm[1])*60)+parseFloat(wm[2]), text: wm[3], dur: 0 }); }
+
+                        const clean = raw.replace(/<\d{2,}:\d{2}(?:\.\d{1,3})?>/g, '').trim();
+                        if(clean === "" || clean === "♪") return;
+                        if(!hasW) words = [{ time, text: clean, dur: 0 }];
+
+                        const isBgVocal = (clean.startsWith('(') && clean.endsWith(')')) || 
+                                          (clean.startsWith('[') && clean.endsWith(']')) ||
+                                          clean.startsWith('Coro:') || 
+                                          clean.startsWith('(Coro)') ||
+                                          /^[\(\[\{].*[\)\]\}]$/.test(clean);
+                        rawLines.push({ time, words, dur: 0, isBgVocal });
+                    }
+                });
+            }
+
+            rawLines.forEach((l, i) => {
+                let nTime = (i < rawLines.length - 1) ? rawLines[i+1].time : l.time + 8;
+                if(!l.dur) l.dur = Math.max(0, nTime - l.time);
+
+                for(let j=0; j<l.words.length; j++) {
+                    if(!l.words[j].dur || l.words[j].dur <= 0) {
+                        if(j < l.words.length - 1) l.words[j].dur = Math.max(0.05, l.words[j+1].time - l.words[j].time);
+                        else l.words[j].dur = Math.min(2.5, Math.max(0.05, nTime - l.words[j].time));
+                    }
+                }
+            });
+
+            return rawLines.map(l => ({
+                words: l.words.map(w => ({
+                    startTime: Math.round(w.time * 1000),
+                    endTime: Math.round((w.time + w.dur) * 1000),
+                    word: w.text
+                })),
+                translatedLyric: '',
+                romanLyric: '',
+                startTime: Math.round(l.time * 1000),
+                endTime: Math.round((l.time + l.dur) * 1000),
+                isBG: !!l.isBgVocal,
+                isDuet: false
+            }));
+        }
+
         async function fetchLyrics(url) {
             const container = document.getElementById('lyrics-content');
-            const scroller = document.getElementById('lyrics-scroller');
-            
-            parsedLyrics =[];
-            targetScrollY = 0;
-            currentScrollY = 0;
-            scroller.scrollTop = 0;
-            
-            if(!url) { container.innerHTML = "<div style='height:100%; display:flex; align-items:center; justify-content:center;'><p style='color:rgba(255,255,255,0.3); font-size:32px; font-weight:800;'>Instrumental</p></div>"; return; }
-            container.innerHTML = "<p style='color:rgba(255,255,255,0.3); font-size:32px; font-weight:800; text-align:center;'>Loading...</p>";
-            
+            const player = await ensureLyricPlayer();
+
+            let emptyState = document.getElementById('lyrics-empty-state');
+
+            if(!url) { 
+                player.setLyricLines([]);
+                if(!emptyState) {
+                    emptyState = document.createElement('div');
+                    emptyState.id = 'lyrics-empty-state';
+                    emptyState.className = 'lyrics-empty-state';
+                    emptyState.innerHTML = "<p>Instrumental</p>";
+                    container.parentElement.appendChild(emptyState);
+                }
+                emptyState.style.display = 'flex';
+                return; 
+            }
+            if(emptyState) emptyState.style.display = 'none';
+
             try {
                 const res = await fetch(url); 
                 const text = await res.text(); 
-                
-                if (url.endsWith('.ttml') || text.includes('http://www.w3.org/ns/ttml') || text.includes('<?xml')) {
-                    const parser = new DOMParser();
-                    const xmlDoc = parser.parseFromString(text, "text/xml");
-                    const pTags = xmlDoc.getElementsByTagName('p');
-                    
-                    for(let i=0; i<pTags.length; i++) {
-                        const p = pTags[i];
-                        const beginAttr = p.getAttribute('begin') || p.getAttribute('t');
-                        if (!beginAttr) continue;
-                        
-                        const pBegin = parseTTMLTime(beginAttr);
-                        const endAttr = p.getAttribute('end');
-                        const pEnd = endAttr ? parseTTMLTime(endAttr) : 0;
-                        
-                        let words =[];
-                        
-                        Array.from(p.childNodes).forEach(node => {
-                            if (node.nodeType === Node.TEXT_NODE) {
-                                let val = node.nodeValue;
-                                if(val) {
-                                    val = val.replace(/[\r\n\t]+/g, ' ').replace(/\s{2,}/g, ' ');
-                                    if(val === ' ') {
-                                        if(words.length > 0) words[words.length - 1].text += ' ';
-                                    } else if (val.trim() !== '') {
-                                        words.push({ time: pBegin, dur: 0, text: val, el: null, fill: 0, lastRenderedFill: 0 });
-                                    }
-                                }
-                            } else if (node.nodeType === Node.ELEMENT_NODE && (node.nodeName.toLowerCase() === 'span' || node.nodeName.toLowerCase() === 's')) {
-                                const sBeginAttr = node.getAttribute('begin') || node.getAttribute('t');
-                                const sBegin = sBeginAttr ? parseTTMLTime(sBeginAttr) : pBegin;
-                                
-                                const sEndAttr = node.getAttribute('end');
-                                const sDurAttr = node.getAttribute('d');
-                                
-                                let dur = 0;
-                                if(sEndAttr) dur = parseTTMLTime(sEndAttr) - sBegin;
-                                else if(sDurAttr) dur = parseTTMLTime(sDurAttr);
-                                else dur = 0;
-
-                                words.push({ time: sBegin, dur: dur, text: node.textContent || "", el: null, fill: 0, lastRenderedFill: 0 });
-                            }
-                        });
-
-                        if (words.length === 0) {
-                            const rawText = p.textContent || "";
-                            const cleanLine = rawText.trim();
-                            const pDur = pEnd > pBegin ? pEnd - pBegin : 0;
-                            if (cleanLine) {
-                                words.push({ time: pBegin, dur: pDur, text: cleanLine, el: null, fill: 0, lastRenderedFill: 0 });
-                            } else if (pDur > 0) {
-                                words.push({ time: pBegin, dur: pDur, text: "•••", el: null, fill: 0, lastRenderedFill: 0, isInterlude: true });
-                            }
-                        }
-                        
-                        if(words.length > 0) {
-                            const cleanLine = words.map(w => w.text).join('').trim();
-                            const lineIsInterlude = words.length === 1 && !!words[0].isInterlude;
-                            
-                            const isBgVocal = (cleanLine.startsWith('(') && cleanLine.endsWith(')')) || 
-                                              (cleanLine.startsWith('[') && cleanLine.endsWith(']')) ||
-                                              cleanLine.startsWith('Coro:') || 
-                                              cleanLine.startsWith('(Coro)') ||
-                                              /^[\(\[\{].*[\)\]\}]$/.test(cleanLine);
-                            
-                            parsedLyrics.push({ 
-                                time: pBegin, 
-                                text: cleanLine, 
-                                words, 
-                                el: null, 
-                                dur: pEnd > pBegin ? pEnd - pBegin : 0,
-                                isBgVocal: isBgVocal,
-                                isInterlude: lineIsInterlude,
-                                trueEnd: pEnd > pBegin ? pEnd : null
-                            });
-                        }
-                    }
-
-                } else {
-                    const lines = text.split('\n');
-                    lines.forEach(line => {
-                        const lineMatch = line.match(/\[(\d{2,}):(\d{2}(?:\.\d{1,3})?)\](.*)/);
-                        if(lineMatch) {
-                            const time = (parseInt(lineMatch[1])*60) + parseFloat(lineMatch[2]);
-                            const raw = lineMatch[3].replace('\r', '');
-                            
-                            let words =[]; let wm; const wReg = /<(\d{2,}):(\d{2}(?:\.\d{1,3})?)>([^<]*)/g; let hasW = false;
-                            while((wm = wReg.exec(raw)) !== null) { hasW = true; words.push({ time: (parseInt(wm[1])*60)+parseFloat(wm[2]), text: wm[3], el: null, dur: 0, fill: 0, lastRenderedFill: 0 }); }
-                            
-                            const clean = raw.replace(/<\d{2,}:\d{2}(?:\.\d{1,3})?>/g, '').trim();
-                            if(clean === "" || clean === "♪") words =[{ time, text: "•••", el: null, dur: 0, fill: 0, lastRenderedFill: 0, isInterlude: true }];
-                            else if(!hasW) words =[{ time, text: clean, el: null, dur: 0, fill: 0, lastRenderedFill: 0 }];
-                            
-                            const isBgVocal = (clean.startsWith('(') && clean.endsWith(')')) || 
-                                              (clean.startsWith('[') && clean.endsWith(']')) ||
-                                              clean.startsWith('Coro:') || 
-                                              clean.startsWith('(Coro)') ||
-                                              /^[\(\[\{].*[\)\]\}]$/.test(clean);
-                            parsedLyrics.push({ time, text: clean, words, el: null, dur: 0, isBgVocal: isBgVocal, isInterlude: (words.length === 1 && !!words[0].isInterlude), trueEnd: null });
-                        }
-                    });
+                const lyricLines = parseToAMLLLines(text, url);
+                if(!lyricLines.length) throw new Error('empty');
+                player.setLyricLines(lyricLines, activeAudio.currentTime * 1000);
+                player.calcLayout(true, true);
+            } catch(e) {
+                player.setLyricLines([]);
+                if(!emptyState) {
+                    emptyState = document.createElement('div');
+                    emptyState.id = 'lyrics-empty-state';
+                    emptyState.className = 'lyrics-empty-state';
+                    container.parentElement.appendChild(emptyState);
                 }
-                
-                parsedLyrics.forEach((l, i) => {
-                    let nTime = (i < parsedLyrics.length - 1) ? parsedLyrics[i+1].time : l.time + 8;
-                    if(!l.dur) l.dur = Math.max(0, nTime - l.time);
-                    
-                    for(let j=0; j<l.words.length; j++) {
-                        if(!l.words[j].dur || l.words[j].dur <= 0) {
-                            if(j < l.words.length - 1) l.words[j].dur = Math.max(0.05, l.words[j+1].time - l.words[j].time);
-                            else l.words[j].dur = Math.min(2.5, Math.max(0.05, nTime - l.words[j].time));
-                        }
-                    }
-                });
-
-                // Insert a breathing-dots indicator for long instrumental gaps that
-                // weren't explicitly marked in the lyrics file (matches the interlude
-                // indicator behavior used by Apple Music / AMLL-style lyric viewers).
-                const GAP_THRESHOLD = 6;
-                const makeInterludeLine = (start, dur) => ({
-                    time: start, text: "•••",
-                    words: [{ time: start, dur: dur, text: "•••", el: null, fill: 0, lastRenderedFill: 0, isInterlude: true }],
-                    el: null, dur: dur, isBgVocal: false, isInterlude: true, trueEnd: start + dur
-                });
-
-                const withGaps =[];
-                for(let i = 0; i < parsedLyrics.length; i++) {
-                    const cur = parsedLyrics[i];
-                    if(i === 0 && cur.time >= GAP_THRESHOLD && !cur.isInterlude) {
-                        const dotDur = Math.min(cur.time * 0.6, 4);
-                        withGaps.push(makeInterludeLine(Math.max(0, cur.time * 0.25), dotDur));
-                    }
-                    withGaps.push(cur);
-                    const next = parsedLyrics[i + 1];
-                    if(next && !cur.isInterlude && !next.isInterlude) {
-                        const curEnd = (cur.trueEnd != null) ? cur.trueEnd : (cur.time + cur.dur);
-                        const gap = next.time - curEnd;
-                        if(gap >= GAP_THRESHOLD) {
-                            const dotDur = Math.min(gap * 0.6, 4);
-                            withGaps.push(makeInterludeLine(curEnd + (gap - dotDur) * 0.4, dotDur));
-                        }
-                    }
-                }
-                parsedLyrics = withGaps;
-
-                container.innerHTML = ""; if(!parsedLyrics.length) throw new Error();
-                
-                linePhysics = parsedLyrics.map((l) => {
-                    const isBg = l.isBgVocal;
-                    return {
-                        scalePos: isBg ? 0.90 : 0.95, scaleVel: 0,   
-                        opacPos:  isBg ? 0.18 : 0.32, opacVel:  0,   
-                        blurPos:  isBg ? 1.0  : 0.8,  blurVel:  0,   
-                    };
-                });
-
-                parsedLyrics.forEach((l, lineIdx) => {
-                    const div = document.createElement('div'); 
-                    div.className = 'lrc-line';
-                    
-                    if (l.isBgVocal) {
-                        div.classList.add('bg-vocals');
-                    }
-                    if (l.isInterlude) {
-                        div.classList.add('interlude-line');
-                    }
-                    
-                    div.onclick = () => { activeAudio.currentTime = l.time; activeAudio.play(); setPlayIcon(true); };
-                    
-                    l.words.forEach(w => {
-                        if (w.isInterlude) {
-                            const wrap = document.createElement('span');
-                            wrap.className = 'lrc-dots dots-idle';
-                            for(let d = 0; d < 3; d++) {
-                                const dot = document.createElement('span');
-                                dot.className = 'lrc-dot';
-                                wrap.appendChild(dot);
-                            }
-                            w.el = wrap;
-                            div.appendChild(wrap);
-                            return;
-                        }
-
-                        let t = w.text;
-                        let leadingSpace = false;
-                        let trailingSpace = false;
-                        
-                        if (/^\s+/.test(t)) { leadingSpace = true;  t = t.trimStart(); }
-                        if (/\s+$/.test(t)) { trailingSpace = true; t = t.trimEnd(); }
-                        
-                        if(leadingSpace) div.appendChild(document.createTextNode(" "));
-                        
-                        if(t) { 
-                            const s = document.createElement('span'); 
-                            
-                            const isWordBg = l.isBgVocal || /[\(\)\[\]\{\}]/.test(t);
-                            s.className = isWordBg ? 'lrc-word bg-vocals-word idle' : 'lrc-word idle'; 
-                            
-                            s.textContent = t; 
-                            w.el = s; 
-                            div.appendChild(s); 
-                        }
-                        
-                        if(trailingSpace) div.appendChild(document.createTextNode(" "));
-                    });
-                    
-                    l.el = div; container.appendChild(div);
-
-                    const sp = linePhysics[lineIdx];
-                    div.style.opacity   = sp.opacPos;
-                    div.style.transform = `scale(${sp.scalePos}) translateZ(0)`;
-                    div.style.filter    = `blur(${sp.blurPos}px)`;
-                });
-                
-                scrollSpring = { pos: 0, vel: 0, target: 0 };
-                const sc = document.getElementById('lyrics-scroller');
-                sc.scrollTop = 0;
-
-                const setManual = () => { 
-                    isUserScrolling = true; 
-                    clearTimeout(scrollTimeout); 
-                    scrollTimeout = setTimeout(() => { isUserScrolling = false; }, USER_SCROLL_GRACE); 
-                };
-                sc.removeEventListener('wheel',     setManual);
-                sc.removeEventListener('touchmove', setManual);
-                sc.addEventListener('wheel',     setManual, {passive: true});
-                sc.addEventListener('touchmove', setManual, {passive: true});
-                
-            } catch(e) { container.innerHTML = "<div style='height:100%; display:flex; align-items:center; justify-content:center;'><p style='color:rgba(255,255,255,0.3); font-size:32px; font-weight:800;'>Lyrics Unavailable</p></div>"; }
-        }
-
-        function springStep(pos, vel, target) {
-            const force = -SPRING_K * (pos - target) - SPRING_D * vel;
-            const acc   = force / SPRING_M;
-            const newVel = vel + acc * SPRING_DT;
-            const newPos = pos + newVel * SPRING_DT;
-            return { pos: newPos, vel: newVel };
-        }
-
-        function tickLinePhysics(dt, activeIdx) {
-            if(!parsedLyrics.length || !linePhysics.length) return;
-            _physicsAccum += dt;
-            while(_physicsAccum >= SPRING_DT) {
-                _physicsAccum -= SPRING_DT;
-                for(let i = 0; i < linePhysics.length; i++) {
-                    const sp = linePhysics[i];
-                    const isActive = (i === activeIdx);
-                    const isBg = parsedLyrics[i]?.isBgVocal;
-                    
-                    const tScale = isActive ? (isBg ? 1.02 : 1.08) : (isBg ? 0.90 : 0.95);
-                    const tOpac  = isActive ? (isBg ? 0.75 : 1.0)  : (i < activeIdx ? 0.20 : (isBg ? 0.18 : 0.32));
-                    const tBlur  = isActive ? 0.0  : (i < activeIdx ? (isBg ? 0.8 : 0.6)  : (isBg ? 1.0 : 0.7));
-                    
-                    let r;
-                    r = springStep(sp.scalePos, sp.scaleVel, tScale);
-                    sp.scalePos = r.pos; sp.scaleVel = r.vel;
-                    r = springStep(sp.opacPos, sp.opacVel, tOpac);
-                    sp.opacPos = r.pos; sp.opacVel = r.vel;
-                    r = springStep(sp.blurPos, sp.blurVel, tBlur);
-                    sp.blurPos = r.pos; sp.blurVel = r.vel;
-                }
+                emptyState.innerHTML = "<p>Lyrics Unavailable</p>";
+                emptyState.style.display = 'flex';
             }
         }
 
-        function flushLinePhysics() {
-            for(let i = 0; i < linePhysics.length; i++) {
-                const el = parsedLyrics[i]?.el;
-                if(!el) continue;
-                const sp = linePhysics[i];
-                el.style.opacity   = sp.opacPos.toFixed(4);
-                el.style.transform = `scale(${sp.scalePos.toFixed(5)}) translateZ(0)`;
-                el.style.filter    = `blur(${Math.max(0, sp.blurPos).toFixed(3)}px)`;
-            }
-        }
-
-        function updateKaraoke(cur, dt) {
-            if(!parsedLyrics.length) return;
-            
-            let nIdx = -1;
-            for(let i = 0; i < parsedLyrics.length; i++) {
-                const effTime = parsedLyrics[i].isBgVocal ? parsedLyrics[i].time - 1.0 : parsedLyrics[i].time;
-                if(cur >= effTime) nIdx = i;
-                else break;
-            }
-
-            if(nIdx !== activeLyricIndex) {
-                parsedLyrics.forEach((l, i) => {
-                    if(!l.el) return;
-                    l.el.className = i < nIdx  ? 'lrc-line passed'
-                                   : i === nIdx ? 'lrc-line active'
-                                   :              'lrc-line';
-                    if (l.isBgVocal) l.el.classList.add('bg-vocals');
-                });
-                activeLyricIndex = nIdx;
-
-                if(nIdx >= 0 && !isUserScrolling) {
-                    const sc = document.getElementById('lyrics-scroller');
-                    const el = parsedLyrics[nIdx].el;
-                    const newTarget = el.offsetTop - (sc.clientHeight * 0.4) + (el.clientHeight / 2);
-                    scrollSpring.target = Math.max(0, newTarget);
-                }
-            }
-
-            tickLinePhysics(dt, nIdx);
-            flushLinePhysics();
-
-            if(!isUserScrolling && nIdx >= 0) {
-                const sc = document.getElementById('lyrics-scroller');
-                let sr = springStep(scrollSpring.pos, scrollSpring.vel, scrollSpring.target);
-                scrollSpring.pos = sr.pos;
-                scrollSpring.vel = sr.vel;
-                sc.scrollTop = scrollSpring.pos;
-            }
-
-            if(nIdx < 0) return;
-            const line = parsedLyrics[nIdx];
-
-            const paintLines = nIdx < parsedLyrics.length - 1 ? [nIdx, nIdx + 1] : [nIdx];
-
-            for(const li of paintLines) {
-                const ln = parsedLyrics[li];
-                ln.words.forEach(w => {
-                    if(!w.el) return;
-
-                    if (w.isInterlude) {
-                        if(cur >= w.time + w.dur) {
-                            if(!w._sung) { w._sung = true; w.el.className = 'lrc-dots dots-sung'; }
-                        } else if(cur >= w.time) {
-                            w._sung = false;
-                            if(w.el.className !== 'lrc-dots breathing') {
-                                const cycle = Math.max(0.7, Math.min(2.2, w.dur / 4));
-                                w.el.style.setProperty('--breath-dur', `${cycle.toFixed(2)}s`);
-                                w.el.className = 'lrc-dots breathing';
-                            }
-                        } else if(w._sung) {
-                            w._sung = false;
-                            w.el.className = 'lrc-dots dots-idle';
-                        }
-                        return;
-                    }
-
-                    let raw;
-                    if(cur >= w.time + w.dur) {
-                        if(!w._sung) {
-                            w._sung = true;
-                            w.el.style.removeProperty('--wp');
-                            w.el.className = ln.isBgVocal ? 'lrc-word bg-vocals-word sung' : 'lrc-word sung';
-                        }
-                        return;
-                    } else if(cur >= w.time) {
-                        raw = w.dur > 0 ? (cur - w.time) / w.dur : 1;
-                    } else {
-                        if(w._sung) {
-                            w._sung = false;
-                            w.el.className = ln.isBgVocal ? 'lrc-word bg-vocals-word idle' : 'lrc-word idle';
-                            w.el.style.removeProperty('--wp');
-                        }
-                        return;
-                    }
-
-                    w._sung = false;
-                    w.el.className = ln.isBgVocal ? 'lrc-word bg-vocals-word' : 'lrc-word';
-                    const wp = Math.min(115, raw * 115);
-                    w.el.style.setProperty('--wp', `${wp.toFixed(2)}%`);
-                });
-            }
-
-            for(let i = 0; i < nIdx; i++) {
-                const ln = parsedLyrics[i];
-                ln.words.forEach(w => {
-                    if(!w.el || w._sung) return;
-                    w._sung = true;
-                    if (w.isInterlude) { w.el.className = 'lrc-dots dots-sung'; return; }
-                    w.el.style.removeProperty('--wp');
-                    w.el.className = ln.isBgVocal ? 'lrc-word bg-vocals-word sung' : 'lrc-word sung';
-                });
-            }
-
-            for(let i = nIdx + 1; i < parsedLyrics.length; i++) {
-                const ln = parsedLyrics[i];
-                ln.words.forEach(w => {
-                    if(!w.el || !w._sung) return;
-                    w._sung = false;
-                    if (w.isInterlude) { w.el.className = 'lrc-dots dots-idle'; return; }
-                    w.el.style.removeProperty('--wp');
-                    w.el.className = ln.isBgVocal ? 'lrc-word bg-vocals-word idle' : 'lrc-word idle';
-                });
-            }
-        }
 
         function fmt(s) { return `${Math.floor(s/60)}:${Math.floor(s%60).toString().padStart(2,'0')}`; }
 
@@ -1977,7 +1641,7 @@
             }
         }
 
-        function renderLoop() {
+        function renderLoop(rafTime) {
             if(activeAudio.duration && !isNaN(activeAudio.duration)) {
                 let cur = activeAudio.currentTime; 
                 
@@ -2005,19 +1669,12 @@
                 
                 checkAutoMix();
                 
-                if(isNPOpen) { 
+                if(isNPOpen && lyricPlayer) { 
                     const visualTime = cur + 0.1;
-                    updateKaraoke(visualTime, 1/60); 
-
-                    const sc = document.getElementById('lyrics-scroller');
-                    if (isUserScrolling) { currentScrollY = sc.scrollTop; } 
-                    else {
-                        const scrollDiff = targetScrollY - currentScrollY;
-                        if (Math.abs(scrollDiff) > 0.5) {
-                            currentScrollY += scrollDiff * 0.05;
-                            sc.scrollTop = currentScrollY;
-                        }
-                    }
+                    const deltaMs = _lyricLastFrameMs ? Math.min(100, rafTime - _lyricLastFrameMs) : (1000/60);
+                    _lyricLastFrameMs = rafTime;
+                    lyricPlayer.setCurrentTime(visualTime * 1000);
+                    lyricPlayer.update(deltaMs);
                 }
             }
             requestAnimationFrame(renderLoop);
