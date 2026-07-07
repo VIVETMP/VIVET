@@ -16,9 +16,21 @@
 
     <!-- Real Apple Music-like Lyrics engine (the same one used by the AMLL TTML Tool preview) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@applemusic-like-lyrics/core@0.5.1/dist/style.css">
+    
+    <!-- Synchronous promise initialization to prevent any race condition with ESM loading -->
+    <script>
+        window.__AMLLResolver = null;
+        window.__AMLLReady = new Promise((resolve) => {
+            window.__AMLLResolver = resolve;
+        });
+    </script>
     <script type="module">
         import { LyricPlayer } from "https://esm.sh/@applemusic-like-lyrics/core@0.5.1";
-        window.__AMLLReady = Promise.resolve(LyricPlayer);
+        if (window.__AMLLResolver) {
+            window.__AMLLResolver(LyricPlayer);
+        } else {
+            window.__AMLLReady = Promise.resolve(LyricPlayer);
+        }
     </script>
     
     <style>
@@ -809,6 +821,7 @@
         let globalVolume = 0.75;
         let lastAudioTime = 0;
         let lastTimeUpdate = 0;
+        let _lyricLastFrameMs = null;
 
         const trackAnalysis = {};
         let recentHistory =[];
@@ -1405,6 +1418,7 @@
             haptic(); isNPOpen = !isNPOpen;
             const np = document.getElementById('np-fs'); const app = document.getElementById('app-wrapper');
             if (isNPOpen) { 
+                _lyricLastFrameMs = null;
                 np.classList.add('active'); 
                 app.classList.add('scaled'); 
                 resizeFluidCanvas(); 
@@ -1425,6 +1439,9 @@
         async function ensureLyricPlayer() {
             if (lyricPlayer) return lyricPlayer;
             const LyricPlayerCtor = await window.__AMLLReady;
+            if (!LyricPlayerCtor) {
+                throw new Error("AMLL Core not loaded yet");
+            }
             lyricPlayer = new LyricPlayerCtor();
             lyricPlayer.setEnableSpring(true);
             lyricPlayer.setEnableBlur(true);
@@ -1449,7 +1466,11 @@
 
         function parseTTMLTime(str) {
             if(!str) return 0;
-            str = str.toString().replace(/s$/, '').trim(); 
+            str = str.toString().trim();
+            if (str.endsWith('ms')) {
+                return parseFloat(str.replace('ms', '')) / 1000;
+            }
+            str = str.replace(/s$/, ''); 
             const parts = str.split(':');
             let sec = 0;
             if(parts.length === 3) {
@@ -1464,28 +1485,39 @@
 
         // Parses TTML or word-level LRC text into the LyricLine[] shape
         // expected by DomLyricPlayer.setLyricLines() (all times in ms).
-        // Empty/instrumental markers are simply skipped — the real player
-        // detects the resulting gaps itself and shows its own interlude dots.
         function parseToAMLLLines(text, url) {
             const rawLines = [];
 
-            if (url.endsWith('.ttml') || text.includes('http://www.w3.org/ns/ttml') || text.includes('<?xml')) {
+            if (url.endsWith('.ttml') || text.includes('http://www.w3.org/ns/ttml') || text.includes('<?xml') || text.includes('<tt')) {
                 const parser = new DOMParser();
                 const xmlDoc = parser.parseFromString(text, "text/xml");
-                const pTags = xmlDoc.getElementsByTagName('p');
+                
+                const parserError = xmlDoc.getElementsByTagName('parsererror');
+                if (parserError.length > 0) {
+                    console.error("XML Parsing Error in TTML:", parserError[0].textContent);
+                }
 
-                for(let i=0; i<pTags.length; i++) {
-                    const p = pTags[i];
+                // Namespace-independent search to support any prefixed tags like tt:p or ttml:p
+                let pTags = xmlDoc.getElementsByTagNameNS ? xmlDoc.getElementsByTagNameNS('*', 'p') : [];
+                if (pTags.length === 0) {
+                    pTags = xmlDoc.getElementsByTagName('p');
+                }
+                const pElements = Array.from(pTags);
+
+                pElements.forEach(p => {
                     const beginAttr = p.getAttribute('begin') || p.getAttribute('t');
-                    if (!beginAttr) continue;
+                    if (!beginAttr) return;
 
                     const pBegin = parseTTMLTime(beginAttr);
                     const endAttr = p.getAttribute('end');
                     const pEnd = endAttr ? parseTTMLTime(endAttr) : 0;
 
                     let words = [];
+                    const childNodes = Array.from(p.childNodes);
 
-                    Array.from(p.childNodes).forEach(node => {
+                    childNodes.forEach(node => {
+                        const localName = node.localName ? node.localName.toLowerCase() : (node.nodeName ? node.nodeName.toLowerCase() : '');
+                        
                         if (node.nodeType === Node.TEXT_NODE) {
                             let val = node.nodeValue;
                             if(val) {
@@ -1496,12 +1528,12 @@
                                     words.push({ time: pBegin, dur: 0, text: val });
                                 }
                             }
-                        } else if (node.nodeType === Node.ELEMENT_NODE && (node.nodeName.toLowerCase() === 'span' || node.nodeName.toLowerCase() === 's')) {
+                        } else if (node.nodeType === Node.ELEMENT_NODE && (localName === 'span' || localName === 's' || localName.endsWith(':span') || localName.endsWith(':s'))) {
                             const sBeginAttr = node.getAttribute('begin') || node.getAttribute('t');
                             const sBegin = sBeginAttr ? parseTTMLTime(sBeginAttr) : pBegin;
 
                             const sEndAttr = node.getAttribute('end');
-                            const sDurAttr = node.getAttribute('d');
+                            const sDurAttr = node.getAttribute('d') || node.getAttribute('dur');
 
                             let dur = 0;
                             if(sEndAttr) dur = parseTTMLTime(sEndAttr) - sBegin;
@@ -1520,7 +1552,7 @@
 
                     if(words.length > 0) {
                         const cleanLine = words.map(w => w.text).join('').trim();
-                        if (!cleanLine) continue;
+                        if (!cleanLine) return;
 
                         const isBgVocal = (cleanLine.startsWith('(') && cleanLine.endsWith(')')) || 
                                           (cleanLine.startsWith('[') && cleanLine.endsWith(']')) ||
@@ -1535,7 +1567,7 @@
                             isBgVocal: isBgVocal
                         });
                     }
-                }
+                });
             } else {
                 const lines = text.split('\n');
                 lines.forEach(line => {
@@ -1573,24 +1605,35 @@
                 }
             });
 
-            return rawLines.map(l => ({
-                words: l.words.map(w => ({
-                    startTime: Math.round(w.time * 1000),
-                    endTime: Math.round((w.time + w.dur) * 1000),
-                    word: w.text
-                })),
-                translatedLyric: '',
-                romanLyric: '',
-                startTime: Math.round(l.time * 1000),
-                endTime: Math.round((l.time + l.dur) * 1000),
-                isBG: !!l.isBgVocal,
-                isDuet: false
-            }));
+            return rawLines.map(l => {
+                const lineText = l.words.map(w => w.text).join('').trim();
+                return {
+                    words: l.words.map(w => ({
+                        startTime: Math.round(w.time * 1000),
+                        endTime: Math.round((w.time + w.dur) * 1000),
+                        word: w.text
+                    })),
+                    text: lineText,
+                    translatedLyric: '',
+                    romanLyric: '',
+                    startTime: Math.round(l.time * 1000),
+                    endTime: Math.round((l.time + l.dur) * 1000),
+                    isBG: !!l.isBgVocal,
+                    isDuet: false
+                };
+            });
         }
 
         async function fetchLyrics(url) {
             const container = document.getElementById('lyrics-content');
-            const player = await ensureLyricPlayer();
+            let player;
+            
+            try {
+                player = await ensureLyricPlayer();
+            } catch(e) {
+                console.error("Failed to initialize AMLL lyric player:", e);
+                return;
+            }
 
             let emptyState = document.getElementById('lyrics-empty-state');
 
@@ -1612,10 +1655,11 @@
                 const res = await fetch(url); 
                 const text = await res.text(); 
                 const lyricLines = parseToAMLLLines(text, url);
-                if(!lyricLines.length) throw new Error('empty');
+                if(!lyricLines.length) throw new Error('Empty lyric file parsed');
                 player.setLyricLines(lyricLines, activeAudio.currentTime * 1000);
                 player.calcLayout(true, true);
             } catch(e) {
+                console.error("Error loading or parsing lyrics:", e);
                 player.setLyricLines([]);
                 if(!emptyState) {
                     emptyState = document.createElement('div');
@@ -1642,6 +1686,8 @@
         }
 
         function renderLoop(rafTime) {
+            if (!rafTime) rafTime = performance.now();
+            
             if(activeAudio.duration && !isNaN(activeAudio.duration)) {
                 let cur = activeAudio.currentTime; 
                 
@@ -1690,7 +1736,8 @@
                 if(e.target.closest('#lyrics-scroller') && document.getElementById('lyrics-scroller').scrollTop > 0) return;
                 if(np.scrollTop > 0) return; 
                 
-                sY = e.touches[0].clientY; np.style.transition = 'none'; app.style.transition = 'none';
+                sY = e.touches[0].clientY; cY = sY;
+                np.style.transition = 'none'; app.style.transition = 'none';
             }, {passive:true});
             
             np.addEventListener('touchmove', e => {
