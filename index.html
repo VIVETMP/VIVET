@@ -256,7 +256,7 @@
         .controls-buttons i { cursor: pointer; transition: all 0.3s var(--ease-snappy); }
         .controls-buttons i:hover { color: #fff; transform: scale(1.2); text-shadow: 0 0 10px rgba(255,255,255,0.5); }
         .controls-buttons i:active { transform: scale(0.9); }
-        .btn-play-circle { width: 52px; height: 52px; background: #fff; color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; transition: all 0.4s var(--ease-snappy); box-shadow: 0 10px 20px rgba(255,255,255,0.2); }
+        .btn-play-circle { width: 52px; height: 52px; background: #fff; color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; transition: all 0.4s var(--ease-snappy); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
         .btn-play-circle i { margin-left: 3px; }
         .btn-play-circle:hover { transform: scale(1.1); box-shadow: 0 15px 30px rgba(255,255,255,0.4); }
 
@@ -730,7 +730,7 @@
 
     <script>
         /* ==================================================================
-           DATA (Religion, Talento, YeYe, 222, 4 Life, 444, Cologne)
+           DATA (Religion, Talento, YeYe, 222, 4 Life, 444, Cologne, Lagunas)
            ================================================================== */
         const religionCoverUrl = "https://files.catbox.moe/bvfrst.jpg";
         const talentoCoverUrl  = "https://files.catbox.moe/bpjz9c.jpg";
@@ -739,12 +739,14 @@
         const fourLifeCoverUrl = "https://files.catbox.moe/8byhnd.jpg";
         const remix444CoverUrl = "https://files.catbox.moe/rlhr7h.jpg";
         const cologneCoverUrl  = "https://files.catbox.moe/uqzai3.jpg";
+        const lagunasCoverUrl  = "https://files.catbox.moe/ktbz1a.jpg";
 
         // Mapeo de imágenes de fondo personalizadas
         const bgImages = {
             "Cologne": "https://files.catbox.moe/oaw0mw.png",
             "444 - Remix": "https://files.catbox.moe/325a9q.png",
-            "Talento": "https://files.catbox.moe/3kk9d0.png"
+            "Talento": "https://files.catbox.moe/3kk9d0.png",
+            "Lagunas": "https://files.catbox.moe/3pi5rh.png"
         };
 
         const albumsData = [ 
@@ -754,7 +756,8 @@
             { id: "222-single", title: "222", artist: "Yan Block", cover: veintidosCoverUrl, year: "2026" },
             { id: "4life-single", title: "4 Life", artist: "Kris R", cover: fourLifeCoverUrl, year: "2026" },
             { id: "444-remix-single", title: "444 - Remix", artist: "Yan Block, De La Rose, Hades66 & Ñengo Flow", cover: remix444CoverUrl, year: "2026" },
-            { id: "cologne-single", title: "Cologne", artist: "Junior H & Ovi", cover: cologneCoverUrl, year: "2026" }
+            { id: "cologne-single", title: "Cologne", artist: "Junior H & Ovi", cover: cologneCoverUrl, year: "2026" },
+            { id: "lagunas-single", title: "Lagunas", artist: "Peso Pluma & Jasiel Nuñez", cover: lagunasCoverUrl, year: "2026" }
         ];
 
         const cancionesData = [
@@ -827,6 +830,16 @@
                 album: "cologne-single",
                 trackNum: 1,
                 coverLoaded: true
+            },
+            { 
+                title: "Lagunas", 
+                artist: "Peso Pluma & Jasiel Nuñez", 
+                url: "https://files.catbox.moe/f7gemk.mp3", 
+                lrc: "https://files.catbox.moe/hhua24.ttml",
+                cover: lagunasCoverUrl,
+                album: "lagunas-single",
+                trackNum: 1,
+                coverLoaded: true
             }
         ];
 
@@ -837,7 +850,9 @@
             { name: "Hades66", img: remix444CoverUrl },
             { name: "Ñengo Flow", img: remix444CoverUrl },
             { name: "Junior H", img: cologneCoverUrl },
-            { name: "Ovi", img: cologneCoverUrl }
+            { name: "Ovi", img: cologneCoverUrl },
+            { name: "Peso Pluma", img: lagunasCoverUrl },
+            { name: "Jasiel Nuñez", img: lagunasCoverUrl }
         ];
 
         /* ==================================================================
@@ -1317,6 +1332,18 @@
             return sec || 0;
         }
 
+        // Helper to query attributes dynamically without namespace prefix issues
+        function getAttributeInsensitive(element, attrName) {
+            if (!element || !element.attributes) return '';
+            for (let i = 0; i < element.attributes.length; i++) {
+                const attr = element.attributes[i];
+                if (attr.localName === attrName || attr.name === attrName || attr.name.endsWith(':' + attrName)) {
+                    return attr.value;
+                }
+            }
+            return '';
+        }
+
         // Parses TTML or word-level LRC text into the LyricLine[] shape
         // expected by DomLyricPlayer.setLyricLines() (all times in ms).
         function parseToAMLLLines(text, url) {
@@ -1346,6 +1373,18 @@
                     const endAttr = p.getAttribute('end');
                     const pEnd = endAttr ? parseTTMLTime(endAttr) : 0;
 
+                    // Duet vocalist identification
+                    const pAgent = getAttributeInsensitive(p, 'agent') || '';
+                    const pStyle = getAttributeInsensitive(p, 'style') || '';
+                    const pClass = getAttributeInsensitive(p, 'class') || p.className || '';
+                    
+                    let isDuetLine = pAgent.toLowerCase().includes('v2') || 
+                                     pAgent.toLowerCase().includes('v3') || 
+                                     pAgent.toLowerCase().includes('singer2') || 
+                                     pAgent.toLowerCase().includes('guest') ||
+                                     pStyle.toLowerCase().includes('v2') ||
+                                     pClass.toLowerCase().includes('v2');
+
                     let words = [];
                     const childNodes = Array.from(p.childNodes);
 
@@ -1373,6 +1412,11 @@
                             if(sEndAttr) dur = parseTTMLTime(sEndAttr) - sBegin;
                             else if(sDurAttr) dur = parseTTMLTime(sDurAttr);
 
+                            const sAgent = getAttributeInsensitive(node, 'agent') || '';
+                            if (sAgent.toLowerCase().includes('v2') || sAgent.toLowerCase().includes('v3') || sAgent.toLowerCase().includes('singer2')) {
+                                isDuetLine = true;
+                            }
+
                             words.push({ time: sBegin, dur: dur, text: node.textContent || "" });
                         }
                     });
@@ -1398,7 +1442,8 @@
                             time: pBegin, 
                             words, 
                             dur: pEnd > pBegin ? pEnd - pBegin : 0,
-                            isBgVocal: isBgVocal
+                            isBgVocal: isBgVocal,
+                            isDuetLine: isDuetLine
                         });
                     }
                 });
@@ -1422,7 +1467,7 @@
                                           clean.startsWith('Coro:') || 
                                           clean.startsWith('(Coro)') ||
                                           /^[\(\[\{].*[\)\]\}]$/.test(clean);
-                        rawLines.push({ time, words, dur: 0, isBgVocal });
+                        rawLines.push({ time, words, dur: 0, isBgVocal, isDuetLine: false });
                     }
                 });
             }
@@ -1453,7 +1498,7 @@
                     startTime: Math.round(l.time * 1000),
                     endTime: Math.round((l.time + l.dur) * 1000),
                     isBG: !!l.isBgVocal,
-                    isDuet: false
+                    isDuet: !!l.isDuetLine
                 };
             });
         }
