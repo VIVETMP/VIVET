@@ -730,7 +730,7 @@
 
     <script>
         /* ==================================================================
-           DATA (Religion, Talento, YeYe, 222, 4 Life, 444, Cologne, Lagunas)
+           DATA (Religion, Talento, YeYe, 222, 4 Life, 444, Cologne, Lagunas, Emociones)
            ================================================================== */
         const religionCoverUrl = "https://files.catbox.moe/bvfrst.jpg";
         const talentoCoverUrl  = "https://files.catbox.moe/bpjz9c.jpg";
@@ -740,6 +740,7 @@
         const remix444CoverUrl = "https://files.catbox.moe/rlhr7h.jpg";
         const cologneCoverUrl  = "https://files.catbox.moe/uqzai3.jpg";
         const lagunasCoverUrl  = "https://files.catbox.moe/ktbz1a.jpg";
+        const emocionesCoverUrl = "https://files.catbox.moe/wla4pw.jpg";
 
         // Mapeo de imágenes de fondo personalizadas
         const bgImages = {
@@ -747,7 +748,8 @@
             "444 - Remix": "https://files.catbox.moe/325a9q.png",
             "Talento": "https://files.catbox.moe/3kk9d0.png",
             "Lagunas": "https://files.catbox.moe/3pi5rh.png",
-            "4 Life": "https://files.catbox.moe/c9lse7.png"
+            "4 Life": "https://files.catbox.moe/c9lse7.png",
+            "Emociones": "https://files.catbox.moe/h7db9f.png"
         };
 
         const albumsData = [ 
@@ -758,7 +760,8 @@
             { id: "4life-single", title: "4 Life", artist: "Kris R", cover: fourLifeCoverUrl, year: "2026" },
             { id: "444-remix-single", title: "444 - Remix", artist: "Yan Block, De La Rose, Hades66 & Ñengo Flow", cover: remix444CoverUrl, year: "2026" },
             { id: "cologne-single", title: "Cologne", artist: "Junior H & Ovi", cover: cologneCoverUrl, year: "2026" },
-            { id: "lagunas-single", title: "Lagunas", artist: "Peso Pluma & Jasiel Nuñez", cover: lagunasCoverUrl, year: "2026" }
+            { id: "lagunas-single", title: "Lagunas", artist: "Peso Pluma & Jasiel Nuñez", cover: lagunasCoverUrl, year: "2026" },
+            { id: "emociones-single", title: "Emociones", artist: "Hades66", cover: emocionesCoverUrl, year: "2026" }
         ];
 
         const cancionesData = [
@@ -841,6 +844,16 @@
                 album: "lagunas-single",
                 trackNum: 1,
                 coverLoaded: true
+            },
+            { 
+                title: "Emociones", 
+                artist: "Hades66", 
+                url: "https://files.catbox.moe/mcn9hf.mp3", 
+                lrc: "https://files.catbox.moe/rybou1.ttml",
+                cover: emocionesCoverUrl,
+                album: "emociones-single",
+                trackNum: 1,
+                coverLoaded: true
             }
         ];
 
@@ -848,7 +861,7 @@
             { name: "Yan Block", img: religionCoverUrl },
             { name: "Kris R", img: fourLifeCoverUrl },
             { name: "De La Rose", img: remix444CoverUrl },
-            { name: "Hades66", img: remix444CoverUrl },
+            { name: "Hades66", img: emocionesCoverUrl },
             { name: "Ñengo Flow", img: remix444CoverUrl },
             { name: "Junior H", img: cologneCoverUrl },
             { name: "Ovi", img: cologneCoverUrl },
