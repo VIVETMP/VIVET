@@ -277,7 +277,7 @@
         .btn-fullscreen:hover { background: rgba(255,255,255,0.15); transform: scale(1.1); color: #fff; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
 
         /* ==================================================================
-           FULLSCREEN NOW PLAYING (APPLE TV / DESKTOP REPLICA)
+           FULLSCREEN NOW PLAYING (IMMERSIVE REPLICA)
            ================================================================== */
         #np-fs {
             position: fixed; inset: 0; z-index: 100; transform: translateY(100%); opacity: 0; visibility: hidden;
@@ -297,90 +297,61 @@
         @media (min-width: 1025px) {
             .btn-collapse {
                 position: absolute; top: 40px; left: 40px; width: 44px; height: 44px;
-                background: transparent; border: none; cursor: pointer; z-index: 10;
-                display: flex; align-items: center; justify-content: center; font-size: 32px; 
-                color: rgba(255,255,255,0.5); transition: all 0.2s var(--ease-snappy); outline: none;
+                background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); 
+                border-radius: 50%; cursor: pointer; z-index: 10;
+                display: flex; align-items: center; justify-content: center; font-size: 20px; 
+                color: rgba(255,255,255,0.6); transition: all 0.3s var(--ease-snappy); outline: none;
+                opacity: 0;
             }
-            .btn-collapse:hover { color: #fff; transform: scale(1.1); }
+            #np-fs:hover .btn-collapse { opacity: 1; }
+            .btn-collapse:hover { color: #fff; background: rgba(255, 255, 255, 0.15); transform: scale(1.1); }
             .btn-collapse i { display: block; }
             .btn-collapse-mob { display: none; }
         }
 
-        /* Desktop 2-Column Layout */
+        /* Responsive Immersive Layout */
         .np-layout { 
             position: relative; z-index: 3; display: flex; width: 100%; height: 100%; 
-            max-width: 1600px; padding: 0 8vw; gap: 8vw; margin: 0 auto; align-items: center; justify-content: center;
+            max-width: 1400px; padding: 0 6vw; gap: 8vw; margin: 0 auto; align-items: center; justify-content: space-between;
         }
         
         .np-left-pane {
-            flex: 0 0 clamp(320px, 35vw, 480px); display: flex; flex-direction: column; justify-content: center; gap: 24px; position: relative;
+            flex: 0 0 380px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative;
         }
 
         .np-art-wrap { 
-            width: 100%; aspect-ratio: 1; border-radius: 12px; 
-            box-shadow: 0 25px 60px rgba(0,0,0,0.5); 
+            width: 380px; height: 380px; border-radius: 24px; 
+            box-shadow: 0 30px 70px rgba(0,0,0,0.5); 
             overflow: hidden; transition: transform 0.6s var(--ease-cinematic); 
             background: #111; cursor: pointer;
         }
         .np-art-wrap:hover { transform: scale(1.02); }
         .np-art { width: 100%; height: 100%; object-fit: cover; }
 
-        .np-info-block { display: flex; flex-direction: column; gap: 16px; width: 100%; }
+        .np-info-block { display: flex; flex-direction: column; width: 100%; }
 
-        .np-scrubber-group { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+        /* Hidden Scrubber and Controls on Desktop, shown on Hover to match visual mockup */
+        .np-scrubber-group { 
+            display: flex; flex-direction: column; gap: 10px; width: 100%; 
+            opacity: 0; transform: translateY(15px);
+            transition: opacity 0.5s var(--ease-snappy), transform 0.5s var(--ease-snappy);
+            pointer-events: none; margin-top: 24px;
+        }
         .np-time-row { display: flex; justify-content: space-between; font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.55); font-variant-numeric: tabular-nums; letter-spacing: 0.02em; margin-bottom: 2px;}
         
-        /* Progress Bar */
         .np-progress-track {
-            width: 100%;
-            height: 5px;
-            background: rgba(255,255,255,0.12);
-            border-radius: 100px;
-            cursor: pointer;
-            position: relative;
-            transition: height 0.25s var(--ease-snappy);
-            overflow: visible;
+            width: 100%; height: 5px; background: rgba(255,255,255,0.12); border-radius: 100px; cursor: pointer; position: relative; transition: height 0.25s var(--ease-snappy); overflow: visible;
         }
-        .np-progress-track:hover {
-            height: 8px;
-        }
+        .np-progress-track:hover { height: 8px; }
         .np-progress-fill {
-            width: 0%;
-            height: 100%;
-            border-radius: 100px;
-            background: #fff;
-            position: relative;
-            transition: width 0.1s linear;
-            box-shadow: 0 0 12px rgba(255,255,255,0.35);
+            width: 0%; height: 100%; border-radius: 100px; background: #fff; position: relative; transition: width 0.1s linear; box-shadow: 0 0 12px rgba(255,255,255,0.35);
         }
         .np-progress-fill::after {
-            content: '';
-            position: absolute;
-            right: -6px;
-            top: 50%;
-            transform: translateY(-50%) scale(0);
-            width: 14px;
-            height: 14px;
-            background: #fff;
-            border-radius: 50%;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.5), 0 0 16px rgba(255,255,255,0.5);
-            transition: transform 0.2s var(--ease-snappy);
+            content: ''; position: absolute; right: -6px; top: 50%; transform: translateY(-50%) scale(0); width: 14px; height: 14px; background: #fff; border-radius: 50%; box-shadow: 0 2px 10px rgba(0,0,0,0.5), 0 0 16px rgba(255,255,255,0.5); transition: transform 0.2s var(--ease-snappy);
         }
-        .np-progress-track:hover .np-progress-fill::after {
-            transform: translateY(-50%) scale(1);
-        }
+        .np-progress-track:hover .np-progress-fill::after { transform: translateY(-50%) scale(1); }
         .np-progress-fill::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: 100px;
-            background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%);
-            animation: progressShimmer 2.5s ease-in-out infinite;
-        }
-        @keyframes progressShimmer {
-            0% { transform: translateX(-100%); opacity: 0; }
-            50% { opacity: 1; }
-            100% { transform: translateX(100%); opacity: 0; }
+            content: ''; position: absolute; inset: 0; border-radius: 100px; background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%); animation: progressShimmer 2.5s ease-in-out infinite;
         }
         
         .np-scrubber-group .scrubber-bg { height: 4px; border-radius: 2px; background: rgba(255,255,255,0.2); }
@@ -388,20 +359,26 @@
         .np-scrubber-group .scrubber-fill { border-radius: 2px; box-shadow: none; transition: width 0.1s linear;}
         .np-scrubber-group .scrubber-fill::after { display: none; }
 
-        .np-track-info-center { display: flex; flex-direction: column; gap: 4px; align-items: center; text-align: center; }
-        .np-track-title { font-size: 18px; font-weight: 700; color: #fff; letter-spacing: -0.01em;}
-        .np-track-artist { font-size: 16px; color: rgba(255,255,255,0.6); font-weight: 500; letter-spacing: -0.01em;}
+        /* Centered Track Info directly below artwork, styled exactly like mockup */
+        .np-track-info-center { display: flex; flex-direction: column; gap: 8px; align-items: center; text-align: center; margin-top: 24px;}
+        .np-track-title { font-size: 22px; font-weight: 800; color: #fff; letter-spacing: -0.015em; }
+        .np-track-artist { font-size: 16px; color: rgba(255, 255, 255, 0.55); font-weight: 600; letter-spacing: -0.01em; }
 
-        .hidden-controls { 
+        .np-main-controls { 
             display: flex; justify-content: center; align-items: center; gap: 32px; 
-            opacity: 0; pointer-events: none; transition: opacity 0.3s ease; 
-            margin-top: 10px; position: absolute; bottom: -80px; width: 100%;
+            opacity: 0; transform: translateY(15px);
+            transition: opacity 0.5s var(--ease-snappy), transform 0.5s var(--ease-snappy);
+            pointer-events: none; margin-top: 24px;
         }
-        .np-left-pane:hover .hidden-controls { opacity: 1; pointer-events: auto; }
-        
         .np-main-controls i { cursor: pointer; transition: 0.2s; color: #fff; }
         .np-main-controls i:hover { transform: scale(1.15); filter: drop-shadow(0 0 10px rgba(255,255,255,0.4));}
         .np-main-controls i:active { transform: scale(0.95); }
+
+        /* Smooth Reveal triggers on left pane hover on Desktop */
+        .np-left-pane:hover .np-scrubber-group,
+        .np-left-pane:hover .np-main-controls {
+            opacity: 1; transform: translateY(0); pointer-events: auto;
+        }
 
         /* Right Pane: Immersive Lyrics */
         .np-right-pane { 
@@ -429,23 +406,18 @@
             padding: 0 2vw; margin: 0;
         }
 
-        /* ============================================================
-           REAL AMLL (Apple Music-like Lyrics) ENGINE
-           The actual @applemusic-like-lyrics/core player is mounted
-           here. Its own stylesheet (loaded in <head>) handles all
-           line/word layout, springs, blur, scale and interlude dots —
-           these are just the theme variables it exposes for styling.
-           ============================================================ */
+        /* AMLL Core Theme Settings adjusted to perfectly fit mockup design and size */
         #lyrics-content {
             width: 100%;
             height: 100%;
         }
         #lyrics-content .amll-lyric-player {
-            --amll-lp-color: #fff;
-            --amll-lp-font-size: clamp(28px, 3.6vw, 52px);
+            --amll-lp-color: rgba(255, 255, 255, 0.4);
+            --amll-lp-active-color: #fff;
+            --amll-lp-font-size: clamp(32px, 3.4vw, 44px);
             --amll-lp-hover-bg-color: rgba(255,255,255,0.08);
-            font-weight: 700;
-            letter-spacing: -0.01em;
+            font-weight: 800;
+            letter-spacing: -0.02em;
         }
         .lyrics-empty-state {
             height: 100%; display: flex; align-items: center; justify-content: center;
@@ -504,14 +476,19 @@
                 flex-direction: column; padding: 60px 8vw 40px; gap: 32px; 
                 height: auto; min-height: 100vh; justify-content: flex-start;
             }
-            .np-left-pane { max-width: 100%; width: 100%; gap: 24px; flex: none; align-items: center; }
+            .np-left-pane { max-width: 100%; width: 100%; gap: 16px; flex: none; align-items: center; }
             
-            .np-art-wrap { width: 100%; max-width: 360px; aspect-ratio: 1; border-radius: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
+            .np-art-wrap { width: 100%; max-width: 300px; height: 300px; aspect-ratio: 1; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
             
             .np-track-title { font-size: 22px; white-space: normal; line-height: 1.2; }
             .np-track-artist { font-size: 18px; }
             
-            .hidden-controls { position: relative; opacity: 1; pointer-events: auto; bottom: 0; margin-top: 0; gap: 40px;}
+            /* Keep Scrubber and Controls always visible on touch/mobile devices for flawless usage */
+            .np-scrubber-group,
+            .np-main-controls { 
+                position: relative; opacity: 1 !important; transform: none !important; pointer-events: auto !important; margin-top: 10px; gap: 24px;
+            }
+            .np-main-controls { gap: 40px; }
             
             .np-right-pane { width: 100%; max-width: 400px; flex: none; height: 70vh; position: relative; margin-top: 10px; }
             .lyrics-scroll-area { padding: 10vh 4vw 30vh 4vw; }
@@ -676,7 +653,7 @@
         </div>
     </div>
 
-    <!-- FULLSCREEN NOW PLAYING OVERLAY -->
+    <!-- FULLSCREEN NOW PLAYING OVERLAY (STYTLED AS THE PROVIDED MOCKUP IMAGE) -->
     <div id="np-fs">
         <div class="np-bg-wrap">
             <div id="np-bg-back" class="ambient-bg-layer"></div>
@@ -689,11 +666,20 @@
         <button class="btn-collapse-mob" onclick="toggleNP()"></button>
 
         <div class="np-layout">
-            <!-- Left Pane: Info & Scrubber -->
+            <!-- Left Pane: Info, Controls & Scrubber -->
             <div class="np-left-pane">
-                <div class="np-art-wrap" onclick="togglePlay()"><img src="https://files.catbox.moe/bvfrst.jpg" id="np-img-large" class="np-art" crossorigin="anonymous"></div>
+                <div class="np-art-wrap" onclick="togglePlay()">
+                    <img src="https://files.catbox.moe/bvfrst.jpg" id="np-img-large" class="np-art" crossorigin="anonymous">
+                </div>
                 
                 <div class="np-info-block">
+                    <!-- Meta info centered directly beneath the artwork -->
+                    <div class="np-track-info-center">
+                        <h2 class="np-track-title"><span id="np-title-large">Religión</span></h2>
+                        <p class="np-track-artist" id="np-artist-large">Yan Block</p>
+                    </div>
+
+                    <!-- Progress bar (fades in on hover for desktop, always visible on mobile) -->
                     <div class="np-scrubber-group">
                         <div class="np-progress-track" id="np-progress-track" onclick="seek(event, this)">
                             <div class="np-progress-fill" id="bar-fill-np"></div>
@@ -703,14 +689,10 @@
                             <span id="time-tot-np">-0:00</span>
                         </div>
                     </div>
-
-                    <div class="np-track-info-center">
-                        <h2 class="np-track-title"><span id="np-title-large">Religión</span></h2>
-                        <p class="np-track-artist" id="np-artist-large">Yan Block — Religión (Single)</p>
-                    </div>
                 </div>
 
-                <div class="np-main-controls hidden-controls">
+                <!-- Media buttons (fades in on hover for desktop, always visible on mobile) -->
+                <div class="np-main-controls">
                     <i class="ph-bold ph-shuffle" style="font-size: 20px; color: rgba(255,255,255,0.5);"></i>
                     <i class="ph-fill ph-skip-back" onclick="prevSong()" style="font-size: 38px;"></i>
                     <i class="ph-fill ph-play" id="icon-play-np" onclick="togglePlay()" style="font-size: 48px;"></i>
@@ -1238,7 +1220,7 @@
             document.getElementById('player-title').innerText = song.title;
             document.getElementById('player-artist').innerText = song.artist;
             document.getElementById('np-title-large').innerText = song.title;
-            document.getElementById('np-artist-large').innerText = `${song.artist} — Single`;
+            document.getElementById('np-artist-large').innerText = song.artist;
             
             fetchLyrics(song.lrc);
         }
