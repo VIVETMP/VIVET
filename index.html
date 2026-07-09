@@ -237,7 +237,7 @@
         .player-wrapper { position: fixed; bottom: 32px; left: 0; width: 100%; display: flex; justify-content: center; z-index: 50; pointer-events: none; padding: 0 32px; }
         .player-pill { pointer-events: auto; width: 100%; max-width: 1100px; height: var(--player-height); background: var(--bg-glass-heavy); backdrop-filter: blur(50px) saturate(200%); -webkit-backdrop-filter: blur(50px) saturate(200%); border: 1px solid var(--border-highlight); border-radius: 24px; display: flex; align-items: center; justify-content: space-between; padding: 12px 24px; box-shadow: 0 30px 60px rgba(0,0,0,0.6), inset 0 1px 2px rgba(255,255,255,0.1); transition: transform 0.5s var(--ease-snappy), border-color 0.3s; position: relative; overflow: hidden; }
         .player-pill:hover { transform: translateY(-4px); border-color: rgba(255,255,255,0.2); }
-        .progress-mini-wrapper { absolute; top: 0; left: 0; width: 100%; height: 2px; background: rgba(255,255,255,0.05); }
+        .progress-mini-wrapper { position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: rgba(255,255,255,0.05); }
         .progress-mini-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent-1), var(--accent-2)); transition: width 0.1s linear; box-shadow: 0 0 10px var(--accent-glow); }
 
         .player-info { display: flex; align-items: center; gap: 16px; width: 30%; cursor: pointer; transition: 0.3s; padding: 6px; border-radius: 16px; }
@@ -309,121 +309,129 @@
             .btn-collapse-mob { display: none; }
         }
 
-        /* Responsive Immersive Layout matching dimensions precisely */
-        .np-layout { 
-            position: relative; z-index: 3; display: flex; width: 100%; height: 100%; 
-            max-width: 1600px; padding: 0 8vw; gap: 6vw; margin: 0 auto; align-items: center; justify-content: center;
-        }
-        
-        .np-left-pane {
-            flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative;
+        /* 1920x1080 Real Proportion Grid and Alignment */
+        @media (min-width: 1025px) {
+            .np-layout { 
+                position: relative; z-index: 3; display: grid; 
+                grid-template-columns: 43% 57%; width: 100%; height: 100%; 
+                max-width: 1920px; padding: 0 100px 0 140px; gap: 80px; 
+                margin: 0 auto; align-items: center; justify-content: center;
+            }
+            
+            .np-left-pane {
+                width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative;
+            }
+
+            /* Scaled precisely to fit 1920x1080 widescreen height perfectly */
+            .np-art-wrap { 
+                width: 58vh; height: 58vh;
+                max-width: 630px; max-height: 630px;
+                min-width: 320px; min-height: 320px;
+                aspect-ratio: 1;
+                border-radius: 28px; 
+                box-shadow: 0 35px 80px rgba(0,0,0,0.6); 
+                overflow: hidden; transition: transform 0.6s var(--ease-cinematic); 
+                background: #111; cursor: pointer;
+            }
+            .np-art-wrap:hover { transform: scale(1.02); }
+            .np-art { width: 100%; height: 100%; object-fit: cover; }
+
+            .np-info-block { display: flex; flex-direction: column; width: 100%; }
+
+            /* Interactive Scrubber Layer - does not shift centered text */
+            .np-scrubber-group { 
+                position: absolute; bottom: -40px; left: 50%; transform: translateX(-50%) translateY(10px);
+                display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 440px;
+                opacity: 0; transition: opacity 0.4s var(--ease-snappy), transform 0.4s var(--ease-snappy);
+                pointer-events: none;
+            }
+            .np-time-row { display: flex; justify-content: space-between; font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.55); font-variant-numeric: tabular-nums; letter-spacing: 0.02em; margin-bottom: 2px;}
+            
+            .np-progress-track {
+                width: 100%; height: 5px; background: rgba(255,255,255,0.12); border-radius: 100px; cursor: pointer; position: relative; transition: height 0.25s var(--ease-snappy); overflow: visible;
+            }
+            .np-progress-track:hover { height: 8px; }
+            .np-progress-fill {
+                width: 0%; height: 100%; border-radius: 100px; background: #fff; position: relative; transition: width 0.1s linear; box-shadow: 0 0 12px rgba(255,255,255,0.35);
+            }
+            .np-progress-fill::after {
+                content: ''; position: absolute; right: -6px; top: 50%; transform: translateY(-50%) scale(0); width: 14px; height: 14px; background: #fff; border-radius: 50%; box-shadow: 0 2px 10px rgba(0,0,0,0.5), 0 0 16px rgba(255,255,255,0.5); transition: transform 0.2s var(--ease-snappy);
+            }
+            .np-progress-track:hover .np-progress-fill::after { transform: translateY(-50%) scale(1); }
+            .np-progress-fill::before {
+                content: ''; position: absolute; inset: 0; border-radius: 100px; background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%); animation: progressShimmer 2.5s ease-in-out infinite;
+            }
+            
+            .np-scrubber-group .scrubber-bg { height: 4px; border-radius: 2px; background: rgba(255,255,255,0.2); }
+            .np-scrubber-group .scrubber-bg:hover { height: 6px; }
+            .np-scrubber-group .scrubber-fill { border-radius: 2px; box-shadow: none; transition: width 0.1s linear;}
+            .np-scrubber-group .scrubber-fill::after { display: none; }
+
+            /* Centered Track Info directly below artwork, scaled exactly like 1080p mockup */
+            .np-track-info-center { display: flex; flex-direction: column; gap: 8px; align-items: center; text-align: center; margin-top: 36px;}
+            .np-track-title { font-size: 24px; font-weight: 800; color: #fff; letter-spacing: -0.015em; }
+            .np-track-artist { font-size: 18px; color: rgba(255, 255, 255, 0.5); font-weight: 600; letter-spacing: -0.01em; }
+
+            /* Interactive Controls Layer - floats dynamically at the bottom */
+            .np-main-controls { 
+                position: absolute; bottom: -105px; left: 50%; transform: translateX(-50%) translateY(10px);
+                display: flex; justify-content: center; align-items: center; gap: 32px; 
+                opacity: 0; transition: opacity 0.4s var(--ease-snappy), transform 0.4s var(--ease-snappy);
+                pointer-events: none;
+            }
+            .np-main-controls i { cursor: pointer; transition: 0.2s; color: #fff; }
+            .np-main-controls i:hover { transform: scale(1.15); filter: drop-shadow(0 0 10px rgba(255,255,255,0.4));}
+            .np-main-controls i:active { transform: scale(0.95); }
+
+            /* Smooth Reveal triggers on left pane hover on Desktop */
+            .np-left-pane:hover .np-scrubber-group {
+                opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto;
+            }
+            .np-left-pane:hover .np-main-controls {
+                opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto;
+            }
+
+            /* Right Pane: Widescreen Column space */
+            .np-right-pane { 
+                flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: center; position: relative; 
+                max-width: 950px; padding-left: 20px;
+                mask-image: linear-gradient(to bottom, 
+                    transparent 0%, 
+                    rgba(0,0,0,0.6) 8%, 
+                    rgba(0,0,0,1) 16%, 
+                    rgba(0,0,0,1) 82%, 
+                    rgba(0,0,0,0.6) 92%, 
+                    transparent 100%
+                );
+                -webkit-mask-image: linear-gradient(to bottom, 
+                    transparent 0%, 
+                    rgba(0,0,0,0.6) 8%, 
+                    rgba(0,0,0,1) 16%, 
+                    rgba(0,0,0,1) 82%, 
+                    rgba(0,0,0,0.6) 92%, 
+                    transparent 100%
+                );
+            }
+            .lyrics-scroll-area {
+                position: relative; height: 100%; overflow: hidden; 
+                padding: 0 2vw; margin: 0;
+            }
+
+            /* AMLL Core Theme Settings - Pure white fill with precise 1080p mockup scales */
+            #lyrics-content {
+                width: 100%;
+                height: 100%;
+            }
+            #lyrics-content .amll-lyric-player {
+                --amll-lp-color: rgba(255, 255, 255, 0.35) !important;
+                --amll-lp-active-color: #ffffff !important;
+                --amll-lp-font-size: clamp(38px, 4.8vh, 52px);
+                --amll-lp-hover-bg-color: rgba(255,255,255,0.08);
+                font-weight: 800;
+                letter-spacing: -0.02em;
+            }
         }
 
-        /* Configured to the exact ratio of the mockup image */
-        .np-art-wrap { 
-            width: 54vh; height: 54vh;
-            max-width: 440px; max-height: 440px;
-            min-width: 300px; min-height: 300px;
-            aspect-ratio: 1;
-            border-radius: 24px; 
-            box-shadow: 0 35px 85px rgba(0,0,0,0.55); 
-            overflow: hidden; transition: transform 0.6s var(--ease-cinematic); 
-            background: #111; cursor: pointer;
-        }
-        .np-art-wrap:hover { transform: scale(1.02); }
-        .np-art { width: 100%; height: 100%; object-fit: cover; }
-
-        .np-info-block { display: flex; flex-direction: column; width: 100%; }
-
-        /* Hidden Scrubber and Controls on Desktop, shown on Hover to match visual mockup */
-        .np-scrubber-group { 
-            display: flex; flex-direction: column; gap: 10px; width: 100%; 
-            opacity: 0; transform: translateY(15px);
-            transition: opacity 0.5s var(--ease-snappy), transform 0.5s var(--ease-snappy);
-            pointer-events: none; margin-top: 24px;
-        }
-        .np-time-row { display: flex; justify-content: space-between; font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.55); font-variant-numeric: tabular-nums; letter-spacing: 0.02em; margin-bottom: 2px;}
-        
-        .np-progress-track {
-            width: 100%; height: 5px; background: rgba(255,255,255,0.12); border-radius: 100px; cursor: pointer; position: relative; transition: height 0.25s var(--ease-snappy); overflow: visible;
-        }
-        .np-progress-track:hover { height: 8px; }
-        .np-progress-fill {
-            width: 0%; height: 100%; border-radius: 100px; background: #fff; position: relative; transition: width 0.1s linear; box-shadow: 0 0 12px rgba(255,255,255,0.35);
-        }
-        .np-progress-fill::after {
-            content: ''; position: absolute; right: -6px; top: 50%; transform: translateY(-50%) scale(0); width: 14px; height: 14px; background: #fff; border-radius: 50%; box-shadow: 0 2px 10px rgba(0,0,0,0.5), 0 0 16px rgba(255,255,255,0.5); transition: transform 0.2s var(--ease-snappy);
-        }
-        .np-progress-track:hover .np-progress-fill::after { transform: translateY(-50%) scale(1); }
-        .np-progress-fill::before {
-            content: ''; position: absolute; inset: 0; border-radius: 100px; background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%); animation: progressShimmer 2.5s ease-in-out infinite;
-        }
-        
-        .np-scrubber-group .scrubber-bg { height: 4px; border-radius: 2px; background: rgba(255,255,255,0.2); }
-        .np-scrubber-group .scrubber-bg:hover { height: 6px; }
-        .np-scrubber-group .scrubber-fill { border-radius: 2px; box-shadow: none; transition: width 0.1s linear;}
-        .np-scrubber-group .scrubber-fill::after { display: none; }
-
-        /* Centered Track Info directly below artwork, styled exactly like mockup */
-        .np-track-info-center { display: flex; flex-direction: column; gap: 8px; align-items: center; text-align: center; margin-top: 24px;}
-        .np-track-title { font-size: 20px; font-weight: 800; color: #fff; letter-spacing: -0.015em; }
-        .np-track-artist { font-size: 15px; color: rgba(255, 255, 255, 0.55); font-weight: 600; letter-spacing: -0.01em; }
-
-        .np-main-controls { 
-            display: flex; justify-content: center; align-items: center; gap: 32px; 
-            opacity: 0; transform: translateY(15px);
-            transition: opacity 0.5s var(--ease-snappy), transform 0.5s var(--ease-snappy);
-            pointer-events: none; margin-top: 24px;
-        }
-        .np-main-controls i { cursor: pointer; transition: 0.2s; color: #fff; }
-        .np-main-controls i:hover { transform: scale(1.15); filter: drop-shadow(0 0 10px rgba(255,255,255,0.4));}
-        .np-main-controls i:active { transform: scale(0.95); }
-
-        /* Smooth Reveal triggers on left pane hover on Desktop */
-        .np-left-pane:hover .np-scrubber-group,
-        .np-left-pane:hover .np-main-controls {
-            opacity: 1; transform: translateY(0); pointer-events: auto;
-        }
-
-        /* Right Pane: Immersive Lyrics */
-        .np-right-pane { 
-            flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: center; position: relative; 
-            max-width: 850px;
-            mask-image: linear-gradient(to bottom, 
-                transparent 0%, 
-                rgba(0,0,0,0.6) 8%, 
-                rgba(0,0,0,1) 16%, 
-                rgba(0,0,0,1) 82%, 
-                rgba(0,0,0,0.6) 92%, 
-                transparent 100%
-            );
-            -webkit-mask-image: linear-gradient(to bottom, 
-                transparent 0%, 
-                rgba(0,0,0,0.6) 8%, 
-                rgba(0,0,0,1) 16%, 
-                rgba(0,0,0,1) 82%, 
-                rgba(0,0,0,0.6) 92%, 
-                transparent 100%
-            );
-        }
-        .lyrics-scroll-area {
-            position: relative; height: 100%; overflow: hidden; 
-            padding: 0 2vw; margin: 0;
-        }
-
-        /* AMLL Core Theme Settings - Locked to standard white fill color scheme */
-        #lyrics-content {
-            width: 100%;
-            height: 100%;
-        }
-        #lyrics-content .amll-lyric-player {
-            --amll-lp-color: rgba(255, 255, 255, 0.45) !important;
-            --amll-lp-active-color: #ffffff !important;
-            --amll-lp-font-size: clamp(34px, 3.5vw, 46px);
-            --amll-lp-hover-bg-color: rgba(255,255,255,0.08);
-            font-weight: 800;
-            letter-spacing: -0.02em;
-        }
         .lyrics-empty-state {
             height: 100%; display: flex; align-items: center; justify-content: center;
         }
