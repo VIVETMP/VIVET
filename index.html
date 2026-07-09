@@ -417,13 +417,13 @@
                 padding: 0 2vw; margin: 0;
             }
 
-            /* AMLL Core Theme Settings - Pure white fill with precise 1080p mockup scales */
+            /* AMLL Core Theme Settings - Pure white base text fill with 1080p scales */
             #lyrics-content {
                 width: 100%;
                 height: 100%;
             }
             #lyrics-content .amll-lyric-player {
-                --amll-lp-color: rgba(255, 255, 255, 0.35) !important;
+                --amll-lp-color: #ffffff !important;
                 --amll-lp-active-color: #ffffff !important;
                 --amll-lp-font-size: clamp(38px, 4.8vh, 52px);
                 --amll-lp-hover-bg-color: rgba(255,255,255,0.08);
@@ -666,7 +666,7 @@
         </div>
     </div>
 
-    <!-- FULLSCREEN NOW PLAYING OVERLAY (STYTLED AS THE PROVIDED MOCKUP IMAGE) -->
+    <!-- FULLSCREEN NOW PLAYING OVERLAY (STYLED TO PEFECTLY MATCH REFERENCE MOCKUP DIMENSIONS) -->
     <div id="np-fs">
         <div class="np-bg-wrap">
             <div id="np-bg-back" class="ambient-bg-layer"></div>
@@ -679,14 +679,14 @@
         <button class="btn-collapse-mob" onclick="toggleNP()"></button>
 
         <div class="np-layout">
-            <!-- Left Pane: Info, Controls & Scrubber -->
+            <!-- Left Pane: Info, Controls & Scrubber (Aligned and proportioned dynamically based on widescreen metrics) -->
             <div class="np-left-pane">
                 <div class="np-art-wrap" onclick="togglePlay()">
                     <img src="https://files.catbox.moe/bvfrst.jpg" id="np-img-large" class="np-art" crossorigin="anonymous">
                 </div>
                 
                 <div class="np-info-block">
-                    <!-- Meta info centered directly beneath the artwork -->
+                    <!-- Meta info centered directly beneath the artwork with precise gaps -->
                     <div class="np-track-info-center">
                         <h2 class="np-track-title"><span id="np-title-large">Religión</span></h2>
                         <p class="np-track-artist" id="np-artist-large">Yan Block</p>
