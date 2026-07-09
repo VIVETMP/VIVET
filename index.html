@@ -725,7 +725,7 @@
 
     <script>
         /* ==================================================================
-           DATA (Religion, Talento, YeYe, 222, 4 Life, 444, Cologne, Lagunas, Emociones)
+           DATA (Religion, Talento, YeYe, 222, 4 Life, 444, Cologne, Lagunas, Emociones, PIKA PIKA)
            ================================================================== */
         const religionCoverUrl = "https://files.catbox.moe/bvfrst.jpg";
         const talentoCoverUrl  = "https://files.catbox.moe/bpjz9c.jpg";
@@ -736,6 +736,7 @@
         const cologneCoverUrl  = "https://files.catbox.moe/uqzai3.jpg";
         const lagunasCoverUrl  = "https://files.catbox.moe/ktbz1a.jpg";
         const emocionesCoverUrl = "https://files.catbox.moe/wla4pw.jpg";
+        const pikapikaCoverUrl  = "https://files.catbox.moe/ej9nbi.jpg";
 
         // Mapeo de imágenes de fondo personalizadas
         const bgImages = {
@@ -744,7 +745,8 @@
             "Talento": "https://files.catbox.moe/3kk9d0.png",
             "Lagunas": "https://files.catbox.moe/3pi5rh.png",
             "4 Life": "https://files.catbox.moe/c9lse7.png",
-            "Emociones": "https://files.catbox.moe/h7db9f.png"
+            "Emociones": "https://files.catbox.moe/h7db9f.png",
+            "PIKA PIKA": "https://files.catbox.moe/oztuk2.png"
         };
 
         const albumsData = [ 
@@ -756,7 +758,8 @@
             { id: "444-remix-single", title: "444 - Remix", artist: "Yan Block, De La Rose, Hades66 & Ñengo Flow", cover: remix444CoverUrl, year: "2026" },
             { id: "cologne-single", title: "Cologne", artist: "Junior H & Ovi", cover: cologneCoverUrl, year: "2026" },
             { id: "lagunas-single", title: "Lagunas", artist: "Peso Pluma & Jasiel Nuñez", cover: lagunasCoverUrl, year: "2026" },
-            { id: "emociones-single", title: "Emociones", artist: "Hades66", cover: emocionesCoverUrl, year: "2026" }
+            { id: "emociones-single", title: "Emociones", artist: "Hades66", cover: emocionesCoverUrl, year: "2026" },
+            { id: "pikapika-single", title: "PIKA PIKA", artist: "Chuyin, Fuerza Regida, Jorsshh & Calle 24", cover: pikapikaCoverUrl, year: "2026" }
         ];
 
         const cancionesData = [
@@ -849,6 +852,16 @@
                 album: "emociones-single",
                 trackNum: 1,
                 coverLoaded: true
+            },
+            { 
+                title: "PIKA PIKA", 
+                artist: "Chuyin, Fuerza Regida, Jorsshh & Calle 24", 
+                url: "https://files.catbox.moe/lvpf5o.mp3", 
+                lrc: "https://files.catbox.moe/dj1zm1.ttml",
+                cover: pikapikaCoverUrl,
+                album: "pikapika-single",
+                trackNum: 1,
+                coverLoaded: true
             }
         ];
 
@@ -861,7 +874,11 @@
             { name: "Junior H", img: cologneCoverUrl },
             { name: "Ovi", img: cologneCoverUrl },
             { name: "Peso Pluma", img: lagunasCoverUrl },
-            { name: "Jasiel Nuñez", img: lagunasCoverUrl }
+            { name: "Jasiel Nuñez", img: lagunasCoverUrl },
+            { name: "Chuyin", img: pikapikaCoverUrl },
+            { name: "Fuerza Regida", img: pikapikaCoverUrl },
+            { name: "Jorsshh", img: pikapikaCoverUrl },
+            { name: "Calle 24", img: pikapikaCoverUrl }
         ];
 
         /* ==================================================================
