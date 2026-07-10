@@ -90,7 +90,7 @@
         }
 
         /* ==================================================================
-           AMBIENT BACKGROUND IMAGE WITH BLUR & SMOOTH CROSSFADE
+           AMBIENT BACKGROUND SOLID COLOR WITH SMOOTH CROSSFADE
            ================================================================== */
         #ambient-bg, .np-bg-wrap {
             position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
@@ -99,7 +99,7 @@
         #ambient-bg::after {
             content: '';
             position: absolute; inset: 0;
-            background: rgba(0, 0, 0, 0.3); /* Base Contrast Layer */
+            background: rgba(0, 0, 0, 0.35); /* 0.35 Light Contrast Mask to preserve text readability */
             z-index: 4;
             pointer-events: none;
         }
@@ -109,8 +109,7 @@
         }
         .ambient-bg-layer {
             position: absolute; inset: -10%;
-            filter: blur(50px) saturate(160%); /* Ambient blur & boosted saturation */
-            transition: opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1); /* Crossfade de 1.2s */
+            transition: opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1); /* Crossfade of 1.2s */
             opacity: 1;
         }
         #bg-back, #np-bg-back { z-index: 1; }
@@ -529,7 +528,7 @@
 </head>
 <body>
 
-    <!-- AMBIENT LAYERED BACKGROUND WITH STYLIZED CROSSFADE -->
+    <!-- AMBIENT LAYERED BACKGROUND -->
     <div id="ambient-bg">
         <div class="noise-overlay"></div>
         <div id="bg-back" class="ambient-bg-layer"></div>
@@ -682,7 +681,7 @@
         </div>
     </div>
 
-    <!-- FULLSCREEN NOW PLAYING OVERLAY (STATIC CURATED PALETTE GRADIENTS) -->
+    <!-- FULLSCREEN NOW PLAYING OVERLAY (STATIC CURATED SINGLE COLORS) -->
     <div id="np-fs">
         <div class="np-bg-wrap">
             <div id="np-bg-back" class="ambient-bg-layer"></div>
@@ -906,20 +905,20 @@
         ];
 
         /* ==================================================================
-           PREDEFINED CURATED COLOR PALETTES
+           PREDEFINED SINGLE COLORS
            ================================================================== */
-        const songPalettes = {
-            "Religión": ["rgb(85, 107, 36)", "rgb(164, 198, 57)", "rgb(255, 255, 230)", "rgb(142, 126, 85)", "rgb(24, 20, 13)", "rgb(110, 13, 13)"],
-            "Talento": ["rgb(245, 245, 245)", "rgb(190, 190, 190)", "rgb(125, 125, 125)", "rgb(75, 75, 75)", "rgb(35, 35, 35)", "rgb(15, 15, 15)"],
-            "YeYe": ["rgb(255, 255, 255)", "rgb(220, 220, 220)", "rgb(35, 35, 35)", "rgb(0, 0, 0)", "rgb(255, 0, 50)", "rgb(0, 230, 240)"],
-            "222": ["rgb(215, 100, 20)", "rgb(240, 150, 45)", "rgb(25, 20, 25)", "rgb(110, 130, 115)", "rgb(55, 65, 55)", "rgb(190, 80, 55)"],
-            "4 Life": ["rgb(10, 10, 15)", "rgb(80, 80, 85)", "rgb(155, 155, 160)", "rgb(185, 60, 45)", "rgb(105, 30, 25)", "rgb(0, 0, 5)"],
-            "444 - Remix": ["rgb(15, 12, 12)", "rgb(40, 30, 30)", "rgb(110, 65, 55)", "rgb(175, 105, 90)", "rgb(215, 150, 135)", "rgb(240, 210, 200)"],
-            "Cologne": ["rgb(215, 175, 75)", "rgb(215, 20, 25)", "rgb(240, 240, 240)", "rgb(35, 55, 60)", "rgb(110, 105, 75)", "rgb(15, 15, 15)"],
-            "Lagunas": ["rgb(15, 20, 30)", "rgb(5, 5, 10)", "rgb(200, 120, 140)", "rgb(110, 105, 155)", "rgb(65, 55, 90)", "rgb(240, 245, 250)"],
-            "PIKA PIKA": ["rgb(215, 90, 35)", "rgb(240, 215, 165)", "rgb(20, 20, 25)", "rgb(245, 245, 245)", "rgb(240, 150, 45)", "rgb(95, 115, 105)"],
-            "Emociones": ["rgb(245, 130, 35)", "rgb(255, 230, 180)", "rgb(160, 185, 200)", "rgb(75, 95, 105)", "rgb(15, 20, 25)", "rgb(115, 120, 125)"],
-            "MOONLIGHT": ["rgb(0, 51, 255)", "rgb(0, 10, 45)", "rgb(57, 255, 178)", "rgb(255, 0, 170)", "rgb(255, 41, 88)", "rgb(26, 32, 94)"]
+        const songColors = {
+            "Religión": "#8C7120",
+            "Talento": "#595959",
+            "YeYe": "#F2F2F2",
+            "222": "#D95204",
+            "4 Life": "#0D0D0D",
+            "444 - Remix": "#090708",
+            "Cologne": "#6E5F36",
+            "Lagunas": "#060D1F",
+            "Emociones": "#1C3240",
+            "PIKA PIKA": "#AC8E5C",
+            "MOONLIGHT": "#0115CA"
         };
 
         /* ==================================================================
@@ -1001,28 +1000,24 @@
         function haptic() { if (navigator.vibrate) navigator.vibrate(10); }
 
         /* ==================================================================
-           DYNAMIC COLOR PALETTE MAPPING & STATIC RADIAL GRADIENT GENERATOR
+           DYNAMIC COLOR MAPPING & SOLID COLOR GRADIENT GENERATOR
            ================================================================== */
-        function getPaletteForSong(title) {
+        function getColorForSong(title) {
             const normalized = title.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
             
-            if (normalized === "religion") return songPalettes["Religión"];
-            if (normalized === "talento") return songPalettes["Talento"];
-            if (normalized === "yeye") return songPalettes["YeYe"];
-            if (normalized === "222") return songPalettes["222"];
-            if (normalized === "4 life") return songPalettes["4 Life"];
-            if (normalized.includes("444")) return songPalettes["444 - Remix"];
-            if (normalized === "cologne") return songPalettes["Cologne"];
-            if (normalized === "lagunas") return songPalettes["Lagunas"];
-            if (normalized === "pika pika") return songPalettes["PIKA PIKA"];
-            if (normalized === "emociones") return songPalettes["Emociones"];
-            if (normalized === "moonlight") return songPalettes["MOONLIGHT"];
+            if (normalized === "religion") return songColors["Religión"];
+            if (normalized === "talento") return songColors["Talento"];
+            if (normalized === "yeye") return songColors["YeYe"];
+            if (normalized === "222") return songColors["222"];
+            if (normalized === "4 life") return songColors["4 Life"];
+            if (normalized.includes("444")) return songColors["444 - Remix"];
+            if (normalized === "cologne") return songColors["Cologne"];
+            if (normalized === "lagunas") return songColors["Lagunas"];
+            if (normalized === "pika pika") return songColors["PIKA PIKA"];
+            if (normalized === "emociones") return songColors["Emociones"];
+            if (normalized === "moonlight") return songColors["MOONLIGHT"];
             
-            // Fallback base palette
-            return [
-                "rgb(255, 46, 147)", "rgb(127, 73, 180)", "rgb(60, 30, 100)", 
-                "rgb(30, 15, 50)", "rgb(15, 7, 25)", "rgb(5, 2, 10)"
-            ];
+            return "#050507"; // default fallback dark background
         }
 
         function updateDynamicBackgroundForSong(songTitle) {
@@ -1033,31 +1028,20 @@
             
             if (!bgBack || !bgFront) return;
             
-            const colors = getPaletteForSong(songTitle);
-            const [c1, c2, c3, c4, c5, c6] = colors;
+            const color = getColorForSong(songTitle);
             
-            // Multi-radial layered gradient format matching Apple Music design language
-            const gradientString = `
-                radial-gradient(circle at 15% 25%, ${c1} 0%, rgba(0,0,0,0) 50%),
-                radial-gradient(circle at 85% 15%, ${c2} 0%, rgba(0,0,0,0) 50%),
-                radial-gradient(circle at 50% 85%, ${c3} 0%, rgba(0,0,0,0) 55%),
-                radial-gradient(circle at 80% 80%, ${c4} 0%, rgba(0,0,0,0) 50%),
-                radial-gradient(circle at 20% 80%, ${c5} 0%, rgba(0,0,0,0) 50%),
-                linear-gradient(135deg, ${c6} 0%, #050507 100%)
-            `.replace(/\s+/g, ' ');
-
-            const currentGradient = bgFront.style.backgroundImage || bgFront.style.background;
-            if (currentGradient === gradientString) return;
+            const currentColor = bgFront.style.backgroundColor || bgFront.style.background;
+            if (currentColor === color) return;
             
-            bgBack.style.background = bgFront.style.background || gradientString;
+            bgBack.style.background = bgFront.style.background || color;
             if (npBgBack && npBgFront) {
-                npBgBack.style.background = npBgFront.style.background || gradientString;
+                npBgBack.style.background = npBgFront.style.background || color;
             }
             
-            bgFront.style.background = gradientString;
+            bgFront.style.background = color;
             bgFront.classList.remove('fade-in');
             if (npBgFront) {
-                npBgFront.style.background = gradientString;
+                npBgFront.style.background = color;
                 npBgFront.classList.remove('fade-in');
             }
             
@@ -1418,7 +1402,6 @@
             return sec || 0;
         }
 
-        // Helper to query attributes dynamically without namespace prefix issues
         // Helper to query attributes dynamically without namespace prefix issues
         function getAttributeInsensitive(element, attrName) {
             if (!element || !element.attributes) return '';
