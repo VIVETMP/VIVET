@@ -90,7 +90,7 @@
         }
 
         /* ==================================================================
-           AMBIENT BACKGROUND
+           AMBIENT BACKGROUND IMAGE WITH BLUR & SMOOTH CROSSFADE
            ================================================================== */
         #ambient-bg {
             position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
@@ -99,22 +99,24 @@
         #ambient-bg::after {
             content: '';
             position: absolute; inset: 0;
-            background: radial-gradient(ellipse at center, rgba(5, 5, 7, 0.15) 0%, rgba(5, 5, 7, 0.55) 60%, rgba(5, 5, 7, 0.85) 100%);
-            z-index: 3;
+            background: radial-gradient(ellipse at center, rgba(5, 5, 7, 0.1) 0%, rgba(5, 5, 7, 0.5) 60%, rgba(5, 5, 7, 0.85) 100%);
+            z-index: 4;
             pointer-events: none;
         }
         .noise-overlay {
-            position: absolute; inset: 0; z-index: 2; opacity: 0.045; mix-blend-mode: overlay; pointer-events: none;
+            position: absolute; inset: 0; z-index: 3; opacity: 0.045; mix-blend-mode: overlay; pointer-events: none;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
-        #fluid-canvas {
-            position: absolute; inset: -8%; width: 116%; height: 116%;
-            filter: blur(70px) saturate(200%) brightness(0.9);
+        .ambient-bg-layer {
+            position: absolute; inset: -10%;
+            background-size: cover; background-position: center;
+            filter: blur(35px) saturate(120%) brightness(0.35);
+            transition: opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1);
             opacity: 1;
-            pointer-events: none;
-            z-index: 1;
-            will-change: filter;
         }
+        #bg-back { z-index: 1; }
+        #bg-front { z-index: 2; opacity: 0; }
+        #bg-front.fade-in { opacity: 1; }
 
         /* ==================================================================
            APP LAYOUT
@@ -254,7 +256,7 @@
         .controls-buttons i { cursor: pointer; transition: all 0.3s var(--ease-snappy); }
         .controls-buttons i:hover { color: #fff; transform: scale(1.2); text-shadow: 0 0 10px rgba(255,255,255,0.5); }
         .controls-buttons i:active { transform: scale(0.9); }
-        .btn-play-circle { width: 52px; height: 52px; background: #fff; color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; transition: all 0.4s var(--ease-snappy); box-shadow: 0 10px 20px rgba(255,255,255,0.2); }
+        .btn-play-circle { width: 52px; height: 52px; background: #fff; color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; transition: all 0.4s var(--ease-snappy); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
         .btn-play-circle i { margin-left: 3px; }
         .btn-play-circle:hover { transform: scale(1.1); box-shadow: 0 15px 30px rgba(255,255,255,0.4); }
 
@@ -275,7 +277,7 @@
         .btn-fullscreen:hover { background: rgba(255,255,255,0.15); transform: scale(1.1); color: #fff; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
 
         /* ==================================================================
-           FULLSCREEN NOW PLAYING (APPLE TV / DESKTOP REPLICA)
+           FULLSCREEN NOW PLAYING (IMMERSIVE REPLICA & DESKTOP MATCH)
            ================================================================== */
         #np-fs {
             position: fixed; inset: 0; z-index: 100; transform: translateY(100%); opacity: 0; visibility: hidden;
@@ -285,171 +287,151 @@
         #np-fs.active { transform: translateY(0); opacity: 1; visibility: visible; }
 
         .np-bg-wrap { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
-        #fluid-canvas-np {
-            position: absolute; inset: -8%; width: 116%; height: 116%;
-            filter: blur(80px) saturate(220%) brightness(0.85);
-            opacity: 1;
-            pointer-events: none;
-            z-index: 0;
-            will-change: filter;
-        }
-        .np-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.55); z-index: 1; }
-        .np-grain { position: absolute; inset: 0; z-index: 2; opacity: 0.035; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none;}
+        .np-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.55); z-index: 3; }
+        .np-grain { position: absolute; inset: 0; z-index: 4; opacity: 0.035; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none;}
+        #np-bg-back { z-index: 1; }
+        #np-bg-front { z-index: 2; opacity: 0; }
+        #np-bg-front.fade-in { opacity: 1; }
 
         /* Collapse Button */
         @media (min-width: 1025px) {
             .btn-collapse {
                 position: absolute; top: 40px; left: 40px; width: 44px; height: 44px;
-                background: transparent; border: none; cursor: pointer; z-index: 10;
-                display: flex; align-items: center; justify-content: center; font-size: 32px; 
-                color: rgba(255,255,255,0.5); transition: all 0.2s var(--ease-snappy); outline: none;
+                background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); 
+                border-radius: 50%; cursor: pointer; z-index: 10;
+                display: flex; align-items: center; justify-content: center; font-size: 20px; 
+                color: rgba(255,255,255,0.6); transition: all 0.3s var(--ease-snappy); outline: none;
+                opacity: 0;
             }
-            .btn-collapse:hover { color: #fff; transform: scale(1.1); }
+            #np-fs:hover .btn-collapse { opacity: 1; }
+            .btn-collapse:hover { color: #fff; background: rgba(255, 255, 255, 0.15); transform: scale(1.1); }
             .btn-collapse i { display: block; }
             .btn-collapse-mob { display: none; }
         }
 
-        /* Desktop 2-Column Layout */
-        .np-layout { 
-            position: relative; z-index: 3; display: flex; width: 100%; height: 100%; 
-            max-width: 1600px; padding: 0 8vw; gap: 8vw; margin: 0 auto; align-items: center; justify-content: center;
-        }
-        
-        .np-left-pane {
-            flex: 0 0 clamp(320px, 35vw, 480px); display: flex; flex-direction: column; justify-content: center; gap: 24px; position: relative;
+        /* 1920x1080 Real Proportion Grid and Alignment */
+        @media (min-width: 1025px) {
+            .np-layout { 
+                position: relative; z-index: 3; display: grid; 
+                grid-template-columns: 43% 57%; width: 100%; height: 100%; 
+                max-width: 1920px; padding: 0 100px 0 140px; gap: 80px; 
+                margin: 0 auto; align-items: center; justify-content: center;
+            }
+            
+            .np-left-pane {
+                width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative;
+            }
+
+            /* Scaled precisely to fit 1920x1080 widescreen height perfectly */
+            .np-art-wrap { 
+                width: 58vh; height: 58vh;
+                max-width: 630px; max-height: 630px;
+                min-width: 320px; min-height: 320px;
+                aspect-ratio: 1;
+                border-radius: 28px; 
+                box-shadow: 0 35px 80px rgba(0,0,0,0.6); 
+                overflow: hidden; transition: transform 0.6s var(--ease-cinematic); 
+                background: #111; cursor: pointer;
+            }
+            .np-art-wrap:hover { transform: scale(1.02); }
+            .np-art { width: 100%; height: 100%; object-fit: cover; }
+
+            .np-info-block { display: flex; flex-direction: column; width: 100%; }
+
+            /* Interactive Scrubber Layer - does not shift centered text */
+            .np-scrubber-group { 
+                position: absolute; bottom: -40px; left: 50%; transform: translateX(-50%) translateY(10px);
+                display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 440px;
+                opacity: 0; transition: opacity 0.4s var(--ease-snappy), transform 0.4s var(--ease-snappy);
+                pointer-events: none;
+            }
+            .np-time-row { display: flex; justify-content: space-between; font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.55); font-variant-numeric: tabular-nums; letter-spacing: 0.02em; margin-bottom: 2px;}
+            
+            .np-progress-track {
+                width: 100%; height: 5px; background: rgba(255,255,255,0.12); border-radius: 100px; cursor: pointer; position: relative; transition: height 0.25s var(--ease-snappy); overflow: visible;
+            }
+            .np-progress-track:hover { height: 8px; }
+            .np-progress-fill {
+                width: 0%; height: 100%; border-radius: 100px; background: #fff; position: relative; transition: width 0.1s linear; box-shadow: 0 0 12px rgba(255,255,255,0.35);
+            }
+            .np-progress-fill::after {
+                content: ''; position: absolute; right: -6px; top: 50%; transform: translateY(-50%) scale(0); width: 14px; height: 14px; background: #fff; border-radius: 50%; box-shadow: 0 2px 10px rgba(0,0,0,0.5), 0 0 16px rgba(255,255,255,0.5); transition: transform 0.2s var(--ease-snappy);
+            }
+            .np-progress-track:hover .np-progress-fill::after { transform: translateY(-50%) scale(1); }
+            .np-progress-fill::before {
+                content: ''; position: absolute; inset: 0; border-radius: 100px; background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%); animation: progressShimmer 2.5s ease-in-out infinite;
+            }
+            
+            .np-scrubber-group .scrubber-bg { height: 4px; border-radius: 2px; background: rgba(255,255,255,0.2); }
+            .np-scrubber-group .scrubber-bg:hover { height: 6px; }
+            .np-scrubber-group .scrubber-fill { border-radius: 2px; box-shadow: none; transition: width 0.1s linear;}
+            .np-scrubber-group .scrubber-fill::after { display: none; }
+
+            /* Centered Track Info directly below artwork, scaled exactly like 1080p mockup */
+            .np-track-info-center { display: flex; flex-direction: column; gap: 8px; align-items: center; text-align: center; margin-top: 36px;}
+            .np-track-title { font-size: 24px; font-weight: 800; color: #fff; letter-spacing: -0.015em; }
+            .np-track-artist { font-size: 18px; color: rgba(255, 255, 255, 0.5); font-weight: 600; letter-spacing: -0.01em; }
+
+            /* Interactive Controls Layer - floats dynamically at the bottom */
+            .np-main-controls { 
+                position: absolute; bottom: -105px; left: 50%; transform: translateX(-50%) translateY(10px);
+                display: flex; justify-content: center; align-items: center; gap: 32px; 
+                opacity: 0; transition: opacity 0.4s var(--ease-snappy), transform 0.4s var(--ease-snappy);
+                pointer-events: none;
+            }
+            .np-main-controls i { cursor: pointer; transition: 0.2s; color: #fff; }
+            .np-main-controls i:hover { transform: scale(1.15); filter: drop-shadow(0 0 10px rgba(255,255,255,0.4));}
+            .np-main-controls i:active { transform: scale(0.95); }
+
+            /* Smooth Reveal triggers on left pane hover on Desktop */
+            .np-left-pane:hover .np-scrubber-group {
+                opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto;
+            }
+            .np-left-pane:hover .np-main-controls {
+                opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto;
+            }
+
+            /* Right Pane: Widescreen Column space */
+            .np-right-pane { 
+                flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: center; position: relative; 
+                max-width: 950px; padding-left: 20px;
+                mask-image: linear-gradient(to bottom, 
+                    transparent 0%, 
+                    rgba(0,0,0,0.6) 8%, 
+                    rgba(0,0,0,1) 16%, 
+                    rgba(0,0,0,1) 82%, 
+                    rgba(0,0,0,0.6) 92%, 
+                    transparent 100%
+                );
+                -webkit-mask-image: linear-gradient(to bottom, 
+                    transparent 0%, 
+                    rgba(0,0,0,0.6) 8%, 
+                    rgba(0,0,0,1) 16%, 
+                    rgba(0,0,0,1) 82%, 
+                    rgba(0,0,0,0.6) 92%, 
+                    transparent 100%
+                );
+            }
+            .lyrics-scroll-area {
+                position: relative; height: 100%; overflow: hidden; 
+                padding: 0 2vw; margin: 0;
+            }
+
+            /* AMLL Core Theme Settings - Pure white base text fill with 1080p scales */
+            #lyrics-content {
+                width: 100%;
+                height: 100%;
+            }
+            #lyrics-content .amll-lyric-player {
+                --amll-lp-color: #ffffff !important;
+                --amll-lp-active-color: #ffffff !important;
+                --amll-lp-font-size: clamp(38px, 4.8vh, 52px);
+                --amll-lp-hover-bg-color: rgba(255,255,255,0.08);
+                font-weight: 800;
+                letter-spacing: -0.02em;
+            }
         }
 
-        .np-art-wrap { 
-            width: 100%; aspect-ratio: 1; border-radius: 12px; 
-            box-shadow: 0 25px 60px rgba(0,0,0,0.5); 
-            overflow: hidden; transition: transform 0.6s var(--ease-cinematic); 
-            background: #111; cursor: pointer;
-        }
-        .np-art-wrap:hover { transform: scale(1.02); }
-        .np-art { width: 100%; height: 100%; object-fit: cover; }
-
-        .np-info-block { display: flex; flex-direction: column; gap: 16px; width: 100%; }
-
-        .np-scrubber-group { display: flex; flex-direction: column; gap: 10px; width: 100%; }
-        .np-time-row { display: flex; justify-content: space-between; font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.55); font-variant-numeric: tabular-nums; letter-spacing: 0.02em; margin-bottom: 2px;}
-        
-        /* Progress Bar */
-        .np-progress-track {
-            width: 100%;
-            height: 5px;
-            background: rgba(255,255,255,0.12);
-            border-radius: 100px;
-            cursor: pointer;
-            position: relative;
-            transition: height 0.25s var(--ease-snappy);
-            overflow: visible;
-        }
-        .np-progress-track:hover {
-            height: 8px;
-        }
-        .np-progress-fill {
-            width: 0%;
-            height: 100%;
-            border-radius: 100px;
-            background: #fff;
-            position: relative;
-            transition: width 0.1s linear;
-            box-shadow: 0 0 12px rgba(255,255,255,0.35);
-        }
-        .np-progress-fill::after {
-            content: '';
-            position: absolute;
-            right: -6px;
-            top: 50%;
-            transform: translateY(-50%) scale(0);
-            width: 14px;
-            height: 14px;
-            background: #fff;
-            border-radius: 50%;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.5), 0 0 16px rgba(255,255,255,0.5);
-            transition: transform 0.2s var(--ease-snappy);
-        }
-        .np-progress-track:hover .np-progress-fill::after {
-            transform: translateY(-50%) scale(1);
-        }
-        .np-progress-fill::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: 100px;
-            background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%);
-            animation: progressShimmer 2.5s ease-in-out infinite;
-        }
-        @keyframes progressShimmer {
-            0% { transform: translateX(-100%); opacity: 0; }
-            50% { opacity: 1; }
-            100% { transform: translateX(100%); opacity: 0; }
-        }
-        
-        .np-scrubber-group .scrubber-bg { height: 4px; border-radius: 2px; background: rgba(255,255,255,0.2); }
-        .np-scrubber-group .scrubber-bg:hover { height: 6px; }
-        .np-scrubber-group .scrubber-fill { border-radius: 2px; box-shadow: none; transition: width 0.1s linear;}
-        .np-scrubber-group .scrubber-fill::after { display: none; }
-
-        .np-track-info-center { display: flex; flex-direction: column; gap: 4px; align-items: center; text-align: center; }
-        .np-track-title { font-size: 18px; font-weight: 700; color: #fff; letter-spacing: -0.01em;}
-        .np-track-artist { font-size: 16px; color: rgba(255,255,255,0.6); font-weight: 500; letter-spacing: -0.01em;}
-
-        .hidden-controls { 
-            display: flex; justify-content: center; align-items: center; gap: 32px; 
-            opacity: 0; pointer-events: none; transition: opacity 0.3s ease; 
-            margin-top: 10px; position: absolute; bottom: -80px; width: 100%;
-        }
-        .np-left-pane:hover .hidden-controls { opacity: 1; pointer-events: auto; }
-        
-        .np-main-controls i { cursor: pointer; transition: 0.2s; color: #fff; }
-        .np-main-controls i:hover { transform: scale(1.15); filter: drop-shadow(0 0 10px rgba(255,255,255,0.4));}
-        .np-main-controls i:active { transform: scale(0.95); }
-
-        /* Right Pane: Immersive Lyrics */
-        .np-right-pane { 
-            flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: center; position: relative; 
-            max-width: 800px;
-            mask-image: linear-gradient(to bottom, 
-                transparent 0%, 
-                rgba(0,0,0,0.6) 8%, 
-                rgba(0,0,0,1) 16%, 
-                rgba(0,0,0,1) 82%, 
-                rgba(0,0,0,0.6) 92%, 
-                transparent 100%
-            );
-            -webkit-mask-image: linear-gradient(to bottom, 
-                transparent 0%, 
-                rgba(0,0,0,0.6) 8%, 
-                rgba(0,0,0,1) 16%, 
-                rgba(0,0,0,1) 82%, 
-                rgba(0,0,0,0.6) 92%, 
-                transparent 100%
-            );
-        }
-        .lyrics-scroll-area {
-            position: relative; height: 100%; overflow: hidden; 
-            padding: 0 2vw; margin: 0;
-        }
-
-        /* ============================================================
-           REAL AMLL (Apple Music-like Lyrics) ENGINE
-           The actual @applemusic-like-lyrics/core player is mounted
-           here. Its own stylesheet (loaded in <head>) handles all
-           line/word layout, springs, blur, scale and interlude dots —
-           these are just the theme variables it exposes for styling.
-           ============================================================ */
-        #lyrics-content {
-            width: 100%;
-            height: 100%;
-        }
-        #lyrics-content .amll-lyric-player {
-            --amll-lp-color: #fff;
-            --amll-lp-font-size: clamp(28px, 3.6vw, 52px);
-            --amll-lp-hover-bg-color: rgba(255,255,255,0.08);
-            font-weight: 700;
-            letter-spacing: -0.01em;
-        }
         .lyrics-empty-state {
             height: 100%; display: flex; align-items: center; justify-content: center;
         }
@@ -507,14 +489,19 @@
                 flex-direction: column; padding: 60px 8vw 40px; gap: 32px; 
                 height: auto; min-height: 100vh; justify-content: flex-start;
             }
-            .np-left-pane { max-width: 100%; width: 100%; gap: 24px; flex: none; align-items: center; }
+            .np-left-pane { max-width: 100%; width: 100%; gap: 16px; flex: none; align-items: center; }
             
-            .np-art-wrap { width: 100%; max-width: 360px; aspect-ratio: 1; border-radius: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
+            .np-art-wrap { width: 100%; max-width: 300px; height: 300px; aspect-ratio: 1; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
             
             .np-track-title { font-size: 22px; white-space: normal; line-height: 1.2; }
             .np-track-artist { font-size: 18px; }
             
-            .hidden-controls { position: relative; opacity: 1; pointer-events: auto; bottom: 0; margin-top: 0; gap: 40px;}
+            /* Keep Scrubber and Controls always visible on touch/mobile devices for flawless usage */
+            .np-scrubber-group,
+            .np-main-controls { 
+                position: relative; opacity: 1 !important; transform: none !important; pointer-events: auto !important; margin-top: 10px; gap: 24px;
+            }
+            .np-main-controls { gap: 40px; }
             
             .np-right-pane { width: 100%; max-width: 400px; flex: none; height: 70vh; position: relative; margin-top: 10px; }
             .lyrics-scroll-area { padding: 10vh 4vw 30vh 4vw; }
@@ -526,10 +513,11 @@
 </head>
 <body>
 
-    <!-- AMBIENT CANVAS BACKGROUND -->
+    <!-- AMBIENT LAYERED BACKGROUND -->
     <div id="ambient-bg">
         <div class="noise-overlay"></div>
-        <canvas id="fluid-canvas"></canvas>
+        <div id="bg-back" class="ambient-bg-layer"></div>
+        <div id="bg-front" class="ambient-bg-layer"></div>
     </div>
 
     <!-- MAIN APP SHELL -->
@@ -678,10 +666,11 @@
         </div>
     </div>
 
-    <!-- FULLSCREEN NOW PLAYING OVERLAY -->
+    <!-- FULLSCREEN NOW PLAYING OVERLAY (STYLED TO PEFECTLY MATCH REFERENCE MOCKUP DIMENSIONS) -->
     <div id="np-fs">
         <div class="np-bg-wrap">
-            <canvas id="fluid-canvas-np"></canvas>
+            <div id="np-bg-back" class="ambient-bg-layer"></div>
+            <div id="np-bg-front" class="ambient-bg-layer"></div>
             <div class="np-overlay"></div>
             <div class="np-grain"></div>
         </div>
@@ -690,11 +679,20 @@
         <button class="btn-collapse-mob" onclick="toggleNP()"></button>
 
         <div class="np-layout">
-            <!-- Left Pane: Info & Scrubber -->
+            <!-- Left Pane: Info, Controls & Scrubber (Aligned and proportioned dynamically based on widescreen metrics) -->
             <div class="np-left-pane">
-                <div class="np-art-wrap" onclick="togglePlay()"><img src="https://files.catbox.moe/bvfrst.jpg" id="np-img-large" class="np-art" crossorigin="anonymous"></div>
+                <div class="np-art-wrap" onclick="togglePlay()">
+                    <img src="https://files.catbox.moe/bvfrst.jpg" id="np-img-large" class="np-art" crossorigin="anonymous">
+                </div>
                 
                 <div class="np-info-block">
+                    <!-- Meta info centered directly beneath the artwork with precise gaps -->
+                    <div class="np-track-info-center">
+                        <h2 class="np-track-title"><span id="np-title-large">Religión</span></h2>
+                        <p class="np-track-artist" id="np-artist-large">Yan Block</p>
+                    </div>
+
+                    <!-- Progress bar (fades in on hover for desktop, always visible on mobile) -->
                     <div class="np-scrubber-group">
                         <div class="np-progress-track" id="np-progress-track" onclick="seek(event, this)">
                             <div class="np-progress-fill" id="bar-fill-np"></div>
@@ -704,14 +702,10 @@
                             <span id="time-tot-np">-0:00</span>
                         </div>
                     </div>
-
-                    <div class="np-track-info-center">
-                        <h2 class="np-track-title"><span id="np-title-large">Religión</span></h2>
-                        <p class="np-track-artist" id="np-artist-large">Yan Block — Religión (Single)</p>
-                    </div>
                 </div>
 
-                <div class="np-main-controls hidden-controls">
+                <!-- Media buttons (fades in on hover for desktop, always visible on mobile) -->
+                <div class="np-main-controls">
                     <i class="ph-bold ph-shuffle" style="font-size: 20px; color: rgba(255,255,255,0.5);"></i>
                     <i class="ph-fill ph-skip-back" onclick="prevSong()" style="font-size: 38px;"></i>
                     <i class="ph-fill ph-play" id="icon-play-np" onclick="togglePlay()" style="font-size: 48px;"></i>
@@ -729,25 +723,45 @@
         </div>
     </div>
 
-    <!-- Hidden Canvas for Color Extraction -->
-    <canvas id="color-extractor" style="display:none;"></canvas>
-
     <script>
         /* ==================================================================
-           DATA (Religion, Talento & YeYe by Yan Block)
+           DATA (Religion, Talento, YeYe, 222, 4 Life, 444, Cologne, Lagunas, Emociones, PIKA PIKA, MOONLIGHT)
            ================================================================== */
         const religionCoverUrl = "https://files.catbox.moe/bvfrst.jpg";
         const talentoCoverUrl  = "https://files.catbox.moe/bpjz9c.jpg";
         const yeyeCoverUrl     = "https://files.catbox.moe/jfktck.jpg";
         const veintidosCoverUrl = "https://files.catbox.moe/231x9h.jpg";
         const fourLifeCoverUrl = "https://files.catbox.moe/8byhnd.jpg";
+        const remix444CoverUrl = "https://files.catbox.moe/rlhr7h.jpg";
+        const cologneCoverUrl  = "https://files.catbox.moe/uqzai3.jpg";
+        const lagunasCoverUrl  = "https://files.catbox.moe/ktbz1a.jpg";
+        const emocionesCoverUrl = "https://files.catbox.moe/wla4pw.jpg";
+        const pikapikaCoverUrl  = "https://files.catbox.moe/ej9nbi.jpg";
+        const moonlightCoverUrl = "https://files.catbox.moe/nx3g9e.jpg";
+
+        // Mapeo de imágenes de fondo personalizadas
+        const bgImages = {
+            "Cologne": "https://files.catbox.moe/oaw0mw.png",
+            "444 - Remix": "https://files.catbox.moe/325a9q.png",
+            "Talento": "https://files.catbox.moe/3kk9d0.png",
+            "Lagunas": "https://files.catbox.moe/3pi5rh.png",
+            "4 Life": "https://files.catbox.moe/c9lse7.png",
+            "Emociones": "https://files.catbox.moe/h7db9f.png",
+            "PIKA PIKA": "https://files.catbox.moe/oztuk2.png"
+        };
 
         const albumsData = [ 
             { id: "religion-single", title: "Religión", artist: "Yan Block", cover: religionCoverUrl, year: "2026" },
             { id: "talento-single", title: "Talento", artist: "Yan Block", cover: talentoCoverUrl, year: "2026" },
             { id: "yeye-single", title: "YeYe", artist: "Yan Block", cover: yeyeCoverUrl, year: "2026" },
             { id: "222-single", title: "222", artist: "Yan Block", cover: veintidosCoverUrl, year: "2026" },
-            { id: "4life-single", title: "4 Life", artist: "Kris R", cover: fourLifeCoverUrl, year: "2026" }
+            { id: "4life-single", title: "4 Life", artist: "Kris R", cover: fourLifeCoverUrl, year: "2026" },
+            { id: "444-remix-single", title: "444 - Remix", artist: "Yan Block, De La Rose, Hades66 & Ñengo Flow", cover: remix444CoverUrl, year: "2026" },
+            { id: "cologne-single", title: "Cologne", artist: "Junior H & Ovi", cover: cologneCoverUrl, year: "2026" },
+            { id: "lagunas-single", title: "Lagunas", artist: "Peso Pluma & Jasiel Nuñez", cover: lagunasCoverUrl, year: "2026" },
+            { id: "emociones-single", title: "Emociones", artist: "Hades66", cover: emocionesCoverUrl, year: "2026" },
+            { id: "pikapika-single", title: "PIKA PIKA", artist: "Chuyin, Fuerza Regida, Jorsshh & Calle 24", cover: pikapikaCoverUrl, year: "2026" },
+            { id: "moonlight-single", title: "MOONLIGHT", artist: "Omar Courtz & Eladio Carrión", cover: moonlightCoverUrl, year: "2026" }
         ];
 
         const cancionesData = [
@@ -800,12 +814,85 @@
                 album: "4life-single",
                 trackNum: 1,
                 coverLoaded: true
+            },
+            { 
+                title: "444 - Remix", 
+                artist: "Yan Block, De La Rose, Hades66 & Ñengo Flow", 
+                url: "https://files.catbox.moe/8eh8pr.mp3", 
+                lrc: "https://files.catbox.moe/s93ecx.ttml",
+                cover: remix444CoverUrl,
+                album: "444-remix-single",
+                trackNum: 1,
+                coverLoaded: true
+            },
+            { 
+                title: "Cologne", 
+                artist: "Junior H & Ovi", 
+                url: "https://files.catbox.moe/pvl500.mp3", 
+                lrc: "https://files.catbox.moe/a6ws2b.ttml",
+                cover: cologneCoverUrl,
+                album: "cologne-single",
+                trackNum: 1,
+                coverLoaded: true
+            },
+            { 
+                title: "Lagunas", 
+                artist: "Peso Pluma & Jasiel Nuñez", 
+                url: "https://files.catbox.moe/f7gemk.mp3", 
+                lrc: "https://files.catbox.moe/hhua24.ttml",
+                cover: lagunasCoverUrl,
+                album: "lagunas-single",
+                trackNum: 1,
+                coverLoaded: true
+            },
+            { 
+                title: "Emociones", 
+                artist: "Hades66", 
+                url: "https://files.catbox.moe/mcn9hf.mp3", 
+                lrc: "https://files.catbox.moe/rybou1.ttml",
+                cover: emocionesCoverUrl,
+                album: "emociones-single",
+                trackNum: 1,
+                coverLoaded: true
+            },
+            { 
+                title: "PIKA PIKA", 
+                artist: "Chuyin, Fuerza Regida, Jorsshh & Calle 24", 
+                url: "https://files.catbox.moe/lvpf5o.mp3", 
+                lrc: "https://files.catbox.moe/dj1zm1.ttml",
+                cover: pikapikaCoverUrl,
+                album: "pikapika-single",
+                trackNum: 1,
+                coverLoaded: true
+            },
+            { 
+                title: "MOONLIGHT", 
+                artist: "Omar Courtz & Eladio Carrión", 
+                url: "https://files.catbox.moe/c2gkyh.mp3", 
+                lrc: "https://files.catbox.moe/8vo30v.ttml",
+                cover: moonlightCoverUrl,
+                album: "moonlight-single",
+                trackNum: 1,
+                coverLoaded: true
             }
         ];
 
         const artistsData = [
             { name: "Yan Block", img: religionCoverUrl },
-            { name: "Kris R", img: fourLifeCoverUrl }
+            { name: "Kris R", img: fourLifeCoverUrl },
+            { name: "De La Rose", img: remix444CoverUrl },
+            { name: "Hades66", img: emocionesCoverUrl },
+            { name: "Ñengo Flow", img: remix444CoverUrl },
+            { name: "Junior H", img: cologneCoverUrl },
+            { name: "Ovi", img: cologneCoverUrl },
+            { name: "Peso Pluma", img: lagunasCoverUrl },
+            { name: "Jasiel Nuñez", img: lagunasCoverUrl },
+            { name: "Chuyin", img: pikapikaCoverUrl },
+            { name: "Fuerza Regida", img: pikapikaCoverUrl },
+            { name: "Jorsshh", img: pikapikaCoverUrl },
+            { name: "Calle 24", img: pikapikaCoverUrl },
+            { name: "Omar Courtz", img: moonlightCoverUrl },
+            { name: "Eladio Carrión", img: moonlightCoverUrl }
         ];
 
         /* ==================================================================
@@ -887,259 +974,58 @@
         function haptic() { if (navigator.vibrate) navigator.vibrate(10); }
 
         /* ==================================================================
-           DYNAMIC BACKGROUND ENGINE
+           BACKGROUND IMAGE BLUR SYSTEM
            ================================================================== */
-        let fluidCanvas, fluidCtx;
-        let npFluidCanvas, npFluidCtx;
-        
-        let activePalette   = null;  
-        let targetPalette   = null;  
-        let paletteProgress = 1.0;   
-        const PALETTE_LERP_DURATION = 800; 
-        let paletteLerpStart = 0;
-        
-        let globalPalette = [
-            {r:255, g:46,  b:147},
-            {r:127, g:73,  b:180},
-            {r:80,  g:40,  b:120},
-            {r:40,  g:20,  b:70},
-            {r:200, g:60,  b:160},
-            {r:60,  g:30,  b:100}
-        ];
-        
-        let blobs = [];
-        let extractCanvas = null;
-        let extractCtx    = null;
-        
-        function initFluidBackground() {
-            fluidCanvas   = document.getElementById('fluid-canvas');
-            fluidCtx      = fluidCanvas.getContext('2d');
-            npFluidCanvas = document.getElementById('fluid-canvas-np');
-            npFluidCtx    = npFluidCanvas.getContext('2d');
-            
-            extractCanvas = document.createElement('canvas');
-            extractCanvas.width  = 64;
-            extractCanvas.height = 64;
-            extractCtx = extractCanvas.getContext('2d', { willReadFrequently: true });
-            
-            resizeFluidCanvas();
-            window.addEventListener('resize', resizeFluidCanvas);
-            
-            blobs = Array.from({length: 6}, (_, i) => ({
-                x: 0.5, y: 0.5,           
-                vx: 0,  vy: 0,             
-                t:  (i / 6) * Math.PI * 2, 
-                speed: 0.00018 + i * 0.000035,
-                radMul: 0.55 + (i % 3) * 0.18,
-                colorIdx: i % 6,
-                ax: 0.28 + (i * 0.13) % 0.4,
-                ay: 0.22 + (i * 0.17) % 0.4,
-                fx: 1 + (i % 3) * 0.5,
-                fy: 1 + ((i+1) % 3) * 0.5,
-                px: (i * 1.3) % (Math.PI * 2),
-                py: (i * 0.9) % (Math.PI * 2),
-            }));
-            
-            blobs.forEach(b => {
-                b.x = 0.1 + Math.random() * 0.8;
-                b.y = 0.1 + Math.random() * 0.8;
-            });
-            
-            activePalette = [...globalPalette];
-            requestAnimationFrame(animateFluid);
-        }
-        
-        function resizeFluidCanvas() {
-            const w = Math.ceil(window.innerWidth  / 4);
-            const h = Math.ceil(window.innerHeight / 4);
-            if (fluidCanvas)   { fluidCanvas.width   = w; fluidCanvas.height   = h; }
-            if (npFluidCanvas) { npFluidCanvas.width  = w; npFluidCanvas.height = h; }
-        }
-        
-        function extractPaletteFromImage(img) {
-            if (!img || !img.complete || img.naturalWidth === 0) return null;
-            try {
-                extractCtx.drawImage(img, 0, 0, 64, 64);
-                
-                const positions = [
-                    [4,4],[30,4],[56,4],
-                    [4,30],[30,30],[56,30],
-                    [4,56],[30,56],[56,56],
-                    [15,15],[46,15],[30,46],
-                ];
-                
-                const colors = [];
-                for (const [x, y] of positions) {
-                    const d = extractCtx.getImageData(x, y, 4, 4).data;
-                    let r=0,g=0,b=0,n=0;
-                    for (let i=0; i<d.length; i+=4) { r+=d[i]; g+=d[i+1]; b+=d[i+2]; n++; }
-                    r=Math.round(r/n); g=Math.round(g/n); b=Math.round(b/n);
-                    
-                    const boosted = boostSaturation(r, g, b, 1.4);
-                    colors.push(boosted);
-                }
-                
-                const vivid = colors.filter(c => {
-                    const brightness = (c.r * 299 + c.g * 587 + c.b * 114) / 1000;
-                    return brightness > 18 && brightness < 240;
-                });
-                
-                if (vivid.length < 3) return null;
-                while (vivid.length < 6) vivid.push({...vivid[vivid.length-1]});
-                return vivid.slice(0, 6);
-            } catch (e) { return null; }
-        }
-        
-        function boostSaturation(r, g, b, factor) {
-            r/=255; g/=255; b/=255;
-            const max=Math.max(r,g,b), min=Math.min(r,g,b);
-            let h,s,l=(max+min)/2;
-            if(max===min){ h=s=0; }
-            else {
-                const d=max-min;
-                s=l>0.5?d/(2-max-min):d/(max+min);
-                switch(max){
-                    case r: h=(g-b)/d+(g<b?6:0); break;
-                    case g: h=(b-r)/d+2; break;
-                    default: h=(r-g)/d+4;
-                }
-                h/=6;
+        function getBackgroundForSong(song) {
+            if (bgImages[song.title]) {
+                return bgImages[song.title];
             }
-            s = Math.min(1, s * factor);
-            function hue2rgb(p,q,t){ if(t<0)t+=1; if(t>1)t-=1; if(t<1/6)return p+(q-p)*6*t; if(t<1/2)return q; if(t<2/3)return p+(q-p)*(2/3-t)*6; return p; }
-            let nr,ng,nb;
-            if(s===0){ nr=ng=nb=l; }
-            else {
-                const q2=l<0.5?l*(1+s):l+s-l*s, p2=2*l-q2;
-                nr=hue2rgb(p2,q2,h+1/3); ng=hue2rgb(p2,q2,h); nb=hue2rgb(p2,q2,h-1/3);
+            return song.cover; // Default fallback to song's cover image
+        }
+
+        function setBgImage(url) {
+            const bgBack = document.getElementById('bg-back');
+            const bgFront = document.getElementById('bg-front');
+            const npBgBack = document.getElementById('np-bg-back');
+            const npBgFront = document.getElementById('np-bg-front');
+            
+            if (!bgBack || !bgFront) return;
+            
+            const currentUrl = bgFront.style.backgroundImage;
+            const formattedUrl = `url("${url}")`;
+            if (currentUrl === formattedUrl) return;
+            
+            // Set back layer to the current background
+            bgBack.style.backgroundImage = bgFront.style.backgroundImage;
+            if (npBgBack && npBgFront) {
+                npBgBack.style.backgroundImage = npBgFront.style.backgroundImage;
             }
-            return { r:Math.round(nr*255), g:Math.round(ng*255), b:Math.round(nb*255) };
-        }
-        
-        function startPaletteTransition(newPalette) {
-            if (!newPalette) return;
-            targetPalette    = newPalette;
-            paletteProgress  = 0.0;
-            paletteLerpStart = performance.now();
-        }
-        
-        function tickPaletteTransition(now) {
-            if (paletteProgress >= 1.0 || !targetPalette) return;
-            const elapsed = now - paletteLerpStart;
-            paletteProgress = Math.min(1.0, elapsed / PALETTE_LERP_DURATION);
             
-            const t = 1 - Math.pow(1 - paletteProgress, 3);
+            // Prepare front layer with the new background
+            bgFront.style.backgroundImage = formattedUrl;
+            bgFront.classList.remove('fade-in');
+            if (npBgFront) {
+                npBgFront.style.backgroundImage = formattedUrl;
+                npBgFront.classList.remove('fade-in');
+            }
             
-            activePalette = activePalette.map((src, i) => {
-                const dst = targetPalette[i] || targetPalette[0];
-                return {
-                    r: Math.round(src.r + (dst.r - src.r) * t),
-                    g: Math.round(src.g + (dst.g - src.g) * t),
-                    b: Math.round(src.b + (dst.b - src.b) * t),
-                };
-            });
+            // Trigger layout reflow to register transition
+            void bgFront.offsetWidth;
             
-            if (paletteProgress >= 1.0) activePalette = [...targetPalette];
-        }
-        
-        function animateFluid(now) {
-            tickPaletteTransition(now);
-            if (fluidCanvas && fluidCtx) drawFluidFrame(fluidCanvas, fluidCtx, now);
-            if (isNPOpen && npFluidCanvas && npFluidCtx) drawFluidFrame(npFluidCanvas, npFluidCtx, now);
-            requestAnimationFrame(animateFluid);
-        }
-        
-        function drawFluidFrame(canvas, ctx, now) {
-            const W = canvas.width;
-            const H = canvas.height;
-            const palette = activePalette || globalPalette;
-            
-            ctx.fillStyle = `rgb(4,4,7)`;
-            ctx.fillRect(0, 0, W, H);
-            
-            blobs.forEach((b, i) => {
-                b.t += b.speed;
-                const nx = 0.5 + b.ax * Math.sin(b.fx * b.t + b.px);
-                const ny = 0.5 + b.ay * Math.sin(b.fy * b.t + b.py);
-                
-                b.x += (nx - b.x) * 0.028;
-                b.y += (ny - b.y) * 0.028;
-                
-                const cx = b.x * W;
-                const cy = b.y * H;
-                const maxDim = Math.max(W, H);
-                const r = maxDim * b.radMul;
-                
-                const c = palette[b.colorIdx] || palette[0];
-                
-                const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
-                grad.addColorStop(0,   `rgba(${c.r},${c.g},${c.b},0.88)`);
-                grad.addColorStop(0.4, `rgba(${c.r},${c.g},${c.b},0.55)`);
-                grad.addColorStop(0.8, `rgba(${c.r},${c.g},${c.b},0.15)`);
-                grad.addColorStop(1,   `rgba(${c.r},${c.g},${c.b},0)`);
-                
-                ctx.globalCompositeOperation = 'screen';
-                ctx.fillStyle = grad;
-                ctx.fillRect(0, 0, W, H);
-            });
-            ctx.globalCompositeOperation = 'source-over';
+            // Animate transition
+            bgFront.classList.add('fade-in');
+            if (npBgFront) {
+                npBgFront.classList.add('fade-in');
+            }
         }
 
         /* ==================================================================
-           BACKGROUND COLOR EXTRACTION & COVERS
+           COVERS UPDATE
            ================================================================== */
         function updateCovers(imgUrl) {
             document.getElementById('player-img').src = imgUrl;
             const lg = document.getElementById('np-img-large'); 
             lg.src = imgUrl;
-            
-            if (!lg.complete) {
-                lg.addEventListener('load', () => {
-                    const palette = extractPaletteFromImage(lg);
-                    if (palette) {
-                        globalPalette = palette;
-                        startPaletteTransition(palette);
-                        applyAccentFromPalette(palette);
-                    }
-                }, { once: true });
-            } else {
-                const palette = extractPaletteFromImage(lg);
-                if (palette) {
-                    globalPalette = palette;
-                    startPaletteTransition(palette);
-                    applyAccentFromPalette(palette);
-                }
-            }
-        }
-        
-        function applyAccentFromPalette(palette) {
-            let bestIdx = 0, bestSat = -1;
-            palette.forEach((c, i) => {
-                const r=c.r/255, g=c.g/255, b=c.b/255;
-                const max=Math.max(r,g,b), min=Math.min(r,g,b);
-                const sat = max === 0 ? 0 : (max-min)/max;
-                if (sat > bestSat) { bestSat = sat; bestIdx = i; }
-            });
-            const a = palette[bestIdx];
-            const b2 = palette[(bestIdx+2) % palette.length];
-            document.documentElement.style.setProperty('--accent-1', `rgb(${a.r},${a.g},${a.b})`);
-            document.documentElement.style.setProperty('--accent-2', `rgb(${b2.r},${b2.g},${b2.b})`);
-            document.documentElement.style.setProperty('--accent-glow', `rgba(${a.r},${a.g},${a.b},0.45)`);
-        }
-
-        async function processCoverQueue() {
-            updateCovers(cancionesData[currentPlayingIndex].cover);
-            const img = new Image();
-            img.crossOrigin = "anonymous";
-            img.onload = () => {
-                const palette = extractPaletteFromImage(img);
-                if (palette) {
-                    globalPalette = palette;
-                    activePalette = [...palette];
-                    applyAccentFromPalette(palette);
-                }
-            };
-            img.src = cancionesData[currentPlayingIndex].cover;
         }
 
         function loadSongCover(song, i) {
@@ -1371,10 +1257,14 @@
             currentPlayingIndex = idx; const song = cancionesData[idx];
             updateCovers(song.cover);
             
+            // Background Layer Update
+            const bgUrl = getBackgroundForSong(song);
+            setBgImage(bgUrl);
+            
             document.getElementById('player-title').innerText = song.title;
             document.getElementById('player-artist').innerText = song.artist;
             document.getElementById('np-title-large').innerText = song.title;
-            document.getElementById('np-artist-large').innerText = `${song.artist} — Single`;
+            document.getElementById('np-artist-large').innerText = song.artist;
             
             fetchLyrics(song.lrc);
         }
@@ -1421,7 +1311,6 @@
                 _lyricLastFrameMs = null;
                 np.classList.add('active'); 
                 app.classList.add('scaled'); 
-                resizeFluidCanvas(); 
                 if(lyricPlayer) lyricPlayer.calcLayout(true, true);
             } 
             else { 
@@ -1483,6 +1372,18 @@
             return sec || 0;
         }
 
+        // Helper to query attributes dynamically without namespace prefix issues
+        function getAttributeInsensitive(element, attrName) {
+            if (!element || !element.attributes) return '';
+            for (let i = 0; i < element.attributes.length; i++) {
+                const attr = element.attributes[i];
+                if (attr.localName === attrName || attr.name === attrName || attr.name.endsWith(':' + attrName)) {
+                    return attr.value;
+                }
+            }
+            return '';
+        }
+
         // Parses TTML or word-level LRC text into the LyricLine[] shape
         // expected by DomLyricPlayer.setLyricLines() (all times in ms).
         function parseToAMLLLines(text, url) {
@@ -1512,6 +1413,18 @@
                     const endAttr = p.getAttribute('end');
                     const pEnd = endAttr ? parseTTMLTime(endAttr) : 0;
 
+                    // Duet vocalist identification
+                    const pAgent = getAttributeInsensitive(p, 'agent') || '';
+                    const pStyle = getAttributeInsensitive(p, 'style') || '';
+                    const pClass = getAttributeInsensitive(p, 'class') || p.className || '';
+                    
+                    let isDuetLine = pAgent.toLowerCase().includes('v2') || 
+                                     pAgent.toLowerCase().includes('v3') || 
+                                     pAgent.toLowerCase().includes('singer2') || 
+                                     pAgent.toLowerCase().includes('guest') ||
+                                     pStyle.toLowerCase().includes('v2') ||
+                                     pClass.toLowerCase().includes('v2');
+
                     let words = [];
                     const childNodes = Array.from(p.childNodes);
 
@@ -1539,6 +1452,11 @@
                             if(sEndAttr) dur = parseTTMLTime(sEndAttr) - sBegin;
                             else if(sDurAttr) dur = parseTTMLTime(sDurAttr);
 
+                            const sAgent = getAttributeInsensitive(node, 'agent') || '';
+                            if (sAgent.toLowerCase().includes('v2') || sAgent.toLowerCase().includes('v3') || sAgent.toLowerCase().includes('singer2')) {
+                                isDuetLine = true;
+                            }
+
                             words.push({ time: sBegin, dur: dur, text: node.textContent || "" });
                         }
                     });
@@ -1564,7 +1482,8 @@
                             time: pBegin, 
                             words, 
                             dur: pEnd > pBegin ? pEnd - pBegin : 0,
-                            isBgVocal: isBgVocal
+                            isBgVocal: isBgVocal,
+                            isDuetLine: isDuetLine
                         });
                     }
                 });
@@ -1588,7 +1507,7 @@
                                           clean.startsWith('Coro:') || 
                                           clean.startsWith('(Coro)') ||
                                           /^[\(\[\{].*[\)\]\}]$/.test(clean);
-                        rawLines.push({ time, words, dur: 0, isBgVocal });
+                        rawLines.push({ time, words, dur: 0, isBgVocal, isDuetLine: false });
                     }
                 });
             }
@@ -1619,7 +1538,7 @@
                     startTime: Math.round(l.time * 1000),
                     endTime: Math.round((l.time + l.dur) * 1000),
                     isBG: !!l.isBgVocal,
-                    isDuet: false
+                    isDuet: !!l.isDuetLine
                 };
             });
         }
@@ -1769,7 +1688,25 @@
             renderGrid(albumsData, 'grid-albums', 'album');
             renderGrid(artistsData, 'grid-artists', 'artist');
             
-            initFluidBackground();
+            // Set initial background layer elements with first track
+            const firstSong = cancionesData[0];
+            const initialBg = getBackgroundForSong(firstSong);
+            
+            const bgBack = document.getElementById('bg-back');
+            const bgFront = document.getElementById('bg-front');
+            const npBgBack = document.getElementById('np-bg-back');
+            const npBgFront = document.getElementById('np-bg-front');
+            
+            if (bgBack && bgFront) {
+                bgBack.style.backgroundImage = `url("${initialBg}")`;
+                bgFront.style.backgroundImage = `url("${initialBg}")`;
+                bgFront.classList.add('fade-in');
+            }
+            if (npBgBack && npBgFront) {
+                npBgBack.style.backgroundImage = `url("${initialBg}")`;
+                npBgFront.style.backgroundImage = `url("${initialBg}")`;
+                npBgFront.classList.add('fade-in');
+            }
             
             document.getElementById('search-input').addEventListener('input', handleSearch);
             document.body.addEventListener('click', ensureAudioContext, { once: true });
@@ -1779,7 +1716,6 @@
             
             analysisQueue =[...cancionesData];
             setTimeout(runAnalysisQueue, 1000);
-            setTimeout(processCoverQueue, 1500);
             
             setupGestures();
             document.getElementById('vol-fill-desk').style.width = `${globalVolume*100}%`;
