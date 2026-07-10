@@ -725,7 +725,7 @@
 
     <script>
         /* ==================================================================
-           DATA (Religion, Talento, YeYe, 222, 4 Life, 444, Cologne, Lagunas, Emociones, PIKA PIKA)
+           DATA (Religion, Talento, YeYe, 222, 4 Life, 444, Cologne, Lagunas, Emociones, PIKA PIKA, MOONLIGHT)
            ================================================================== */
         const religionCoverUrl = "https://files.catbox.moe/bvfrst.jpg";
         const talentoCoverUrl  = "https://files.catbox.moe/bpjz9c.jpg";
@@ -737,6 +737,7 @@
         const lagunasCoverUrl  = "https://files.catbox.moe/ktbz1a.jpg";
         const emocionesCoverUrl = "https://files.catbox.moe/wla4pw.jpg";
         const pikapikaCoverUrl  = "https://files.catbox.moe/ej9nbi.jpg";
+        const moonlightCoverUrl = "https://files.catbox.moe/nx3g9e.jpg";
 
         // Mapeo de imágenes de fondo personalizadas
         const bgImages = {
@@ -759,7 +760,8 @@
             { id: "cologne-single", title: "Cologne", artist: "Junior H & Ovi", cover: cologneCoverUrl, year: "2026" },
             { id: "lagunas-single", title: "Lagunas", artist: "Peso Pluma & Jasiel Nuñez", cover: lagunasCoverUrl, year: "2026" },
             { id: "emociones-single", title: "Emociones", artist: "Hades66", cover: emocionesCoverUrl, year: "2026" },
-            { id: "pikapika-single", title: "PIKA PIKA", artist: "Chuyin, Fuerza Regida, Jorsshh & Calle 24", cover: pikapikaCoverUrl, year: "2026" }
+            { id: "pikapika-single", title: "PIKA PIKA", artist: "Chuyin, Fuerza Regida, Jorsshh & Calle 24", cover: pikapikaCoverUrl, year: "2026" },
+            { id: "moonlight-single", title: "MOONLIGHT", artist: "Omar Courtz & Eladio Carrión", cover: moonlightCoverUrl, year: "2026" }
         ];
 
         const cancionesData = [
@@ -862,6 +864,16 @@
                 album: "pikapika-single",
                 trackNum: 1,
                 coverLoaded: true
+            },
+            { 
+                title: "MOONLIGHT", 
+                artist: "Omar Courtz & Eladio Carrión", 
+                url: "https://files.catbox.moe/c2gkyh.mp3", 
+                lrc: "https://files.catbox.moe/8vo30v.ttml",
+                cover: moonlightCoverUrl,
+                album: "moonlight-single",
+                trackNum: 1,
+                coverLoaded: true
             }
         ];
 
@@ -878,7 +890,9 @@
             { name: "Chuyin", img: pikapikaCoverUrl },
             { name: "Fuerza Regida", img: pikapikaCoverUrl },
             { name: "Jorsshh", img: pikapikaCoverUrl },
-            { name: "Calle 24", img: pikapikaCoverUrl }
+            { name: "Calle 24", img: pikapikaCoverUrl },
+            { name: "Omar Courtz", img: moonlightCoverUrl },
+            { name: "Eladio Carrión", img: moonlightCoverUrl }
         ];
 
         /* ==================================================================
