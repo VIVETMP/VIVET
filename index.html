@@ -13,6 +13,9 @@
     <!-- Icons & Tools -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsmediatags/3.9.5/jsmediatags.min.js"></script>
+    
+    <!-- Color Thief CDN for professional color extraction -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.3.0/color-thief.umd.js"></script>
 
     <!-- Real Apple Music-like Lyrics engine (the same one used by the AMLL TTML Tool preview) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@applemusic-like-lyrics/core@0.5.1/dist/style.css">
@@ -90,7 +93,7 @@
         }
 
         /* ==================================================================
-           AMBIENT BACKGROUND IMAGE WITH BLUR & SMOOTH CROSSFADE
+           DYNAMIC AMBIENT BACKGROUND SYSTEM WITH SMOOTH GRADIENT MESH
            ================================================================== */
         #ambient-bg {
             position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
@@ -99,7 +102,7 @@
         #ambient-bg::after {
             content: '';
             position: absolute; inset: 0;
-            background: radial-gradient(ellipse at center, rgba(5, 5, 7, 0.1) 0%, rgba(5, 5, 7, 0.5) 60%, rgba(5, 5, 7, 0.85) 100%);
+            background: radial-gradient(ellipse at center, rgba(5, 5, 7, 0.15) 0%, rgba(5, 5, 7, 0.5) 60%, rgba(5, 5, 7, 0.85) 100%);
             z-index: 4;
             pointer-events: none;
         }
@@ -107,16 +110,74 @@
             position: absolute; inset: 0; z-index: 3; opacity: 0.045; mix-blend-mode: overlay; pointer-events: none;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
+        
+        /* Layer Styling for extreme blur crossfades */
         .ambient-bg-layer {
-            position: absolute; inset: -10%;
-            background-size: cover; background-position: center;
-            filter: blur(35px) saturate(120%) brightness(0.35);
-            transition: opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+            position: absolute; inset: -20%;
+            overflow: hidden;
+            transition: opacity 1.5s cubic-bezier(0.25, 1, 0.5, 1);
             opacity: 1;
+            filter: blur(100px) saturate(140%) brightness(0.45);
+            background: #050507;
         }
-        #bg-back { z-index: 1; }
-        #bg-front { z-index: 2; opacity: 0; }
-        #bg-front.fade-in { opacity: 1; }
+        #bg-back, #np-bg-back { z-index: 1; }
+        #bg-front, #np-bg-front { z-index: 2; opacity: 0; }
+        #bg-front.fade-in, #np-bg-front.fade-in { opacity: 1; }
+
+        /* Hardware Accelerated Smooth-Floating Blobs */
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            mix-blend-mode: screen;
+            opacity: 0.65;
+            transition: background 1.5s ease-in-out;
+            will-change: transform;
+        }
+        .blob1 {
+            width: 70vh; height: 70vh;
+            top: -10%; left: -10%;
+            background: var(--color-1, #FF2E93);
+            animation: float1 28s ease-in-out infinite alternate;
+        }
+        .blob2 {
+            width: 80vh; height: 80vh;
+            bottom: -20%; right: -10%;
+            background: var(--color-2, #7F49B4);
+            animation: float2 32s ease-in-out infinite alternate;
+        }
+        .blob3 {
+            width: 60vh; height: 60vh;
+            top: 30%; left: 40%;
+            background: var(--color-3, #281446);
+            animation: float3 24s ease-in-out infinite alternate;
+        }
+        .blob4 {
+            width: 75vh; height: 75vh;
+            bottom: 20%; left: -20%;
+            background: var(--color-4, #C83CA0);
+            animation: float4 36s ease-in-out infinite alternate;
+        }
+
+        @keyframes float1 {
+            0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+            50% { transform: translate(15vw, 10vh) scale(1.1) rotate(180deg); }
+            100% { transform: translate(-5vw, -5vh) scale(0.9) rotate(360deg); }
+        }
+        @keyframes float2 {
+            0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+            50% { transform: translate(-10vw, -15vh) scale(1.2) rotate(-120deg); }
+            100% { transform: translate(10vw, 5vh) scale(0.9) rotate(-240deg); }
+        }
+        @keyframes float3 {
+            0% { transform: translate(0, 0) scale(0.95); }
+            50% { transform: translate(-15vw, 15vh) scale(1.15); }
+            100% { transform: translate(15vw, -10vh) scale(0.9); }
+        }
+        @keyframes float4 {
+            0% { transform: translate(0, 0) scale(1.1) rotate(0deg); }
+            50% { transform: translate(10vw, -10vh) scale(0.85) rotate(90deg); }
+            100% { transform: translate(-10vw, 15vh) scale(1.05) rotate(180deg); }
+        }
 
         /* ==================================================================
            APP LAYOUT
@@ -513,11 +574,21 @@
 </head>
 <body>
 
-    <!-- AMBIENT LAYERED BACKGROUND -->
+    <!-- AMBIENT LAYERED BACKGROUND WITH PROFESSIONAL GRADIENT MESH -->
     <div id="ambient-bg">
         <div class="noise-overlay"></div>
-        <div id="bg-back" class="ambient-bg-layer"></div>
-        <div id="bg-front" class="ambient-bg-layer"></div>
+        <div id="bg-back" class="ambient-bg-layer">
+            <div class="blob blob1"></div>
+            <div class="blob blob2"></div>
+            <div class="blob blob3"></div>
+            <div class="blob blob4"></div>
+        </div>
+        <div id="bg-front" class="ambient-bg-layer">
+            <div class="blob blob1"></div>
+            <div class="blob blob2"></div>
+            <div class="blob blob3"></div>
+            <div class="blob blob4"></div>
+        </div>
     </div>
 
     <!-- MAIN APP SHELL -->
@@ -669,8 +740,18 @@
     <!-- FULLSCREEN NOW PLAYING OVERLAY (STYLED TO PEFECTLY MATCH REFERENCE MOCKUP DIMENSIONS) -->
     <div id="np-fs">
         <div class="np-bg-wrap">
-            <div id="np-bg-back" class="ambient-bg-layer"></div>
-            <div id="np-bg-front" class="ambient-bg-layer"></div>
+            <div id="np-bg-back" class="ambient-bg-layer">
+                <div class="blob blob1"></div>
+                <div class="blob blob2"></div>
+                <div class="blob blob3"></div>
+                <div class="blob blob4"></div>
+            </div>
+            <div id="np-bg-front" class="ambient-bg-layer">
+                <div class="blob blob1"></div>
+                <div class="blob blob2"></div>
+                <div class="blob blob3"></div>
+                <div class="blob blob4"></div>
+            </div>
             <div class="np-overlay"></div>
             <div class="np-grain"></div>
         </div>
@@ -723,6 +804,9 @@
         </div>
     </div>
 
+    <!-- Hidden Canvas for Color Extraction -->
+    <canvas id="color-extractor" style="display:none;"></canvas>
+
     <script>
         /* ==================================================================
            DATA (Religion, Talento, YeYe, 222, 4 Life, 444, Cologne, Lagunas, Emociones, PIKA PIKA, MOONLIGHT)
@@ -738,17 +822,6 @@
         const emocionesCoverUrl = "https://files.catbox.moe/wla4pw.jpg";
         const pikapikaCoverUrl  = "https://files.catbox.moe/ej9nbi.jpg";
         const moonlightCoverUrl = "https://files.catbox.moe/nx3g9e.jpg";
-
-        // Mapeo de imágenes de fondo personalizadas
-        const bgImages = {
-            "Cologne": "https://files.catbox.moe/oaw0mw.png",
-            "444 - Remix": "https://files.catbox.moe/325a9q.png",
-            "Talento": "https://files.catbox.moe/3kk9d0.png",
-            "Lagunas": "https://files.catbox.moe/3pi5rh.png",
-            "4 Life": "https://files.catbox.moe/c9lse7.png",
-            "Emociones": "https://files.catbox.moe/h7db9f.png",
-            "PIKA PIKA": "https://files.catbox.moe/oztuk2.png"
-        };
 
         const albumsData = [ 
             { id: "religion-single", title: "Religión", artist: "Yan Block", cover: religionCoverUrl, year: "2026" },
@@ -974,49 +1047,142 @@
         function haptic() { if (navigator.vibrate) navigator.vibrate(10); }
 
         /* ==================================================================
-           BACKGROUND IMAGE BLUR SYSTEM
+           DYNAMIC COLOR EXTRACTION & AMBIENT TRANSITION LOGIC
            ================================================================== */
-        function getBackgroundForSong(song) {
-            if (bgImages[song.title]) {
-                return bgImages[song.title];
+        let colorThiefInstance = null;
+
+        function getColorsFromImage(img, callback) {
+            if (!img) return;
+            
+            const runFallback = () => {
+                const colors = extractColorsFallback(img);
+                callback(colors);
+            };
+
+            if (typeof ColorThief !== 'undefined') {
+                if (!colorThiefInstance) {
+                    colorThiefInstance = new ColorThief();
+                }
+                try {
+                    if (img.complete && img.naturalWidth !== 0) {
+                        const palette = colorThiefInstance.getPalette(img, 4);
+                        if (palette && palette.length >= 4) {
+                            const colors = palette.map(c => ({ r: c[0], g: c[1], b: c[2] }));
+                            callback(colors);
+                        } else {
+                            runFallback();
+                        }
+                    } else {
+                        img.addEventListener('load', () => {
+                            try {
+                                const palette = colorThiefInstance.getPalette(img, 4);
+                                if (palette && palette.length >= 4) {
+                                    const colors = palette.map(c => ({ r: c[0], g: c[1], b: c[2] }));
+                                    callback(colors);
+                                } else {
+                                    runFallback();
+                                }
+                            } catch(err) {
+                                runFallback();
+                            }
+                        }, { once: true });
+                    }
+                } catch (e) {
+                    console.warn("ColorThief extraction failed, using fallback:", e);
+                    runFallback();
+                }
+            } else {
+                runFallback();
             }
-            return song.cover; // Default fallback to song's cover image
         }
 
-        function setBgImage(url) {
-            const bgBack = document.getElementById('bg-back');
+        function extractColorsFallback(img) {
+            try {
+                const canvas = document.getElementById('color-extractor') || document.createElement('canvas');
+                canvas.width = 10;
+                canvas.height = 10;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, 10, 10);
+                const imgData = ctx.getImageData(0, 0, 10, 10).data;
+                
+                let colors = [];
+                for (let i = 0; i < imgData.length; i += 4) {
+                    colors.push({ r: imgData[i], g: imgData[i+1], b: imgData[i+2] });
+                }
+                
+                return [
+                    colors[15] || { r: 255, g: 46, b: 147 },
+                    colors[35] || { r: 127, g: 73, b: 180 },
+                    colors[65] || { r: 40, g: 20, b: 70 },
+                    colors[85] || { r: 200, g: 60, b: 160 }
+                ];
+            } catch (e) {
+                return [
+                    { r: 255, g: 46, b: 147 },
+                    { r: 127, g: 73, b: 180 },
+                    { r: 40, g: 20, b: 70 },
+                    { r: 200, g: 60, b: 160 }
+                ];
+            }
+        }
+
+        function updateAmbientBackgroundColors(colors) {
+            if (!colors || colors.length < 4) return;
+            const c1 = colors[0];
+            const c2 = colors[1];
+            const c3 = colors[2];
+            const c4 = colors[3];
+            
             const bgFront = document.getElementById('bg-front');
-            const npBgBack = document.getElementById('np-bg-back');
             const npBgFront = document.getElementById('np-bg-front');
             
-            if (!bgBack || !bgFront) return;
+            if (!bgFront) return;
             
-            const currentUrl = bgFront.style.backgroundImage;
-            const formattedUrl = `url("${url}")`;
-            if (currentUrl === formattedUrl) return;
+            // Set variables to Front Layer
+            bgFront.style.setProperty('--color-1', `rgb(${c1.r}, ${c1.g}, ${c1.b})`);
+            bgFront.style.setProperty('--color-2', `rgb(${c2.r}, ${c2.g}, ${c2.b})`);
+            bgFront.style.setProperty('--color-3', `rgb(${c3.r}, ${c3.g}, ${c3.b})`);
+            bgFront.style.setProperty('--color-4', `rgb(${c4.r}, ${c4.g}, ${c4.b})`);
             
-            // Set back layer to the current background
-            bgBack.style.backgroundImage = bgFront.style.backgroundImage;
-            if (npBgBack && npBgFront) {
-                npBgBack.style.backgroundImage = npBgFront.style.backgroundImage;
-            }
-            
-            // Prepare front layer with the new background
-            bgFront.style.backgroundImage = formattedUrl;
-            bgFront.classList.remove('fade-in');
             if (npBgFront) {
-                npBgFront.style.backgroundImage = formattedUrl;
-                npBgFront.classList.remove('fade-in');
+                npBgFront.style.setProperty('--color-1', `rgb(${c1.r}, ${c1.g}, ${c1.b})`);
+                npBgFront.style.setProperty('--color-2', `rgb(${c2.r}, ${c2.g}, ${c2.b})`);
+                npBgFront.style.setProperty('--color-3', `rgb(${c3.r}, ${c3.g}, ${c3.b})`);
+                npBgFront.style.setProperty('--color-4', `rgb(${c4.r}, ${c4.g}, ${c4.b})`);
             }
             
-            // Trigger layout reflow to register transition
+            // Remove active classes
+            bgFront.classList.remove('fade-in');
+            if (npBgFront) npBgFront.classList.remove('fade-in');
+            
+            // Trigger reflow
             void bgFront.offsetWidth;
             
-            // Animate transition
+            // Fade in front
             bgFront.classList.add('fade-in');
-            if (npBgFront) {
-                npBgFront.classList.add('fade-in');
-            }
+            if (npBgFront) npBgFront.classList.add('fade-in');
+            
+            // Copy to Back after crossfade completes (1.5s transition time)
+            setTimeout(() => {
+                const bgBack = document.getElementById('bg-back');
+                const npBgBack = document.getElementById('np-bg-back');
+                
+                if (bgBack) {
+                    bgBack.style.setProperty('--color-1', `rgb(${c1.r}, ${c1.g}, ${c1.b})`);
+                    bgBack.style.setProperty('--color-2', `rgb(${c2.r}, ${c2.g}, ${c2.b})`);
+                    bgBack.style.setProperty('--color-3', `rgb(${c3.r}, ${c3.g}, ${c3.b})`);
+                    bgBack.style.setProperty('--color-4', `rgb(${c4.r}, ${c4.g}, ${c4.b})`);
+                }
+                if (npBgBack) {
+                    npBgBack.style.setProperty('--color-1', `rgb(${c1.r}, ${c1.g}, ${c1.b})`);
+                    npBgBack.style.setProperty('--color-2', `rgb(${c2.r}, ${c2.g}, ${c2.b})`);
+                    npBgBack.style.setProperty('--color-3', `rgb(${c3.r}, ${c3.g}, ${c3.b})`);
+                    npBgBack.style.setProperty('--color-4', `rgb(${c4.r}, ${c4.g}, ${c4.b})`);
+                }
+                
+                bgFront.classList.remove('fade-in');
+                if (npBgFront) npBgFront.classList.remove('fade-in');
+            }, 1500);
         }
 
         /* ==================================================================
@@ -1257,9 +1423,11 @@
             currentPlayingIndex = idx; const song = cancionesData[idx];
             updateCovers(song.cover);
             
-            // Background Layer Update
-            const bgUrl = getBackgroundForSong(song);
-            setBgImage(bgUrl);
+            // Dynamic color extraction linked directly on cover load
+            const imgEl = document.getElementById('np-img-large');
+            getColorsFromImage(imgEl, (colors) => {
+                updateAmbientBackgroundColors(colors);
+            });
             
             document.getElementById('player-title').innerText = song.title;
             document.getElementById('player-artist').innerText = song.artist;
@@ -1688,25 +1856,36 @@
             renderGrid(albumsData, 'grid-albums', 'album');
             renderGrid(artistsData, 'grid-artists', 'artist');
             
-            // Set initial background layer elements with first track
+            // Set initial dynamic background colors
             const firstSong = cancionesData[0];
-            const initialBg = getBackgroundForSong(firstSong);
-            
-            const bgBack = document.getElementById('bg-back');
-            const bgFront = document.getElementById('bg-front');
-            const npBgBack = document.getElementById('np-bg-back');
-            const npBgFront = document.getElementById('np-bg-front');
-            
-            if (bgBack && bgFront) {
-                bgBack.style.backgroundImage = `url("${initialBg}")`;
-                bgFront.style.backgroundImage = `url("${initialBg}")`;
-                bgFront.classList.add('fade-in');
-            }
-            if (npBgBack && npBgFront) {
-                npBgBack.style.backgroundImage = `url("${initialBg}")`;
-                npBgFront.style.backgroundImage = `url("${initialBg}")`;
-                npBgFront.classList.add('fade-in');
-            }
+            const tempImg = new Image();
+            tempImg.crossOrigin = "anonymous";
+            tempImg.onload = () => {
+                getColorsFromImage(tempImg, (colors) => {
+                    if (colors && colors.length >= 4) {
+                        const bgBack = document.getElementById('bg-back');
+                        const bgFront = document.getElementById('bg-front');
+                        const npBgBack = document.getElementById('np-bg-back');
+                        const npBgFront = document.getElementById('np-bg-front');
+                        
+                        const applyTo = (el) => {
+                            if (!el) return;
+                            el.style.setProperty('--color-1', `rgb(${colors[0].r}, ${colors[0].g}, ${colors[0].b})`);
+                            el.style.setProperty('--color-2', `rgb(${colors[1].r}, ${colors[1].g}, ${colors[1].b})`);
+                            el.style.setProperty('--color-3', `rgb(${colors[2].r}, ${colors[2].g}, ${colors[2].b})`);
+                            el.style.setProperty('--color-4', `rgb(${colors[3].r}, ${colors[3].g}, ${colors[3].b})`);
+                        };
+                        applyTo(bgBack);
+                        applyTo(bgFront);
+                        applyTo(npBgBack);
+                        applyTo(npBgFront);
+                        
+                        if (bgFront) bgFront.classList.add('fade-in');
+                        if (npBgFront) npBgFront.classList.add('fade-in');
+                    }
+                });
+            };
+            tempImg.src = firstSong.cover;
             
             document.getElementById('search-input').addEventListener('input', handleSearch);
             document.body.addEventListener('click', ensureAudioContext, { once: true });
