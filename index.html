@@ -14,7 +14,7 @@
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsmediatags/3.9.5/jsmediatags.min.js"></script>
 
-    <!-- Real Apple Music-like Lyrics engine -->
+    <!-- Real Apple Music-like Lyrics engine (the same one used by the AMLL TTML Tool preview) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@applemusic-like-lyrics/core@0.5.1/dist/style.css">
     
     <!-- Synchronous promise initialization to prevent any race condition with ESM loading -->
@@ -90,7 +90,7 @@
         }
 
         /* ==================================================================
-           AMBIENT BACKGROUND STYLIZED LINEAR GRADIENTS
+           AMBIENT BACKGROUND SOLID COLOR WITH SMOOTH CROSSFADE
            ================================================================== */
         #ambient-bg, .np-bg-wrap {
             position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
@@ -99,7 +99,7 @@
         #ambient-bg::after {
             content: '';
             position: absolute; inset: 0;
-            background: rgba(0, 0, 0, 0.15);
+            background: rgba(0, 0, 0, 0.35); /* 0.35 Light Contrast Mask to preserve text readability */
             z-index: 4;
             pointer-events: none;
         }
@@ -108,8 +108,8 @@
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
         .ambient-bg-layer {
-            position: absolute; inset: 0;
-            transition: opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+            position: absolute; inset: -10%;
+            transition: opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1); /* Crossfade of 1.2s */
             opacity: 1;
         }
         #bg-back, #np-bg-back { z-index: 1; }
@@ -275,7 +275,7 @@
         .btn-fullscreen:hover { background: rgba(255,255,255,0.15); transform: scale(1.1); color: #fff; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
 
         /* ==================================================================
-           FULLSCREEN NOW PLAYING
+           FULLSCREEN NOW PLAYING (IMMERSIVE REPLICA & DESKTOP MATCH)
            ================================================================== */
         #np-fs {
             position: fixed; inset: 0; z-index: 100; transform: translateY(100%); opacity: 0; visibility: hidden;
@@ -285,7 +285,7 @@
         #np-fs.active { transform: translateY(0); opacity: 1; visibility: visible; }
 
         .np-bg-wrap { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
-        .np-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.35); z-index: 3; }
+        .np-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.35); z-index: 3; } /* 0.35 Light Contrast Overlay */
         .np-grain { position: absolute; inset: 0; z-index: 4; opacity: 0.035; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none;}
 
         /* Collapse Button */
@@ -304,7 +304,7 @@
             .btn-collapse-mob { display: none; }
         }
 
-        /* proportions desktop */
+        /* 1920x1080 Real Proportion Grid and Alignment (Apple Music Desktop Proportions) */
         @media (min-width: 1025px) {
             .np-layout { 
                 position: relative; z-index: 3; display: flex; 
@@ -317,18 +317,20 @@
                 position: absolute;
                 left: 0;
                 top: 0;
-                width: 45%;
+                width: 45%; /* Exactly 45% left pane */
                 height: 100%;
                 display: flex; flex-direction: column; align-items: center; justify-content: center;
             }
 
+            /* Natural container flow to position all controls below the artwork beautifully */
             .np-left-content {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                width: 560px;
+                width: 560px; /* Aligns exactly with the 560px artwork */
             }
 
+            /* Configured precisely to width 560px and height 560px with 24px border radius and cinematic shadow */
             .np-art-wrap { 
                 width: 560px !important; height: 560px !important;
                 border-radius: 24px !important; 
@@ -342,10 +344,12 @@
 
             .np-info-block { display: flex; flex-direction: column; width: 100%; }
 
+            /* Centered Track Info directly below artwork, styled exactly like mockup instructions */
             .np-track-info-center { display: flex; flex-direction: column; gap: 10px; align-items: center; text-align: center; margin-top: 28px !important; width: 100%;}
             .np-track-title { font-size: 26px !important; font-weight: 800; color: #fff; letter-spacing: -0.015em; }
             .np-track-artist { font-size: 20px !important; color: rgba(255, 255, 255, 0.55); font-weight: 600; letter-spacing: -0.01em; }
 
+            /* Interactive Scrubber Layer - placed in standard document flow directly below info block */
             .np-scrubber-group { 
                 display: flex; flex-direction: column; gap: 10px; width: 100%;
                 margin-top: 24px;
@@ -372,6 +376,7 @@
             .np-scrubber-group .scrubber-fill { border-radius: 2px; box-shadow: none; transition: width 0.1s linear;}
             .np-scrubber-group .scrubber-fill::after { display: none; }
 
+            /* Interactive Controls Layer - naturally placed below scrubber in document flow */
             .np-main-controls { 
                 display: flex; justify-content: center; align-items: center; gap: 32px; 
                 margin-top: 24px;
@@ -383,6 +388,7 @@
             .np-main-controls i:hover { transform: scale(1.15); filter: drop-shadow(0 0 10px rgba(255,255,255,0.4));}
             .np-main-controls i:active { transform: scale(0.95); }
 
+            /* Smooth Reveal triggers on left pane hover on Desktop */
             .np-left-pane:hover .np-scrubber-group {
                 opacity: 1; transform: translateY(0); pointer-events: auto;
             }
@@ -390,9 +396,10 @@
                 opacity: 1; transform: translateY(0); pointer-events: auto;
             }
 
+            /* Right Pane: 55% Widescreen Space, starting exactly from left: 930px */
             .np-right-pane { 
                 position: absolute;
-                left: 930px;
+                left: 930px; /* Exactly starts at left: 930px */
                 top: 0;
                 width: calc(100% - 930px);
                 height: 100%; display: flex; flex-direction: column; justify-content: center;
@@ -419,6 +426,7 @@
                 padding: 0; margin: 0;
             }
 
+            /* AMLL Core Theme Settings - Pure white base text fill with exact 58px / weight 800 scales */
             #lyrics-content {
                 width: 100%;
                 height: 100%;
@@ -432,6 +440,7 @@
                 letter-spacing: -0.02em;
             }
             
+            /* Comfortable, generous vertical spacing between lines like Apple Music Desktop */
             #lyrics-content .amll-lyric-player .amll-lyric-line {
                 margin-bottom: 24px !important;
             }
@@ -502,6 +511,7 @@
             .np-track-title { font-size: 22px; white-space: normal; line-height: 1.2; }
             .np-track-artist { font-size: 18px; }
             
+            /* Keep Scrubber and Controls always visible on touch/mobile devices for flawless usage */
             .np-scrubber-group,
             .np-main-controls { 
                 position: relative; opacity: 1 !important; transform: none !important; pointer-events: auto !important; margin-top: 10px; gap: 24px;
@@ -518,7 +528,7 @@
 </head>
 <body>
 
-    <!-- AMBIENT LAYERED BACKGROUND WITH STYLIZED CROSSFADE -->
+    <!-- AMBIENT LAYERED BACKGROUND -->
     <div id="ambient-bg">
         <div class="noise-overlay"></div>
         <div id="bg-back" class="ambient-bg-layer"></div>
@@ -671,7 +681,7 @@
         </div>
     </div>
 
-    <!-- FULLSCREEN NOW PLAYING OVERLAY -->
+    <!-- FULLSCREEN NOW PLAYING OVERLAY (STATIC CURATED SINGLE COLORS) -->
     <div id="np-fs">
         <div class="np-bg-wrap">
             <div id="np-bg-back" class="ambient-bg-layer"></div>
@@ -858,7 +868,7 @@
                 title: "PIKA PIKA", 
                 artist: "Chuyin, Fuerza Regida, Jorsshh & Calle 24", 
                 url: "https://files.catbox.moe/lvpf5o.mp3", 
-                lrc: "https://files.catbox.moe/mp2pqv.ttml",
+                lrc: "https://files.catbox.moe/dj1zm1.ttml",
                 cover: pikapikaCoverUrl,
                 album: "pikapika-single",
                 trackNum: 1,
@@ -876,21 +886,39 @@
             }
         ];
 
+        const artistsData = [
+            { name: "Yan Block", img: religionCoverUrl },
+            { name: "Kris R", img: fourLifeCoverUrl },
+            { name: "De La Rose", img: remix444CoverUrl },
+            { name: "Hades66", img: emocionesCoverUrl },
+            { name: "Ñengo Flow", img: remix444CoverUrl },
+            { name: "Junior H", img: cologneCoverUrl },
+            { name: "Ovi", img: cologneCoverUrl },
+            { name: "Peso Pluma", img: lagunasCoverUrl },
+            { name: "Jasiel Nuñez", img: lagunasCoverUrl },
+            { name: "Chuyin", img: pikapikaCoverUrl },
+            { name: "Fuerza Regida", img: pikapikaCoverUrl },
+            { name: "Jorsshh", img: pikapikaCoverUrl },
+            { name: "Calle 24", img: pikapikaCoverUrl },
+            { name: "Omar Courtz", img: moonlightCoverUrl },
+            { name: "Eladio Carrión", img: moonlightCoverUrl }
+        ];
+
         /* ==================================================================
-           PREDEFINED CURATED PREMIUM LINEAR GRADIENTS (135deg)
+           PREDEFINED SINGLE COLORS
            ================================================================== */
-        const songGradients = {
-            "Religión": "linear-gradient(135deg, #0D0D08 0%, #4A4B16 35%, #7D6E2C 70%, #D6C75A 100%)",
-            "Talento": "linear-gradient(135deg, #0A0A0A 0%, #151515 35%, #555555 70%, #D8D8D8 100%)",
-            "YeYe": "linear-gradient(135deg, #050505 0%, #1A1A1A 35%, #777777 70%, #F2F2F2 100%)",
-            "222": "linear-gradient(135deg, #0B1718 0%, #214442 35%, #6B3D2A 70%, #C7652A 100%)",
-            "4 Life": "linear-gradient(135deg, #05050D 0%, #080817 35%, #33202A 70%, #8A2F28 100%)",
-            "Cologne": "linear-gradient(135deg, #0B0D0A 0%, #303524 35%, #65502A 70%, #C39A3A 100%)",
-            "444 - Remix": "linear-gradient(135deg, #030303 0%, #111010 35%, #3A2025 70%, #9B4A4A 100%)",
-            "Lagunas": "linear-gradient(135deg, #030817 0%, #061125 35%, #34203D 70%, #C05B8B 100%)",
-            "Emociones": "linear-gradient(135deg, #050A0F 0%, #101B24 35%, #526675 70%, #B8C8D2 100%)",
-            "PIKA PIKA": "linear-gradient(135deg, #050B12 0%, #17212A 35%, #6B3824 70%, #B65A24 100%)",
-            "MOONLIGHT": "linear-gradient(135deg, #030615 0%, #081B9A 35%, #4B1B8A 70%, #FF2A9B 100%)"
+        const songColors = {
+            "Religión": "#8C7120",
+            "Talento": "#595959",
+            "YeYe": "#F2F2F2",
+            "222": "#D95204",
+            "4 Life": "#0D0D0D",
+            "444 - Remix": "#090708",
+            "Cologne": "#6E5F36",
+            "Lagunas": "#060D1F",
+            "Emociones": "#1C3240",
+            "PIKA PIKA": "#AC8E5C",
+            "MOONLIGHT": "#0115CA"
         };
 
         /* ==================================================================
@@ -972,24 +1000,24 @@
         function haptic() { if (navigator.vibrate) navigator.vibrate(10); }
 
         /* ==================================================================
-           DYNAMIC COLOR MAPPING & CURATED 135deg LINEAR GRADIENTS
+           DYNAMIC COLOR MAPPING & SOLID COLOR GRADIENT GENERATOR
            ================================================================== */
-        function getGradientForSong(title) {
+        function getColorForSong(title) {
             const normalized = title.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
             
-            if (normalized === "religion") return songGradients["Religión"];
-            if (normalized === "talento") return songGradients["Talento"];
-            if (normalized === "yeye") return songGradients["YeYe"];
-            if (normalized === "222") return songGradients["222"];
-            if (normalized === "4 life") return songGradients["4 Life"];
-            if (normalized.includes("444")) return songGradients["444 - Remix"];
-            if (normalized === "cologne") return songGradients["Cologne"];
-            if (normalized === "lagunas") return songGradients["Lagunas"];
-            if (normalized === "pika pika") return songGradients["PIKA PIKA"];
-            if (normalized === "emociones") return songGradients["Emociones"];
-            if (normalized === "moonlight") return songGradients["MOONLIGHT"];
+            if (normalized === "religion") return songColors["Religión"];
+            if (normalized === "talento") return songColors["Talento"];
+            if (normalized === "yeye") return songColors["YeYe"];
+            if (normalized === "222") return songColors["222"];
+            if (normalized === "4 life") return songColors["4 Life"];
+            if (normalized.includes("444")) return songColors["444 - Remix"];
+            if (normalized === "cologne") return songColors["Cologne"];
+            if (normalized === "lagunas") return songColors["Lagunas"];
+            if (normalized === "pika pika") return songColors["PIKA PIKA"];
+            if (normalized === "emociones") return songColors["Emociones"];
+            if (normalized === "moonlight") return songColors["MOONLIGHT"];
             
-            return "linear-gradient(135deg, #050507 0%, #0a0a0e 100%)";
+            return "#050507"; // default fallback dark background
         }
 
         function updateDynamicBackgroundForSong(songTitle) {
@@ -1000,20 +1028,20 @@
             
             if (!bgBack || !bgFront) return;
             
-            const gradient = getGradientForSong(songTitle);
+            const color = getColorForSong(songTitle);
             
-            const currentBg = bgFront.style.backgroundImage || bgFront.style.background;
-            if (currentBg.includes(gradient)) return;
+            const currentColor = bgFront.style.backgroundColor || bgFront.style.background;
+            if (currentColor === color) return;
             
-            bgBack.style.background = bgFront.style.background || gradient;
+            bgBack.style.background = bgFront.style.background || color;
             if (npBgBack && npBgFront) {
-                npBgBack.style.background = npBgFront.style.background || gradient;
+                npBgBack.style.background = npBgFront.style.background || color;
             }
             
-            bgFront.style.background = gradient;
+            bgFront.style.background = color;
             bgFront.classList.remove('fade-in');
             if (npBgFront) {
-                npBgFront.style.background = gradient;
+                npBgFront.style.background = color;
                 npBgFront.classList.remove('fade-in');
             }
             
@@ -1323,6 +1351,7 @@
 
         /* ==================================================================
            LYRICS ENGINE — real @applemusic-like-lyrics/core player
+           (the same DomLyricPlayer engine used by the AMLL TTML Tool preview)
            ================================================================== */
         let lyricPlayer = null;
 
@@ -1373,6 +1402,7 @@
             return sec || 0;
         }
 
+        // Helper to query attributes dynamically without namespace prefix issues
         function getAttributeInsensitive(element, attrName) {
             if (!element || !element.attributes) return '';
             for (let i = 0; i < element.attributes.length; i++) {
@@ -1384,6 +1414,8 @@
             return '';
         }
 
+        // Parses TTML or word-level LRC text into the LyricLine[] shape
+        // expected by DomLyricPlayer.setLyricLines() (all times in ms).
         function parseToAMLLLines(text, url) {
             const rawLines = [];
 
@@ -1396,6 +1428,7 @@
                     console.error("XML Parsing Error in TTML:", parserError[0].textContent);
                 }
 
+                // Namespace-independent search to support any prefixed tags like tt:p or ttml:p
                 let pTags = xmlDoc.getElementsByTagNameNS ? xmlDoc.getElementsByTagNameNS('*', 'p') : [];
                 if (pTags.length === 0) {
                     pTags = xmlDoc.getElementsByTagName('p');
@@ -1410,6 +1443,7 @@
                     const endAttr = p.getAttribute('end');
                     const pEnd = endAttr ? parseTTMLTime(endAttr) : 0;
 
+                    // Duet vocalist identification
                     const pAgent = getAttributeInsensitive(p, 'agent') || '';
                     const pStyle = getAttributeInsensitive(p, 'style') || '';
                     const pClass = getAttributeInsensitive(p, 'class') || p.className || '';
