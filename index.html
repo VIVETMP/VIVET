@@ -14,7 +14,7 @@
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsmediatags/3.9.5/jsmediatags.min.js"></script>
 
-    <!-- Real Apple Music-like Lyrics engine (the same one used by the AMLL TTML Tool preview) -->
+    <!-- Real Apple Music-like Lyrics engine -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@applemusic-like-lyrics/core@0.5.1/dist/style.css">
     
     <!-- Synchronous promise initialization to prevent any race condition with ESM loading -->
@@ -90,7 +90,7 @@
         }
 
         /* ==================================================================
-           AMBIENT BACKGROUND STYLIZED LINEAR GRADIENTS (APPLE MUSIC STYLE)
+           AMBIENT BACKGROUND STYLIZED LINEAR GRADIENTS
            ================================================================== */
         #ambient-bg, .np-bg-wrap {
             position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
@@ -99,7 +99,7 @@
         #ambient-bg::after {
             content: '';
             position: absolute; inset: 0;
-            background: rgba(0, 0, 0, 0.15); /* Sutil contraste para preservar la legibilidad sin alterar el degradado */
+            background: rgba(0, 0, 0, 0.15);
             z-index: 4;
             pointer-events: none;
         }
@@ -109,7 +109,7 @@
         }
         .ambient-bg-layer {
             position: absolute; inset: 0;
-            transition: opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1); /* Crossfade de 1.2s */
+            transition: opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1);
             opacity: 1;
         }
         #bg-back, #np-bg-back { z-index: 1; }
@@ -275,7 +275,7 @@
         .btn-fullscreen:hover { background: rgba(255,255,255,0.15); transform: scale(1.1); color: #fff; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
 
         /* ==================================================================
-           FULLSCREEN NOW PLAYING (IMMERSIVE REPLICA & DESKTOP MATCH)
+           FULLSCREEN NOW PLAYING
            ================================================================== */
         #np-fs {
             position: fixed; inset: 0; z-index: 100; transform: translateY(100%); opacity: 0; visibility: hidden;
@@ -285,7 +285,7 @@
         #np-fs.active { transform: translateY(0); opacity: 1; visibility: visible; }
 
         .np-bg-wrap { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
-        .np-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.35); z-index: 3; } /* 0.35 Light Contrast Overlay */
+        .np-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.35); z-index: 3; }
         .np-grain { position: absolute; inset: 0; z-index: 4; opacity: 0.035; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none;}
 
         /* Collapse Button */
@@ -304,7 +304,7 @@
             .btn-collapse-mob { display: none; }
         }
 
-        /* 1920x1080 Real Proportion Grid and Alignment (Apple Music Desktop Proportions) */
+        /* proportions desktop */
         @media (min-width: 1025px) {
             .np-layout { 
                 position: relative; z-index: 3; display: flex; 
@@ -317,20 +317,18 @@
                 position: absolute;
                 left: 0;
                 top: 0;
-                width: 45%; /* Exactly 45% left pane */
+                width: 45%;
                 height: 100%;
                 display: flex; flex-direction: column; align-items: center; justify-content: center;
             }
 
-            /* Natural container flow to position all controls below the artwork beautifully */
             .np-left-content {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                width: 560px; /* Aligns exactly with the 560px artwork */
+                width: 560px;
             }
 
-            /* Configured precisely to width 560px and height 560px with 24px border radius and cinematic shadow */
             .np-art-wrap { 
                 width: 560px !important; height: 560px !important;
                 border-radius: 24px !important; 
@@ -344,12 +342,10 @@
 
             .np-info-block { display: flex; flex-direction: column; width: 100%; }
 
-            /* Centered Track Info directly below artwork, styled exactly like mockup instructions */
             .np-track-info-center { display: flex; flex-direction: column; gap: 10px; align-items: center; text-align: center; margin-top: 28px !important; width: 100%;}
             .np-track-title { font-size: 26px !important; font-weight: 800; color: #fff; letter-spacing: -0.015em; }
             .np-track-artist { font-size: 20px !important; color: rgba(255, 255, 255, 0.55); font-weight: 600; letter-spacing: -0.01em; }
 
-            /* Interactive Scrubber Layer - placed in standard document flow directly below info block */
             .np-scrubber-group { 
                 display: flex; flex-direction: column; gap: 10px; width: 100%;
                 margin-top: 24px;
@@ -376,7 +372,6 @@
             .np-scrubber-group .scrubber-fill { border-radius: 2px; box-shadow: none; transition: width 0.1s linear;}
             .np-scrubber-group .scrubber-fill::after { display: none; }
 
-            /* Interactive Controls Layer - naturally placed below scrubber in document flow */
             .np-main-controls { 
                 display: flex; justify-content: center; align-items: center; gap: 32px; 
                 margin-top: 24px;
@@ -388,7 +383,6 @@
             .np-main-controls i:hover { transform: scale(1.15); filter: drop-shadow(0 0 10px rgba(255,255,255,0.4));}
             .np-main-controls i:active { transform: scale(0.95); }
 
-            /* Smooth Reveal triggers on left pane hover on Desktop */
             .np-left-pane:hover .np-scrubber-group {
                 opacity: 1; transform: translateY(0); pointer-events: auto;
             }
@@ -396,10 +390,9 @@
                 opacity: 1; transform: translateY(0); pointer-events: auto;
             }
 
-            /* Right Pane: 55% Widescreen Space, starting exactly from left: 930px */
             .np-right-pane { 
                 position: absolute;
-                left: 930px; /* Exactly starts at left: 930px */
+                left: 930px;
                 top: 0;
                 width: calc(100% - 930px);
                 height: 100%; display: flex; flex-direction: column; justify-content: center;
@@ -426,7 +419,6 @@
                 padding: 0; margin: 0;
             }
 
-            /* AMLL Core Theme Settings - Pure white base text fill with exact 58px / weight 800 scales */
             #lyrics-content {
                 width: 100%;
                 height: 100%;
@@ -440,7 +432,6 @@
                 letter-spacing: -0.02em;
             }
             
-            /* Comfortable, generous vertical spacing between lines like Apple Music Desktop */
             #lyrics-content .amll-lyric-player .amll-lyric-line {
                 margin-bottom: 24px !important;
             }
@@ -511,7 +502,6 @@
             .np-track-title { font-size: 22px; white-space: normal; line-height: 1.2; }
             .np-track-artist { font-size: 18px; }
             
-            /* Keep Scrubber and Controls always visible on touch/mobile devices for flawless usage */
             .np-scrubber-group,
             .np-main-controls { 
                 position: relative; opacity: 1 !important; transform: none !important; pointer-events: auto !important; margin-top: 10px; gap: 24px;
@@ -681,7 +671,7 @@
         </div>
     </div>
 
-    <!-- FULLSCREEN NOW PLAYING OVERLAY (STATIC CURATED SINGLE COLORS) -->
+    <!-- FULLSCREEN NOW PLAYING OVERLAY -->
     <div id="np-fs">
         <div class="np-bg-wrap">
             <div id="np-bg-back" class="ambient-bg-layer"></div>
@@ -999,7 +989,7 @@
             if (normalized === "emociones") return songGradients["Emociones"];
             if (normalized === "moonlight") return songGradients["MOONLIGHT"];
             
-            return "linear-gradient(135deg, #050507 0%, #0a0a0e 100%)"; // default fallback
+            return "linear-gradient(135deg, #050507 0%, #0a0a0e 100%)";
         }
 
         function updateDynamicBackgroundForSong(songTitle) {
@@ -1333,7 +1323,6 @@
 
         /* ==================================================================
            LYRICS ENGINE — real @applemusic-like-lyrics/core player
-           (the same DomLyricPlayer engine used by the AMLL TTML Tool preview)
            ================================================================== */
         let lyricPlayer = null;
 
@@ -1384,7 +1373,6 @@
             return sec || 0;
         }
 
-        // Helper to query attributes dynamically without namespace prefix issues
         function getAttributeInsensitive(element, attrName) {
             if (!element || !element.attributes) return '';
             for (let i = 0; i < element.attributes.length; i++) {
@@ -1396,8 +1384,6 @@
             return '';
         }
 
-        // Parses TTML or word-level LRC text into the LyricLine[] shape
-        // expected by DomLyricPlayer.setLyricLines() (all times in ms).
         function parseToAMLLLines(text, url) {
             const rawLines = [];
 
@@ -1410,7 +1396,6 @@
                     console.error("XML Parsing Error in TTML:", parserError[0].textContent);
                 }
 
-                // Namespace-independent search to support any prefixed tags like tt:p or ttml:p
                 let pTags = xmlDoc.getElementsByTagNameNS ? xmlDoc.getElementsByTagNameNS('*', 'p') : [];
                 if (pTags.length === 0) {
                     pTags = xmlDoc.getElementsByTagName('p');
@@ -1425,7 +1410,6 @@
                     const endAttr = p.getAttribute('end');
                     const pEnd = endAttr ? parseTTMLTime(endAttr) : 0;
 
-                    // Duet vocalist identification
                     const pAgent = getAttributeInsensitive(p, 'agent') || '';
                     const pStyle = getAttributeInsensitive(p, 'style') || '';
                     const pClass = getAttributeInsensitive(p, 'class') || p.className || '';
