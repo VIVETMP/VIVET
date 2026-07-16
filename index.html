@@ -745,7 +745,7 @@
 
     <script>
         /* ==================================================================
-           DATA (Religion, Talento, YeYe, 222, 4 Life, 444, Cologne, Lagunas, Emociones, PIKA PIKA, MOONLIGHT)
+           DATA (Religion, Talento, YeYe, 222, 4 Life, 444, Cologne, Lagunas, Emociones, PIKA PIKA, MOONLIGHT, ¿Qué Nos Pasó?)
            ================================================================== */
         const religionCoverUrl = "https://files.catbox.moe/bvfrst.jpg";
         const talentoCoverUrl  = "https://files.catbox.moe/bpjz9c.jpg";
@@ -758,6 +758,7 @@
         const emocionesCoverUrl = "https://files.catbox.moe/wla4pw.jpg";
         const pikapikaCoverUrl  = "https://files.catbox.moe/ej9nbi.jpg";
         const moonlightCoverUrl = "https://files.catbox.moe/nx3g9e.jpg";
+        const queNosPasoCoverUrl = "https://files.catbox.moe/twhqri.jpg";
 
         const albumsData = [ 
             { id: "religion-single", title: "Religión", artist: "Yan Block", cover: religionCoverUrl, year: "2026" },
@@ -770,7 +771,8 @@
             { id: "lagunas-single", title: "Lagunas", artist: "Peso Pluma & Jasiel Nuñez", cover: lagunasCoverUrl, year: "2026" },
             { id: "emociones-single", title: "Emociones", artist: "Hades66", cover: emocionesCoverUrl, year: "2026" },
             { id: "pikapika-single", title: "PIKA PIKA", artist: "Chuyin, Fuerza Regida, Jorsshh & Calle 24", cover: pikapikaCoverUrl, year: "2026" },
-            { id: "moonlight-single", title: "MOONLIGHT", artist: "Omar Courtz & Eladio Carrión", cover: moonlightCoverUrl, year: "2026" }
+            { id: "moonlight-single", title: "MOONLIGHT", artist: "Omar Courtz & Eladio Carrión", cover: moonlightCoverUrl, year: "2026" },
+            { id: "quenospaso-single", title: "¿Qué Nos Pasó?", artist: "Anuel AA", cover: queNosPasoCoverUrl, year: "2026" }
         ];
 
         const cancionesData = [
@@ -883,6 +885,16 @@
                 album: "moonlight-single",
                 trackNum: 1,
                 coverLoaded: true
+            },
+            { 
+                title: "¿Qué Nos Pasó?", 
+                artist: "Anuel AA", 
+                url: "https://files.catbox.moe/kd2eew.mp3", 
+                lrc: "https://files.catbox.moe/hubb42.ttml",
+                cover: queNosPasoCoverUrl,
+                album: "quenospaso-single",
+                trackNum: 1,
+                coverLoaded: true
             }
         ];
 
@@ -901,7 +913,8 @@
             { name: "Jorsshh", img: pikapikaCoverUrl },
             { name: "Calle 24", img: pikapikaCoverUrl },
             { name: "Omar Courtz", img: moonlightCoverUrl },
-            { name: "Eladio Carrión", img: moonlightCoverUrl }
+            { name: "Eladio Carrión", img: moonlightCoverUrl },
+            { name: "Anuel AA", img: queNosPasoCoverUrl }
         ];
 
         /* ==================================================================
@@ -918,7 +931,8 @@
             "Lagunas": "#060D1F",
             "Emociones": "#1C3240",
             "PIKA PIKA": "#AC8E5C",
-            "MOONLIGHT": "#0115CA"
+            "MOONLIGHT": "#0115CA",
+            "¿Qué Nos Pasó?": "#210759"
         };
 
         /* ==================================================================
@@ -1016,6 +1030,7 @@
             if (normalized === "pika pika") return songColors["PIKA PIKA"];
             if (normalized === "emociones") return songColors["Emociones"];
             if (normalized === "moonlight") return songColors["MOONLIGHT"];
+            if (normalized.includes("que nos paso")) return songColors["¿Qué Nos Pasó?"];
             
             return "#050507"; // default fallback dark background
         }
