@@ -14,7 +14,7 @@
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsmediatags/3.9.5/jsmediatags.min.js"></script>
 
-    <!-- Real Apple Music-like Lyrics engine -->
+    <!-- Real Apple Music-like Lyrics engine (the same one used by the AMLL TTML Tool preview) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@applemusic-like-lyrics/core@0.5.1/dist/style.css">
     
     <!-- Synchronous promise initialization to prevent any race condition with ESM loading -->
@@ -99,7 +99,7 @@
         #ambient-bg::after {
             content: '';
             position: absolute; inset: 0;
-            background: rgba(0, 0, 0, 0.35);
+            background: rgba(0, 0, 0, 0.35); /* 0.35 Light Contrast Mask to preserve text readability */
             z-index: 4;
             pointer-events: none;
         }
@@ -109,7 +109,7 @@
         }
         .ambient-bg-layer {
             position: absolute; inset: -10%;
-            transition: opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+            transition: opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1); /* Crossfade of 1.2s */
             opacity: 1;
         }
         #bg-back, #np-bg-back { z-index: 1; }
@@ -285,7 +285,7 @@
         #np-fs.active { transform: translateY(0); opacity: 1; visibility: visible; }
 
         .np-bg-wrap { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
-        .np-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.35); z-index: 3; }
+        .np-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.35); z-index: 3; } /* 0.35 Light Contrast Overlay */
         .np-grain { position: absolute; inset: 0; z-index: 4; opacity: 0.035; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none;}
 
         /* Collapse Button */
@@ -317,18 +317,20 @@
                 position: absolute;
                 left: 0;
                 top: 0;
-                width: 45%;
+                width: 45%; /* Exactly 45% left pane */
                 height: 100%;
                 display: flex; flex-direction: column; align-items: center; justify-content: center;
             }
 
+            /* Natural container flow to position all controls below the artwork beautifully */
             .np-left-content {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                width: 560px;
+                width: 560px; /* Aligns exactly with the 560px artwork */
             }
 
+            /* Configured precisely to width 560px and height 560px with 24px border radius and cinematic shadow */
             .np-art-wrap { 
                 width: 560px !important; height: 560px !important;
                 border-radius: 24px !important; 
@@ -342,10 +344,12 @@
 
             .np-info-block { display: flex; flex-direction: column; width: 100%; }
 
+            /* Centered Track Info directly below artwork, styled exactly like mockup instructions */
             .np-track-info-center { display: flex; flex-direction: column; gap: 10px; align-items: center; text-align: center; margin-top: 28px !important; width: 100%;}
             .np-track-title { font-size: 26px !important; font-weight: 800; color: #fff; letter-spacing: -0.015em; }
             .np-track-artist { font-size: 20px !important; color: rgba(255, 255, 255, 0.55); font-weight: 600; letter-spacing: -0.01em; }
 
+            /* Interactive Scrubber Layer - placed in standard document flow directly below info block */
             .np-scrubber-group { 
                 display: flex; flex-direction: column; gap: 10px; width: 100%;
                 margin-top: 24px;
@@ -372,6 +376,7 @@
             .np-scrubber-group .scrubber-fill { border-radius: 2px; box-shadow: none; transition: width 0.1s linear;}
             .np-scrubber-group .scrubber-fill::after { display: none; }
 
+            /* Interactive Controls Layer - naturally placed below scrubber in document flow */
             .np-main-controls { 
                 display: flex; justify-content: center; align-items: center; gap: 32px; 
                 margin-top: 24px;
@@ -383,6 +388,7 @@
             .np-main-controls i:hover { transform: scale(1.15); filter: drop-shadow(0 0 10px rgba(255,255,255,0.4));}
             .np-main-controls i:active { transform: scale(0.95); }
 
+            /* Smooth Reveal triggers on left pane hover on Desktop */
             .np-left-pane:hover .np-scrubber-group {
                 opacity: 1; transform: translateY(0); pointer-events: auto;
             }
@@ -390,9 +396,10 @@
                 opacity: 1; transform: translateY(0); pointer-events: auto;
             }
 
+            /* Right Pane: 55% Widescreen Space, starting exactly from left: 930px */
             .np-right-pane { 
                 position: absolute;
-                left: 930px;
+                left: 930px; /* Exactly starts at left: 930px */
                 top: 0;
                 width: calc(100% - 930px);
                 height: 100%; display: flex; flex-direction: column; justify-content: center;
@@ -419,7 +426,7 @@
                 padding: 0; margin: 0;
             }
 
-            /* AMLL Core Theme Settings */
+            /* AMLL Core Theme Settings - Pure white base text fill with exact 58px / weight 800 scales */
             #lyrics-content {
                 width: 100%;
                 height: 100%;
@@ -431,11 +438,9 @@
                 --amll-lp-hover-bg-color: rgba(255,255,255,0.08);
                 font-weight: 800 !important;
                 letter-spacing: -0.02em;
-                /* Forced vertical flex layout so appended sibling footer flows naturally after lines list */
-                display: flex !important;
-                flex-direction: column !important;
             }
             
+            /* Comfortable, generous vertical spacing between lines like Apple Music Desktop */
             #lyrics-content .amll-lyric-player .amll-lyric-line {
                 margin-bottom: 24px !important;
             }
@@ -446,45 +451,6 @@
         }
         .lyrics-empty-state p {
             color: rgba(255,255,255,0.3); font-size: 32px; font-weight: 800;
-        }
-
-        /* Credits & copyrights layout */
-        .amll-credits-footer {
-            margin-top: 80px;
-            padding: 40px 0 160px 0; /* Clear space below so text can scroll clear of bottom layout mask */
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
-            color: rgba(255, 255, 255, 0.4);
-            font-size: 15px;
-            line-height: 1.6;
-            font-family: var(--font-main);
-            text-align: left;
-            width: 100%;
-            box-sizing: border-box;
-            flex-shrink: 0;
-        }
-        .amll-credits-footer h3 {
-            font-size: 13px;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            margin-bottom: 12px;
-            color: rgba(255, 255, 255, 0.35);
-            font-weight: 700;
-        }
-        .amll-credits-footer p {
-            font-weight: 500;
-            color: rgba(255, 255, 255, 0.6);
-        }
-        @media (max-width: 1024px) {
-            .amll-credits-footer {
-                margin-top: 40px;
-                padding: 24px 0 120px 0;
-                font-size: 13px;
-            }
-            /* Fallback flex alignment for mobile layout */
-            #lyrics-content .amll-lyric-player {
-                display: flex !important;
-                flex-direction: column !important;
-            }
         }
 
         /* ==================================================================
@@ -545,6 +511,7 @@
             .np-track-title { font-size: 22px; white-space: normal; line-height: 1.2; }
             .np-track-artist { font-size: 18px; }
             
+            /* Keep Scrubber and Controls always visible on touch/mobile devices for flawless usage */
             .np-scrubber-group,
             .np-main-controls { 
                 position: relative; opacity: 1 !important; transform: none !important; pointer-events: auto !important; margin-top: 10px; gap: 24px;
@@ -714,7 +681,7 @@
         </div>
     </div>
 
-    <!-- FULLSCREEN NOW PLAYING OVERLAY -->
+    <!-- FULLSCREEN NOW PLAYING OVERLAY (STATIC CURATED SINGLE COLORS) -->
     <div id="np-fs">
         <div class="np-bg-wrap">
             <div id="np-bg-back" class="ambient-bg-layer"></div>
@@ -735,11 +702,13 @@
                     </div>
                     
                     <div class="np-info-block">
+                        <!-- Meta info centered directly beneath the artwork with precise gaps -->
                         <div class="np-track-info-center">
                             <h2 class="np-track-title"><span id="np-title-large">Religión</span></h2>
                             <p class="np-track-artist" id="np-artist-large">Yan Block</p>
                         </div>
 
+                        <!-- Progress bar (fades in on hover for desktop, always visible on mobile) -->
                         <div class="np-scrubber-group">
                             <div class="np-progress-track" id="np-progress-track" onclick="seek(event, this)">
                                 <div class="np-progress-fill" id="bar-fill-np"></div>
@@ -751,6 +720,7 @@
                         </div>
                     </div>
 
+                    <!-- Media buttons (fades in on hover for desktop, always visible on mobile) -->
                     <div class="np-main-controls">
                         <i class="ph-bold ph-shuffle" style="font-size: 20px; color: rgba(255,255,255,0.5);"></i>
                         <i class="ph-fill ph-skip-back" onclick="prevSong()" style="font-size: 38px;"></i>
@@ -775,7 +745,7 @@
 
     <script>
         /* ==================================================================
-           DATA (Religion, Talento, YeYe, 222, 4 Life, 444, Cologne, Lagunas, Emociones, PIKA PIKA, MOONLIGHT, Caperuza)
+           DATA (Religion, Talento, YeYe, 222, 4 Life, 444, Cologne, Lagunas, Emociones, PIKA PIKA, MOONLIGHT)
            ================================================================== */
         const religionCoverUrl = "https://files.catbox.moe/bvfrst.jpg";
         const talentoCoverUrl  = "https://files.catbox.moe/bpjz9c.jpg";
@@ -788,7 +758,6 @@
         const emocionesCoverUrl = "https://files.catbox.moe/wla4pw.jpg";
         const pikapikaCoverUrl  = "https://files.catbox.moe/ej9nbi.jpg";
         const moonlightCoverUrl = "https://files.catbox.moe/nx3g9e.jpg";
-        const caperuzaCoverUrl = "https://files.catbox.moe/k9ppt2.jpg";
 
         const albumsData = [ 
             { id: "religion-single", title: "Religión", artist: "Yan Block", cover: religionCoverUrl, year: "2026" },
@@ -801,8 +770,7 @@
             { id: "lagunas-single", title: "Lagunas", artist: "Peso Pluma & Jasiel Nuñez", cover: lagunasCoverUrl, year: "2026" },
             { id: "emociones-single", title: "Emociones", artist: "Hades66", cover: emocionesCoverUrl, year: "2026" },
             { id: "pikapika-single", title: "PIKA PIKA", artist: "Chuyin, Fuerza Regida, Jorsshh & Calle 24", cover: pikapikaCoverUrl, year: "2026" },
-            { id: "moonlight-single", title: "MOONLIGHT", artist: "Omar Courtz & Eladio Carrión", cover: moonlightCoverUrl, year: "2026" },
-            { id: "caperuza-single", title: "Caperuza", artist: "Fuerza Regida", cover: caperuzaCoverUrl, year: "2026" }
+            { id: "moonlight-single", title: "MOONLIGHT", artist: "Omar Courtz & Eladio Carrión", cover: moonlightCoverUrl, year: "2026" }
         ];
 
         const cancionesData = [
@@ -915,16 +883,6 @@
                 album: "moonlight-single",
                 trackNum: 1,
                 coverLoaded: true
-            },
-            { 
-                title: "Caperuza", 
-                artist: "Fuerza Regida", 
-                url: "https://files.catbox.moe/osu8cp.mp3", 
-                lrc: "https://files.catbox.moe/dtvjmc.ttml",
-                cover: caperuzaCoverUrl,
-                album: "caperuza-single",
-                trackNum: 1,
-                coverLoaded: true
             }
         ];
 
@@ -939,7 +897,7 @@
             { name: "Peso Pluma", img: lagunasCoverUrl },
             { name: "Jasiel Nuñez", img: lagunasCoverUrl },
             { name: "Chuyin", img: pikapikaCoverUrl },
-            { name: "Fuerza Regida", img: caperuzaCoverUrl },
+            { name: "Fuerza Regida", img: pikapikaCoverUrl },
             { name: "Jorsshh", img: pikapikaCoverUrl },
             { name: "Calle 24", img: pikapikaCoverUrl },
             { name: "Omar Courtz", img: moonlightCoverUrl },
@@ -960,8 +918,7 @@
             "Lagunas": "#060D1F",
             "Emociones": "#1C3240",
             "PIKA PIKA": "#AC8E5C",
-            "MOONLIGHT": "#0115CA",
-            "Caperuza": "#000000"
+            "MOONLIGHT": "#0115CA"
         };
 
         /* ==================================================================
@@ -1043,17 +1000,24 @@
         function haptic() { if (navigator.vibrate) navigator.vibrate(10); }
 
         /* ==================================================================
-           DYNAMIC COLOR MAPPING
+           DYNAMIC COLOR MAPPING & SOLID COLOR GRADIENT GENERATOR
            ================================================================== */
-        function getColorForSong(songTitle) {
-            const normalizedTitle = songTitle.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
-            for (const key of Object.keys(songColors)) {
-                const normalizedKey = key.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
-                if (normalizedTitle === normalizedKey || normalizedTitle.includes(normalizedKey)) {
-                    return songColors[key];
-                }
-            }
-            return "#050507";
+        function getColorForSong(title) {
+            const normalized = title.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+            
+            if (normalized === "religion") return songColors["Religión"];
+            if (normalized === "talento") return songColors["Talento"];
+            if (normalized === "yeye") return songColors["YeYe"];
+            if (normalized === "222") return songColors["222"];
+            if (normalized === "4 life") return songColors["4 Life"];
+            if (normalized.includes("444")) return songColors["444 - Remix"];
+            if (normalized === "cologne") return songColors["Cologne"];
+            if (normalized === "lagunas") return songColors["Lagunas"];
+            if (normalized === "pika pika") return songColors["PIKA PIKA"];
+            if (normalized === "emociones") return songColors["Emociones"];
+            if (normalized === "moonlight") return songColors["MOONLIGHT"];
+            
+            return "#050507"; // default fallback dark background
         }
 
         function updateDynamicBackgroundForSong(songTitle) {
@@ -1065,6 +1029,7 @@
             if (!bgBack || !bgFront) return;
             
             const color = getColorForSong(songTitle);
+            
             const currentColor = bgFront.style.backgroundColor || bgFront.style.background;
             if (currentColor === color) return;
             
@@ -1386,6 +1351,7 @@
 
         /* ==================================================================
            LYRICS ENGINE — real @applemusic-like-lyrics/core player
+           (the same DomLyricPlayer engine used by the AMLL TTML Tool preview)
            ================================================================== */
         let lyricPlayer = null;
 
@@ -1462,6 +1428,7 @@
                     console.error("XML Parsing Error in TTML:", parserError[0].textContent);
                 }
 
+                // Namespace-independent search to support any prefixed tags like tt:p or ttml:p
                 let pTags = xmlDoc.getElementsByTagNameNS ? xmlDoc.getElementsByTagNameNS('*', 'p') : [];
                 if (pTags.length === 0) {
                     pTags = xmlDoc.getElementsByTagName('p');
@@ -1476,6 +1443,7 @@
                     const endAttr = p.getAttribute('end');
                     const pEnd = endAttr ? parseTTMLTime(endAttr) : 0;
 
+                    // Duet vocalist identification
                     const pAgent = getAttributeInsensitive(p, 'agent') || '';
                     const pStyle = getAttributeInsensitive(p, 'style') || '';
                     const pClass = getAttributeInsensitive(p, 'class') || p.className || '';
@@ -1605,65 +1573,6 @@
             });
         }
 
-        /* ==================================================================
-           CREDITS & COPYRIGHT EXTRACTOR (RELIABLE REGEX + XML FALLBACK)
-           ================================================================== */
-        function extractCreditsFromTTML(text) {
-            const writers = [];
-            let copyright = '';
-
-            try {
-                // 1. Regex Match for name tags (extremely robust against namespace parser errors)
-                const nameRegex = /<(?:[a-z0-9\-]+:)?name[^>]*>([^<]+)<\/(?:[a-z0-9\-]+:)?name>/gi;
-                let match;
-                while ((match = nameRegex.exec(text)) !== null) {
-                    const name = match[1].trim();
-                    if (name && !writers.includes(name) && name.toLowerCase() !== 'vocals' && name.toLowerCase() !== 'vocalist') {
-                        writers.push(name);
-                    }
-                }
-
-                // 2. Regex Match for copyright tags
-                const copyrightRegex = /<(?:[a-z0-9\-]+:)?copyright[^>]*>([^<]+)<\/(?:[a-z0-9\-]+:)?copyright>/i;
-                const copyMatch = text.match(copyrightRegex);
-                if (copyMatch) {
-                    copyright = copyMatch[1].trim()
-                        .replace(/&amp;/g, '&')
-                        .replace(/&quot;/g, '"')
-                        .replace(/&apos;/g, "'")
-                        .replace(/&lt;/g, '<')
-                        .replace(/&gt;/g, '>');
-                }
-
-                // 3. XML Parser Fallback if regex extracted nothing
-                if (writers.length === 0) {
-                    const parser = new DOMParser();
-                    const xmlDoc = parser.parseFromString(text, "text/xml");
-                    
-                    let agents = xmlDoc.getElementsByTagNameNS ? xmlDoc.getElementsByTagNameNS('*', 'agent') : [];
-                    if (agents.length === 0) agents = xmlDoc.getElementsByTagName('agent');
-                    
-                    Array.from(agents).forEach(agent => {
-                        const nameEl = agent.getElementsByTagNameNS ? agent.getElementsByTagNameNS('*', 'name')[0] : agent.getElementsByTagName('name')[0];
-                        if (nameEl && nameEl.textContent) {
-                            const name = nameEl.textContent.trim();
-                            if (name && !writers.includes(name)) writers.push(name);
-                        }
-                    });
-                }
-            } catch (e) {
-                console.error("Error during credits extraction process:", e);
-            }
-
-            if (writers.length > 0 || copyright) {
-                return {
-                    writers: writers,
-                    copyright: copyright
-                };
-            }
-            return null;
-        }
-
         async function fetchLyrics(url) {
             const container = document.getElementById('lyrics-content');
             let player;
@@ -1674,10 +1583,6 @@
                 console.error("Failed to initialize AMLL lyric player:", e);
                 return;
             }
-
-            // Clean up any remaining credits elements before loading new track
-            const existingFooter = document.getElementById('lyric-credits-footer');
-            if (existingFooter) existingFooter.remove();
 
             let emptyState = document.getElementById('lyrics-empty-state');
 
@@ -1702,25 +1607,6 @@
                 if(!lyricLines.length) throw new Error('Empty lyric file parsed');
                 player.setLyricLines(lyricLines, activeAudio.currentTime * 1000);
                 player.calcLayout(true, true);
-
-                // --- ADD CREDITS FOOTER ---
-                const creditsData = extractCreditsFromTTML(text);
-                if (creditsData && creditsData.writers && creditsData.writers.length > 0) {
-                    const footer = document.createElement('div');
-                    footer.id = 'lyric-credits-footer';
-                    footer.className = 'amll-credits-footer';
-                    
-                    let writersHTML = `<h3>Créditos</h3><p>${creditsData.writers.join('<br>')}</p>`;
-                    if (creditsData.copyright) {
-                        writersHTML += `<p style="margin-top: 16px; font-size: 13px; opacity: 0.5;">${creditsData.copyright}</p>`;
-                    }
-                    footer.innerHTML = writersHTML;
-                    
-                    const playerEl = player.getElement();
-                    // Append directly to the outer container. This protects the node 
-                    // from being deleted during virtual DOM rendering of the active lines list.
-                    playerEl.appendChild(footer);
-                }
             } catch(e) {
                 console.error("Error loading or parsing lyrics:", e);
                 player.setLyricLines([]);
@@ -1734,6 +1620,7 @@
                 emptyState.style.display = 'flex';
             }
         }
+
 
         function fmt(s) { return `${Math.floor(s/60)}:${Math.floor(s%60).toString().padStart(2,'0')}`; }
 
