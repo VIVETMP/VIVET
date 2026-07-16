@@ -426,7 +426,7 @@
                 padding: 0; margin: 0;
             }
 
-            /* AMLL Core Theme Settings - Pure white base text fill with exact 58px / weight 800 scales */
+            /* AMLL Theme Settings - Pure white base text fill with exact 58px / weight 800 scales */
             #lyrics-content {
                 width: 100%;
                 height: 100%;
@@ -451,6 +451,39 @@
         }
         .lyrics-empty-state p {
             color: rgba(255,255,255,0.3); font-size: 32px; font-weight: 800;
+        }
+
+        /* Credits style at the end of lyrics */
+        .amll-credits-footer {
+            margin-top: 80px;
+            padding: 40px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 15px;
+            line-height: 1.6;
+            font-family: var(--font-main);
+            text-align: left;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .amll-credits-footer h3 {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 12px;
+            color: rgba(255, 255, 255, 0.35);
+            font-weight: 700;
+        }
+        .amll-credits-footer p {
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.6);
+        }
+        @media (max-width: 1024px) {
+            .amll-credits-footer {
+                margin-top: 40px;
+                padding: 24px 0;
+                font-size: 13px;
+            }
         }
 
         /* ==================================================================
@@ -511,7 +544,7 @@
             .np-track-title { font-size: 22px; white-space: normal; line-height: 1.2; }
             .np-track-artist { font-size: 18px; }
             
-            /* Keep Scrubber and Controls always visible on touch/mobile devices for flawless usage */
+            /* Keep Scrubber and Controls always visible on touch/mobile devices for usage */
             .np-scrubber-group,
             .np-main-controls { 
                 position: relative; opacity: 1 !important; transform: none !important; pointer-events: auto !important; margin-top: 10px; gap: 24px;
@@ -555,7 +588,7 @@
             <section id="view-songs" class="view-section active">
                 <div class="page-header">
                     <h1>Listen Now</h1>
-                    <p>Curated top picks and the latest essential releases.</p>
+                    <p>Curated top picks and the latest releases.</p>
                 </div>
                 <div class="grid-container" id="grid-songs"></div>
             </section>
@@ -745,7 +778,7 @@
 
     <script>
         /* ==================================================================
-           DATA (Religion, Talento, YeYe, 222, 4 Life, 444, Cologne, Lagunas, Emociones, PIKA PIKA, MOONLIGHT)
+           DATA (Religion, Talento, YeYe, 222, 4 Life, 444, Cologne, Lagunas, Emociones, PIKA PIKA, MOONLIGHT, Caperuza)
            ================================================================== */
         const religionCoverUrl = "https://files.catbox.moe/bvfrst.jpg";
         const talentoCoverUrl  = "https://files.catbox.moe/bpjz9c.jpg";
@@ -758,6 +791,7 @@
         const emocionesCoverUrl = "https://files.catbox.moe/wla4pw.jpg";
         const pikapikaCoverUrl  = "https://files.catbox.moe/ej9nbi.jpg";
         const moonlightCoverUrl = "https://files.catbox.moe/nx3g9e.jpg";
+        const caperuzaCoverUrl = "https://files.catbox.moe/k9ppt2.jpg";
 
         const albumsData = [ 
             { id: "religion-single", title: "Religión", artist: "Yan Block", cover: religionCoverUrl, year: "2026" },
@@ -770,7 +804,8 @@
             { id: "lagunas-single", title: "Lagunas", artist: "Peso Pluma & Jasiel Nuñez", cover: lagunasCoverUrl, year: "2026" },
             { id: "emociones-single", title: "Emociones", artist: "Hades66", cover: emocionesCoverUrl, year: "2026" },
             { id: "pikapika-single", title: "PIKA PIKA", artist: "Chuyin, Fuerza Regida, Jorsshh & Calle 24", cover: pikapikaCoverUrl, year: "2026" },
-            { id: "moonlight-single", title: "MOONLIGHT", artist: "Omar Courtz & Eladio Carrión", cover: moonlightCoverUrl, year: "2026" }
+            { id: "moonlight-single", title: "MOONLIGHT", artist: "Omar Courtz & Eladio Carrión", cover: moonlightCoverUrl, year: "2026" },
+            { id: "caperuza-single", title: "Caperuza", artist: "Fuerza Regida", cover: caperuzaCoverUrl, year: "2026" }
         ];
 
         const cancionesData = [
@@ -883,6 +918,16 @@
                 album: "moonlight-single",
                 trackNum: 1,
                 coverLoaded: true
+            },
+            { 
+                title: "Caperuza", 
+                artist: "Fuerza Regida", 
+                url: "https://files.catbox.moe/osu8cp.mp3", 
+                lrc: "https://files.catbox.moe/dtvjmc.ttml",
+                cover: caperuzaCoverUrl,
+                album: "caperuza-single",
+                trackNum: 1,
+                coverLoaded: true
             }
         ];
 
@@ -897,7 +942,7 @@
             { name: "Peso Pluma", img: lagunasCoverUrl },
             { name: "Jasiel Nuñez", img: lagunasCoverUrl },
             { name: "Chuyin", img: pikapikaCoverUrl },
-            { name: "Fuerza Regida", img: pikapikaCoverUrl },
+            { name: "Fuerza Regida", img: caperuzaCoverUrl },
             { name: "Jorsshh", img: pikapikaCoverUrl },
             { name: "Calle 24", img: pikapikaCoverUrl },
             { name: "Omar Courtz", img: moonlightCoverUrl },
@@ -918,7 +963,8 @@
             "Lagunas": "#060D1F",
             "Emociones": "#1C3240",
             "PIKA PIKA": "#AC8E5C",
-            "MOONLIGHT": "#0115CA"
+            "MOONLIGHT": "#0115CA",
+            "Caperuza": "#000000"
         };
 
         /* ==================================================================
@@ -1002,21 +1048,14 @@
         /* ==================================================================
            DYNAMIC COLOR MAPPING & SOLID COLOR GRADIENT GENERATOR
            ================================================================== */
-        function getColorForSong(title) {
-            const normalized = title.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
-            
-            if (normalized === "religion") return songColors["Religión"];
-            if (normalized === "talento") return songColors["Talento"];
-            if (normalized === "yeye") return songColors["YeYe"];
-            if (normalized === "222") return songColors["222"];
-            if (normalized === "4 life") return songColors["4 Life"];
-            if (normalized.includes("444")) return songColors["444 - Remix"];
-            if (normalized === "cologne") return songColors["Cologne"];
-            if (normalized === "lagunas") return songColors["Lagunas"];
-            if (normalized === "pika pika") return songColors["PIKA PIKA"];
-            if (normalized === "emociones") return songColors["Emociones"];
-            if (normalized === "moonlight") return songColors["MOONLIGHT"];
-            
+        function getColorForSong(songTitle) {
+            const normalizedTitle = songTitle.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+            for (const key of Object.keys(songColors)) {
+                const normalizedKey = key.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+                if (normalizedTitle === normalizedKey || normalizedTitle.includes(normalizedKey)) {
+                    return songColors[key];
+                }
+            }
             return "#050507"; // default fallback dark background
         }
 
@@ -1573,6 +1612,75 @@
             });
         }
 
+        /* ==================================================================
+           CREDITS & COPYRIGHT EXTRACTOR
+           ================================================================== */
+        function extractCreditsFromTTML(text) {
+            try {
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(text, "text/xml");
+                
+                // Extract Writers / Composers from agents
+                let agents = xmlDoc.getElementsByTagNameNS ? xmlDoc.getElementsByTagNameNS('*', 'agent') : [];
+                if (agents.length === 0) {
+                    agents = xmlDoc.getElementsByTagName('agent');
+                }
+                
+                const writers = [];
+                Array.from(agents).forEach(agent => {
+                    const nameEl = agent.getElementsByTagNameNS ? agent.getElementsByTagNameNS('*', 'name')[0] : agent.getElementsByTagName('name')[0];
+                    if (nameEl && nameEl.textContent) {
+                        const name = nameEl.textContent.trim();
+                        if (name && !writers.includes(name)) {
+                            writers.push(name);
+                        }
+                    }
+                });
+
+                // Check other metadata tags for custom credit information
+                let metadata = xmlDoc.getElementsByTagNameNS ? xmlDoc.getElementsByTagNameNS('*', 'metadata') : [];
+                if (metadata.length === 0) {
+                    metadata = xmlDoc.getElementsByTagName('metadata');
+                }
+                
+                const otherCredits = [];
+                Array.from(metadata).forEach(meta => {
+                    const children = Array.from(meta.childNodes);
+                    children.forEach(child => {
+                        const localName = child.localName ? child.localName.toLowerCase() : '';
+                        if (localName.includes('writers') || localName.includes('credits') || localName.includes('composer')) {
+                            if (child.textContent) {
+                                const content = child.textContent.trim();
+                                if (content) otherCredits.push(content);
+                            }
+                        }
+                    });
+                });
+
+                // Extract copyrights
+                let copyrights = xmlDoc.getElementsByTagNameNS ? xmlDoc.getElementsByTagNameNS('*', 'copyright') : [];
+                if (copyrights.length === 0) {
+                    copyrights = xmlDoc.getElementsByTagName('copyright');
+                }
+                let copyright = '';
+                if (copyrights.length > 0 && copyrights[0].textContent) {
+                    copyright = copyrights[0].textContent.trim();
+                }
+
+                const resultWriters = writers.length > 0 ? writers : (otherCredits.length > 0 ? otherCredits : []);
+                if (resultWriters.length > 0 || copyright) {
+                    return {
+                        writers: resultWriters,
+                        copyright: copyright,
+                        source: writers.length > 0 ? 'agents' : 'metadata'
+                    };
+                }
+            } catch (e) {
+                console.error("Error extracting credits from TTML:", e);
+            }
+            return null;
+        }
+
         async function fetchLyrics(url) {
             const container = document.getElementById('lyrics-content');
             let player;
@@ -1583,6 +1691,10 @@
                 console.error("Failed to initialize AMLL lyric player:", e);
                 return;
             }
+
+            // Always clear existing credits first
+            const existingFooter = document.getElementById('lyric-credits-footer');
+            if (existingFooter) existingFooter.remove();
 
             let emptyState = document.getElementById('lyrics-empty-state');
 
@@ -1607,6 +1719,24 @@
                 if(!lyricLines.length) throw new Error('Empty lyric file parsed');
                 player.setLyricLines(lyricLines, activeAudio.currentTime * 1000);
                 player.calcLayout(true, true);
+
+                // --- ADD CREDITS FOOTER ---
+                const creditsData = extractCreditsFromTTML(text);
+                if (creditsData && creditsData.writers && creditsData.writers.length > 0) {
+                    const footer = document.createElement('div');
+                    footer.id = 'lyric-credits-footer';
+                    footer.className = 'amll-credits-footer';
+                    
+                    let writersHTML = `<h3>Créditos</h3><p>${creditsData.writers.join('<br>')}</p>`;
+                    if (creditsData.copyright) {
+                        writersHTML += `<p style="margin-top: 16px; font-size: 13px; opacity: 0.5;">${creditsData.copyright}</p>`;
+                    }
+                    footer.innerHTML = writersHTML;
+                    
+                    const playerEl = player.getElement();
+                    const targetContainer = playerEl.querySelector('.amll-lyric-list') || playerEl;
+                    targetContainer.appendChild(footer);
+                }
             } catch(e) {
                 console.error("Error loading or parsing lyrics:", e);
                 player.setLyricLines([]);
@@ -1620,7 +1750,6 @@
                 emptyState.style.display = 'flex';
             }
         }
-
 
         function fmt(s) { return `${Math.floor(s/60)}:${Math.floor(s%60).toString().padStart(2,'0')}`; }
 
