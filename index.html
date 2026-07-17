@@ -745,7 +745,7 @@
 
     <script>
         /* ==================================================================
-           DATA (Religion, Talento, YeYe, 222, 4 Life, 444, Cologne, Lagunas, Emociones, PIKA PIKA, MOONLIGHT, Pensándote, Dile a Él, Tú y Yo)
+           DATA (Religion, Talento, YeYe, 222, 4 Life, 444, Cologne, Lagunas, Emociones, PIKA PIKA, MOONLIGHT, Pensándote, Dile a Él, Tú y Yo, Bellakita)
            ================================================================== */
         const religionCoverUrl = "https://files.catbox.moe/bvfrst.jpg";
         const talentoCoverUrl  = "https://files.catbox.moe/bpjz9c.jpg";
@@ -761,6 +761,7 @@
         const pensandoteCoverUrl = "https://files.catbox.moe/eklvl0.jpg";
         const dileaelCoverUrl = "https://files.catbox.moe/eklvl0.jpg";
         const tuyyoCoverUrl = "https://file.garden/alq0ENqplE9QfqJV/TU%20Y%20YO%20cover.jpg";
+        const bellakitaCoverUrl = "https://file.garden/alq0ENqplE9QfqJV/Bellakita%20cover.jpg";
 
         const albumsData = [ 
             { id: "religion-single", title: "Religión", artist: "Yan Block", cover: religionCoverUrl, year: "2026" },
@@ -776,7 +777,8 @@
             { id: "moonlight-single", title: "MOONLIGHT", artist: "Omar Courtz & Eladio Carrión", cover: moonlightCoverUrl, year: "2026" },
             { id: "pensandote-single", title: "Pensándote", artist: "Rauw Alejandro", cover: pensandoteCoverUrl, year: "2026" },
             { id: "dileael-single", title: "Dile a Él", artist: "Rauw Alejandro", cover: dileaelCoverUrl, year: "2026" },
-            { id: "tuyyo-single", title: "Tú y Yo", artist: "ROA", cover: tuyyoCoverUrl, year: "2026" }
+            { id: "tuyyo-single", title: "Tú y Yo", artist: "ROA", cover: tuyyoCoverUrl, year: "2026" },
+            { id: "bellakita-single", title: "Bellakita", artist: "CDobleta", cover: bellakitaCoverUrl, year: "2026" }
         ];
 
         const cancionesData = [
@@ -919,6 +921,16 @@
                 album: "tuyyo-single",
                 trackNum: 1,
                 coverLoaded: true
+            },
+            { 
+                title: "Bellakita", 
+                artist: "CDobleta", 
+                url: "https://file.garden/alq0ENqplE9QfqJV/CDobleta%20-%20Bellakita%20(SPOTISAVER).mp3", 
+                lrc: "https://file.garden/alq0ENqplE9QfqJV/BELLAKITA%20-%20CDOBLETA.ttml",
+                cover: bellakitaCoverUrl,
+                album: "bellakita-single",
+                trackNum: 1,
+                coverLoaded: true
             }
         ];
 
@@ -939,7 +951,8 @@
             { name: "Omar Courtz", img: moonlightCoverUrl },
             { name: "Eladio Carrión", img: moonlightCoverUrl },
             { name: "Rauw Alejandro", img: pensandoteCoverUrl },
-            { name: "ROA", img: tuyyoCoverUrl }
+            { name: "ROA", img: tuyyoCoverUrl },
+            { name: "CDobleta", img: bellakitaCoverUrl }
         ];
 
         /* ==================================================================
@@ -959,7 +972,8 @@
             "MOONLIGHT": "#0115CA",
             "Pensándote": "#000000",
             "Dile a Él": "#000000",
-            "Tú y Yo": "#000000"
+            "Tú y Yo": "#000000",
+            "Bellakita": "#C0171E"
         };
 
         /* ==================================================================
@@ -1013,14 +1027,19 @@
             const highpass = audioCtx.createBiquadFilter(); highpass.type = 'highpass'; highpass.frequency.value = 0;
             const lowpass = audioCtx.createBiquadFilter(); lowpass.type = 'lowpass'; lowpass.frequency.value = 22000;
             const bass = audioCtx.createBiquadFilter(); bass.type = 'lowshelf'; bass.frequency.value = 200; bass.gain.value = 0;
-            const delay = audioCtx.createDelay(5.0); delay.delayTime.value = 0.45;
-            const feedback = audioCtx.createGain(); feedback.gain.value = 0; delay.connect(feedback); feedback.connect(delay);
-            const delayOut = audioCtx.createGain(); delayOut.gain.value = 0; delay.connect(delayOut);
+            const delay = createDelayNode(audioCtx);
             const deckGain = audioCtx.createGain(); deckGain.gain.value = 1;
             
-            source.connect(highpass); highpass.connect(lowpass); lowpass.connect(bass); bass.connect(deckGain); bass.connect(delay);
-            deckGain.connect(masterCompressor); delayOut.connect(masterCompressor);
-            return { source, highpass, lowpass, bass, delay, feedback, delayOut, deckGain };
+            function createDelayNode(ctx) {
+                const d = ctx.createDelay(5.0); d.delayTime.value = 0.45;
+                const f = ctx.createGain(); f.gain.value = 0; d.connect(f); f.connect(d);
+                const o = ctx.createGain(); o.gain.value = 0; d.connect(o);
+                return { delay: d, feedback: f, delayOut: o };
+            }
+            
+            source.connect(highpass); highpass.connect(lowpass); lowpass.connect(bass); bass.connect(deckGain); bass.connect(delay.delay);
+            deckGain.connect(masterCompressor); delay.delayOut.connect(masterCompressor);
+            return { source, highpass, lowpass, bass, delay: delay.delay, feedback: delay.feedback, delayOut: delay.delayOut, deckGain };
         }
 
         function resetDeckFX(deck) {
@@ -1060,6 +1079,7 @@
             if (normalized === "pensandote") return songColors["Pensándote"];
             if (normalized === "dile a el") return songColors["Dile a Él"];
             if (normalized === "tu y yo") return songColors["Tú y Yo"];
+            if (normalized === "bellakita") return songColors["Bellakita"];
             
             return "#050507"; // default fallback dark background
         }
