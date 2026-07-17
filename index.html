@@ -649,10 +649,10 @@
             <div class="progress-mini-wrapper"><div class="progress-mini-fill" id="bar-fill-mini"></div></div>
             
             <div class="player-info" onclick="toggleNP()">
-                <img src="https://res.cloudinary.com/fuvvrcof/image/upload/v1784235975/Qu%C3%A9_Nos_Pas%C3%B3_cover_1_dmr278.jpg" id="player-img" class="player-img" crossorigin="anonymous">
+                <img src="https://files.catbox.moe/bvfrst.jpg" id="player-img" class="player-img" crossorigin="anonymous">
                 <div class="player-meta">
-                    <div class="player-title"><span id="player-title">¿Qué Nos Pasó?</span> <div class="ai-badge" id="badge-pill">Mix</div></div>
-                    <div class="player-artist" id="player-artist">Anuel AA</div>
+                    <div class="player-title"><span id="player-title">Religión</span> <div class="ai-badge" id="badge-pill">Mix</div></div>
+                    <div class="player-artist" id="player-artist">Yan Block</div>
                 </div>
             </div>
 
@@ -698,14 +698,14 @@
             <div class="np-left-pane">
                 <div class="np-left-content">
                     <div class="np-art-wrap" onclick="togglePlay()">
-                        <img src="https://res.cloudinary.com/fuvvrcof/image/upload/v1784235975/Qu%C3%A9_Nos_Pas%C3%B3_cover_1_dmr278.jpg" id="np-img-large" class="np-art" crossorigin="anonymous">
+                        <img src="https://files.catbox.moe/bvfrst.jpg" id="np-img-large" class="np-art" crossorigin="anonymous">
                     </div>
                     
                     <div class="np-info-block">
                         <!-- Meta info centered directly beneath the artwork with precise gaps -->
                         <div class="np-track-info-center">
-                            <h2 class="np-track-title"><span id="np-title-large">¿Qué Nos Pasó?</span></h2>
-                            <p class="np-track-artist" id="np-artist-large">Anuel AA</p>
+                            <h2 class="np-track-title"><span id="np-title-large">Religión</span></h2>
+                            <p class="np-track-artist" id="np-artist-large">Yan Block</p>
                         </div>
 
                         <!-- Progress bar (fades in on hover for desktop, always visible on mobile) -->
@@ -745,9 +745,8 @@
 
     <script>
         /* ==================================================================
-           DATA (Que Nos Paso, Religion, Talento, YeYe, 222, 4 Life, 444, Cologne, Lagunas, Emociones, PIKA PIKA, MOONLIGHT)
+           DATA (Religion, Talento, YeYe, 222, 4 Life, 444, Cologne, Lagunas, Emociones, PIKA PIKA, MOONLIGHT)
            ================================================================== */
-        const queNosPasoCoverUrl = "https://res.cloudinary.com/fuvvrcof/image/upload/v1784235975/Qu%C3%A9_Nos_Pas%C3%B3_cover_1_dmr278.jpg";
         const religionCoverUrl = "https://files.catbox.moe/bvfrst.jpg";
         const talentoCoverUrl  = "https://files.catbox.moe/bpjz9c.jpg";
         const yeyeCoverUrl     = "https://files.catbox.moe/jfktck.jpg";
@@ -761,7 +760,6 @@
         const moonlightCoverUrl = "https://files.catbox.moe/nx3g9e.jpg";
 
         const albumsData = [ 
-            { id: "que-nos-paso-single", title: "¿Qué Nos Pasó?", artist: "Anuel AA", cover: queNosPasoCoverUrl, year: "2026" },
             { id: "religion-single", title: "Religión", artist: "Yan Block", cover: religionCoverUrl, year: "2026" },
             { id: "talento-single", title: "Talento", artist: "Yan Block", cover: talentoCoverUrl, year: "2026" },
             { id: "yeye-single", title: "YeYe", artist: "Yan Block", cover: yeyeCoverUrl, year: "2026" },
@@ -776,16 +774,6 @@
         ];
 
         const cancionesData = [
-            { 
-                title: "¿Qué Nos Pasó?", 
-                artist: "Anuel AA", 
-                url: "https://res.cloudinary.com/fuvvrcof/video/upload/v1784235947/Anuel_AA_-_Qu%C3%A9_Nos_Pas%C3%B3_SPOTISAVER_iyagjm.mp3", 
-                lrc: "https://res.cloudinary.com/fuvvrcof/raw/upload/v1784235969/Anuel_AA_-_Qu%C3%A9_Nos_Pas%C3%B3__bguypl.ttml",
-                cover: queNosPasoCoverUrl,
-                album: "que-nos-paso-single",
-                trackNum: 1,
-                coverLoaded: true
-            },
             { 
                 title: "Religión", 
                 artist: "Yan Block", 
@@ -899,7 +887,6 @@
         ];
 
         const artistsData = [
-            { name: "Anuel AA", img: queNosPasoCoverUrl },
             { name: "Yan Block", img: religionCoverUrl },
             { name: "Kris R", img: fourLifeCoverUrl },
             { name: "De La Rose", img: remix444CoverUrl },
@@ -921,7 +908,6 @@
            PREDEFINED SINGLE COLORS
            ================================================================== */
         const songColors = {
-            "¿Qué Nos Pasó?": "#210759",
             "Religión": "#8C7120",
             "Talento": "#595959",
             "YeYe": "#F2F2F2",
@@ -1016,10 +1002,9 @@
         /* ==================================================================
            DYNAMIC COLOR MAPPING & SOLID COLOR GRADIENT GENERATOR
            ================================================================== */
-        function getColorForSong(songTitle) {
-            const normalized = songTitle.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+        function getColorForSong(title) {
+            const normalized = title.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
             
-            if (normalized === "que nos paso" || normalized === "¿que nos paso?") return songColors["¿Qué Nos Pasó?"];
             if (normalized === "religion") return songColors["Religión"];
             if (normalized === "talento") return songColors["Talento"];
             if (normalized === "yeye") return songColors["YeYe"];
@@ -1322,7 +1307,6 @@
             else { activeAudio.pause(); setPlayIcon(false); }
         }
 
-        // Modificado para usar la cantidad real de canciones de la lista actualizable
         function nextSong() { haptic(); playSong((currentPlayingIndex + 1) % cancionesData.length); }
         function prevSong() { haptic(); playSong((currentPlayingIndex - 1 + cancionesData.length) % cancionesData.length); }
         
