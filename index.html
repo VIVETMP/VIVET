@@ -745,7 +745,7 @@
 
     <script>
         /* ==================================================================
-           DATA (Religion, Talento, YeYe, 222, 4 Life, 444, Cologne, Lagunas, Emociones, PIKA PIKA, MOONLIGHT, Pensándote, Dile a Él)
+           DATA (Religion, Talento, YeYe, 222, 4 Life, 444, Cologne, Lagunas, Emociones, PIKA PIKA, MOONLIGHT, Pensándote, Dile a Él, Tú y Yo)
            ================================================================== */
         const religionCoverUrl = "https://files.catbox.moe/bvfrst.jpg";
         const talentoCoverUrl  = "https://files.catbox.moe/bpjz9c.jpg";
@@ -760,6 +760,7 @@
         const moonlightCoverUrl = "https://files.catbox.moe/nx3g9e.jpg";
         const pensandoteCoverUrl = "https://files.catbox.moe/eklvl0.jpg";
         const dileaelCoverUrl = "https://files.catbox.moe/eklvl0.jpg";
+        const tuyyoCoverUrl = "https://file.garden/alq0ENqplE9QfqJV/TU%20Y%20YO%20cover.jpg";
 
         const albumsData = [ 
             { id: "religion-single", title: "Religión", artist: "Yan Block", cover: religionCoverUrl, year: "2026" },
@@ -774,7 +775,8 @@
             { id: "pikapika-single", title: "PIKA PIKA", artist: "Chuyin, Fuerza Regida, Jorsshh & Calle 24", cover: pikapikaCoverUrl, year: "2026" },
             { id: "moonlight-single", title: "MOONLIGHT", artist: "Omar Courtz & Eladio Carrión", cover: moonlightCoverUrl, year: "2026" },
             { id: "pensandote-single", title: "Pensándote", artist: "Rauw Alejandro", cover: pensandoteCoverUrl, year: "2026" },
-            { id: "dileael-single", title: "Dile a Él", artist: "Rauw Alejandro", cover: dileaelCoverUrl, year: "2026" }
+            { id: "dileael-single", title: "Dile a Él", artist: "Rauw Alejandro", cover: dileaelCoverUrl, year: "2026" },
+            { id: "tuyyo-single", title: "Tú y Yo", artist: "ROA", cover: tuyyoCoverUrl, year: "2026" }
         ];
 
         const cancionesData = [
@@ -907,6 +909,16 @@
                 album: "dileael-single",
                 trackNum: 1,
                 coverLoaded: true
+            },
+            { 
+                title: "Tú y Yo", 
+                artist: "ROA", 
+                url: "https://file.garden/alq0ENqplE9QfqJV/TU%20Y%20YO_spotdown.org.mp3", 
+                lrc: "https://file.garden/alq0ENqplE9QfqJV/TU%20Y%20YO%20-%20ROA.ttml",
+                cover: tuyyoCoverUrl,
+                album: "tuyyo-single",
+                trackNum: 1,
+                coverLoaded: true
             }
         ];
 
@@ -926,7 +938,8 @@
             { name: "Calle 24", img: pikapikaCoverUrl },
             { name: "Omar Courtz", img: moonlightCoverUrl },
             { name: "Eladio Carrión", img: moonlightCoverUrl },
-            { name: "Rauw Alejandro", img: pensandoteCoverUrl }
+            { name: "Rauw Alejandro", img: pensandoteCoverUrl },
+            { name: "ROA", img: tuyyoCoverUrl }
         ];
 
         /* ==================================================================
@@ -945,7 +958,8 @@
             "PIKA PIKA": "#AC8E5C",
             "MOONLIGHT": "#0115CA",
             "Pensándote": "#000000",
-            "Dile a Él": "#000000"
+            "Dile a Él": "#000000",
+            "Tú y Yo": "#000000"
         };
 
         /* ==================================================================
@@ -1045,6 +1059,7 @@
             if (normalized === "moonlight") return songColors["MOONLIGHT"];
             if (normalized === "pensandote") return songColors["Pensándote"];
             if (normalized === "dile a el") return songColors["Dile a Él"];
+            if (normalized === "tu y yo") return songColors["Tú y Yo"];
             
             return "#050507"; // default fallback dark background
         }
@@ -1432,7 +1447,6 @@
         }
 
         // Helper to query attributes dynamically without namespace prefix issues
-        // (Supports ttml parameters or any namespaced attribute syntax correctly)
         function getAttributeInsensitive(element, attrName) {
             if (!element || !element.attributes) return '';
             for (let i = 0; i < element.attributes.length; i++) {
