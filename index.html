@@ -901,8 +901,8 @@
             { 
                 title: "Dile a Él", 
                 artist: "Rauw Alejandro", 
-                url: "https://files.catbox.moe/c026rt.mp3", 
-                lrc: "https://files.catbox.moe/33ze6e.ttml",
+                url: "https://file.garden/alq0ENqplE9QfqJV/Rauw%20Alejandro%20-%20Dile%20a%20El%20(SPOTISAVER).mp3", 
+                lrc: "https://file.garden/alq0ENqplE9QfqJV/Dile%20A%20El.ttml",
                 cover: dileaelCoverUrl,
                 album: "dileael-single",
                 trackNum: 1,
@@ -1432,6 +1432,7 @@
         }
 
         // Helper to query attributes dynamically without namespace prefix issues
+        // (Supports ttml parameters or any namespaced attribute syntax correctly)
         function getAttributeInsensitive(element, attrName) {
             if (!element || !element.attributes) return '';
             for (let i = 0; i < element.attributes.length; i++) {
