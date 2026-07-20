@@ -86,7 +86,7 @@
             display: flex;
             user-select: none;
             -webkit-font-smoothing: antialiased;
-            -moz-osx-smoothing: grayscale;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         /* ==================================================================
@@ -745,7 +745,7 @@
 
     <script>
         /* ==================================================================
-           DATA (Religion, Talento, YeYe, 222, 4 Life, 444, Cologne, Lagunas, Emociones, PIKA PIKA, MOONLIGHT, Pensándote, Dile a Él, Tú y Yo, Bellakita, VAMOaCOCHI)
+           DATA (Religion, Talento, YeYe, 222, 4 Life, 444, Cologne, Lagunas, Emociones, PIKA PIKA, MOONLIGHT, Pensándote, Dile a Él, Tú y Yo, Bellakita, VAMOaCOCHI, MONSTRUO)
            ================================================================== */
         const religionCoverUrl = "https://files.catbox.moe/bvfrst.jpg";
         const talentoCoverUrl  = "https://files.catbox.moe/bpjz9c.jpg";
@@ -763,6 +763,7 @@
         const tuyyoCoverUrl = "https://file.garden/alq0ENqplE9QfqJV/TU%20Y%20YO%20cover.jpg";
         const bellakitaCoverUrl = "https://file.garden/alq0ENqplE9QfqJV/Bellakita%20cover.jpg";
         const vamoacochiCoverUrl = "https://file.garden/alq0ENqplE9QfqJV/VAMOaCOCHI%20cover.jpg";
+        const monstruoCoverUrl = "https://file.garden/alq0ENqplE9QfqJV/MONSTRUO%20cover.jpg";
 
         const albumsData = [ 
             { id: "religion-single", title: "Religión", artist: "Yan Block", cover: religionCoverUrl, year: "2026" },
@@ -780,7 +781,8 @@
             { id: "dileael-single", title: "Dile a Él", artist: "Rauw Alejandro", cover: dileaelCoverUrl, year: "2026" },
             { id: "tuyyo-single", title: "Tú y Yo", artist: "ROA", cover: tuyyoCoverUrl, year: "2026" },
             { id: "bellakita-single", title: "Bellakita", artist: "CDobleta", cover: bellakitaCoverUrl, year: "2026" },
-            { id: "vamoacochi-single", title: "VAMOaCOCHI", artist: "Omar Courtz", cover: vamoacochiCoverUrl, year: "2026" }
+            { id: "vamoacochi-single", title: "VAMOaCOCHI", artist: "Omar Courtz", cover: vamoacochiCoverUrl, year: "2026" },
+            { id: "monstruo-single", title: "MONSTRUO", artist: "Tainy & Feid", cover: monstruoCoverUrl, year: "2026" }
         ];
 
         const cancionesData = [
@@ -943,6 +945,16 @@
                 album: "vamoacochi-single",
                 trackNum: 1,
                 coverLoaded: true
+            },
+            { 
+                title: "MONSTRUO", 
+                artist: "Tainy & Feid", 
+                url: "https://file.garden/alq0ENqplE9QfqJV/MONSTRUO_spotdown.org.mp3", 
+                lrc: "https://file.garden/alq0ENqplE9QfqJV/Tainy%20-%20MONSTRUO.ttml",
+                cover: monstruoCoverUrl,
+                album: "monstruo-single",
+                trackNum: 1,
+                coverLoaded: true
             }
         ];
 
@@ -964,7 +976,9 @@
             { name: "Eladio Carrión", img: moonlightCoverUrl },
             { name: "Rauw Alejandro", img: pensandoteCoverUrl },
             { name: "ROA", img: tuyyoCoverUrl },
-            { name: "CDobleta", img: bellakitaCoverUrl }
+            { name: "CDobleta", img: bellakitaCoverUrl },
+            { name: "Tainy", img: monstruoCoverUrl },
+            { name: "Feid", img: monstruoCoverUrl }
         ];
 
         /* ==================================================================
@@ -986,7 +1000,8 @@
             "Dile a Él": "#000000",
             "Tú y Yo": "#000000",
             "Bellakita": "#C0171E",
-            "VAMOaCOCHI": "#0114C9"
+            "VAMOaCOCHI": "#0114C9",
+            "MONSTRUO": "#EFE7D8"
         };
 
         /* ==================================================================
@@ -1089,6 +1104,7 @@
             if (normalized === "tu y yo") return songColors["Tú y Yo"];
             if (normalized === "bellakita") return songColors["Bellakita"];
             if (normalized === "vamoacochi") return songColors["VAMOaCOCHI"];
+            if (normalized === "monstruo") return songColors["MONSTRUO"];
             
             return "#050507"; // default fallback dark background
         }
