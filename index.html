@@ -86,7 +86,7 @@
             display: flex;
             user-select: none;
             -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
+            -moz-osx-smoothing: grayscale;
         }
 
         /* ==================================================================
@@ -1054,7 +1054,7 @@
             if(!audioCtx) return; const now = audioCtx.currentTime;
             deck.highpass.frequency.cancelScheduledValues(now); deck.highpass.frequency.setValueAtTime(0, now);
             deck.lowpass.frequency.cancelScheduledValues(now); deck.lowpass.frequency.setValueAtTime(22000, now);
-            deck.bass.bass.gain.cancelScheduledValues(now); deck.bass.gain.setValueAtTime(0, now);
+            deck.bass.gain.cancelScheduledValues(now); deck.bass.gain.setValueAtTime(0, now);
             deck.deckGain.gain.cancelScheduledValues(now); deck.deckGain.gain.setValueAtTime(1, now);
             deck.delayOut.gain.cancelScheduledValues(now); deck.delayOut.gain.setValueAtTime(0, now);
             deck.feedback.gain.cancelScheduledValues(now); deck.feedback.gain.setValueAtTime(0, now);
