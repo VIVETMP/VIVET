@@ -226,7 +226,7 @@
         .hero-stats { font-size: 15px; font-weight: 500; color: var(--text-secondary); margin-top: 8px; display: flex; align-items: center; gap: 12px;}
         .hero-actions { display: flex; gap: 16px; margin-top: 32px; }
         .btn-primary { background: #fff; color: #000; font-family: var(--font-display); font-weight: 700; font-size: 16px; padding: 16px 48px; border-radius: 100px; display: inline-flex; align-items: center; gap: 12px; cursor: pointer; transition: all 0.4s var(--ease-snappy); border: none; outline: none; box-shadow: 0 15px 30px rgba(255,255,255,0.2); }
-        .btn-primary:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 20px 40px rgba(255,255,255,0.3); }
+        .btn-primary:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 20px 40px rgba(255,255,255,0.3); box-shadow: 0 20px 40px rgba(255,255,255,0.3); }
         .btn-primary:active { transform: scale(0.96); }
 
         /* ==================================================================
@@ -745,7 +745,7 @@
 
     <script>
         /* ==================================================================
-           DATA (Religion, Talento, YeYe, 222, 4 Life, 444, Cologne, Lagunas, Emociones, PIKA PIKA, MOONLIGHT, Pensándote, Dile a Él, Tú y Yo, Bellakita, VAMOaCOCHI, MONSTRUO)
+           DATA (Religion, Talento, YeYe, 222, 4 Life, 444, Cologne, Lagunas, Emociones, PIKA PIKA, MOONLIGHT, Pensándote, Dile a Él, Tú y Yo, Bellakita, VAMOaCOCHI, MONSTRUO, TATE QUIETA)
            ================================================================== */
         const religionCoverUrl = "https://files.catbox.moe/bvfrst.jpg";
         const talentoCoverUrl  = "https://files.catbox.moe/bpjz9c.jpg";
@@ -764,6 +764,7 @@
         const bellakitaCoverUrl = "https://file.garden/alq0ENqplE9QfqJV/Bellakita%20cover.jpg";
         const vamoacochiCoverUrl = "https://file.garden/alq0ENqplE9QfqJV/VAMOaCOCHI%20cover.jpg";
         const monstruoCoverUrl = "https://file.garden/alq0ENqplE9QfqJV/MONSTRUO%20cover.jpg";
+        const tatequietaCoverUrl = "https://file.garden/alq0ENqplE9QfqJV/TATE%20QUIETA_640x640.jpg";
 
         const albumsData = [ 
             { id: "religion-single", title: "Religión", artist: "Yan Block", cover: religionCoverUrl, year: "2026" },
@@ -782,7 +783,8 @@
             { id: "tuyyo-single", title: "Tú y Yo", artist: "ROA", cover: tuyyoCoverUrl, year: "2026" },
             { id: "bellakita-single", title: "Bellakita", artist: "CDobleta", cover: bellakitaCoverUrl, year: "2026" },
             { id: "vamoacochi-single", title: "VAMOaCOCHI", artist: "Omar Courtz", cover: vamoacochiCoverUrl, year: "2026" },
-            { id: "monstruo-single", title: "MONSTRUO", artist: "Tainy & Feid", cover: monstruoCoverUrl, year: "2026" }
+            { id: "monstruo-single", title: "MONSTRUO", artist: "Tainy & Feid", cover: monstruoCoverUrl, year: "2026" },
+            { id: "tatequieta-single", title: "TATE QUIETA", artist: "ROA & CDobleta", cover: tatequietaCoverUrl, year: "2026" }
         ];
 
         const cancionesData = [
@@ -955,6 +957,16 @@
                 album: "monstruo-single",
                 trackNum: 1,
                 coverLoaded: true
+            },
+            { 
+                title: "TATE QUIETA", 
+                artist: "ROA & CDobleta", 
+                url: "https://file.garden/alq0ENqplE9QfqJV/TATE%20QUIETA_spotdown.org.mp3", 
+                lrc: "https://file.garden/alq0ENqplE9QfqJV/ROA%20-%20TATE%20QUIETA.ttml",
+                cover: tatequietaCoverUrl,
+                album: "tatequieta-single",
+                trackNum: 1,
+                coverLoaded: true
             }
         ];
 
@@ -1001,7 +1013,8 @@
             "Tú y Yo": "#000000",
             "Bellakita": "#C0171E",
             "VAMOaCOCHI": "#0114C9",
-            "MONSTRUO": "#EFE7D8"
+            "MONSTRUO": "#EFE7D8",
+            "TATE QUIETA": "#000000"
         };
 
         /* ==================================================================
@@ -1105,6 +1118,7 @@
             if (normalized === "bellakita") return songColors["Bellakita"];
             if (normalized === "vamoacochi") return songColors["VAMOaCOCHI"];
             if (normalized === "monstruo") return songColors["MONSTRUO"];
+            if (normalized === "tate quieta") return songColors["TATE QUIETA"];
             
             return "#050507"; // default fallback dark background
         }
