@@ -102,7 +102,7 @@
         /* Glassy Dark Contrast Vignette for Ultimate UI Legibility */
         .ambient-contrast-mask {
             position: absolute; inset: 0;
-            background: radial-gradient(circle at 50% 50%, rgba(5, 5, 7, 0.35) 0%, rgba(5, 5, 7, 0.85) 100%), rgba(0, 0, 0, 0.3);
+            background: radial-gradient(circle at 50% 50%, rgba(5, 5, 7, 0.3) 0%, rgba(5, 5, 7, 0.82) 100%), rgba(0, 0, 0, 0.28);
             z-index: 2;
             pointer-events: none;
         }
@@ -118,11 +118,20 @@
         #app-wrapper {
             display: flex; width: 100vw; height: 100vh; height: 100dvh; position: relative; z-index: 10;
             background: transparent;
-            transition: transform 0.8s var(--ease-cinematic), border-radius 0.8s var(--ease-cinematic), opacity 0.5s;
+            opacity: 1;
+            visibility: visible;
+            transition: transform 0.65s var(--ease-cinematic), border-radius 0.65s var(--ease-cinematic), opacity 0.4s ease, visibility 0.4s;
             transform-origin: center center;
         }
+        
+        /* ZERO TRANSPARENCY BLEED: Home completely and cleanly fades away when Now Playing is active */
         #app-wrapper.scaled {
-            transform: scale(0.93) translateY(-1.5vh); border-radius: clamp(24px, 3vw, 40px); overflow: hidden; pointer-events: none; opacity: 0.35;
+            transform: scale(0.92) translateY(-2vh);
+            border-radius: clamp(24px, 3vw, 40px);
+            overflow: hidden;
+            pointer-events: none;
+            opacity: 0 !important;
+            visibility: hidden !important;
             box-shadow: 0 40px 100px rgba(0,0,0,1);
         }
 
@@ -244,7 +253,18 @@
         /* ==================================================================
            PERSISTENT BOTTOM PLAYER (GLASSMORPHISM)
            ================================================================== */
-        .player-wrapper { position: fixed; bottom: clamp(12px, 2.5vh, 32px); left: 0; width: 100%; display: flex; justify-content: center; z-index: 50; pointer-events: none; padding: 0 clamp(12px, 2.5vw, 32px); }
+        .player-wrapper { 
+            position: fixed; bottom: clamp(12px, 2.5vh, 32px); left: 0; width: 100%; display: flex; justify-content: center; z-index: 50; pointer-events: none; padding: 0 clamp(12px, 2.5vw, 32px);
+            transition: transform 0.5s var(--ease-cinematic), opacity 0.35s ease;
+        }
+        
+        /* Auto-hide mini player pill when in fullscreen to prevent clutter */
+        body.np-active .player-wrapper {
+            opacity: 0 !important;
+            pointer-events: none !important;
+            transform: translateY(35px) scale(0.95);
+        }
+
         .player-pill { pointer-events: auto; width: 100%; max-width: 1100px; height: var(--player-height); background: var(--bg-glass-heavy); backdrop-filter: blur(50px) saturate(200%); -webkit-backdrop-filter: blur(50px) saturate(200%); border: 1px solid var(--border-highlight); border-radius: clamp(18px, 2vw, 24px); display: flex; align-items: center; justify-content: space-between; padding: 8px clamp(12px, 1.8vw, 24px); box-shadow: 0 30px 60px rgba(0,0,0,0.6), inset 0 1px 2px rgba(255,255,255,0.15); transition: transform 0.4s var(--ease-snappy), border-color 0.3s; position: relative; overflow: hidden; gap: 12px; }
         .player-pill:hover { transform: translateY(-3px); border-color: rgba(255,255,255,0.25); }
         .progress-mini-wrapper { position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: rgba(255,255,255,0.05); }
@@ -293,7 +313,7 @@
            ================================================================== */
         #np-fs {
             position: fixed; inset: 0; z-index: 100; transform: translateY(100%); opacity: 0; visibility: hidden;
-            transition: transform 0.75s var(--ease-cinematic), opacity 0.45s; display: flex; flex-direction: column; 
+            transition: transform 0.65s var(--ease-cinematic), opacity 0.35s ease, visibility 0.35s; display: flex; flex-direction: column; 
             overflow: hidden; background: transparent; font-family: var(--font-display);
             padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
         }
@@ -301,7 +321,7 @@
 
         .np-overlay { 
             position: absolute; inset: 0; 
-            background: radial-gradient(circle at 50% 50%, rgba(5, 5, 7, 0.3) 0%, rgba(5, 5, 7, 0.8) 100%), rgba(0, 0, 0, 0.25);
+            background: radial-gradient(circle at 50% 50%, rgba(5, 5, 7, 0.25) 0%, rgba(5, 5, 7, 0.78) 100%), rgba(0, 0, 0, 0.2);
             z-index: 4; 
             pointer-events: none;
         }
@@ -493,7 +513,15 @@
                 background: rgba(10, 10, 14, 0.75); backdrop-filter: blur(40px) saturate(200%); -webkit-backdrop-filter: blur(40px) saturate(200%);
                 border-top: 1px solid rgba(255,255,255,0.08); z-index: 60;
                 justify-content: space-around; align-items: center; padding-bottom: env(safe-area-inset-bottom);
+                transition: transform 0.4s var(--ease-cinematic), opacity 0.3s;
             }
+            
+            body.np-active .mobile-nav {
+                transform: translateY(100%);
+                opacity: 0;
+                pointer-events: none;
+            }
+
             .nav-item-mob { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-secondary); font-size: 11px; font-weight: 600; cursor: pointer; }
             .nav-item-mob i { font-size: clamp(22px, 3vh, 26px); transition: 0.35s var(--ease-snappy); }
             .nav-item-mob.active { color: var(--text-primary); }
@@ -577,7 +605,7 @@
 </head>
 <body>
 
-    <!-- KAWARP WEBGL ANIMATED BACKGROUND ENGINE (Glassy Music) -->
+    <!-- KAWARP WEBGL ANIMATED BACKGROUND ENGINE (Glassy Music / Non-Repetitive Fluid) -->
     <div id="ambient-bg">
         <canvas id="kawarp-canvas"></canvas>
         <div class="ambient-contrast-mask"></div>
@@ -873,7 +901,7 @@
         ];
 
         /* ==================================================================
-           KAWARP WEBGL SHADER ENGINE (BETTER LYRICS / GLASSY MUSIC)
+           KAWARP WEBGL SHADER ENGINE (EVOLVING, NON-REPETITIVE FLUID)
            ================================================================== */
         class KawarpShaderBackground {
             constructor(canvas) {
@@ -883,6 +911,7 @@
                 this.transition = 1.0;
                 this.transitionSpeed = 0.016;
                 this.audioBeat = 0;
+                this.seed = 1.0;
                 this.currentTexture = null;
                 this.prevTexture = null;
                 this.currentUrl = "";
@@ -902,13 +931,14 @@
                     }
                 `;
 
-                // Fluid Domain Warping + Kawase Sampling + Saturation + Noise Dither Shader
+                // Multi-Octave Fractal Domain Warping + Chromatic Liquid Prism
                 const fsSource = `
                     precision highp float;
                     uniform sampler2D uCurrentTex;
                     uniform sampler2D uPrevTex;
                     uniform float uTransition;
                     uniform float uTime;
+                    uniform float uSeed;
                     uniform vec2 uResolution;
                     uniform float uAudioBeat;
                     varying vec2 vUv;
@@ -937,7 +967,7 @@
                     }
 
                     vec4 sampleKawase(sampler2D tex, vec2 uv) {
-                        float dist = 0.025;
+                        float dist = 0.026;
                         vec4 col = texture2D(tex, uv) * 0.32;
                         col += texture2D(tex, uv + vec2(-dist, -dist)) * 0.17;
                         col += texture2D(tex, uv + vec2(dist, -dist)) * 0.17;
@@ -953,39 +983,61 @@
                         vec2 p = st - 0.5;
                         p.x *= aspect;
                         
-                        float t = uTime * 0.06;
-                        
-                        // Domain warping (Glassy Kawarp Engine)
+                        // Dynamic evolving speeds & breathing modulation
+                        float t1 = uTime * 0.045 + uSeed;
+                        float t2 = uTime * 0.028 + uSeed * 1.37;
+                        float t3 = uTime * 0.016 + uSeed * 0.73;
+
+                        float breathe = 0.5 + 0.5 * sin(uTime * 0.07 + uSeed * 2.0);
+                        float turbulence = mix(0.75, 1.35, breathe);
+
+                        // 1st Fractal layer (Macro Flow)
                         vec2 q = vec2(
-                            snoise(p * 0.9 + vec2(0.0, t * 0.4)),
-                            snoise(p * 0.9 + vec2(3.6, 1.7 + t * 0.4))
+                            snoise(p * (0.85 + 0.15 * sin(t3)) + vec2(cos(t1), sin(t1))),
+                            snoise(p * (0.85 + 0.15 * cos(t3)) + vec2(sin(t2), cos(t2)) + vec2(3.6, 1.7))
                         );
                         
+                        // 2nd Fractal layer (Vortices & Turbulent Swirl)
                         vec2 r = vec2(
-                            snoise(p * 1.3 + 2.5 * q + vec2(1.7, 9.2) + t * 0.6),
-                            snoise(p * 1.3 + 2.5 * q + vec2(8.3, 2.8) + t * 0.6)
+                            snoise(p * 1.35 + 2.6 * q + vec2(1.7, 9.2) + vec2(cos(t2 * 1.2), sin(t1 * 1.1))),
+                            snoise(p * 1.35 + 2.6 * q + vec2(8.3, 2.8) + vec2(sin(t1 * 1.3), cos(t2 * 0.9)))
+                        );
+
+                        // 3rd Micro-Fluid layer (Continuous non-repeating detail)
+                        vec2 s = vec2(
+                            snoise(p * 2.2 + 1.4 * r + vec2(t1 * 0.8, -t2 * 0.6)),
+                            snoise(p * 2.2 + 1.4 * r + vec2(-t2 * 0.7, t1 * 0.5))
                         );
                         
-                        float warpPower = 0.35 + (uAudioBeat * 0.14);
-                        vec2 warped = p + warpPower * r;
+                        float warpPower = (0.33 + uAudioBeat * 0.18 + breathe * 0.08) * turbulence;
+                        vec2 warped = p + warpPower * (r + s * 0.35);
                         warped.x /= aspect;
                         vec2 finalUv = clamp(warped + 0.5, 0.01, 0.99);
                         
-                        vec4 colCurr = sampleKawase(uCurrentTex, finalUv);
-                        vec4 colPrev = sampleKawase(uPrevTex, finalUv);
+                        // Chromatic liquid prism dispersion
+                        float split = 0.007 * (1.0 + uAudioBeat * 2.2);
+                        vec4 colCurrR = sampleKawase(uCurrentTex, finalUv + vec2(split, 0.0));
+                        vec4 colCurrG = sampleKawase(uCurrentTex, finalUv);
+                        vec4 colCurrB = sampleKawase(uCurrentTex, finalUv - vec2(split, 0.0));
+                        vec4 colCurr = vec4(colCurrR.r, colCurrG.g, colCurrB.b, 1.0);
+
+                        vec4 colPrevR = sampleKawase(uPrevTex, finalUv + vec2(split, 0.0));
+                        vec4 colPrevG = sampleKawase(uPrevTex, finalUv);
+                        vec4 colPrevB = sampleKawase(uPrevTex, finalUv - vec2(split, 0.0));
+                        vec4 colPrev = vec4(colPrevR.r, colPrevG.g, colPrevB.b, 1.0);
                         
                         vec4 finalColor = mix(colPrev, colCurr, uTransition);
                         
-                        // Boost saturation & vibrancy
+                        // Rich saturation boost
                         float gray = dot(finalColor.rgb, vec3(0.299, 0.587, 0.114));
-                        vec3 rgb = mix(vec3(gray), finalColor.rgb, 1.85 + uAudioBeat * 0.25);
+                        vec3 rgb = mix(vec3(gray), finalColor.rgb, 1.9 + uAudioBeat * 0.28);
                         
-                        // Soft vignette
+                        // Subtle center vignette for contrast
                         float distCenter = length(st - 0.5);
-                        float vignette = smoothstep(0.85, 0.15, distCenter);
-                        rgb *= mix(0.55, 0.85, vignette);
+                        float vignette = smoothstep(0.88, 0.18, distCenter);
+                        rgb *= mix(0.56, 0.86, vignette);
                         
-                        // Dither to prevent color banding
+                        // Micro dither to prevent gradient banding
                         float dither = fract(sin(dot(gl_FragCoord.xy, vec2(12.9898,78.233))) * 43758.5453) * 0.01;
                         rgb += vec3(dither);
                         
@@ -1016,6 +1068,7 @@
                 this.uPrevTex = gl.getUniformLocation(this.program, 'uPrevTex');
                 this.uTransition = gl.getUniformLocation(this.program, 'uTransition');
                 this.uTime = gl.getUniformLocation(this.program, 'uTime');
+                this.uSeed = gl.getUniformLocation(this.program, 'uSeed');
                 this.uResolution = gl.getUniformLocation(this.program, 'uResolution');
                 this.uAudioBeat = gl.getUniformLocation(this.program, 'uAudioBeat');
 
@@ -1046,9 +1099,12 @@
                 return tex;
             }
 
-            loadArtwork(url) {
+            loadArtwork(url, songIndex = 0) {
                 if (this.currentUrl === url) return;
                 this.currentUrl = url;
+                
+                // Assign a distinct procedural seed for every track
+                this.seed = ((songIndex + 1) * 37.193 + Math.PI * 2.718) % 100.0;
 
                 const img = new Image();
                 img.crossOrigin = "anonymous";
@@ -1085,11 +1141,11 @@
                     this.transition = Math.min(1.0, this.transition + this.transitionSpeed);
                 }
 
-                // Smooth audio beat interpolation
                 this.audioBeat += (beat - this.audioBeat) * 0.15;
 
                 gl.useProgram(this.program);
                 gl.uniform1f(this.uTime, this.time);
+                gl.uniform1f(this.uSeed, this.seed);
                 gl.uniform1f(this.uTransition, this.transition);
                 gl.uniform1f(this.uAudioBeat, this.audioBeat);
                 gl.uniform2f(this.uResolution, this.canvas.width, this.canvas.height);
@@ -1186,16 +1242,16 @@
 
         function haptic() { if (navigator.vibrate) navigator.vibrate(10); }
 
-        function updateCovers(songTitle, imgUrl) {
+        function updateCovers(songTitle, imgUrl, songIdx = 0) {
             document.getElementById('player-img').src = imgUrl;
             document.getElementById('np-img-large').src = imgUrl;
-            if (kawarpEngine) kawarpEngine.loadArtwork(imgUrl);
+            if (kawarpEngine) kawarpEngine.loadArtwork(imgUrl, songIdx);
         }
 
         function loadSongCover(song, i) {
             song.coverLoaded = true;
             document.querySelectorAll(`.cover-song-${i}`).forEach(img => img.src = song.cover);
-            if(currentPlayingIndex === i) updateCovers(song.title, song.cover);
+            if(currentPlayingIndex === i) updateCovers(song.title, song.cover, i);
             if(song.album && song.trackNum === 1) {
                 const detImg = document.getElementById('det-album-img');
                 if (detImg) detImg.src = song.cover;
@@ -1418,7 +1474,7 @@
             document.querySelectorAll(`.track-row-${idx}`).forEach(el => el.classList.add('active'));
             
             currentPlayingIndex = idx; const song = cancionesData[idx];
-            updateCovers(song.title, song.cover);
+            updateCovers(song.title, song.cover, idx);
             
             document.getElementById('player-title').innerText = song.title;
             document.getElementById('player-artist').innerText = song.artist;
@@ -1465,16 +1521,23 @@
 
         function toggleNP() {
             haptic(); isNPOpen = !isNPOpen;
-            const np = document.getElementById('np-fs'); const app = document.getElementById('app-wrapper');
+            const np = document.getElementById('np-fs'); 
+            const app = document.getElementById('app-wrapper');
+            
             if (isNPOpen) { 
                 _lyricLastFrameMs = null;
+                document.body.classList.add('np-active');
                 np.classList.add('active'); 
                 app.classList.add('scaled'); 
                 setTimeout(() => { if(lyricPlayer) lyricPlayer.calcLayout(true, true); }, 150);
             } 
             else { 
+                document.body.classList.remove('np-active');
                 np.classList.remove('active'); 
                 app.classList.remove('scaled'); 
+                app.style.opacity = '';
+                app.style.visibility = '';
+                app.style.transform = '';
             }
         }
 
@@ -1794,10 +1857,12 @@
         }
 
         /* ==================================================================
-           GESTURES (SWIPE DOWN TO CLOSE NP)
+           GESTURES (SMOOTH DRAG-TO-CLOSE & ZERO-BLEED TRANSITIONS)
            ================================================================== */
         function setupGestures() {
-            let sY=0, cY=0; const np = document.getElementById('np-fs'), app = document.getElementById('app-wrapper');
+            let sY=0, cY=0; 
+            const np = document.getElementById('np-fs'); 
+            const app = document.getElementById('app-wrapper');
             
             np.addEventListener('touchstart', e => {
                 if(e.target.closest('#lyrics-scroller') && document.getElementById('lyrics-scroller').scrollTop > 0) return;
@@ -1805,6 +1870,7 @@
                 
                 sY = e.touches[0].clientY; cY = sY;
                 np.style.transition = 'none'; app.style.transition = 'none';
+                app.style.visibility = 'visible';
             }, {passive:true});
             
             np.addEventListener('touchmove', e => {
@@ -1814,7 +1880,9 @@
                 cY = e.touches[0].clientY; let d = cY - sY;
                 if(d > 0 && np.scrollTop <= 0) { 
                     np.style.transform = `translateY(${d}px)`;
-                    app.style.transform = `scale(${Math.min(1, 0.93 + (d/window.innerHeight)*0.07)}) translateY(${-1.5+(d/window.innerHeight)*1.5}vh)`;
+                    const progress = Math.min(1, d / (window.innerHeight * 0.45));
+                    app.style.opacity = (progress * 0.85).toString();
+                    app.style.transform = `scale(${0.92 + progress * 0.08}) translateY(${-2 + progress * 2}vh)`;
                 }
             }, {passive:true});
             
@@ -1823,8 +1891,15 @@
                 if(e.target.closest('.scrubber-bg') || e.target.closest('.np-progress-track')) return;
                 let d = cY - sY; sY = 0;
                 np.style.transition = ''; app.style.transition = '';
-                if(d > 120) toggleNP();
-                else { np.style.transform = ''; app.style.transform = 'scale(0.93) translateY(-1.5vh)'; }
+                
+                if(d > 120) {
+                    toggleNP();
+                } else { 
+                    np.style.transform = ''; 
+                    app.style.opacity = '0';
+                    app.style.visibility = 'hidden';
+                    app.style.transform = 'scale(0.92) translateY(-2vh)'; 
+                }
             }, {passive:true});
         }
 
