@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>VIVETMP Music - Premium Edition</title>
+    <title>VIVETMP Music - Glassy Edition</title>
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -35,27 +35,27 @@
     
     <style>
         /* ==================================================================
-           PREMIUM DESIGN SYSTEM & FLUID VARIABLES
+           PREMIUM GLASSY DESIGN SYSTEM & FLUID VARIABLES
            ================================================================== */
         :root {
             --bg-deep: #050507;
             --bg-surface: #0a0a0e;
-            --bg-glass-heavy: rgba(15, 15, 20, 0.75);
-            --bg-glass-light: rgba(255, 255, 255, 0.03);
-            --bg-glass-hover: rgba(255, 255, 255, 0.08);
+            --bg-glass-heavy: rgba(15, 15, 20, 0.65);
+            --bg-glass-light: rgba(255, 255, 255, 0.04);
+            --bg-glass-hover: rgba(255, 255, 255, 0.1);
             
             --text-primary: #ffffff;
-            --text-secondary: rgba(255, 255, 255, 0.55);
-            --text-tertiary: rgba(255, 255, 255, 0.3);
+            --text-secondary: rgba(255, 255, 255, 0.6);
+            --text-tertiary: rgba(255, 255, 255, 0.35);
             
-            --border-subtle: rgba(255, 255, 255, 0.05);
-            --border-highlight: rgba(255, 255, 255, 0.12);
-            --shadow-float: 0 20px 40px rgba(0, 0, 0, 0.4);
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --border-highlight: rgba(255, 255, 255, 0.18);
+            --shadow-float: 0 20px 40px rgba(0, 0, 0, 0.5);
             --shadow-glow: 0 0 40px var(--accent-glow);
             
             --accent-1: #FF2E93;
             --accent-2: #7F49B4;
-            --accent-glow: rgba(255, 46, 147, 0.3);
+            --accent-glow: rgba(255, 46, 147, 0.35);
             
             --font-display: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Outfit', sans-serif;
             --font-main: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Plus Jakarta Sans', sans-serif;
@@ -67,12 +67,6 @@
             --sidebar-width: clamp(210px, 16vw, 270px);
             --player-height: clamp(74px, 9vh, 88px);
             --nav-height-mob: clamp(65px, 9vh, 78px);
-        }
-
-        @property --fill {
-            syntax: '<percentage>';
-            inherits: true;
-            initial-value: 0%;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -91,63 +85,35 @@
         }
 
         /* ==================================================================
-           YOUTUBE-LIKE ANIMATED BLURRED ARTWORK BACKGROUND
+           KAWARP WEBGL SHADER CANVAS BACKGROUND
            ================================================================== */
-        #ambient-bg, .np-bg-wrap {
+        #ambient-bg {
             position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
             background: var(--bg-deep);
         }
 
-        /* Contrast Vignette Overlay for maximum UI readability */
+        #kawarp-canvas {
+            position: absolute; inset: 0; width: 100%; height: 100%;
+            object-fit: cover;
+            will-change: transform, opacity;
+            z-index: 1;
+        }
+
+        /* Glassy Dark Contrast Vignette for Ultimate UI Legibility */
         .ambient-contrast-mask {
             position: absolute; inset: 0;
-            background: radial-gradient(circle at 50% 50%, rgba(5, 5, 7, 0.45) 0%, rgba(5, 5, 7, 0.85) 100%), rgba(0, 0, 0, 0.35);
-            z-index: 4;
+            background: radial-gradient(circle at 50% 50%, rgba(5, 5, 7, 0.35) 0%, rgba(5, 5, 7, 0.85) 100%), rgba(0, 0, 0, 0.3);
+            z-index: 2;
             pointer-events: none;
         }
 
         .noise-overlay {
-            position: absolute; inset: 0; z-index: 5; opacity: 0.04; mix-blend-mode: overlay; pointer-events: none;
+            position: absolute; inset: 0; z-index: 3; opacity: 0.035; mix-blend-mode: overlay; pointer-events: none;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
 
-        /* Animated floating blur layers */
-        .ambient-bg-layer {
-            position: absolute; 
-            inset: -30%; /* Overscaled bleed area so blur and translation never clip borders */
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            filter: blur(75px) saturate(190%) brightness(0.65);
-            -webkit-filter: blur(75px) saturate(190%) brightness(0.65);
-            transition: opacity 1.4s cubic-bezier(0.25, 1, 0.5, 1);
-            opacity: 1;
-            will-change: transform, opacity;
-            animation: ambientDrift 28s ease-in-out infinite alternate;
-        }
-
-        #bg-back, #np-bg-back { z-index: 1; }
-        #bg-front, #np-bg-front { z-index: 2; opacity: 0; }
-        #bg-front.fade-in, #np-bg-front.fade-in { opacity: 1; }
-
-        /* Smooth, slow organic motion */
-        @keyframes ambientDrift {
-            0% {
-                transform: scale(1.3) translate(0%, 0%) rotate(0deg);
-            }
-            33% {
-                transform: scale(1.42) translate(-3%, 2.5%) rotate(2.5deg);
-            }
-            66% {
-                transform: scale(1.36) translate(3%, -2%) rotate(-2deg);
-            }
-            100% {
-                transform: scale(1.45) translate(-2.5%, -3%) rotate(1.5deg);
-            }
-        }
-
         /* ==================================================================
-           APP LAYOUT & DESKTOP SHELL
+           APP LAYOUT & DESKTOP SHELL (GLASSMORPHISM)
            ================================================================== */
         #app-wrapper {
             display: flex; width: 100vw; height: 100vh; height: 100dvh; position: relative; z-index: 10;
@@ -166,10 +132,11 @@
             padding: clamp(24px, 3vh, 40px) clamp(16px, 1.5vw, 24px);
             display: flex; flex-direction: column; gap: clamp(24px, 4vh, 48px);
             background: var(--bg-glass-light); border: 1px solid var(--border-subtle);
-            border-radius: clamp(20px, 2vw, 28px); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
+            border-radius: clamp(20px, 2vw, 28px); backdrop-filter: blur(50px) saturate(180%); -webkit-backdrop-filter: blur(50px) saturate(180%);
             flex-shrink: 0; z-index: 20; position: relative;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
         }
-        #sidebar::before { content: ''; position: absolute; inset: 0; border-radius: inherit; background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, transparent 100%); pointer-events: none; }
+        #sidebar::before { content: ''; position: absolute; inset: 0; border-radius: inherit; background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, transparent 100%); pointer-events: none; }
         
         .brand { font-family: var(--font-display); font-size: clamp(20px, 1.8vw, 26px); font-weight: 900; letter-spacing: -0.02em; display: flex; align-items: center; gap: 12px; color: #fff; text-shadow: 0 4px 20px rgba(0,0,0,0.5); }
         .brand i { font-size: clamp(24px, 2.2vw, 32px); color: #fff; filter: drop-shadow(0 0 12px var(--accent-glow)); }
@@ -185,7 +152,7 @@
         .nav-item:hover { color: var(--text-primary); transform: translateX(6px); }
         .nav-item:hover::before { opacity: 1; }
         .nav-item:hover i { transform: scale(1.12) rotate(-5deg); color: var(--accent-1); }
-        .nav-item.active { color: #fff; background: rgba(255,255,255,0.08); box-shadow: inset 0 1px 1px rgba(255,255,255,0.1); }
+        .nav-item.active { color: #fff; background: rgba(255,255,255,0.12); box-shadow: inset 0 1px 1px rgba(255,255,255,0.15); }
         .nav-item.active i { color: var(--accent-1); filter: drop-shadow(0 0 8px var(--accent-glow)); }
 
         #main-content {
@@ -201,7 +168,7 @@
         @keyframes viewEnter { 0% { opacity: 0; transform: translateY(24px) scale(0.99); filter: blur(8px); } 100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); } }
 
         .page-header { margin-bottom: clamp(28px, 4vh, 56px); position: relative; }
-        .page-header h1 { font-family: var(--font-display); font-size: clamp(32px, 5vw, 64px); font-weight: 800; letter-spacing: -0.03em; margin-bottom: 8px; line-height: 1.1; background: linear-gradient(to right, #ffffff, #a8a8a8); -webkit-background-clip: text; color: transparent; }
+        .page-header h1 { font-family: var(--font-display); font-size: clamp(32px, 5vw, 64px); font-weight: 800; letter-spacing: -0.03em; margin-bottom: 8px; line-height: 1.1; background: linear-gradient(to right, #ffffff, #c0c0c0); -webkit-background-clip: text; color: transparent; }
         .page-header p { font-size: clamp(14px, 1.2vw, 18px); color: var(--text-secondary); font-weight: 500; letter-spacing: -0.01em; }
         .section-title { font-family: var(--font-display); font-size: clamp(20px, 2vw, 28px); font-weight: 700; letter-spacing: -0.02em; margin: clamp(32px, 4vh, 56px) 0 clamp(16px, 2vh, 32px); display: flex; align-items: center; justify-content: space-between; }
 
@@ -217,8 +184,8 @@
         .card:hover { transform: translateY(-6px); }
         .card:active { transform: scale(0.96); transition: 0.15s; }
         
-        .card-img-wrapper { position: relative; width: 100%; aspect-ratio: 1; border-radius: clamp(14px, 1.5vw, 20px); overflow: hidden; box-shadow: var(--shadow-float); background: #111; z-index: 2; border: 1px solid rgba(255,255,255,0.05); }
-        .card-img-wrapper::after { content: ''; position: absolute; inset: 0; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1); border-radius: inherit; pointer-events: none; }
+        .card-img-wrapper { position: relative; width: 100%; aspect-ratio: 1; border-radius: clamp(14px, 1.5vw, 20px); overflow: hidden; box-shadow: var(--shadow-float); background: #111; z-index: 2; border: 1px solid rgba(255,255,255,0.08); }
+        .card-img-wrapper::after { content: ''; position: absolute; inset: 0; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12); border-radius: inherit; pointer-events: none; }
         .card-img-wrapper.is-circle { border-radius: 50%; }
         .card-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s var(--ease-fluid); }
         .card:hover .card-img { transform: scale(1.08); }
@@ -239,7 +206,7 @@
 
         /* SEARCH INPUT */
         .search-container { position: relative; width: 100%; max-width: 580px; margin-top: 16px; }
-        .search-input { width: 100%; padding: clamp(12px, 1.8vh, 16px) 20px clamp(12px, 1.8vh, 16px) 52px; border-radius: 100px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: #fff; font-size: clamp(14px, 1.1vw, 16px); font-family: var(--font-main); outline: none; backdrop-filter: blur(20px); transition: all 0.3s var(--ease-snappy); }
+        .search-input { width: 100%; padding: clamp(12px, 1.8vh, 16px) 20px clamp(12px, 1.8vh, 16px) 52px; border-radius: 100px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #fff; font-size: clamp(14px, 1.1vw, 16px); font-family: var(--font-main); outline: none; backdrop-filter: blur(20px); transition: all 0.3s var(--ease-snappy); }
         .search-input:focus { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.3); box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
         .search-container i { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); font-size: 20px; color: var(--text-secondary); pointer-events: none; }
 
@@ -247,7 +214,7 @@
         .track-list { display: flex; flex-direction: column; gap: 8px; width: 100%; padding-bottom: 40px;}
         .track-row { display: flex; align-items: center; gap: clamp(12px, 2vw, 24px); padding: clamp(10px, 1.4vh, 16px) clamp(12px, 1.8vw, 24px); border-radius: 14px; cursor: pointer; transition: all 0.3s var(--ease-snappy); border: 1px solid transparent; background: transparent; }
         .track-row:hover { background: var(--bg-glass-hover); transform: translateX(6px); }
-        .track-row.active { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.1); box-shadow: var(--shadow-float); transform: translateX(6px); }
+        .track-row.active { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.15); box-shadow: var(--shadow-float); transform: translateX(6px); }
         .track-num { width: 28px; font-family: var(--font-display); font-size: clamp(13px, 1.1vw, 16px); color: var(--text-secondary); font-weight: 600; text-align: center; }
         .track-row.active .track-num { color: transparent; position: relative; }
         .track-row.active .track-num::before { content: ""; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 18px; height: 18px; background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23fff"><rect x="4" y="10" width="4" height="14" rx="2" transform-origin="bottom"><animateTransform attributeName="transform" type="scale" values="1 0.3; 1 1; 1 0.3" dur="0.8s" repeatCount="indefinite"/></rect><rect x="10" y="4" width="4" height="20" rx="2" transform-origin="bottom"><animateTransform attributeName="transform" type="scale" values="1 1; 1 0.4; 1 1" dur="0.8s" repeatCount="indefinite"/></rect><rect x="16" y="12" width="4" height="12" rx="2" transform-origin="bottom"><animateTransform attributeName="transform" type="scale" values="1 0.5; 1 0.9; 1 0.5" dur="0.8s" repeatCount="indefinite"/></rect></svg>') no-repeat center; filter: drop-shadow(0 0 5px var(--accent-glow)); }
@@ -257,11 +224,11 @@
         .track-row.active .track-title { color: var(--accent-1); text-shadow: 0 0 10px var(--accent-glow); }
 
         .btn-back { display: inline-flex; align-items: center; gap: 10px; padding: clamp(8px, 1.2vh, 12px) clamp(16px, 1.8vw, 24px); border-radius: 100px; background: var(--bg-glass-light); border: 1px solid var(--border-subtle); color: var(--text-primary); font-size: clamp(13px, 1vw, 15px); font-weight: 600; cursor: pointer; margin-bottom: clamp(24px, 4vh, 48px); transition: all 0.3s var(--ease-snappy); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); width: fit-content; }
-        .btn-back:hover { background: rgba(255,255,255,0.1); transform: translateX(-6px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); border-color: rgba(255,255,255,0.2); }
+        .btn-back:hover { background: rgba(255,255,255,0.12); transform: translateX(-6px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); border-color: rgba(255,255,255,0.2); }
 
         /* HERO SECTION */
         .hero-section { display: flex; align-items: flex-end; gap: clamp(24px, 4vw, 56px); margin-bottom: clamp(32px, 5vh, 64px); position: relative; flex-wrap: wrap; }
-        .hero-img { width: clamp(180px, 20vw, 300px); height: clamp(180px, 20vw, 300px); aspect-ratio: 1; border-radius: clamp(16px, 2vw, 24px); object-fit: cover; box-shadow: 0 40px 80px rgba(0,0,0,0.8); border: 1px solid rgba(255,255,255,0.1); transition: transform 0.5s var(--ease-snappy); flex-shrink: 0; }
+        .hero-img { width: clamp(180px, 20vw, 300px); height: clamp(180px, 20vw, 300px); aspect-ratio: 1; border-radius: clamp(16px, 2vw, 24px); object-fit: cover; box-shadow: 0 40px 80px rgba(0,0,0,0.8); border: 1px solid rgba(255,255,255,0.15); transition: transform 0.5s var(--ease-snappy); flex-shrink: 0; }
         .hero-img:hover { transform: scale(1.02); }
         .hero-img.is-circle { border-radius: 50%; box-shadow: 0 30px 60px rgba(0,0,0,0.6); }
         .hero-meta { display: flex; flex-direction: column; gap: 8px; padding-bottom: 6px; z-index: 2; flex: 1; min-width: 260px; }
@@ -270,16 +237,16 @@
         .hero-subtitle { font-family: var(--font-display); font-size: clamp(18px, 2vw, 24px); font-weight: 700; color: var(--accent-1); text-shadow: 0 0 20px var(--accent-glow); }
         .hero-stats { font-size: clamp(13px, 1vw, 15px); font-weight: 500; color: var(--text-secondary); margin-top: 4px; display: flex; align-items: center; gap: 10px;}
         .hero-actions { display: flex; gap: 16px; margin-top: clamp(16px, 3vh, 32px); }
-        .btn-primary { background: #fff; color: #000; font-family: var(--font-display); font-weight: 700; font-size: clamp(14px, 1.1vw, 16px); padding: clamp(12px, 1.6vh, 16px) clamp(28px, 3vw, 48px); border-radius: 100px; display: inline-flex; align-items: center; gap: 10px; cursor: pointer; transition: all 0.35s var(--ease-snappy); border: none; outline: none; box-shadow: 0 15px 30px rgba(255,255,255,0.2); }
-        .btn-primary:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 20px 40px rgba(255,255,255,0.3); }
+        .btn-primary { background: #fff; color: #000; font-family: var(--font-display); font-weight: 700; font-size: clamp(14px, 1.1vw, 16px); padding: clamp(12px, 1.6vh, 16px) clamp(28px, 3vw, 48px); border-radius: 100px; display: inline-flex; align-items: center; gap: 10px; cursor: pointer; transition: all 0.35s var(--ease-snappy); border: none; outline: none; box-shadow: 0 15px 30px rgba(255,255,255,0.25); }
+        .btn-primary:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 20px 40px rgba(255,255,255,0.35); }
         .btn-primary:active { transform: scale(0.96); }
 
         /* ==================================================================
-           PERSISTENT BOTTOM PLAYER
+           PERSISTENT BOTTOM PLAYER (GLASSMORPHISM)
            ================================================================== */
         .player-wrapper { position: fixed; bottom: clamp(12px, 2.5vh, 32px); left: 0; width: 100%; display: flex; justify-content: center; z-index: 50; pointer-events: none; padding: 0 clamp(12px, 2.5vw, 32px); }
-        .player-pill { pointer-events: auto; width: 100%; max-width: 1100px; height: var(--player-height); background: var(--bg-glass-heavy); backdrop-filter: blur(50px) saturate(200%); -webkit-backdrop-filter: blur(50px) saturate(200%); border: 1px solid var(--border-highlight); border-radius: clamp(18px, 2vw, 24px); display: flex; align-items: center; justify-content: space-between; padding: 8px clamp(12px, 1.8vw, 24px); box-shadow: 0 30px 60px rgba(0,0,0,0.6), inset 0 1px 2px rgba(255,255,255,0.1); transition: transform 0.4s var(--ease-snappy), border-color 0.3s; position: relative; overflow: hidden; gap: 12px; }
-        .player-pill:hover { transform: translateY(-3px); border-color: rgba(255,255,255,0.2); }
+        .player-pill { pointer-events: auto; width: 100%; max-width: 1100px; height: var(--player-height); background: var(--bg-glass-heavy); backdrop-filter: blur(50px) saturate(200%); -webkit-backdrop-filter: blur(50px) saturate(200%); border: 1px solid var(--border-highlight); border-radius: clamp(18px, 2vw, 24px); display: flex; align-items: center; justify-content: space-between; padding: 8px clamp(12px, 1.8vw, 24px); box-shadow: 0 30px 60px rgba(0,0,0,0.6), inset 0 1px 2px rgba(255,255,255,0.15); transition: transform 0.4s var(--ease-snappy), border-color 0.3s; position: relative; overflow: hidden; gap: 12px; }
+        .player-pill:hover { transform: translateY(-3px); border-color: rgba(255,255,255,0.25); }
         .progress-mini-wrapper { position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: rgba(255,255,255,0.05); }
         .progress-mini-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent-1), var(--accent-2)); transition: width 0.1s linear; box-shadow: 0 0 10px var(--accent-glow); }
 
@@ -327,29 +294,28 @@
         #np-fs {
             position: fixed; inset: 0; z-index: 100; transform: translateY(100%); opacity: 0; visibility: hidden;
             transition: transform 0.75s var(--ease-cinematic), opacity 0.45s; display: flex; flex-direction: column; 
-            overflow: hidden; background: #000; font-family: var(--font-display);
+            overflow: hidden; background: transparent; font-family: var(--font-display);
             padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
         }
         #np-fs.active { transform: translateY(0); opacity: 1; visibility: visible; }
 
-        .np-bg-wrap { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
         .np-overlay { 
             position: absolute; inset: 0; 
-            background: radial-gradient(circle at 50% 50%, rgba(5, 5, 7, 0.45) 0%, rgba(5, 5, 7, 0.85) 100%), rgba(0, 0, 0, 0.35);
+            background: radial-gradient(circle at 50% 50%, rgba(5, 5, 7, 0.3) 0%, rgba(5, 5, 7, 0.8) 100%), rgba(0, 0, 0, 0.25);
             z-index: 4; 
+            pointer-events: none;
         }
-        .np-grain { position: absolute; inset: 0; z-index: 5; opacity: 0.035; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); pointer-events: none;}
 
         /* Collapse Buttons */
         .btn-collapse {
             position: absolute; top: clamp(16px, 3.5vh, 40px); left: clamp(16px, 3.5vw, 40px); width: clamp(38px, 4vh, 46px); height: clamp(38px, 4vh, 46px);
-            background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); 
+            background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15); 
             border-radius: 50%; cursor: pointer; z-index: 20;
             display: flex; align-items: center; justify-content: center; font-size: clamp(18px, 2vh, 22px); 
             color: rgba(255,255,255,0.7); transition: all 0.3s var(--ease-snappy); outline: none;
             backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
         }
-        .btn-collapse:hover { color: #fff; background: rgba(255, 255, 255, 0.18); transform: scale(1.08); }
+        .btn-collapse:hover { color: #fff; background: rgba(255, 255, 255, 0.2); transform: scale(1.08); }
         .btn-collapse-mob { display: none; }
 
         /* UNIVERSAL 2-COLUMN ADAPTIVE NOW PLAYING LAYOUT */
@@ -392,6 +358,7 @@
             overflow: hidden; transition: transform 0.5s var(--ease-cinematic); 
             background: #111; cursor: pointer;
             flex-shrink: 0;
+            border: 1px solid rgba(255,255,255,0.15);
         }
         .np-art-wrap:hover { transform: scale(1.02); }
         .np-art { width: 100%; height: 100%; object-fit: cover; }
@@ -400,7 +367,7 @@
 
         .np-track-info-center { display: flex; flex-direction: column; gap: 6px; align-items: center; text-align: center; margin-top: clamp(14px, 2.5vh, 28px); width: 100%;}
         .np-track-title { font-size: clamp(20px, 2.2vw, 28px); font-weight: 800; color: #fff; letter-spacing: -0.015em; word-break: break-word; }
-        .np-track-artist { font-size: clamp(15px, 1.4vw, 20px); color: rgba(255, 255, 255, 0.55); font-weight: 600; letter-spacing: -0.01em; }
+        .np-track-artist { font-size: clamp(15px, 1.4vw, 20px); color: rgba(255, 255, 255, 0.65); font-weight: 600; letter-spacing: -0.01em; }
 
         /* Interactive Scrubber Layer */
         .np-scrubber-group { 
@@ -410,10 +377,10 @@
             transition: opacity 0.35s var(--ease-snappy), transform 0.35s var(--ease-snappy);
             pointer-events: none;
         }
-        .np-time-row { display: flex; justify-content: space-between; font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.55); font-variant-numeric: tabular-nums; letter-spacing: 0.02em; margin-bottom: 2px;}
+        .np-time-row { display: flex; justify-content: space-between; font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.65); font-variant-numeric: tabular-nums; letter-spacing: 0.02em; margin-bottom: 2px;}
         
         .np-progress-track {
-            width: 100%; height: 5px; background: rgba(255,255,255,0.14); border-radius: 100px; cursor: pointer; position: relative; transition: height 0.25s var(--ease-snappy); overflow: visible;
+            width: 100%; height: 5px; background: rgba(255,255,255,0.18); border-radius: 100px; cursor: pointer; position: relative; transition: height 0.25s var(--ease-snappy); overflow: visible;
         }
         .np-progress-track:hover { height: 8px; }
         .np-progress-fill {
@@ -492,15 +459,14 @@
             height: 100%; display: flex; align-items: center; justify-content: center;
         }
         .lyrics-empty-state p {
-            color: rgba(255,255,255,0.3); font-size: clamp(20px, 2.5vw, 32px); font-weight: 800;
+            color: rgba(255,255,255,0.35); font-size: clamp(20px, 2.5vw, 32px); font-weight: 800;
         }
 
         /* ==================================================================
-           RESPONSIVE BREAKPOINTS (Tablets, Mobiles, Foldables, Ultra-Compact)
+           RESPONSIVE BREAKPOINTS (Tablets, Mobiles, Foldables)
            ================================================================== */
         .mobile-nav { display: none; }
 
-        /* Intermediate Tablets & Small Laptops (961px - 1180px) */
         @media (max-width: 1180px) and (min-width: 961px) {
             .np-layout {
                 grid-template-columns: 360px 1fr;
@@ -516,7 +482,6 @@
             }
         }
         
-        /* Mobile, Tablet Portrait & Touch Screens (< 960px or Portrait) */
         @media (max-width: 960px), (orientation: portrait) and (max-width: 1024px) {
             #sidebar { display: none; }
             #main-content { 
@@ -525,8 +490,8 @@
             
             .mobile-nav {
                 display: flex; position: fixed; bottom: 0; left: 0; width: 100%; height: var(--nav-height-mob);
-                background: rgba(10, 10, 14, 0.88); backdrop-filter: blur(40px) saturate(200%); -webkit-backdrop-filter: blur(40px) saturate(200%);
-                border-top: 1px solid rgba(255,255,255,0.06); z-index: 60;
+                background: rgba(10, 10, 14, 0.75); backdrop-filter: blur(40px) saturate(200%); -webkit-backdrop-filter: blur(40px) saturate(200%);
+                border-top: 1px solid rgba(255,255,255,0.08); z-index: 60;
                 justify-content: space-around; align-items: center; padding-bottom: env(safe-area-inset-bottom);
             }
             .nav-item-mob { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-secondary); font-size: 11px; font-weight: 600; cursor: pointer; }
@@ -535,7 +500,7 @@
             .nav-item-mob.active i { transform: scale(1.15) translateY(-2px); color: var(--accent-1); filter: drop-shadow(0 4px 10px var(--accent-glow)); }
 
             .player-wrapper { bottom: calc(var(--nav-height-mob) + clamp(8px, 1.5vh, 16px)); padding: 0 clamp(8px, 2vw, 16px); }
-            .player-pill { height: clamp(64px, 8vh, 72px); padding: 6px 16px 6px 6px; border-radius: 18px; background: rgba(20, 20, 25, 0.95); }
+            .player-pill { height: clamp(64px, 8vh, 72px); padding: 6px 16px 6px 6px; border-radius: 18px; background: rgba(20, 20, 25, 0.85); }
             .player-img { width: clamp(48px, 6vh, 56px); height: clamp(48px, 6vh, 56px); border-radius: 12px; }
             .player-controls, .player-actions { display: none; }
             .player-info { max-width: 80%; width: 80%; }
@@ -573,7 +538,6 @@
             .np-track-title { font-size: clamp(20px, 5vw, 24px); }
             .np-track-artist { font-size: clamp(15px, 3.8vw, 18px); }
             
-            /* Always visible controls and scrubber on touch screens */
             .np-scrubber-group,
             .np-main-controls { 
                 opacity: 1 !important; transform: none !important; pointer-events: auto !important; 
@@ -586,7 +550,6 @@
             #lyrics-content .amll-lyric-player { --amll-lp-font-size: clamp(22px, 5.5vw, 32px) !important; }
         }
 
-        /* Short Screen Landscape (Landscape Phones & Low-Profile Screens) */
         @media (max-height: 560px) and (orientation: landscape) {
             .np-layout {
                 display: grid;
@@ -614,10 +577,9 @@
 </head>
 <body>
 
-    <!-- YOUTUBE-LIKE AMBIENT LAYERED BACKGROUND -->
+    <!-- KAWARP WEBGL ANIMATED BACKGROUND ENGINE (Glassy Music) -->
     <div id="ambient-bg">
-        <div id="bg-back" class="ambient-bg-layer"></div>
-        <div id="bg-front" class="ambient-bg-layer"></div>
+        <canvas id="kawarp-canvas"></canvas>
         <div class="ambient-contrast-mask"></div>
         <div class="noise-overlay"></div>
     </div>
@@ -770,12 +732,7 @@
 
     <!-- FULLSCREEN NOW PLAYING OVERLAY -->
     <div id="np-fs">
-        <div class="np-bg-wrap">
-            <div id="np-bg-back" class="ambient-bg-layer"></div>
-            <div id="np-bg-front" class="ambient-bg-layer"></div>
-            <div class="np-overlay"></div>
-            <div class="np-grain"></div>
-        </div>
+        <div class="np-overlay"></div>
         
         <button class="btn-collapse" onclick="toggleNP()"><i class="ph ph-x"></i></button>
         <button class="btn-collapse-mob" onclick="toggleNP()"></button>
@@ -916,6 +873,242 @@
         ];
 
         /* ==================================================================
+           KAWARP WEBGL SHADER ENGINE (BETTER LYRICS / GLASSY MUSIC)
+           ================================================================== */
+        class KawarpShaderBackground {
+            constructor(canvas) {
+                this.canvas = canvas;
+                this.gl = canvas.getContext('webgl', { alpha: false, antialias: false, powerPreference: 'high-performance' });
+                this.time = 0;
+                this.transition = 1.0;
+                this.transitionSpeed = 0.016;
+                this.audioBeat = 0;
+                this.currentTexture = null;
+                this.prevTexture = null;
+                this.currentUrl = "";
+                this.init();
+            }
+
+            init() {
+                const gl = this.gl;
+                if (!gl) return;
+
+                const vsSource = `
+                    attribute vec2 position;
+                    varying vec2 vUv;
+                    void main() {
+                        vUv = (position + 1.0) * 0.5;
+                        gl_Position = vec4(position, 0.0, 1.0);
+                    }
+                `;
+
+                // Fluid Domain Warping + Kawase Sampling + Saturation + Noise Dither Shader
+                const fsSource = `
+                    precision highp float;
+                    uniform sampler2D uCurrentTex;
+                    uniform sampler2D uPrevTex;
+                    uniform float uTransition;
+                    uniform float uTime;
+                    uniform vec2 uResolution;
+                    uniform float uAudioBeat;
+                    varying vec2 vUv;
+
+                    vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
+                    float snoise(vec2 v){
+                        const vec4 C = vec4(0.211324865405187, 0.366025403784439, -0.577350269189626, 0.024390243902439);
+                        vec2 i  = floor(v + dot(v, C.yy) );
+                        vec2 x0 = v -   i + dot(i, C.xx);
+                        vec2 i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+                        vec4 x12 = x0.xyxy + C.xxzz;
+                        x12.xy -= i1;
+                        i = mod(i, 289.0);
+                        vec3 p = permute( permute( i.y + vec3(0.0, i1.y, 1.0 )) + i.x + vec3(0.0, i1.x, 1.0 ));
+                        vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy), dot(x12.zw,x12.zw)), 0.0);
+                        m = m*m; m = m*m;
+                        vec3 x = 2.0 * fract(p * C.www) - 1.0;
+                        vec3 h = abs(x) - 0.5;
+                        vec3 ox = floor(x + 0.5);
+                        vec3 a0 = x - ox;
+                        m *= 1.79284291400159 - 0.85373472095314 * ( a0*a0 + h*h );
+                        vec3 g;
+                        g.x  = a0.x  * x0.x  + h.x  * x0.y;
+                        g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+                        return 130.0 * dot(m, g);
+                    }
+
+                    vec4 sampleKawase(sampler2D tex, vec2 uv) {
+                        float dist = 0.025;
+                        vec4 col = texture2D(tex, uv) * 0.32;
+                        col += texture2D(tex, uv + vec2(-dist, -dist)) * 0.17;
+                        col += texture2D(tex, uv + vec2(dist, -dist)) * 0.17;
+                        col += texture2D(tex, uv + vec2(-dist, dist)) * 0.17;
+                        col += texture2D(tex, uv + vec2(dist, dist)) * 0.17;
+                        return col;
+                    }
+
+                    void main() {
+                        vec2 st = gl_FragCoord.xy / uResolution.xy;
+                        float aspect = uResolution.x / uResolution.y;
+                        
+                        vec2 p = st - 0.5;
+                        p.x *= aspect;
+                        
+                        float t = uTime * 0.06;
+                        
+                        // Domain warping (Glassy Kawarp Engine)
+                        vec2 q = vec2(
+                            snoise(p * 0.9 + vec2(0.0, t * 0.4)),
+                            snoise(p * 0.9 + vec2(3.6, 1.7 + t * 0.4))
+                        );
+                        
+                        vec2 r = vec2(
+                            snoise(p * 1.3 + 2.5 * q + vec2(1.7, 9.2) + t * 0.6),
+                            snoise(p * 1.3 + 2.5 * q + vec2(8.3, 2.8) + t * 0.6)
+                        );
+                        
+                        float warpPower = 0.35 + (uAudioBeat * 0.14);
+                        vec2 warped = p + warpPower * r;
+                        warped.x /= aspect;
+                        vec2 finalUv = clamp(warped + 0.5, 0.01, 0.99);
+                        
+                        vec4 colCurr = sampleKawase(uCurrentTex, finalUv);
+                        vec4 colPrev = sampleKawase(uPrevTex, finalUv);
+                        
+                        vec4 finalColor = mix(colPrev, colCurr, uTransition);
+                        
+                        // Boost saturation & vibrancy
+                        float gray = dot(finalColor.rgb, vec3(0.299, 0.587, 0.114));
+                        vec3 rgb = mix(vec3(gray), finalColor.rgb, 1.85 + uAudioBeat * 0.25);
+                        
+                        // Soft vignette
+                        float distCenter = length(st - 0.5);
+                        float vignette = smoothstep(0.85, 0.15, distCenter);
+                        rgb *= mix(0.55, 0.85, vignette);
+                        
+                        // Dither to prevent color banding
+                        float dither = fract(sin(dot(gl_FragCoord.xy, vec2(12.9898,78.233))) * 43758.5453) * 0.01;
+                        rgb += vec3(dither);
+                        
+                        gl_FragColor = vec4(rgb, 1.0);
+                    }
+                `;
+
+                const vs = this.compileShader(gl.VERTEX_SHADER, vsSource);
+                const fs = this.compileShader(gl.FRAGMENT_SHADER, fsSource);
+                
+                this.program = gl.createProgram();
+                gl.attachShader(this.program, vs);
+                gl.attachShader(this.program, fs);
+                gl.linkProgram(this.program);
+
+                const buffer = gl.createBuffer();
+                gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+                gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+                    -1, -1,  1, -1, -1,  1,
+                    -1,  1,  1, -1,  1,  1
+                ]), gl.STATIC_DRAW);
+
+                const posAttr = gl.getAttribLocation(this.program, 'position');
+                gl.enableVertexAttribArray(posAttr);
+                gl.vertexAttribPointer(posAttr, 2, gl.FLOAT, false, 0, 0);
+
+                this.uCurrentTex = gl.getUniformLocation(this.program, 'uCurrentTex');
+                this.uPrevTex = gl.getUniformLocation(this.program, 'uPrevTex');
+                this.uTransition = gl.getUniformLocation(this.program, 'uTransition');
+                this.uTime = gl.getUniformLocation(this.program, 'uTime');
+                this.uResolution = gl.getUniformLocation(this.program, 'uResolution');
+                this.uAudioBeat = gl.getUniformLocation(this.program, 'uAudioBeat');
+
+                this.dummyTexture = this.createSolidTexture(15, 15, 20);
+                this.currentTexture = this.dummyTexture;
+                this.prevTexture = this.dummyTexture;
+
+                this.resize();
+                window.addEventListener('resize', () => this.resize());
+            }
+
+            compileShader(type, src) {
+                const s = this.gl.createShader(type);
+                this.gl.shaderSource(s, src);
+                this.gl.compileShader(s);
+                return s;
+            }
+
+            createSolidTexture(r, g, b) {
+                const gl = this.gl;
+                const tex = gl.createTexture();
+                gl.bindTexture(gl.TEXTURE_2D, tex);
+                gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([r, g, b, 255]));
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+                return tex;
+            }
+
+            loadArtwork(url) {
+                if (this.currentUrl === url) return;
+                this.currentUrl = url;
+
+                const img = new Image();
+                img.crossOrigin = "anonymous";
+                img.onload = () => {
+                    const gl = this.gl;
+                    const newTex = gl.createTexture();
+                    gl.bindTexture(gl.TEXTURE_2D, newTex);
+                    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+                    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+                    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+                    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+                    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
+                    this.prevTexture = this.currentTexture;
+                    this.currentTexture = newTex;
+                    this.transition = 0.0;
+                };
+                img.src = url;
+            }
+
+            resize() {
+                const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+                this.canvas.width = window.innerWidth * dpr;
+                this.canvas.height = window.innerHeight * dpr;
+                if (this.gl) this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
+            }
+
+            render(beat) {
+                const gl = this.gl;
+                if (!gl || !this.program) return;
+
+                this.time += 0.016;
+                if (this.transition < 1.0) {
+                    this.transition = Math.min(1.0, this.transition + this.transitionSpeed);
+                }
+
+                // Smooth audio beat interpolation
+                this.audioBeat += (beat - this.audioBeat) * 0.15;
+
+                gl.useProgram(this.program);
+                gl.uniform1f(this.uTime, this.time);
+                gl.uniform1f(this.uTransition, this.transition);
+                gl.uniform1f(this.uAudioBeat, this.audioBeat);
+                gl.uniform2f(this.uResolution, this.canvas.width, this.canvas.height);
+
+                gl.activeTexture(gl.TEXTURE0);
+                gl.bindTexture(gl.TEXTURE_2D, this.currentTexture);
+                gl.uniform1i(this.uCurrentTex, 0);
+
+                gl.activeTexture(gl.TEXTURE1);
+                gl.bindTexture(gl.TEXTURE_2D, this.prevTexture);
+                gl.uniform1i(this.uPrevTex, 1);
+
+                gl.drawArrays(gl.TRIANGLES, 0, 6);
+            }
+        }
+
+        let kawarpEngine = null;
+
+        /* ==================================================================
            AUDIO ENGINE & STATE
            ================================================================== */
         let currentPlayingIndex = 0;
@@ -949,7 +1142,8 @@
             masterGain.gain.value = globalVolume;
             
             analyser = audioCtx.createAnalyser();
-            analyser.fftSize = 128;
+            analyser.fftSize = 64;
+            analyser.smoothingTimeConstant = 0.8;
             
             masterCompressor.connect(masterGain);
             masterGain.connect(analyser);
@@ -992,46 +1186,10 @@
 
         function haptic() { if (navigator.vibrate) navigator.vibrate(10); }
 
-        /* ==================================================================
-           YOUTUBE-LIKE BLURRED BACKGROUND CROSSFADE
-           ================================================================== */
-        let currentCoverBg = "";
-
-        function updateDynamicBackground(coverUrl) {
-            if (!coverUrl || currentCoverBg === coverUrl) return;
-
-            const bgBack = document.getElementById('bg-back');
-            const bgFront = document.getElementById('bg-front');
-            const npBgBack = document.getElementById('np-bg-back');
-            const npBgFront = document.getElementById('np-bg-front');
-            
-            if (!bgBack || !bgFront) return;
-
-            // Preserve current artwork on back layer
-            if (currentCoverBg) {
-                bgBack.style.backgroundImage = `url("${currentCoverBg}")`;
-                if (npBgBack) npBgBack.style.backgroundImage = `url("${currentCoverBg}")`;
-            }
-
-            // Apply new artwork on front layer and trigger crossfade
-            bgFront.style.backgroundImage = `url("${coverUrl}")`;
-            if (npBgFront) npBgFront.style.backgroundImage = `url("${coverUrl}")`;
-            
-            bgFront.classList.remove('fade-in');
-            if (npBgFront) npBgFront.classList.remove('fade-in');
-            
-            void bgFront.offsetWidth; // Force Reflow
-            
-            bgFront.classList.add('fade-in');
-            if (npBgFront) npBgFront.classList.add('fade-in');
-
-            currentCoverBg = coverUrl;
-        }
-
         function updateCovers(songTitle, imgUrl) {
             document.getElementById('player-img').src = imgUrl;
             document.getElementById('np-img-large').src = imgUrl;
-            updateDynamicBackground(imgUrl);
+            if (kawarpEngine) kawarpEngine.loadArtwork(imgUrl);
         }
 
         function loadSongCover(song, i) {
@@ -1582,6 +1740,23 @@
         function renderLoop(rafTime) {
             if (!rafTime) rafTime = performance.now();
             
+            // Extract audio beat energy from analyser node
+            let beatEnergy = 0;
+            if (analyser && !activeAudio.paused) {
+                const dataArray = new Uint8Array(analyser.frequencyBinCount);
+                analyser.getByteFrequencyData(dataArray);
+                let bassSum = 0;
+                for (let i = 0; i < 6; i++) {
+                    bassSum += dataArray[i];
+                }
+                beatEnergy = (bassSum / 6) / 255;
+            }
+
+            // Render Kawarp WebGL Shader Canvas Background
+            if (kawarpEngine) {
+                kawarpEngine.render(beatEnergy);
+            }
+
             if(activeAudio.duration && !isNaN(activeAudio.duration)) {
                 let cur = activeAudio.currentTime; 
                 
@@ -1657,6 +1832,9 @@
            INITIALIZATION
            ================================================================== */
         function init() {
+            const canvas = document.getElementById('kawarp-canvas');
+            kawarpEngine = new KawarpShaderBackground(canvas);
+
             renderGrid(cancionesData, 'grid-songs', 'song');
             renderGrid(albumsData, 'grid-albums', 'album');
             renderGrid(artistsData, 'grid-artists', 'artist');
