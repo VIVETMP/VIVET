@@ -40,12 +40,12 @@
         :root {
             --bg-deep: #070709;
             --bg-surface: #0e0e13;
-            --bg-glass-heavy: rgba(18, 18, 24, 0.75);
-            --bg-glass-card: rgba(255, 255, 255, 0.04);
-            --bg-glass-hover: rgba(255, 255, 255, 0.1);
+            --bg-glass-heavy: rgba(18, 18, 24, 0.72);
+            --bg-glass-card: rgba(255, 255, 255, 0.05);
+            --bg-glass-hover: rgba(255, 255, 255, 0.12);
             
             --text-primary: #ffffff;
-            --text-secondary: rgba(255, 255, 255, 0.65);
+            --text-secondary: rgba(255, 255, 255, 0.68);
             --text-tertiary: rgba(255, 255, 255, 0.4);
             
             --border-subtle: rgba(255, 255, 255, 0.08);
@@ -84,13 +84,41 @@
             -moz-osx-font-smoothing: grayscale;
         }
 
-        /* Ambient Dark Background */
+        /* ==================================================================
+           DYNAMIC COVER-COLORED AMBIENT BACKGROUND
+           ================================================================== */
         #ambient-bg {
             position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
-            background: radial-gradient(circle at 50% 30%, #12121a 0%, #050507 100%);
+            background: #050508;
         }
+
+        .ambient-bg-layer {
+            position: absolute;
+            inset: -30%;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            filter: blur(85px) saturate(220%) brightness(0.65);
+            -webkit-filter: blur(85px) saturate(220%) brightness(0.65);
+            transition: opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+            opacity: 1;
+            transform: scale(1.15);
+            will-change: opacity, transform;
+        }
+
+        #bg-back { z-index: 1; }
+        #bg-front { z-index: 2; opacity: 0; }
+        #bg-front.fade-in { opacity: 1; }
+
+        .ambient-contrast-mask {
+            position: absolute; inset: 0;
+            background: radial-gradient(circle at 50% 35%, rgba(5, 5, 8, 0.25) 0%, rgba(5, 5, 8, 0.8) 100%), rgba(0, 0, 0, 0.3);
+            z-index: 3;
+            pointer-events: none;
+        }
+
         .noise-overlay {
-            position: absolute; inset: 0; z-index: 1; opacity: 0.03; mix-blend-mode: overlay; pointer-events: none;
+            position: absolute; inset: 0; z-index: 4; opacity: 0.035; mix-blend-mode: overlay; pointer-events: none;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
 
@@ -138,7 +166,7 @@
         .nav-item:hover { color: var(--text-primary); transform: translateX(6px); }
         .nav-item:hover::before { opacity: 1; }
         .nav-item:hover i { transform: scale(1.12) rotate(-5deg); color: var(--accent-1); }
-        .nav-item.active { color: #fff; background: rgba(255,255,255,0.1); box-shadow: inset 0 1px 1px rgba(255,255,255,0.15); }
+        .nav-item.active { color: #fff; background: rgba(255,255,255,0.12); box-shadow: inset 0 1px 1px rgba(255,255,255,0.15); }
         .nav-item.active i { color: var(--accent-1); filter: drop-shadow(0 0 8px var(--accent-glow)); }
 
         #main-content {
@@ -282,7 +310,7 @@
         #np-fs {
             position: fixed; inset: 0; z-index: 100; transform: translateY(100%); opacity: 0; visibility: hidden;
             transition: transform 0.65s var(--ease-cinematic), opacity 0.35s ease, visibility 0.35s; display: flex; flex-direction: column; 
-            overflow: hidden; background: radial-gradient(circle at 50% 30%, #151520 0%, #060608 100%); font-family: var(--font-display);
+            overflow: hidden; background: transparent; font-family: var(--font-display);
             padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
         }
         #np-fs.active { transform: translateY(0); opacity: 1; visibility: visible; }
@@ -339,9 +367,9 @@
 
         .np-left-card {
             display: flex; flex-direction: column; align-items: center; width: 100%;
-            background: rgba(255, 255, 255, 0.035); border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.12);
             border-radius: clamp(24px, 2.5vw, 36px); padding: clamp(16px, 2.2vh, 26px);
-            backdrop-filter: blur(40px) saturate(180%); -webkit-backdrop-filter: blur(40px) saturate(180%);
+            backdrop-filter: blur(45px) saturate(190%); -webkit-backdrop-filter: blur(45px) saturate(190%);
             box-shadow: 0 35px 80px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.15);
             transition: all 0.4s var(--ease-snappy);
         }
@@ -352,8 +380,8 @@
             border-radius: clamp(16px, 1.8vw, 24px);
             position: relative; overflow: hidden;
             background: #0d0d12;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.7), 0 8px 20px rgba(0,0,0,0.5);
-            border: 1px solid rgba(255,255,255,0.15);
+            box-shadow: 0 30px 70px rgba(0,0,0,0.7), 0 10px 25px rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.18);
             cursor: pointer;
         }
         
@@ -563,8 +591,11 @@
 </head>
 <body>
 
-    <!-- AMBIENT BASE BACKGROUND -->
+    <!-- DYNAMIC COVER-COLORED AMBIENT BACKGROUND -->
     <div id="ambient-bg">
+        <div id="bg-back" class="ambient-bg-layer"></div>
+        <div id="bg-front" class="ambient-bg-layer"></div>
+        <div class="ambient-contrast-mask"></div>
         <div class="noise-overlay"></div>
     </div>
 
@@ -961,12 +992,67 @@
         function haptic() { if (navigator.vibrate) navigator.vibrate(10); }
 
         /* ==================================================================
-           MEDIA & CANVAS VIDEO CONTROLLER
+           DYNAMIC COVER-BASED COLOR EXTRACTION & BACKGROUND CROSSFADE
            ================================================================== */
+        let currentCoverBg = "";
+
+        function extractColorAndApply(imgUrl) {
+            const img = new Image();
+            img.crossOrigin = "anonymous";
+            img.onload = () => {
+                try {
+                    const canvas = document.getElementById('color-extractor');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = 32;
+                    canvas.height = 32;
+                    ctx.drawImage(img, 0, 0, 32, 32);
+                    const data = ctx.getImageData(0, 0, 32, 32).data;
+                    let r = 0, g = 0, b = 0, count = 0;
+                    for (let i = 0; i < data.length; i += 16) {
+                        const cr = data[i], cg = data[i+1], cb = data[i+2];
+                        const max = Math.max(cr, cg, cb);
+                        const min = Math.min(cr, cg, cb);
+                        if (max > 45 && min < 235) {
+                            r += cr; g += cg; b += cb;
+                            count++;
+                        }
+                    }
+                    if (count > 0) {
+                        r = Math.round(r / count);
+                        g = Math.round(g / count);
+                        b = Math.round(b / count);
+                        document.documentElement.style.setProperty('--accent-1', `rgb(${r}, ${g}, ${b})`);
+                        document.documentElement.style.setProperty('--accent-glow', `rgba(${r}, ${g}, ${b}, 0.4)`);
+                    }
+                } catch(e) {}
+            };
+            img.src = imgUrl;
+        }
+
+        function updateCoverBackground(coverUrl) {
+            if (!coverUrl || currentCoverBg === coverUrl) return;
+            const bgBack = document.getElementById('bg-back');
+            const bgFront = document.getElementById('bg-front');
+            if (!bgBack || !bgFront) return;
+
+            if (currentCoverBg) {
+                bgBack.style.backgroundImage = `url("${currentCoverBg}")`;
+            }
+            bgFront.style.backgroundImage = `url("${coverUrl}")`;
+            bgFront.classList.remove('fade-in');
+            void bgFront.offsetWidth;
+            bgFront.classList.add('fade-in');
+            currentCoverBg = coverUrl;
+
+            extractColorAndApply(coverUrl);
+        }
+
         function updateCoversAndCanvas(song) {
             document.getElementById('player-img').src = song.cover;
             document.getElementById('np-mini-cover').src = song.cover;
             document.getElementById('np-canvas-fallback').src = song.cover;
+
+            updateCoverBackground(song.cover);
 
             const videoEl = document.getElementById('np-canvas-video');
             const badgeEl = document.getElementById('np-canvas-badge');
