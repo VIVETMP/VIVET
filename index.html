@@ -35,7 +35,7 @@
     
     <style>
         /* ==================================================================
-           PREMIUM DESIGN SYSTEM & VARIABLES
+           PREMIUM DESIGN SYSTEM & FLUID VARIABLES
            ================================================================== */
         :root {
             --bg-deep: #070709;
@@ -822,7 +822,7 @@
 
     <script>
         /* ==================================================================
-           DATA DEFINITIONS (INCLUDING SPOTIFY VIDEO CANVAS)
+           DATA DEFINITIONS (INCLUDING SPOTIFY VIDEO CANVAS FOR ALL TRACKS)
            ================================================================== */
         const religionCoverUrl = "https://files.catbox.moe/bvfrst.jpg";
         const talentoCoverUrl  = "https://files.catbox.moe/bpjz9c.jpg";
@@ -867,25 +867,215 @@
         ];
 
         const cancionesData = [
-            { title: "Religión", artist: "Yan Block", url: "https://files.catbox.moe/1g4xcw.mp3", lrc: "https://files.catbox.moe/i159h8.ttml", cover: religionCoverUrl, canvas: null, album: "religion-single", trackNum: 1, coverLoaded: true },
-            { title: "Talento", artist: "Yan Block", url: "https://files.catbox.moe/jh0a8d.mp3", lrc: "https://files.catbox.moe/uhpctn.ttml", cover: talentoCoverUrl, canvas: null, album: "talento-single", trackNum: 1, coverLoaded: true },
-            { title: "YeYe", artist: "Yan Block", url: "https://files.catbox.moe/761o0r.mp3", lrc: "https://files.catbox.moe/rexdjg.ttml", cover: yeyeCoverUrl, canvas: null, album: "yeye-single", trackNum: 1, coverLoaded: true },
-            { title: "222", artist: "Yan Block", url: "https://files.catbox.moe/ovb0v9.mp3", lrc: "https://files.catbox.moe/xjiqtq.ttml", cover: veintidosCoverUrl, canvas: "https://file.garden/alq0ENqplE9QfqJV/CanvasDownloader-Yan-Block-17875.mp4", album: "222-single", trackNum: 1, coverLoaded: true },
-            { title: "4 Life", artist: "Kris R", url: "https://files.catbox.moe/yrvey9.mp3", lrc: "https://files.catbox.moe/0zc6o3.ttml", cover: fourLifeCoverUrl, canvas: null, album: "4life-single", trackNum: 1, coverLoaded: true },
-            { title: "444 - Remix", artist: "Yan Block, De La Rose, Hades66 & Ñengo Flow", url: "https://files.catbox.moe/8eh8pr.mp3", lrc: "https://files.catbox.moe/s93ecx.ttml", cover: remix444CoverUrl, canvas: null, album: "444-remix-single", trackNum: 1, coverLoaded: true },
-            { title: "Cologne", artist: "Junior H & Ovi", url: "https://files.catbox.moe/pvl500.mp3", lrc: "https://files.catbox.moe/a6ws2b.ttml", cover: cologneCoverUrl, canvas: null, album: "cologne-single", trackNum: 1, coverLoaded: true },
-            { title: "Lagunas", artist: "Peso Pluma & Jasiel Nuñez", url: "https://files.catbox.moe/f7gemk.mp3", lrc: "https://files.catbox.moe/hhua24.ttml", cover: lagunasCoverUrl, canvas: null, album: "lagunas-single", trackNum: 1, coverLoaded: true },
-            { title: "Emociones", artist: "Hades66", url: "https://files.catbox.moe/mcn9hf.mp3", lrc: "https://files.catbox.moe/rybou1.ttml", cover: emocionesCoverUrl, canvas: null, album: "emociones-single", trackNum: 1, coverLoaded: true },
-            { title: "PIKA PIKA", artist: "Chuyin, Fuerza Regida, Jorsshh & Calle 24", url: "https://files.catbox.moe/lvpf5o.mp3", lrc: "https://files.catbox.moe/dj1zm1.ttml", cover: pikapikaCoverUrl, canvas: null, album: "pikapika-single", trackNum: 1, coverLoaded: true },
-            { title: "MOONLIGHT", artist: "Omar Courtz & Eladio Carrión", url: "https://files.catbox.moe/c2gkyh.mp3", lrc: "https://files.catbox.moe/8vo30v.ttml", cover: moonlightCoverUrl, canvas: null, album: "moonlight-single", trackNum: 1, coverLoaded: true },
-            { title: "Pensándote", artist: "Rauw Alejandro", url: "https://files.catbox.moe/t1yqwh.mp3", lrc: "https://files.catbox.moe/idoa9n.ttml", cover: pensandoteCoverUrl, canvas: null, album: "pensandote-single", trackNum: 1, coverLoaded: true },
-            { title: "Dile a Él", artist: "Rauw Alejandro", url: "https://file.garden/alq0ENqplE9QfqJV/Rauw%20Alejandro%20-%20Dile%20a%20El%20(SPOTISAVER).mp3", lrc: "https://file.garden/alq0ENqplE9QfqJV/Dile%20A%20El.ttml", cover: dileaelCoverUrl, canvas: null, album: "dileael-single", trackNum: 1, coverLoaded: true },
-            { title: "Tú y Yo", artist: "ROA", url: "https://file.garden/alq0ENqplE9QfqJV/TU%20Y%20YO_spotdown.org.mp3", lrc: "https://file.garden/alq0ENqplE9QfqJV/TU%20Y%20YO%20-%20ROA.ttml", cover: tuyyoCoverUrl, canvas: null, album: "tuyyo-single", trackNum: 1, coverLoaded: true },
-            { title: "Bellakita", artist: "CDobleta", url: "https://file.garden/alq0ENqplE9QfqJV/CDobleta%20-%20Bellakita%20(SPOTISAVER).mp3", lrc: "https://file.garden/alq0ENqplE9QfqJV/BELLAKITA%20-%20CDOBLETA.ttml", cover: bellakitaCoverUrl, canvas: null, album: "bellakita-single", trackNum: 1, coverLoaded: true },
-            { title: "VAMOaCOCHI", artist: "Omar Courtz", url: "https://file.garden/alq0ENqplE9QfqJV/Omar%20Courtz%20-%20VAMOaCOCHI%20(SPOTISAVER).mp3", lrc: "https://file.garden/alq0ENqplE9QfqJV/Omar%20Courtz%20-%20VAMOaCOCHI.ttml", cover: vamoacochiCoverUrl, canvas: null, album: "vamoacochi-single", trackNum: 1, coverLoaded: true },
-            { title: "MONSTRUO", artist: "Tainy & Feid", url: "https://file.garden/alq0ENqplE9QfqJV/MONSTRUO_spotdown.org.mp3", lrc: "https://file.garden/alq0ENqplE9QfqJV/Tainy%20-%20MONSTRUO.ttml", cover: monstruoCoverUrl, canvas: null, album: "monstruo-single", trackNum: 1, coverLoaded: true },
-            { title: "TATE QUIETA", artist: "ROA & CDobleta", url: "https://file.garden/alq0ENqplE9QfqJV/TATE%20QUIETA_spotdown.org.mp3", lrc: "https://file.garden/alq0ENqplE9QfqJV/ROA%20-%20TATE%20QUIETA.ttml", cover: tatequietaCoverUrl, canvas: null, album: "tatequieta-single", trackNum: 1, coverLoaded: true },
-            { title: "Baby Demon", artist: "Anuel AA & YOVNGCHIMI", url: "https://file.garden/alq0ENqplE9QfqJV/Baby%20Demon_spotdown.org.mp3", lrc: "https://file.garden/alq0ENqplE9QfqJV/Anuel%20AA%20-%20Baby%20Demon.ttml", cover: babydemonCoverUrl, canvas: null, album: "babydemon-single", trackNum: 1, coverLoaded: true }
+            { 
+                title: "Religión", 
+                artist: "Yan Block", 
+                url: "https://files.catbox.moe/1g4xcw.mp3", 
+                lrc: "https://files.catbox.moe/i159h8.ttml", 
+                cover: religionCoverUrl, 
+                canvas: "https://file.garden/alq0ENqplE9QfqJV/CanvasDownloader-Yan-Block-17876.mp4", 
+                album: "religion-single", 
+                trackNum: 1, 
+                coverLoaded: true 
+            },
+            { 
+                title: "Talento", 
+                artist: "Yan Block", 
+                url: "https://files.catbox.moe/jh0a8d.mp3", 
+                lrc: "https://files.catbox.moe/uhpctn.ttml", 
+                cover: talentoCoverUrl, 
+                canvas: "https://file.garden/alq0ENqplE9QfqJV/CanvasDownloader-Yan-Block-17876%20(3).mp4", 
+                album: "talento-single", 
+                trackNum: 1, 
+                coverLoaded: true 
+            },
+            { 
+                title: "YeYe", 
+                artist: "Yan Block", 
+                url: "https://files.catbox.moe/761o0r.mp3", 
+                lrc: "https://files.catbox.moe/rexdjg.ttml", 
+                cover: yeyeCoverUrl, 
+                canvas: "https://file.garden/alq0ENqplE9QfqJV/CanvasDownloader-Yan-Block-17876%20(4).mp4", 
+                album: "yeye-single", 
+                trackNum: 1, 
+                coverLoaded: true 
+            },
+            { 
+                title: "222", 
+                artist: "Yan Block", 
+                url: "https://files.catbox.moe/ovb0v9.mp3", 
+                lrc: "https://files.catbox.moe/xjiqtq.ttml", 
+                cover: veintidosCoverUrl, 
+                canvas: "https://file.garden/alq0ENqplE9QfqJV/CanvasDownloader-Yan-Block-17875.mp4", 
+                album: "222-single", 
+                trackNum: 1, 
+                coverLoaded: true 
+            },
+            { 
+                title: "4 Life", 
+                artist: "Kris R", 
+                url: "https://files.catbox.moe/yrvey9.mp3", 
+                lrc: "https://files.catbox.moe/0zc6o3.ttml", 
+                cover: fourLifeCoverUrl, 
+                canvas: null, 
+                album: "4life-single", 
+                trackNum: 1, 
+                coverLoaded: true 
+            },
+            { 
+                title: "444 - Remix", 
+                artist: "Yan Block, De La Rose, Hades66 & Ñengo Flow", 
+                url: "https://files.catbox.moe/8eh8pr.mp3", 
+                lrc: "https://files.catbox.moe/s93ecx.ttml", 
+                cover: remix444CoverUrl, 
+                canvas: "https://file.garden/alq0ENqplE9QfqJV/CanvasDownloader-Yan-Block-17876%20(2).mp4", 
+                album: "444-remix-single", 
+                trackNum: 1, 
+                coverLoaded: true 
+            },
+            { 
+                title: "Cologne", 
+                artist: "Junior H & Ovi", 
+                url: "https://files.catbox.moe/pvl500.mp3", 
+                lrc: "https://files.catbox.moe/a6ws2b.ttml", 
+                cover: cologneCoverUrl, 
+                canvas: null, 
+                album: "cologne-single", 
+                trackNum: 1, 
+                coverLoaded: true 
+            },
+            { 
+                title: "Lagunas", 
+                artist: "Peso Pluma & Jasiel Nuñez", 
+                url: "https://files.catbox.moe/f7gemk.mp3", 
+                lrc: "https://files.catbox.moe/hhua24.ttml", 
+                cover: lagunasCoverUrl, 
+                canvas: null, 
+                album: "lagunas-single", 
+                trackNum: 1, 
+                coverLoaded: true 
+            },
+            { 
+                title: "Emociones", 
+                artist: "Hades66", 
+                url: "https://files.catbox.moe/mcn9hf.mp3", 
+                lrc: "https://files.catbox.moe/rybou1.ttml", 
+                cover: emocionesCoverUrl, 
+                canvas: "https://file.garden/alq0ENqplE9QfqJV/CanvasDownloader-Hades66-1787601.mp4", 
+                album: "emociones-single", 
+                trackNum: 1, 
+                coverLoaded: true 
+            },
+            { 
+                title: "PIKA PIKA", 
+                artist: "Chuyin, Fuerza Regida, Jorsshh & Calle 24", 
+                url: "https://files.catbox.moe/lvpf5o.mp3", 
+                lrc: "https://files.catbox.moe/dj1zm1.ttml", 
+                cover: pikapikaCoverUrl, 
+                canvas: null, 
+                album: "pikapika-single", 
+                trackNum: 1, 
+                coverLoaded: true 
+            },
+            { 
+                title: "MOONLIGHT", 
+                artist: "Omar Courtz & Eladio Carrión", 
+                url: "https://files.catbox.moe/c2gkyh.mp3", 
+                lrc: "https://files.catbox.moe/8vo30v.ttml", 
+                cover: moonlightCoverUrl, 
+                canvas: "https://file.garden/alq0ENqplE9QfqJV/CanvasDownloader-Omar-Courtz-178.mp4", 
+                album: "moonlight-single", 
+                trackNum: 1, 
+                coverLoaded: true 
+            },
+            { 
+                title: "Pensándote", 
+                artist: "Rauw Alejandro", 
+                url: "https://files.catbox.moe/t1yqwh.mp3", 
+                lrc: "https://files.catbox.moe/idoa9n.ttml", 
+                cover: pensandoteCoverUrl, 
+                canvas: null, 
+                album: "pensandote-single", 
+                trackNum: 1, 
+                coverLoaded: true 
+            },
+            { 
+                title: "Dile a Él", 
+                artist: "Rauw Alejandro", 
+                url: "https://file.garden/alq0ENqplE9QfqJV/Rauw%20Alejandro%20-%20Dile%20a%20El%20(SPOTISAVER).mp3", 
+                lrc: "https://file.garden/alq0ENqplE9QfqJV/Dile%20A%20El.ttml", 
+                cover: dileaelCoverUrl, 
+                canvas: null, 
+                album: "dileael-single", 
+                trackNum: 1, 
+                coverLoaded: true 
+            },
+            { 
+                title: "Tú y Yo", 
+                artist: "ROA", 
+                url: "https://file.garden/alq0ENqplE9QfqJV/TU%20Y%20YO_spotdown.org.mp3", 
+                lrc: "https://file.garden/alq0ENqplE9QfqJV/TU%20Y%20YO%20-%20ROA.ttml", 
+                cover: tuyyoCoverUrl, 
+                canvas: null, 
+                album: "tuyyo-single", 
+                trackNum: 1, 
+                coverLoaded: true 
+            },
+            { 
+                title: "Bellakita", 
+                artist: "CDobleta", 
+                url: "https://file.garden/alq0ENqplE9QfqJV/CDobleta%20-%20Bellakita%20(SPOTISAVER).mp3", 
+                lrc: "https://file.garden/alq0ENqplE9QfqJV/BELLAKITA%20-%20CDOBLETA.ttml", 
+                cover: bellakitaCoverUrl, 
+                canvas: null, 
+                album: "bellakita-single", 
+                trackNum: 1, 
+                coverLoaded: true 
+            },
+            { 
+                title: "VAMOaCOCHI", 
+                artist: "Omar Courtz", 
+                url: "https://file.garden/alq0ENqplE9QfqJV/Omar%20Courtz%20-%20VAMOaCOCHI%20(SPOTISAVER).mp3", 
+                lrc: "https://file.garden/alq0ENqplE9QfqJV/Omar%20Courtz%20-%20VAMOaCOCHI.ttml", 
+                cover: vamoacochiCoverUrl, 
+                canvas: "https://file.garden/alq0ENqplE9QfqJV/CanvasDownloader-Omar-Courtz-178%20(1).mp4", 
+                album: "vamoacochi-single", 
+                trackNum: 1, 
+                coverLoaded: true 
+            },
+            { 
+                title: "MONSTRUO", 
+                artist: "Tainy & Feid", 
+                url: "https://file.garden/alq0ENqplE9QfqJV/MONSTRUO_spotdown.org.mp3", 
+                lrc: "https://file.garden/alq0ENqplE9QfqJV/Tainy%20-%20MONSTRUO.ttml", 
+                cover: monstruoCoverUrl, 
+                canvas: "https://file.garden/alq0ENqplE9QfqJV/CanvasDownloader-Tainy-178760151.mp4", 
+                album: "monstruo-single", 
+                trackNum: 1, 
+                coverLoaded: true 
+            },
+            { 
+                title: "TATE QUIETA", 
+                artist: "ROA & CDobleta", 
+                url: "https://file.garden/alq0ENqplE9QfqJV/TATE%20QUIETA_spotdown.org.mp3", 
+                lrc: "https://file.garden/alq0ENqplE9QfqJV/ROA%20-%20TATE%20QUIETA.ttml", 
+                cover: tatequietaCoverUrl, 
+                canvas: null, 
+                album: "tatequieta-single", 
+                trackNum: 1, 
+                coverLoaded: true 
+            },
+            { 
+                title: "Baby Demon", 
+                artist: "Anuel AA & YOVNGCHIMI", 
+                url: "https://file.garden/alq0ENqplE9QfqJV/Baby%20Demon_spotdown.org.mp3", 
+                lrc: "https://file.garden/alq0ENqplE9QfqJV/Anuel%20AA%20-%20Baby%20Demon.ttml", 
+                cover: babydemonCoverUrl, 
+                canvas: null, 
+                album: "babydemon-single", 
+                trackNum: 1, 
+                coverLoaded: true 
+            }
         ];
 
         const artistsData = [
