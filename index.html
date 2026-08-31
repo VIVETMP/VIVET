@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>VIVETMP Music - Canvas Edition</title>
+    <title>VIVETMP Music - Glassy Edition</title>
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -35,10 +35,15 @@
     
     <style>
         /* ==================================================================
-           PREMIUM DESIGN SYSTEM & FLUID VARIABLES
+           PREMIUM DESIGN SYSTEM & DYNAMIC THEME VARIABLES (Glassy Music)
            ================================================================== */
         :root {
-            --bg-deep: #070709;
+            --color-primary-rgb: 255, 46, 147;
+            --color-secondary-rgb: 127, 73, 180;
+            --color-accent-rgb: 255, 110, 180;
+            --bg-ambient-deep: #070709;
+            
+            --bg-deep: var(--bg-ambient-deep);
             --bg-surface: #0e0e13;
             --bg-glass-heavy: rgba(18, 18, 24, 0.72);
             --bg-glass-card: rgba(255, 255, 255, 0.05);
@@ -53,9 +58,9 @@
             --shadow-float: 0 25px 50px rgba(0, 0, 0, 0.6);
             --shadow-glow: 0 0 35px var(--accent-glow);
             
-            --accent-1: #FF2E93;
-            --accent-2: #7F49B4;
-            --accent-glow: rgba(255, 46, 147, 0.35);
+            --accent-1: rgb(var(--color-primary-rgb));
+            --accent-2: rgb(var(--color-secondary-rgb));
+            --accent-glow: rgba(var(--color-primary-rgb), 0.45);
             
             --font-display: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Outfit', sans-serif;
             --font-main: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Plus Jakarta Sans', sans-serif;
@@ -85,40 +90,62 @@
         }
 
         /* ==================================================================
-           DYNAMIC COVER-COLORED AMBIENT BACKGROUND
+           GLASSY MUSIC DYNAMIC BACKGROUND (NanKillBro / Merge Theme)
            ================================================================== */
         #ambient-bg {
             position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
-            background: #050508;
+            background: var(--bg-ambient-deep);
+            transition: background 1.2s var(--ease-cinematic);
         }
 
         .ambient-bg-layer {
             position: absolute;
-            inset: -30%;
+            inset: -45%;
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
-            filter: blur(85px) saturate(220%) brightness(0.65);
-            -webkit-filter: blur(85px) saturate(220%) brightness(0.65);
+            filter: blur(80px) saturate(230%) brightness(0.62);
+            -webkit-filter: blur(80px) saturate(230%) brightness(0.62);
             transition: opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1);
             opacity: 1;
-            transform: scale(1.15);
-            will-change: opacity, transform;
+            transform-origin: center center;
+            animation: slowRotateGlow 75s linear infinite;
+            will-change: transform, opacity;
         }
 
         #bg-back { z-index: 1; }
         #bg-front { z-index: 2; opacity: 0; }
         #bg-front.fade-in { opacity: 1; }
 
-        .ambient-contrast-mask {
-            position: absolute; inset: 0;
-            background: radial-gradient(circle at 50% 35%, rgba(5, 5, 8, 0.25) 0%, rgba(5, 5, 8, 0.8) 100%), rgba(0, 0, 0, 0.3);
+        @keyframes slowRotateGlow {
+            0% { transform: rotate(0deg) scale(1.4); }
+            50% { transform: rotate(180deg) scale(1.6); }
+            100% { transform: rotate(360deg) scale(1.4); }
+        }
+
+        /* Dynamic Mesh Gradient Overlay derived from Quantized Palette */
+        .ambient-mesh-overlay {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 18% 28%, rgba(var(--color-primary-rgb), 0.45) 0%, transparent 60%),
+                        radial-gradient(circle at 82% 72%, rgba(var(--color-secondary-rgb), 0.4) 0%, transparent 60%),
+                        radial-gradient(circle at 50% 50%, rgba(var(--color-accent-rgb), 0.25) 0%, transparent 70%);
+            mix-blend-mode: screen;
+            opacity: 0.9;
+            transition: background 1.2s cubic-bezier(0.25, 1, 0.5, 1);
             z-index: 3;
             pointer-events: none;
         }
 
+        .ambient-contrast-mask {
+            position: absolute; inset: 0;
+            background: radial-gradient(circle at 50% 35%, rgba(5, 5, 8, 0.2) 0%, rgba(5, 5, 8, 0.8) 100%), rgba(0, 0, 0, 0.28);
+            z-index: 4;
+            pointer-events: none;
+        }
+
         .noise-overlay {
-            position: absolute; inset: 0; z-index: 4; opacity: 0.035; mix-blend-mode: overlay; pointer-events: none;
+            position: absolute; inset: 0; z-index: 5; opacity: 0.035; mix-blend-mode: overlay; pointer-events: none;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
 
@@ -215,7 +242,7 @@
         .card.active .card-title { color: var(--accent-1); }
 
         .card-badge { position: absolute; top: 12px; left: 12px; background: rgba(0,0,0,0.65); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); color: #fff; font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px; z-index: 3; border: 1px solid rgba(255,255,255,0.1); }
-        .card-badge.canvas-badge { background: linear-gradient(135deg, rgba(255,46,147,0.8), rgba(127,73,180,0.8)); border-color: rgba(255,255,255,0.3); }
+        .card-badge.canvas-badge { background: linear-gradient(135deg, rgba(var(--color-primary-rgb),0.85), rgba(var(--color-secondary-rgb),0.85)); border-color: rgba(255,255,255,0.3); }
 
         /* SEARCH INPUT */
         .search-container { position: relative; width: 100%; max-width: 580px; margin-top: 16px; }
@@ -591,10 +618,11 @@
 </head>
 <body>
 
-    <!-- DYNAMIC COVER-COLORED AMBIENT BACKGROUND -->
+    <!-- DYNAMIC GLASSY MUSIC BACKGROUND (NanKillBro/glassy-music-nankill Style) -->
     <div id="ambient-bg">
         <div id="bg-back" class="ambient-bg-layer"></div>
         <div id="bg-front" class="ambient-bg-layer"></div>
+        <div class="ambient-mesh-overlay"></div>
         <div class="ambient-contrast-mask"></div>
         <div class="noise-overlay"></div>
     </div>
@@ -817,12 +845,12 @@
         </div>
     </div>
 
-    <!-- Hidden Canvas for Color Extraction -->
+    <!-- Hidden Canvas for Color Extraction Engine -->
     <canvas id="color-extractor" style="display:none;"></canvas>
 
     <script>
         /* ==================================================================
-           DATA DEFINITIONS (ALL CANVAS VIDEOS LINKED)
+           DATA DEFINITIONS (INCLUDING SPOTIFY VIDEO CANVAS FOR ALL TRACKS)
            ================================================================== */
         const religionCoverUrl = "https://files.catbox.moe/bvfrst.jpg";
         const talentoCoverUrl  = "https://files.catbox.moe/bpjz9c.jpg";
@@ -1104,6 +1132,118 @@
         ];
 
         /* ==================================================================
+           COLOR QUANTIZATION ENGINE (NanKillBro / Glassy Music Algorithm)
+           ================================================================== */
+        class GlassyColorExtractor {
+            static extract(imgUrl) {
+                return new Promise((resolve) => {
+                    const img = new Image();
+                    img.crossOrigin = "anonymous";
+                    img.onload = () => {
+                        try {
+                            const canvas = document.createElement('canvas');
+                            const ctx = canvas.getContext('2d');
+                            const size = 64;
+                            canvas.width = size;
+                            canvas.height = size;
+                            ctx.drawImage(img, 0, 0, size, size);
+                            const imgData = ctx.getImageData(0, 0, size, size).data;
+
+                            // 16 Hue Buckets for clustering
+                            const buckets = [];
+                            for (let i = 0; i < 16; i++) buckets.push([]);
+
+                            for (let i = 0; i < imgData.length; i += 16) {
+                                const r = imgData[i];
+                                const g = imgData[i + 1];
+                                const b = imgData[i + 2];
+                                const a = imgData[i + 3];
+
+                                if (a < 128) continue;
+
+                                const hsl = GlassyColorExtractor.rgbToHsl(r, g, b);
+                                if (hsl.l < 0.1 || hsl.l > 0.95) continue;
+
+                                const bucketIdx = Math.floor((hsl.h * 16)) % 16;
+                                buckets[bucketIdx].push({ r, g, b, ...hsl });
+                            }
+
+                            // Score clusters by population and saturation
+                            const scored = buckets
+                                .filter(b => b.length > 0)
+                                .map(b => {
+                                    let totalR = 0, totalG = 0, totalB = 0, totalSat = 0, totalLight = 0;
+                                    for (let c of b) {
+                                        totalR += c.r; totalG += c.g; totalB += c.b;
+                                        totalSat += c.s; totalLight += c.l;
+                                    }
+                                    const count = b.length;
+                                    const avgR = Math.round(totalR / count);
+                                    const avgG = Math.round(totalG / count);
+                                    const avgB = Math.round(totalB / count);
+                                    const avgSat = totalSat / count;
+                                    const avgLight = totalLight / count;
+                                    const score = count * (avgSat + 0.35) * (1 - Math.abs(avgLight - 0.5));
+                                    return { r: avgR, g: avgG, b: avgB, s: avgSat, l: avgLight, score, count };
+                                })
+                                .sort((a, b) => b.score - a.score);
+
+                            let primary = scored[0] || { r: 255, g: 46, b: 147 };
+                            let secondary = scored[1] || { r: Math.round(primary.r * 0.7), g: Math.round(primary.g * 0.5), b: 180 };
+                            let accent = scored[2] || { r: 127, g: 73, b: 180 };
+
+                            const darkR = Math.max(5, Math.round(primary.r * 0.08));
+                            const darkG = Math.max(5, Math.round(primary.g * 0.08));
+                            const darkB = Math.max(8, Math.round(primary.b * 0.12));
+
+                            resolve({
+                                primary: `${primary.r}, ${primary.g}, ${primary.b}`,
+                                secondary: `${secondary.r}, ${secondary.g}, ${secondary.b}`,
+                                accent: `${accent.r}, ${accent.g}, ${accent.b}`,
+                                dark: `rgb(${darkR}, ${darkG}, ${darkB})`
+                            });
+                        } catch (e) {
+                            resolve({
+                                primary: "255, 46, 147",
+                                secondary: "127, 73, 180",
+                                accent: "255, 110, 180",
+                                dark: "#070709"
+                            });
+                        }
+                    };
+                    img.onerror = () => {
+                        resolve({
+                            primary: "255, 46, 147",
+                            secondary: "127, 73, 180",
+                            accent: "255, 110, 180",
+                            dark: "#070709"
+                        });
+                    };
+                    img.src = imgUrl;
+                });
+            }
+
+            static rgbToHsl(r, g, b) {
+                r /= 255; g /= 255; b /= 255;
+                const max = Math.max(r, g, b), min = Math.min(r, g, b);
+                let h, s, l = (max + min) / 2;
+                if (max === min) {
+                    h = s = 0;
+                } else {
+                    const d = max - min;
+                    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                    switch (max) {
+                        case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                        case g: h = (b - r) / d + 2; break;
+                        case b: h = (r - g) / d + 4; break;
+                    }
+                    h /= 6;
+                }
+                return { h, s, l };
+            }
+        }
+
+        /* ==================================================================
            AUDIO ENGINE & STATE
            ================================================================== */
         let currentPlayingIndex = 0;
@@ -1186,41 +1326,8 @@
            ================================================================== */
         let currentCoverBg = "";
 
-        function extractColorAndApply(imgUrl) {
-            const img = new Image();
-            img.crossOrigin = "anonymous";
-            img.onload = () => {
-                try {
-                    const canvas = document.getElementById('color-extractor');
-                    const ctx = canvas.getContext('2d');
-                    canvas.width = 32;
-                    canvas.height = 32;
-                    ctx.drawImage(img, 0, 0, 32, 32);
-                    const data = ctx.getImageData(0, 0, 32, 32).data;
-                    let r = 0, g = 0, b = 0, count = 0;
-                    for (let i = 0; i < data.length; i += 16) {
-                        const cr = data[i], cg = data[i+1], cb = data[i+2];
-                        const max = Math.max(cr, cg, cb);
-                        const min = Math.min(cr, cg, cb);
-                        if (max > 45 && min < 235) {
-                            r += cr; g += cg; b += cb;
-                            count++;
-                        }
-                    }
-                    if (count > 0) {
-                        r = Math.round(r / count);
-                        g = Math.round(g / count);
-                        b = Math.round(b / count);
-                        document.documentElement.style.setProperty('--accent-1', `rgb(${r}, ${g}, ${b})`);
-                        document.documentElement.style.setProperty('--accent-glow', `rgba(${r}, ${g}, ${b}, 0.4)`);
-                    }
-                } catch(e) {}
-            };
-            img.src = imgUrl;
-        }
-
-        function updateCoverBackground(coverUrl) {
-            if (!coverUrl || currentCoverBg === coverUrl) return;
+        async function updateCoverBackground(coverUrl) {
+            if (!coverUrl) return;
             const bgBack = document.getElementById('bg-back');
             const bgFront = document.getElementById('bg-front');
             if (!bgBack || !bgFront) return;
@@ -1230,11 +1337,19 @@
             }
             bgFront.style.backgroundImage = `url("${coverUrl}")`;
             bgFront.classList.remove('fade-in');
-            void bgFront.offsetWidth;
+            void bgFront.offsetWidth; // Force Reflow
             bgFront.classList.add('fade-in');
             currentCoverBg = coverUrl;
 
-            extractColorAndApply(coverUrl);
+            // Extract palette using Glassy Music Quantizer
+            const palette = await GlassyColorExtractor.extract(coverUrl);
+            document.documentElement.style.setProperty('--color-primary-rgb', palette.primary);
+            document.documentElement.style.setProperty('--color-secondary-rgb', palette.secondary);
+            document.documentElement.style.setProperty('--color-accent-rgb', palette.accent);
+            document.documentElement.style.setProperty('--accent-1', `rgb(${palette.primary})`);
+            document.documentElement.style.setProperty('--accent-2', `rgb(${palette.secondary})`);
+            document.documentElement.style.setProperty('--accent-glow', `rgba(${palette.primary}, 0.45)`);
+            document.documentElement.style.setProperty('--bg-ambient-deep', palette.dark);
         }
 
         function updateCoversAndCanvas(song) {
