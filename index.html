@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>VIVETMP Music - Glassy Edition</title>
+    <title>VIVETMP Music - Canvas Edition</title>
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -871,6 +871,7 @@
         const monstruoCoverUrl = "https://file.garden/alq0ENqplE9QfqJV/MONSTRUO%20cover.jpg";
         const tatequietaCoverUrl = "https://file.garden/alq0ENqplE9QfqJV/TATE%20QUIETA_640x640.jpg";
         const babydemonCoverUrl = "https://file.garden/alq0ENqplE9QfqJV/198588574041.jpg";
+        const cosasQueNoTeDijeCoverUrl = "https://file.garden/alq0ENqplE9QfqJV/COSAS%20QUE%20NO%20TE%20DIJE_640x640.jpg";
 
         const albumsData = [ 
             { id: "religion-single", title: "Religión", artist: "Yan Block", cover: religionCoverUrl, year: "2026" },
@@ -891,7 +892,8 @@
             { id: "vamoacochi-single", title: "VAMOaCOCHI", artist: "Omar Courtz", cover: vamoacochiCoverUrl, year: "2026" },
             { id: "monstruo-single", title: "MONSTRUO", artist: "Tainy & Feid", cover: monstruoCoverUrl, year: "2026" },
             { id: "tatequieta-single", title: "TATE QUIETA", artist: "ROA & CDobleta", cover: tatequietaCoverUrl, year: "2026" },
-            { id: "babydemon-single", title: "Baby Demon", artist: "Anuel AA & YOVNGCHIMI", cover: babydemonCoverUrl, year: "2026" }
+            { id: "babydemon-single", title: "Baby Demon", artist: "Anuel AA & YOVNGCHIMI", cover: babydemonCoverUrl, year: "2026" },
+            { id: "cosasquenotedije-single", title: "COSAS QUE NO TE DIJE", artist: "SAIKO", cover: cosasQueNoTeDijeCoverUrl, year: "2026" }
         ];
 
         const cancionesData = [
@@ -1103,6 +1105,17 @@
                 album: "babydemon-single", 
                 trackNum: 1, 
                 coverLoaded: true 
+            },
+            { 
+                title: "COSAS QUE NO TE DIJE", 
+                artist: "SAIKO", 
+                url: "https://file.garden/alq0ENqplE9QfqJV/COSAS%20QUE%20NO%20TE%20DIJE_spotdown.org.mp3", 
+                lrc: "https://file.garden/alq0ENqplE9QfqJV/SAIKO%20-%20COSAS%20QUE%20NO%20TE%20DIJE.ttml", 
+                cover: cosasQueNoTeDijeCoverUrl, 
+                canvas: "https://file.garden/alq0ENqplE9QfqJV/copy_34087CD2-2F11-4A24-A1D1-30337797F94A.mov", 
+                album: "cosasquenotedije-single", 
+                trackNum: 1, 
+                coverLoaded: true 
             }
         ];
 
@@ -1128,7 +1141,8 @@
             { name: "Tainy", img: monstruoCoverUrl },
             { name: "Feid", img: monstruoCoverUrl },
             { name: "Anuel AA", img: babydemonCoverUrl },
-            { name: "YOVNGCHIMI", img: babydemonCoverUrl }
+            { name: "YOVNGCHIMI", img: babydemonCoverUrl },
+            { name: "SAIKO", img: cosasQueNoTeDijeCoverUrl }
         ];
 
         /* ==================================================================
@@ -1149,7 +1163,6 @@
                             ctx.drawImage(img, 0, 0, size, size);
                             const imgData = ctx.getImageData(0, 0, size, size).data;
 
-                            // 16 Hue Buckets for clustering
                             const buckets = [];
                             for (let i = 0; i < 16; i++) buckets.push([]);
 
@@ -1168,7 +1181,6 @@
                                 buckets[bucketIdx].push({ r, g, b, ...hsl });
                             }
 
-                            // Score clusters by population and saturation
                             const scored = buckets
                                 .filter(b => b.length > 0)
                                 .map(b => {
@@ -1327,7 +1339,7 @@
         let currentCoverBg = "";
 
         async function updateCoverBackground(coverUrl) {
-            if (!coverUrl) return;
+            if (!coverUrl || currentCoverBg === coverUrl) return;
             const bgBack = document.getElementById('bg-back');
             const bgFront = document.getElementById('bg-front');
             if (!bgBack || !bgFront) return;
