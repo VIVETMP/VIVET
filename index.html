@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>VIVETMP Music - Apple Music Edition</title>
+    <title>VIVETMP Music - COSAS QUE NO TE DIJE</title>
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <!-- Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
@@ -32,31 +32,48 @@
     
     <style>
         /* ==================================================================
-           SISTEMA DE DISEÑO ESTILO APPLE MUSIC & TONOS NATURALES
+           SISTEMA DE DISEÑO GLASSY & VARIABLES DINÁMICAS (Merge Theme)
            ================================================================== */
         :root {
-            --theme-accent: #ffffff;
+            --color-primary-rgb: 75, 78, 88;
+            --color-secondary-rgb: 105, 110, 122;
+            --color-accent-rgb: 140, 145, 160;
+            --bg-ambient-deep: #070709;
+
+            --bg-deep: var(--bg-ambient-deep);
+            --bg-surface: #0e0e13;
+            --bg-glass-panel: rgba(255, 255, 255, 0.05);
+            --bg-glass-card: rgba(255, 255, 255, 0.07);
+            --bg-glass-heavy: rgba(18, 18, 24, 0.72);
+            --bg-glass-hover: rgba(255, 255, 255, 0.12);
+
             --text-primary: #ffffff;
             --text-secondary: rgba(255, 255, 255, 0.7);
-            --text-tertiary: rgba(255, 255, 255, 0.45);
+            --text-tertiary: rgba(255, 255, 255, 0.42);
 
-            --bg-glass-card: rgba(255, 255, 255, 0.06);
-            --bg-glass-player: rgba(20, 20, 25, 0.78);
-            --border-glass: rgba(255, 255, 255, 0.12);
+            --border-subtle: rgba(255, 255, 255, 0.09);
+            --border-highlight: rgba(255, 255, 255, 0.18);
+            --shadow-float: 0 30px 60px rgba(0, 0, 0, 0.45);
+
+            --accent-1: rgb(var(--color-primary-rgb));
+            --accent-2: rgb(var(--color-secondary-rgb));
+            --accent-glow: rgba(var(--color-primary-rgb), 0.35);
 
             --font-display: -apple-system, BlinkMacSystemFont, 'Outfit', 'Helvetica Neue', sans-serif;
             --font-main: -apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', 'Helvetica Neue', sans-serif;
 
-            --ease-fluid: cubic-bezier(0.25, 1, 0.5, 1);
+            --ease-fluid: cubic-bezier(0.2, 0.8, 0.2, 1);
             --ease-snappy: cubic-bezier(0.3, 1.2, 0.4, 1);
-            --player-height: 84px;
+            --ease-cinematic: cubic-bezier(0.25, 1, 0.5, 1);
+            
+            --player-height: clamp(74px, 9vh, 88px);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
         body {
             font-family: var(--font-main);
-            background-color: #000;
+            background-color: var(--bg-deep);
             color: var(--text-primary);
             height: 100vh; height: 100dvh;
             width: 100vw;
@@ -67,105 +84,125 @@
         }
 
         /* ==================================================================
-           FONDO DINÁMICO FIEL AL TONO (Glassy Music Style)
+           FONDO DINÁMICO DE GLASSY-MUSIC (NanKillBro / Merge Theme)
            ================================================================== */
         #ambient-bg {
             position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
-            background: #000;
+            background: var(--bg-ambient-deep);
+            transition: background 1.2s var(--ease-cinematic);
         }
 
-        /* La imagen de portada desenfocada directamente, conservando sus colores reales */
-        .ambient-cover-layer {
+        .ambient-bg-layer {
             position: absolute;
-            inset: -35%;
+            inset: -45%;
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
-            filter: blur(80px);
-            -webkit-filter: blur(80px);
-            transform: scale(1.25);
-            animation: ambientFloat 60s ease-in-out infinite alternate;
-            will-change: transform;
+            filter: blur(80px) saturate(220%) brightness(0.65);
+            -webkit-filter: blur(80px) saturate(220%) brightness(0.65);
+            transition: opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+            opacity: 1;
+            transform-origin: center center;
+            animation: slowRotateGlow 75s linear infinite;
+            will-change: transform, opacity;
         }
 
-        @keyframes ambientFloat {
-            0% { transform: scale(1.25) translate(0%, 0%) rotate(0deg); }
-            50% { transform: scale(1.38) translate(-2%, 2%) rotate(2deg); }
-            100% { transform: scale(1.28) translate(2%, -2%) rotate(-1.5deg); }
+        #bg-back { z-index: 1; }
+        #bg-front { z-index: 2; opacity: 0; }
+        #bg-front.fade-in { opacity: 1; }
+
+        @keyframes slowRotateGlow {
+            0% { transform: rotate(0deg) scale(1.4); }
+            50% { transform: rotate(180deg) scale(1.6); }
+            100% { transform: rotate(360deg) scale(1.4); }
         }
 
-        /* Capa ligera de atenuación para lectura de texto blanco sin alterar los tonos de la portada */
-        .ambient-darken {
+        /* Malla radial dinámica multipunto con colores extraídos */
+        .ambient-mesh-overlay {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 18% 28%, rgba(var(--color-primary-rgb), 0.45) 0%, transparent 60%),
+                        radial-gradient(circle at 82% 72%, rgba(var(--color-secondary-rgb), 0.4) 0%, transparent 60%),
+                        radial-gradient(circle at 50% 50%, rgba(var(--color-accent-rgb), 0.25) 0%, transparent 70%);
+            mix-blend-mode: screen;
+            opacity: 0.9;
+            transition: background 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        .ambient-contrast-mask {
             position: absolute; inset: 0;
-            background: rgba(0, 0, 0, 0.35);
-            z-index: 1;
+            background: radial-gradient(circle at 50% 35%, rgba(5, 5, 8, 0.2) 0%, rgba(5, 5, 8, 0.8) 100%), rgba(0, 0, 0, 0.28);
+            z-index: 4;
+            pointer-events: none;
         }
 
         .noise-overlay {
-            position: absolute; inset: 0; z-index: 2; opacity: 0.035; mix-blend-mode: overlay;
+            position: absolute; inset: 0; z-index: 5; opacity: 0.035; mix-blend-mode: overlay; pointer-events: none;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
 
         /* ==================================================================
-           UI 1: HOME REDISEÑADO (APPLE MUSIC HERO SHOWCASE)
+           UI 1: HOME SHOWCASE (MINIMAL LUXURY VIEW)
            ================================================================== */
         #app-wrapper {
             display: flex; flex-direction: column; width: 100vw; height: 100vh; height: 100dvh;
             position: relative; z-index: 10;
             opacity: 1; visibility: visible;
-            transition: transform 0.65s var(--ease-fluid), opacity 0.35s ease, visibility 0.35s;
+            transition: transform 0.6s var(--ease-cinematic), opacity 0.35s ease, visibility 0.35s;
         }
 
         #app-wrapper.scaled {
-            transform: scale(0.92) translateY(-2vh);
+            transform: scale(0.93) translateY(-2vh);
             opacity: 0 !important; visibility: hidden !important;
             pointer-events: none;
         }
 
         .home-topbar {
             width: 100%; display: flex; align-items: center; justify-content: space-between;
-            padding: clamp(16px, 3.5vh, 36px) clamp(20px, 4vw, 64px);
+            padding: clamp(16px, 3vh, 32px) clamp(20px, 4vw, 56px);
             z-index: 20;
         }
         .brand {
-            font-family: var(--font-display); font-size: clamp(20px, 2vw, 26px); font-weight: 800;
+            font-family: var(--font-display); font-size: clamp(20px, 2vw, 26px); font-weight: 900;
             display: flex; align-items: center; gap: 10px; color: #fff; letter-spacing: -0.02em;
         }
-        .brand i { font-size: 28px; }
+        .brand i { font-size: 28px; color: var(--accent-1); }
 
-        .audio-quality-tag {
-            display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px;
-            background: rgba(255, 255, 255, 0.08); border: 1px solid var(--border-glass);
+        .top-badge {
+            display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px;
+            background: var(--bg-glass-panel); border: 1px solid var(--border-subtle);
             border-radius: 100px; font-size: 11px; font-weight: 700; letter-spacing: 1px;
-            color: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px);
+            color: var(--text-secondary); backdrop-filter: blur(20px);
         }
 
         .home-hero-container {
             flex: 1; display: flex; align-items: center; justify-content: center;
-            padding: 0 clamp(16px, 4vw, 40px) calc(var(--player-height) + 20px);
+            padding: 0 clamp(16px, 4vw, 40px) calc(var(--player-height) + 30px);
         }
 
         .showcase-card {
-            display: flex; align-items: center; gap: clamp(28px, 4.5vw, 60px);
-            background: var(--bg-glass-card); border: 1px solid var(--border-glass);
+            display: flex; align-items: center; gap: clamp(28px, 4vw, 56px);
+            background: var(--bg-glass-card); border: 1px solid var(--border-highlight);
             border-radius: clamp(24px, 3vw, 40px); padding: clamp(24px, 3.5vw, 48px);
             backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
-            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.5); max-width: 960px; width: 100%;
+            box-shadow: var(--shadow-float); max-width: 960px; width: 100%;
         }
 
         .showcase-art-wrap {
-            width: clamp(200px, 28vw, 340px); height: clamp(200px, 28vw, 340px);
-            aspect-ratio: 1; border-radius: clamp(16px, 2vw, 24px);
-            overflow: hidden; flex-shrink: 0;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+            width: clamp(200px, 26vw, 320px); height: clamp(200px, 26vw, 320px);
+            aspect-ratio: 1; border-radius: clamp(18px, 2vw, 28px);
+            overflow: hidden; position: relative; flex-shrink: 0;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
             border: 1px solid rgba(255, 255, 255, 0.15);
             cursor: pointer;
         }
         .showcase-art { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s var(--ease-fluid); }
-        .showcase-art-wrap:hover .showcase-art { transform: scale(1.04); }
+        .showcase-art-wrap:hover .showcase-art { transform: scale(1.05); }
 
-        .showcase-info { display: flex; flex-direction: column; gap: 8px; flex: 1; min-width: 0; }
-        .meta-subtitle { font-size: 12px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: var(--text-tertiary); }
+        .showcase-info { display: flex; flex-direction: column; gap: 10px; flex: 1; min-width: 0; }
+        .meta-tag { font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: var(--text-tertiary); }
         .showcase-title {
             font-family: var(--font-display); font-size: clamp(28px, 4vw, 48px); font-weight: 900;
             letter-spacing: -0.03em; line-height: 1.1; color: #fff; word-break: break-word;
@@ -173,38 +210,43 @@
         .showcase-artist {
             font-size: clamp(16px, 1.6vw, 22px); font-weight: 600; color: var(--text-secondary);
         }
+        .showcase-badges { display: flex; align-items: center; gap: 10px; margin-top: 4px; }
+        .hi-res-pill {
+            display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 6px;
+            background: rgba(255, 255, 255, 0.08); border: 1px solid var(--border-subtle);
+            font-size: 10px; font-weight: 800; letter-spacing: 1px; color: rgba(255, 255, 255, 0.85);
+        }
 
-        .showcase-actions { display: flex; align-items: center; gap: 16px; margin-top: 20px; }
+        .showcase-actions { display: flex; align-items: center; gap: 16px; margin-top: 18px; }
         .btn-play-hero {
             display: inline-flex; align-items: center; gap: 10px; padding: 14px 34px;
             border-radius: 100px; background: #ffffff; color: #000; border: none;
             font-family: var(--font-display); font-size: 15px; font-weight: 800; cursor: pointer;
-            box-shadow: 0 10px 25px rgba(255, 255, 255, 0.2); transition: all 0.3s var(--ease-snappy);
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.25); transition: all 0.3s var(--ease-snappy);
         }
-        .btn-play-hero:hover { transform: scale(1.04); box-shadow: 0 15px 35px rgba(255, 255, 255, 0.3); }
-        
+        .btn-play-hero:hover { transform: translateY(-2px) scale(1.03); box-shadow: 0 15px 35px rgba(255, 255, 255, 0.35); }
         .btn-lyrics-hero {
-            display: inline-flex; align-items: center; gap: 8px; padding: 14px 26px;
-            border-radius: 100px; background: rgba(255, 255, 255, 0.08); color: #fff; border: 1px solid var(--border-glass);
+            display: inline-flex; align-items: center; gap: 8px; padding: 14px 24px;
+            border-radius: 100px; background: rgba(255, 255, 255, 0.08); color: #fff; border: 1px solid var(--border-highlight);
             font-size: 14px; font-weight: 700; cursor: pointer; backdrop-filter: blur(20px); transition: all 0.3s var(--ease-snappy);
         }
-        .btn-lyrics-hero:hover { background: rgba(255, 255, 255, 0.16); transform: scale(1.02); }
+        .btn-lyrics-hero:hover { background: rgba(255, 255, 255, 0.16); transform: translateY(-2px); }
 
-        /* Barra flotante inferior de reproducción */
+        /* Barra flotante inferior */
         .player-wrapper {
-            position: fixed; bottom: clamp(12px, 2.5vh, 28px); left: 0; width: 100%;
+            position: fixed; bottom: clamp(14px, 2.5vh, 28px); left: 0; width: 100%;
             display: flex; justify-content: center; z-index: 50; pointer-events: none;
             padding: 0 clamp(16px, 3vw, 32px);
-            transition: transform 0.4s var(--ease-fluid), opacity 0.3s;
+            transition: transform 0.4s var(--ease-cinematic), opacity 0.3s;
         }
         body.np-active .player-wrapper { opacity: 0; pointer-events: none; transform: translateY(40px); }
 
         .player-pill {
             pointer-events: auto; width: 100%; max-width: 980px; height: var(--player-height);
-            background: var(--bg-glass-player); backdrop-filter: blur(40px) saturate(180%);
-            border: 1px solid var(--border-glass); border-radius: 24px;
+            background: var(--bg-glass-heavy); backdrop-filter: blur(45px) saturate(180%);
+            border: 1px solid var(--border-highlight); border-radius: 24px;
             display: flex; align-items: center; justify-content: space-between;
-            padding: 8px 24px; box-shadow: 0 30px 60px rgba(0,0,0,0.5); gap: 16px;
+            padding: 8px 24px; box-shadow: 0 30px 60px rgba(0,0,0,0.6); gap: 16px;
         }
 
         .pill-info { display: flex; align-items: center; gap: 14px; width: 30%; cursor: pointer; min-width: 140px; }
@@ -236,12 +278,12 @@
         .btn-expand:hover { color: #fff; transform: scale(1.15); }
 
         /* ==================================================================
-           UI 2: FULLSCREEN NOW PLAYING (APPLE MUSIC DESKTOP REPLICA)
+           UI 2: FULLSCREEN REWORKED (ARTWORK + SPACED LYRICS)
            ================================================================== */
         #np-fs {
             position: fixed; inset: 0; z-index: 100; transform: translateY(100%);
             opacity: 0; visibility: hidden;
-            transition: transform 0.65s var(--ease-fluid), opacity 0.35s ease, visibility 0.35s;
+            transition: transform 0.65s var(--ease-cinematic), opacity 0.35s ease, visibility 0.35s;
             display: flex; flex-direction: column; overflow: hidden;
             background: transparent; font-family: var(--font-display);
             padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
@@ -254,115 +296,114 @@
             padding: 0 clamp(20px, 4vw, 64px); z-index: 30;
         }
         .btn-close-fs {
-            width: 42px; height: 42px; border-radius: 50%; background: rgba(255, 255, 255, 0.08);
-            border: 1px solid var(--border-glass); display: flex; align-items: center; justify-content: center;
-            color: #fff; font-size: 20px; cursor: pointer; backdrop-filter: blur(25px);
+            width: 44px; height: 44px; border-radius: 50%; background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--border-highlight); display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 22px; cursor: pointer; backdrop-filter: blur(25px);
             transition: all 0.3s var(--ease-snappy);
         }
         .btn-close-fs:hover { background: rgba(255, 255, 255, 0.18); transform: scale(1.08); }
 
+        .fs-tag {
+            font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase;
+            padding: 6px 16px; border-radius: 100px; background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--border-subtle); color: var(--text-secondary); backdrop-filter: blur(20px);
+        }
+
         .fs-layout {
-            display: grid; grid-template-columns: minmax(360px, 44%) 1fr;
-            width: 100%; height: 100%; max-width: 1600px; margin: 0 auto;
-            padding: clamp(60px, 9vh, 90px) clamp(24px, 4vw, 64px) clamp(20px, 3.5vh, 40px);
+            display: grid; grid-template-columns: minmax(360px, 45%) 1fr;
+            width: 100%; height: 100%; max-width: 1700px; margin: 0 auto;
+            padding: clamp(70px, 10vh, 96px) clamp(24px, 4vw, 64px) clamp(24px, 4vh, 48px);
             gap: clamp(32px, 5vw, 72px); align-items: center; box-sizing: border-box;
         }
 
-        /* Panel Izquierdo: Carátula Apple Music + Controles */
+        /* Panel Izquierdo */
         .fs-left-pane {
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            width: 100%; max-width: 440px; margin: 0 auto;
+            width: 100%; max-width: 480px; margin: 0 auto;
         }
 
         .fs-art-wrap {
-            width: min(100%, min(380px, 40vh)); height: min(100%, min(380px, 40vh));
-            aspect-ratio: 1; border-radius: clamp(16px, 2vw, 24px);
+            width: min(100%, min(380px, 38vh)); height: min(100%, min(380px, 38vh));
+            aspect-ratio: 1; border-radius: clamp(20px, 2.5vw, 32px);
             overflow: hidden; position: relative;
-            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            cursor: pointer; transition: transform 0.4s var(--ease-fluid);
+            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            cursor: pointer; transition: transform 0.4s var(--ease-cinematic);
         }
         .fs-art-wrap:hover { transform: scale(1.02); }
         .fs-art { width: 100%; height: 100%; object-fit: cover; }
 
-        .fs-info-block { width: 100%; margin-top: clamp(18px, 2.5vh, 26px); display: flex; flex-direction: column; gap: 4px; }
+        .fs-info-block { width: 100%; margin-top: clamp(18px, 2.5vh, 28px); display: flex; flex-direction: column; gap: 6px; }
         .fs-title-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-        .fs-title { font-size: clamp(22px, 2.2vw, 30px); font-weight: 800; color: #fff; letter-spacing: -0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .fs-artist { font-size: clamp(15px, 1.2vw, 18px); color: var(--text-secondary); font-weight: 500; }
-        .fs-heart-btn { font-size: 22px; color: rgba(255,255,255,0.35); cursor: pointer; transition: 0.25s; }
+        .fs-title { font-size: clamp(22px, 2.4vw, 30px); font-weight: 800; color: #fff; letter-spacing: -0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .fs-artist { font-size: clamp(15px, 1.3vw, 18px); color: var(--text-secondary); font-weight: 600; }
+        .fs-heart-btn { font-size: 24px; color: rgba(255,255,255,0.4); cursor: pointer; transition: 0.25s; }
         .fs-heart-btn.active { color: #FF2E93; transform: scale(1.15); }
 
-        /* Scrubber estilo Apple Music */
-        .fs-scrubber { width: 100%; margin-top: 16px; display: flex; flex-direction: column; gap: 6px; }
+        .fs-scrubber { width: 100%; margin-top: 18px; display: flex; flex-direction: column; gap: 6px; }
         .fs-progress-track {
-            width: 100%; height: 4px; background: rgba(255, 255, 255, 0.2); border-radius: 100px;
+            width: 100%; height: 5px; background: rgba(255, 255, 255, 0.15); border-radius: 100px;
             cursor: pointer; position: relative; transition: height 0.2s;
         }
-        .fs-progress-track:hover { height: 7px; }
+        .fs-progress-track:hover { height: 8px; }
         .fs-progress-fill { width: 0%; height: 100%; border-radius: 100px; background: #ffffff; }
-        .fs-time-row { display: flex; justify-content: space-between; font-size: 11px; font-weight: 600; color: var(--text-tertiary); font-variant-numeric: tabular-nums; }
+        .fs-time-row { display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: var(--text-tertiary); font-variant-numeric: tabular-nums; }
 
-        /* Controles multimedia estilo Apple Music */
         .fs-controls {
             display: flex; align-items: center; justify-content: center; gap: clamp(20px, 3vw, 36px);
-            margin-top: 12px; width: 100%;
+            margin-top: 14px; width: 100%;
         }
-        .fs-ctrl-btn { font-size: 22px; color: var(--text-secondary); cursor: pointer; transition: 0.25s; }
+        .fs-ctrl-btn { font-size: 24px; color: var(--text-secondary); cursor: pointer; transition: 0.25s; }
         .fs-ctrl-btn:hover { color: #fff; transform: scale(1.15); }
         .fs-play-btn-large {
-            width: clamp(52px, 5.5vh, 62px); height: clamp(52px, 5.5vh, 62px);
+            width: clamp(52px, 5.8vh, 64px); height: clamp(52px, 5.8vh, 64px);
             border-radius: 50%; background: #ffffff; color: #000;
             display: flex; align-items: center; justify-content: center;
-            font-size: clamp(20px, 2.3vh, 26px); cursor: pointer; transition: transform 0.25s var(--ease-snappy);
-            box-shadow: 0 10px 25px rgba(255, 255, 255, 0.2);
+            font-size: clamp(22px, 2.5vh, 28px); cursor: pointer; transition: transform 0.25s var(--ease-snappy);
+            box-shadow: 0 10px 25px rgba(255, 255, 255, 0.25);
         }
-        .fs-play-btn-large i { margin-left: 2px; }
+        .fs-play-btn-large i { margin-left: 3px; }
         .fs-play-btn-large:hover { transform: scale(1.08); }
 
-        /* Barra de volumen perfectamente centrada */
         .fs-volume-box {
             display: flex; align-items: center; justify-content: center; gap: 12px;
-            width: 100%; max-width: 250px; margin: 16px auto 0 auto; color: var(--text-tertiary); font-size: 16px;
+            width: 100%; max-width: 260px; margin: 16px auto 0 auto; color: var(--text-tertiary); font-size: 16px;
         }
-        .fs-vol-slider { flex: 1; height: 4px; background: rgba(255,255,255,0.2); border-radius: 100px; cursor: pointer; }
+        .fs-vol-slider { flex: 1; height: 4px; background: rgba(255,255,255,0.15); border-radius: 100px; cursor: pointer; }
         .fs-vol-fill { width: 75%; height: 100%; background: #fff; border-radius: 100px; }
 
-        /* Panel Derecho: Letras Apple Music Sincronizadas y ESPACIADAS */
+        /* Panel Derecho: Letras Apple Music Sincronizadas y Espaciadas */
         .fs-right-pane {
             width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center;
-            overflow: hidden; position: relative;
+            background: rgba(255, 255, 255, 0.035); border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: clamp(24px, 3vw, 36px); padding: clamp(20px, 3vh, 40px);
+            backdrop-filter: blur(35px); -webkit-backdrop-filter: blur(35px);
+            overflow: hidden;
             mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,1) 8%, rgba(0,0,0,1) 90%, transparent 100%);
             -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,1) 8%, rgba(0,0,0,1) 90%, transparent 100%);
         }
         .lyrics-scroll-area { position: relative; height: 100%; width: 100%; overflow: hidden; }
         #lyrics-content { width: 100%; height: 100%; }
 
-        /* ==================================================================
-           AMLL LYRICS ENGINE OVERRIDES (LÍNEAS DESPEGADAS Y ESPACIADAS)
-           ================================================================== */
+        /* ESPACIADO AMPLIADO Y GENEROSO PARA LAS LÍNEAS DE LETRAS */
         #lyrics-content .amll-lyric-player {
-            --amll-lp-font-size: clamp(26px, 2.7vw, 40px) !important;
-            --amll-lp-line-height: 1.65 !important;
             --amll-lp-color: #ffffff !important;
-            --amll-lp-hover-bg-color: rgba(255, 255, 255, 0.08) !important;
-            font-weight: 700 !important;
-            letter-spacing: -0.015em !important;
+            --amll-lp-active-color: #ffffff !important;
+            --amll-lp-font-size: clamp(28px, 3.2vw, 48px) !important;
+            --amll-lp-hover-bg-color: rgba(255, 255, 255, 0.08);
+            font-weight: 800 !important;
+            letter-spacing: -0.02em;
         }
         
-        /* Selectores específicos de AMLL core para forzar un respiro vertical entre cada frase */
-        #lyrics-content .amll-lyric-player div[class*="lyricLine"]:not([class*="lyricLineWrapper"]) {
-            padding-top: clamp(16px, 2.4vh, 28px) !important;
-            padding-bottom: clamp(16px, 2.4vh, 28px) !important;
-            min-height: clamp(56px, 7vh, 84px) !important;
-            line-height: 1.65 !important;
-        }
-
-        #lyrics-content .amll-lyric-player div[class*="lyricMainLine"] {
-            line-height: 1.65 !important;
-        }
-
-        #lyrics-content .amll-lyric-player span {
-            line-height: 1.65 !important;
+        /* Margen y respiro entre cada verso */
+        #lyrics-content .amll-lyric-player .amll-lyric-line,
+        #lyrics-content .amll-lyric-player .amll-lyric-line-wrapper,
+        #lyrics-content .amll-lyric-player .amll-lyric-line-content {
+            margin-top: clamp(12px, 1.8vh, 22px) !important;
+            margin-bottom: clamp(18px, 2.6vh, 32px) !important;
+            padding-top: clamp(6px, 1vh, 12px) !important;
+            padding-bottom: clamp(6px, 1vh, 12px) !important;
+            line-height: 1.45 !important;
         }
 
         /* ==================================================================
@@ -372,6 +413,7 @@
             .showcase-card { flex-direction: column; text-align: center; gap: 24px; }
             .showcase-art-wrap { width: 220px; height: 220px; }
             .showcase-actions { justify-content: center; }
+            .showcase-badges { justify-content: center; }
 
             .pill-info { width: 65%; }
             .pill-controls { display: none; }
@@ -383,30 +425,30 @@
             .fs-left-pane { max-width: 100%; }
             .fs-art-wrap { width: min(240px, 55vw); height: min(240px, 55vw); }
             .fs-right-pane { width: 100%; height: 420px; min-height: 380px; }
-            
             #lyrics-content .amll-lyric-player { --amll-lp-font-size: 24px !important; }
-            #lyrics-content .amll-lyric-player div[class*="lyricLine"]:not([class*="lyricLineWrapper"]) {
-                padding-top: 14px !important;
-                padding-bottom: 14px !important;
-                min-height: 48px !important;
+            #lyrics-content .amll-lyric-player .amll-lyric-line {
+                margin-top: 10px !important;
+                margin-bottom: 16px !important;
             }
         }
     </style>
 </head>
 <body>
 
-    <!-- FONDO AMBIENTAL DINÁMICO (FIEL AL TONO REAL DE LA PORTADA) -->
+    <!-- FONDO DINÁMICO DE GLASSY-MUSIC (NanKillBro / Merge Theme) -->
     <div id="ambient-bg">
-        <div id="ambient-cover" class="ambient-cover-layer"></div>
-        <div class="ambient-darken"></div>
+        <div id="bg-back" class="ambient-bg-layer"></div>
+        <div id="bg-front" class="ambient-bg-layer"></div>
+        <div class="ambient-mesh-overlay"></div>
+        <div class="ambient-contrast-mask"></div>
         <div class="noise-overlay"></div>
     </div>
 
-    <!-- UI 1: MAIN HOME SHOWCASE -->
+    <!-- UI 1: MAIN HOME VIEW -->
     <div id="app-wrapper">
         <header class="home-topbar">
             <div class="brand"><i class="ph-fill ph-waveform"></i> VIVETMP</div>
-            <div class="audio-quality-tag"><i class="ph-fill ph-music-notes"></i> LOSSLESS ALAC</div>
+            <div class="top-badge"><i class="ph-fill ph-seal-check"></i> OFFICIAL RELEASE</div>
         </header>
 
         <main class="home-hero-container">
@@ -415,15 +457,18 @@
                     <img src="https://file.garden/alq0ENqplE9QfqJV/COSAS%20QUE%20NO%20TE%20DIJE_640x640.jpg" class="showcase-art" alt="Portada">
                 </div>
                 <div class="showcase-info">
-                    <span class="meta-subtitle">Lanzamiento Oficial</span>
+                    <span class="meta-tag">Canción Destacada</span>
                     <h1 class="showcase-title">COSAS QUE NO TE DIJE</h1>
                     <h2 class="showcase-artist">SAIKO</h2>
+                    <div class="showcase-badges">
+                        <div class="hi-res-pill"><i class="ph-fill ph-waveform"></i> Lossless ALAC 24-bit/96kHz</div>
+                    </div>
                     <div class="showcase-actions">
                         <button class="btn-play-hero" onclick="togglePlay()">
                             <i class="ph-fill ph-play" id="hero-play-icon"></i> Reproducir
                         </button>
                         <button class="btn-lyrics-hero" onclick="toggleNP()">
-                            <i class="ph-bold ph-quotes"></i> Letras en Vivo
+                            <i class="ph-bold ph-quotes"></i> Ver Letras
                         </button>
                     </div>
                 </div>
@@ -469,18 +514,18 @@
         </div>
     </div>
 
-    <!-- UI 2: FULLSCREEN NOW PLAYING (APPLE MUSIC REPLICA) -->
+    <!-- UI 2: FULLSCREEN NOW PLAYING & LYRICS -->
     <div id="np-fs">
         <header class="np-header">
             <button class="btn-close-fs" onclick="toggleNP()" title="Cerrar (Esc)">
                 <i class="ph-bold ph-caret-down"></i>
             </button>
-            <div class="audio-quality-tag"><i class="ph-fill ph-waveform"></i> Hi-Res Lossless 24-bit/96kHz</div>
-            <div style="width:42px;"></div>
+            <div class="fs-tag">Reproduciendo • SAIKO</div>
+            <div style="width:44px;"></div>
         </header>
 
         <div class="fs-layout">
-            <!-- Izquierda: Portada + Metadata + Controles de Apple Music -->
+            <!-- Izquierda: Portada + Controles -->
             <div class="fs-left-pane">
                 <div class="fs-art-wrap" onclick="togglePlay()">
                     <img src="https://file.garden/alq0ENqplE9QfqJV/COSAS%20QUE%20NO%20TE%20DIJE_640x640.jpg" class="fs-art" alt="Portada">
@@ -495,7 +540,6 @@
                         <i class="ph-fill ph-heart fs-heart-btn" onclick="toggleHeart(this)"></i>
                     </div>
 
-                    <!-- Scrubber estilo Apple Music -->
                     <div class="fs-scrubber">
                         <div class="fs-progress-track" onclick="seek(event, this)">
                             <div class="fs-progress-fill" id="fs-bar-fill"></div>
@@ -506,7 +550,6 @@
                         </div>
                     </div>
 
-                    <!-- Controles clásicos de Apple Music -->
                     <div class="fs-controls">
                         <i class="ph-bold ph-shuffle fs-ctrl-btn"></i>
                         <i class="ph-fill ph-skip-back fs-ctrl-btn" onclick="replaySong()"></i>
@@ -517,7 +560,6 @@
                         <i class="ph-bold ph-repeat fs-ctrl-btn"></i>
                     </div>
 
-                    <!-- Barra de volumen centrada -->
                     <div class="fs-volume-box">
                         <i class="ph-fill ph-speaker-low"></i>
                         <div class="fs-vol-slider" onclick="changeVolume(event, this)">
@@ -528,7 +570,7 @@
                 </div>
             </div>
 
-            <!-- Derecha: Letras Apple Music Sincronizadas (Con espacio holgado) -->
+            <!-- Derecha: Letras Sincronizadas Apple Music -->
             <div class="fs-right-pane">
                 <div class="lyrics-scroll-area">
                     <div id="lyrics-content"></div>
@@ -537,9 +579,12 @@
         </div>
     </div>
 
+    <!-- Canvas oculto para extracción analítica de color -->
+    <canvas id="color-extractor" style="display:none;"></canvas>
+
     <script>
         /* ==================================================================
-           DATOS OFICIALES DE LA CANCIÓN
+           DATOS DE LA CANCIÓN
            ================================================================== */
         const currentSong = {
             title: "COSAS QUE NO TE DIJE",
@@ -548,6 +593,116 @@
             lrc: "https://file.garden/alq0ENqplE9QfqJV/SAIKO%20-%20COSAS%20QUE%20NO%20TE%20DIJE.ttml",
             cover: "https://file.garden/alq0ENqplE9QfqJV/COSAS%20QUE%20NO%20TE%20DIJE_640x640.jpg"
         };
+
+        /* ==================================================================
+           EXTRACTOR DE COLOR DE GLASSY-MUSIC (NanKillBro / Merge Theme)
+           ================================================================== */
+        class GlassyColorExtractor {
+            static extract(imgUrl) {
+                return new Promise((resolve) => {
+                    const img = new Image();
+                    img.crossOrigin = "anonymous";
+                    img.onload = () => {
+                        try {
+                            const canvas = document.getElementById('color-extractor');
+                            const ctx = canvas.getContext('2d');
+                            const size = 64;
+                            canvas.width = size;
+                            canvas.height = size;
+                            ctx.drawImage(img, 0, 0, size, size);
+                            const imgData = ctx.getImageData(0, 0, size, size).data;
+
+                            const buckets = [];
+                            for (let i = 0; i < 16; i++) buckets.push([]);
+
+                            for (let i = 0; i < imgData.length; i += 16) {
+                                const r = imgData[i];
+                                const g = imgData[i + 1];
+                                const b = imgData[i + 2];
+                                const a = imgData[i + 3];
+
+                                if (a < 128) continue;
+
+                                const hsl = GlassyColorExtractor.rgbToHsl(r, g, b);
+                                if (hsl.l < 0.1 || hsl.l > 0.95) continue;
+
+                                const bucketIdx = Math.floor((hsl.h * 16)) % 16;
+                                buckets[bucketIdx].push({ r, g, b, ...hsl });
+                            }
+
+                            const scored = buckets
+                                .filter(b => b.length > 0)
+                                .map(b => {
+                                    let totalR = 0, totalG = 0, totalB = 0, totalSat = 0, totalLight = 0;
+                                    for (let c of b) {
+                                        totalR += c.r; totalG += c.g; totalB += c.b;
+                                        totalSat += c.s; totalLight += c.l;
+                                    }
+                                    const count = b.length;
+                                    const avgR = Math.round(totalR / count);
+                                    const avgG = Math.round(totalG / count);
+                                    const avgB = Math.round(totalB / count);
+                                    const avgSat = totalSat / count;
+                                    const avgLight = totalLight / count;
+                                    const score = count * (avgSat + 0.35) * (1 - Math.abs(avgLight - 0.5));
+                                    return { r: avgR, g: avgG, b: avgB, s: avgSat, l: avgLight, score, count };
+                                })
+                                .sort((a, b) => b.score - a.score);
+
+                            let primary = scored[0] || { r: 75, g: 78, b: 88 };
+                            let secondary = scored[1] || { r: Math.round(primary.r * 0.7), g: Math.round(primary.g * 0.5), b: 180 };
+                            let accent = scored[2] || { r: 127, g: 73, b: 180 };
+
+                            const darkR = Math.max(5, Math.round(primary.r * 0.08));
+                            const darkG = Math.max(5, Math.round(primary.g * 0.08));
+                            const darkB = Math.max(8, Math.round(primary.b * 0.12));
+
+                            resolve({
+                                primary: `${primary.r}, ${primary.g}, ${primary.b}`,
+                                secondary: `${secondary.r}, ${secondary.g}, ${secondary.b}`,
+                                accent: `${accent.r}, ${accent.g}, ${accent.b}`,
+                                dark: `rgb(${darkR}, ${darkG}, ${darkB})`
+                            });
+                        } catch (e) {
+                            resolve({
+                                primary: "75, 78, 88",
+                                secondary: "105, 110, 122",
+                                accent: "140, 145, 160",
+                                dark: "#070709"
+                            });
+                        }
+                    };
+                    img.onerror = () => {
+                        resolve({
+                            primary: "75, 78, 88",
+                            secondary: "105, 110, 122",
+                            accent: "140, 145, 160",
+                            dark: "#070709"
+                        });
+                    };
+                    img.src = imgUrl;
+                });
+            }
+
+            static rgbToHsl(r, g, b) {
+                r /= 255; g /= 255; b /= 255;
+                const max = Math.max(r, g, b), min = Math.min(r, g, b);
+                let h, s, l = (max + min) / 2;
+                if (max === min) {
+                    h = s = 0;
+                } else {
+                    const d = max - min;
+                    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                    switch (max) {
+                        case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                        case g: h = (b - r) / d + 2; break;
+                        case b: h = (r - g) / d + 4; break;
+                    }
+                    h /= 6;
+                }
+                return { h, s, l };
+            }
+        }
 
         /* ==================================================================
            MOTOR DE AUDIO & ESTADO
@@ -560,6 +715,7 @@
 
         let audioCtx, masterGain;
         let _lyricLastFrameMs = null;
+        let currentCoverBg = "";
 
         function initAudioEngine() {
             if (audioCtx) return;
@@ -773,9 +929,7 @@
                 const text = await res.text();
                 const lines = parseToAMLLLines(text);
                 player.setLyricLines(lines, 0);
-                setTimeout(() => {
-                    player.calcLayout(true, true);
-                }, 200);
+                player.calcLayout(true, true);
             } catch (e) {
                 console.error("Error al cargar letras:", e);
             }
@@ -811,7 +965,7 @@
             requestAnimationFrame(renderLoop);
         }
 
-        /* Gesto de deslizamiento hacia abajo para cerrar Fullscreen */
+        /* Gesto deslizar para cerrar Fullscreen */
         function setupGestures() {
             let sY = 0, cY = 0;
             const np = document.getElementById('np-fs');
@@ -838,14 +992,37 @@
             }, { passive: true });
         }
 
+        async function updateCoverBackground(coverUrl) {
+            if (!coverUrl) return;
+            const bgBack = document.getElementById('bg-back');
+            const bgFront = document.getElementById('bg-front');
+            if (!bgBack || !bgFront) return;
+
+            if (currentCoverBg) {
+                bgBack.style.backgroundImage = `url("${currentCoverBg}")`;
+            }
+            bgFront.style.backgroundImage = `url("${coverUrl}")`;
+            bgFront.classList.remove('fade-in');
+            void bgFront.offsetWidth;
+            bgFront.classList.add('fade-in');
+            currentCoverBg = coverUrl;
+
+            const palette = await GlassyColorExtractor.extract(coverUrl);
+            document.documentElement.style.setProperty('--color-primary-rgb', palette.primary);
+            document.documentElement.style.setProperty('--color-secondary-rgb', palette.secondary);
+            document.documentElement.style.setProperty('--color-accent-rgb', palette.accent);
+            document.documentElement.style.setProperty('--accent-1', `rgb(${palette.primary})`);
+            document.documentElement.style.setProperty('--accent-2', `rgb(${palette.secondary})`);
+            document.documentElement.style.setProperty('--accent-glow', `rgba(${palette.primary}, 0.45)`);
+            document.documentElement.style.setProperty('--bg-ambient-deep', palette.dark);
+        }
+
         /* Inicialización */
         async function init() {
             document.body.addEventListener('click', ensureAudioContext, { once: true });
             document.body.addEventListener('touchstart', ensureAudioContext, { once: true });
 
-            // Aplicar la portada directamente como capa ambiental fiel al tono
-            document.getElementById('ambient-cover').style.backgroundImage = `url("${currentSong.cover}")`;
-
+            await updateCoverBackground(currentSong.cover);
             setVolumeLevel(globalVolume);
             loadLyrics();
             setupGestures();
