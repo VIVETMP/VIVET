@@ -32,18 +32,19 @@
     
     <style>
         /* ==================================================================
-           SISTEMA DE DISEÑO GLASSY & VARIABLES DINÁMICAS EXACTAS
+           SISTEMA DE DISEÑO GLASSY & VARIABLES DINÁMICAS (NanKillBro / Merge Theme)
            ================================================================== */
         :root {
-            /* Colores base dinámicos extraídos fielmente de la portada */
             --color-primary-rgb: 75, 78, 88;
             --color-secondary-rgb: 105, 110, 122;
             --color-accent-rgb: 140, 145, 160;
 
-            --bg-deep: rgb(15, 16, 20);
+            --bg-ambient-deep: #08090c;
+            --bg-deep: var(--bg-ambient-deep);
+            --bg-surface: #0e0e13;
             --bg-glass-panel: rgba(255, 255, 255, 0.05);
-            --bg-glass-card: rgba(255, 255, 255, 0.07);
-            --bg-glass-heavy: rgba(20, 22, 28, 0.72);
+            --bg-glass-card: rgba(255, 255, 255, 0.06);
+            --bg-glass-heavy: rgba(18, 20, 26, 0.72);
             --bg-glass-hover: rgba(255, 255, 255, 0.12);
 
             --text-primary: #ffffff;
@@ -52,7 +53,7 @@
 
             --border-subtle: rgba(255, 255, 255, 0.09);
             --border-highlight: rgba(255, 255, 255, 0.18);
-            --shadow-float: 0 30px 60px rgba(0, 0, 0, 0.45);
+            --shadow-float: 0 30px 60px rgba(0, 0, 0, 0.5);
 
             --accent-1: rgb(var(--color-primary-rgb));
             --accent-glow: rgba(var(--color-primary-rgb), 0.35);
@@ -82,53 +83,71 @@
         }
 
         /* ==================================================================
-           FONDO AMBIENTAL: TONO EXACTO Y NATURAL DE LA PORTADA
+           SISTEMA DE FONDO DINÁMICO (NanKillBro / Glassy Music Style)
            ================================================================== */
         #ambient-bg {
             position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
-            background: #0a0b0e;
+            background: var(--bg-ambient-deep);
+            transition: background 1.2s var(--ease-cinematic);
         }
 
-        /* Capa de portada con desenfoque óptico sin sobre-saturación */
+        /* Capas de rotación orbital ultra lenta como en el Merge Theme */
         .ambient-art-layer {
             position: absolute;
-            inset: -25%;
+            inset: -45%;
             background-size: cover;
-            background-position: center;
+            background-position: center center;
             background-repeat: no-repeat;
-            filter: blur(75px) brightness(0.72);
-            -webkit-filter: blur(75px) brightness(0.72);
-            transform: scale(1.12);
-            opacity: 1;
-            transition: opacity 1s var(--ease-cinematic);
+            filter: blur(85px) brightness(0.68);
+            -webkit-filter: blur(85px) brightness(0.68);
+            animation: slowRotate 80s linear infinite;
             will-change: transform, opacity;
+            transition: opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+            transform-origin: center center;
+            opacity: 1;
         }
 
-        /* Malla de color derivada directamente de los tonos extraídos tal cual */
-        .ambient-mesh-layer {
-            position: absolute; inset: 0;
-            background: radial-gradient(circle at 20% 25%, rgba(var(--color-primary-rgb), 0.45) 0%, transparent 60%),
-                        radial-gradient(circle at 80% 75%, rgba(var(--color-secondary-rgb), 0.4) 0%, transparent 65%),
-                        radial-gradient(circle at 50% 50%, rgba(var(--color-accent-rgb), 0.2) 0%, transparent 70%);
+        #bg-cover-back { z-index: 1; }
+        #bg-cover-front { z-index: 2; opacity: 0; }
+        #bg-cover-front.fade-in { opacity: 1; }
+
+        @keyframes slowRotate {
+            0% { transform: rotate(0deg) scale(1.45); }
+            50% { transform: rotate(180deg) scale(1.6); }
+            100% { transform: rotate(360deg) scale(1.45); }
+        }
+
+        /* Malla radial dinámica sincronizada a los tonos de la portada */
+        .ambient-radial-glow {
+            position: absolute; inset: 0; z-index: 3;
+            background: radial-gradient(circle at 20% 25%, rgba(var(--color-primary-rgb), 0.45) 0%, transparent 55%),
+                        radial-gradient(circle at 80% 75%, rgba(var(--color-secondary-rgb), 0.38) 0%, transparent 60%),
+                        radial-gradient(circle at 50% 50%, rgba(var(--color-accent-rgb), 0.22) 0%, transparent 70%);
             mix-blend-mode: screen;
-            opacity: 0.85;
-            transition: background 1s ease;
-            z-index: 2;
+            animation: pulseGlowMesh 18s ease-in-out infinite;
+            transition: background 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+            pointer-events: none;
         }
 
+        @keyframes pulseGlowMesh {
+            0%, 100% { opacity: 0.7; transform: scale(1); }
+            50% { opacity: 0.9; transform: scale(1.06); }
+        }
+
+        /* Viñeta de contraste para legibilidad de letras y controles */
         .ambient-vignette {
-            position: absolute; inset: 0;
-            background: radial-gradient(circle at 50% 40%, rgba(0, 0, 0, 0.15) 0%, rgba(0, 0, 0, 0.65) 100%);
-            z-index: 3;
+            position: absolute; inset: 0; z-index: 4;
+            background: radial-gradient(circle at 50% 40%, rgba(0, 0, 0, 0.15) 0%, rgba(4, 5, 8, 0.75) 100%), rgba(0, 0, 0, 0.22);
+            pointer-events: none;
         }
 
         .noise-overlay {
-            position: absolute; inset: 0; z-index: 4; opacity: 0.03; mix-blend-mode: overlay;
+            position: absolute; inset: 0; z-index: 5; opacity: 0.035; mix-blend-mode: overlay; pointer-events: none;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
 
         /* ==================================================================
-           UI 1: HOME REDISEÑADO (MINIMAL LUXURY SHOWCASE)
+           UI 1: HOME REDISEÑADO (SHOWCASE ELEGANTE)
            ================================================================== */
         #app-wrapper {
             display: flex; flex-direction: column; width: 100vw; height: 100vh; height: 100dvh;
@@ -143,7 +162,6 @@
             pointer-events: none;
         }
 
-        /* Barra de navegación superior */
         .home-topbar {
             width: 100%; display: flex; align-items: center; justify-content: space-between;
             padding: clamp(16px, 3vh, 32px) clamp(20px, 4vw, 56px);
@@ -162,7 +180,6 @@
             color: var(--text-secondary); backdrop-filter: blur(20px);
         }
 
-        /* Hero central de la canción */
         .home-hero-container {
             flex: 1; display: flex; align-items: center; justify-content: center;
             padding: 0 clamp(16px, 4vw, 40px) calc(var(--player-height) + 30px);
@@ -264,7 +281,7 @@
         .btn-expand:hover { color: #fff; transform: scale(1.15); }
 
         /* ==================================================================
-           UI 2: FULLSCREEN REWORKED (ARTWORK + LYRICS INMERSIÓN TOTAL)
+           UI 2: FULLSCREEN REWORKED (PROPORCIONAL & LYRICS ESPACIADOS)
            ================================================================== */
         #np-fs {
             position: fixed; inset: 0; z-index: 100; transform: translateY(100%);
@@ -295,7 +312,6 @@
             border: 1px solid var(--border-subtle); color: var(--text-secondary); backdrop-filter: blur(20px);
         }
 
-        /* Layout dividido 50/50 elegante */
         .fs-layout {
             display: grid; grid-template-columns: minmax(360px, 45%) 1fr;
             width: 100%; height: 100%; max-width: 1700px; margin: 0 auto;
@@ -303,7 +319,7 @@
             gap: clamp(32px, 5vw, 72px); align-items: center; box-sizing: border-box;
         }
 
-        /* Panel Izquierdo: Carátula y Controles centrados */
+        /* Panel Izquierdo */
         .fs-left-pane {
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             width: 100%; max-width: 480px; margin: 0 auto;
@@ -362,7 +378,7 @@
         .fs-vol-slider { flex: 1; height: 4px; background: rgba(255,255,255,0.15); border-radius: 100px; cursor: pointer; }
         .fs-vol-fill { width: 75%; height: 100%; background: #fff; border-radius: 100px; }
 
-        /* Panel Derecho: Letras Apple Music sincronizadas */
+        /* Panel Derecho: Letras Apple Music sincronizadas CON ESPACIADO CÓMODO */
         .fs-right-pane {
             width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center;
             background: rgba(255, 255, 255, 0.035); border: 1px solid rgba(255, 255, 255, 0.08);
@@ -375,15 +391,23 @@
         .lyrics-scroll-area { position: relative; height: 100%; width: 100%; overflow: hidden; }
         #lyrics-content { width: 100%; height: 100%; }
 
+        /* Configuraciones de tipografía y espaciado de renglones despegados */
         #lyrics-content .amll-lyric-player {
             --amll-lp-color: #ffffff !important;
             --amll-lp-active-color: #ffffff !important;
-            --amll-lp-font-size: clamp(28px, 3.2vw, 52px) !important;
+            --amll-lp-font-size: clamp(28px, 3.2vw, 50px) !important;
             --amll-lp-hover-bg-color: rgba(255, 255, 255, 0.08);
-            font-weight: 800 !important; letter-spacing: -0.02em;
+            font-weight: 800 !important;
+            letter-spacing: -0.02em;
         }
+        
+        /* Espaciado generoso entre líneas para evitar que estén pegadas */
         #lyrics-content .amll-lyric-player .amll-lyric-line {
-            margin-bottom: clamp(14px, 2vh, 24px) !important;
+            margin-top: clamp(16px, 2.4vh, 30px) !important;
+            margin-bottom: clamp(16px, 2.4vh, 30px) !important;
+            padding-top: clamp(6px, 1vh, 12px) !important;
+            padding-bottom: clamp(6px, 1vh, 12px) !important;
+            line-height: 1.45 !important;
         }
 
         /* ==================================================================
@@ -406,15 +430,20 @@
             .fs-art-wrap { width: min(240px, 55vw); height: min(240px, 55vw); }
             .fs-right-pane { width: 100%; height: 420px; min-height: 380px; }
             #lyrics-content .amll-lyric-player { --amll-lp-font-size: 24px !important; }
+            #lyrics-content .amll-lyric-player .amll-lyric-line {
+                margin-top: 14px !important;
+                margin-bottom: 14px !important;
+            }
         }
     </style>
 </head>
 <body>
 
-    <!-- FONDO AMBIENTAL ADAPTATIVO CON COLORES REALES DE LA PORTADA -->
+    <!-- FONDO AMBIENTAL DINÁMICO IDÉNTICO A GLASSY-MUSIC-NANKILL (MERGE THEME) -->
     <div id="ambient-bg">
-        <div id="ambient-art" class="ambient-art-layer"></div>
-        <div id="ambient-mesh" class="ambient-mesh-layer"></div>
+        <div id="bg-cover-back" class="ambient-art-layer"></div>
+        <div id="bg-cover-front" class="ambient-art-layer"></div>
+        <div class="ambient-radial-glow"></div>
         <div class="ambient-vignette"></div>
         <div class="noise-overlay"></div>
     </div>
@@ -545,7 +574,7 @@
                 </div>
             </div>
 
-            <!-- Derecha: Letras Sincronizadas Apple Music -->
+            <!-- Derecha: Letras Sincronizadas Apple Music con espaciado ampliado -->
             <div class="fs-right-pane">
                 <div class="lyrics-scroll-area">
                     <div id="lyrics-content"></div>
@@ -570,8 +599,7 @@
         };
 
         /* ==================================================================
-           SISTEMA DE EXTRACCIÓN DE COLOR EXACTO Y FIEL A LA PORTADA
-           (Sin hiper-saturación ni oscurecimiento forzado)
+           EXTRACCIÓN DE COLOR FIEL A LA PORTADA (Sin alteraciones artificiales)
            ================================================================== */
         class TrueColorExtractor {
             static extract(imgUrl) {
@@ -588,7 +616,6 @@
                             ctx.drawImage(img, 0, 0, size, size);
                             const data = ctx.getImageData(0, 0, size, size).data;
 
-                            // Agrupamiento por cuantización natural RGB
                             const colorBins = {};
                             for (let i = 0; i < data.length; i += 4) {
                                 if (data[i + 3] < 128) continue;
@@ -596,7 +623,6 @@
                                 const g = data[i + 1];
                                 const b = data[i + 2];
 
-                                // Cuantizar a intervalos de 16 para agrupar tonos reales
                                 const qr = Math.round(r / 16) * 16;
                                 const qg = Math.round(g / 16) * 16;
                                 const qb = Math.round(b / 16) * 16;
@@ -611,7 +637,6 @@
                                 colorBins[key].count++;
                             }
 
-                            // Ordenar por presencia real en la portada
                             const sorted = Object.values(colorBins)
                                 .map(c => ({
                                     r: Math.round(c.r / c.count),
@@ -621,10 +646,8 @@
                                 }))
                                 .sort((a, b) => b.count - a.count);
 
-                            // Color primario: tono dominante real
                             const primary = sorted[0] || { r: 75, g: 78, b: 88 };
 
-                            // Color secundario: tono armónico distinto en la portada
                             let secondary = sorted.find(c => {
                                 const dist = Math.sqrt(
                                     Math.pow(c.r - primary.r, 2) +
@@ -634,28 +657,62 @@
                                 return dist > 40;
                             }) || sorted[1] || primary;
 
-                            // Color acento: tercer tono distintivo
                             let accent = sorted.find(c => {
                                 const dist1 = Math.sqrt(Math.pow(c.r - primary.r, 2) + Math.pow(c.g - primary.g, 2) + Math.pow(c.b - primary.b, 2));
                                 const dist2 = Math.sqrt(Math.pow(c.r - secondary.r, 2) + Math.pow(c.g - secondary.g, 2) + Math.pow(c.b - secondary.b, 2));
                                 return dist1 > 35 && dist2 > 35;
                             }) || secondary;
 
+                            const darkR = Math.max(6, Math.round(primary.r * 0.09));
+                            const darkG = Math.max(6, Math.round(primary.g * 0.09));
+                            const darkB = Math.max(9, Math.round(primary.b * 0.12));
+
                             resolve({
                                 primary: `${primary.r}, ${primary.g}, ${primary.b}`,
                                 secondary: `${secondary.r}, ${secondary.g}, ${secondary.b}`,
-                                accent: `${accent.r}, ${accent.g}, ${accent.b}`
+                                accent: `${accent.r}, ${accent.g}, ${accent.b}`,
+                                dark: `rgb(${darkR}, ${darkG}, ${darkB})`
                             });
                         } catch(e) {
-                            resolve({ primary: "75, 78, 88", secondary: "105, 110, 122", accent: "140, 145, 160" });
+                            resolve({ primary: "75, 78, 88", secondary: "105, 110, 122", accent: "140, 145, 160", dark: "#08090c" });
                         }
                     };
                     img.onerror = () => {
-                        resolve({ primary: "75, 78, 88", secondary: "105, 110, 122", accent: "140, 145, 160" });
+                        resolve({ primary: "75, 78, 88", secondary: "105, 110, 122", accent: "140, 145, 160", dark: "#08090c" });
                     };
                     img.src = imgUrl;
                 });
             }
+        }
+
+        /* ==================================================================
+           CONTROLADOR DEL FONDO AMBIENTAL GLASSY (Merge Theme)
+           ================================================================== */
+        let currentCoverBg = "";
+
+        async function updateAmbientTheme(coverUrl) {
+            if (!coverUrl) return;
+            const bgBack = document.getElementById('bg-cover-back');
+            const bgFront = document.getElementById('bg-cover-front');
+
+            if (currentCoverBg && bgBack) {
+                bgBack.style.backgroundImage = `url("${currentCoverBg}")`;
+            }
+            if (bgFront) {
+                bgFront.style.backgroundImage = `url("${coverUrl}")`;
+                bgFront.classList.remove('fade-in');
+                void bgFront.offsetWidth;
+                bgFront.classList.add('fade-in');
+            }
+            currentCoverBg = coverUrl;
+
+            const palette = await TrueColorExtractor.extract(coverUrl);
+            document.documentElement.style.setProperty('--color-primary-rgb', palette.primary);
+            document.documentElement.style.setProperty('--color-secondary-rgb', palette.secondary);
+            document.documentElement.style.setProperty('--color-accent-rgb', palette.accent);
+            document.documentElement.style.setProperty('--accent-1', `rgb(${palette.primary})`);
+            document.documentElement.style.setProperty('--accent-glow', `rgba(${palette.primary}, 0.35)`);
+            document.documentElement.style.setProperty('--bg-ambient-deep', palette.dark);
         }
 
         /* ==================================================================
@@ -950,16 +1007,8 @@
             document.body.addEventListener('click', ensureAudioContext, { once: true });
             document.body.addEventListener('touchstart', ensureAudioContext, { once: true });
 
-            // Aplicar imagen de fondo real
-            document.getElementById('ambient-art').style.backgroundImage = `url("${currentSong.cover}")`;
-
-            // Extraer colores fieles a la carátula sin alterar saturación
-            const palette = await TrueColorExtractor.extract(currentSong.cover);
-            document.documentElement.style.setProperty('--color-primary-rgb', palette.primary);
-            document.documentElement.style.setProperty('--color-secondary-rgb', palette.secondary);
-            document.documentElement.style.setProperty('--color-accent-rgb', palette.accent);
-            document.documentElement.style.setProperty('--accent-1', `rgb(${palette.primary})`);
-            document.documentElement.style.setProperty('--accent-glow', `rgba(${palette.primary}, 0.35)`);
+            // Inicializar el sistema dinámico de fondo Glassy Music
+            updateAmbientTheme(currentSong.cover);
 
             setVolumeLevel(globalVolume);
             loadLyrics();
