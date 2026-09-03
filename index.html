@@ -13,7 +13,7 @@
     <!-- Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
-    <!-- Apple Music-like Lyrics engine -->
+    <!-- Real Apple Music-like Lyrics engine -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@applemusic-like-lyrics/core@0.5.1/dist/style.css">
     
     <!-- Synchronous promise initialization for ESM lyrics engine -->
@@ -34,12 +34,12 @@
     
     <style>
         /* ==================================================================
-           PREMIUM GLASSY DESIGN SYSTEM & TRUE-TO-SOURCE PALETTE
+           PREMIUM DESIGN SYSTEM & TRUE-TO-SOURCE PALETTE
            ================================================================== */
         :root {
-            --color-primary-rgb: 130, 95, 175;
-            --color-secondary-rgb: 85, 60, 120;
-            --bg-ambient-deep: #07070a;
+            --color-primary-rgb: 125, 85, 165;
+            --color-secondary-rgb: 75, 50, 110;
+            --bg-ambient-deep: #060609;
             
             --bg-deep: var(--bg-ambient-deep);
             --bg-surface: #0e0e13;
@@ -88,7 +88,7 @@
         }
 
         /* ==================================================================
-           GLASSY MUSIC DYNAMIC BACKGROUND (NanKillBro / Merge Theme Style)
+           HIGH-PERFORMANCE DYNAMIC AMBIENT BACKGROUND
            ================================================================== */
         #ambient-bg {
             position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
@@ -98,44 +98,61 @@
 
         .ambient-bg-layer {
             position: absolute;
-            inset: -45%;
+            inset: -35%;
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
-            filter: blur(80px) saturate(180%) brightness(0.65);
-            -webkit-filter: blur(80px) saturate(180%) brightness(0.65);
+            filter: blur(85px) saturate(160%) brightness(0.7);
+            -webkit-filter: blur(85px) saturate(160%) brightness(0.7);
             transition: opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1);
             opacity: 1;
-            transform-origin: center center;
-            animation: slowRotateGlow 75s linear infinite;
+            transform: translate3d(0, 0, 0) scale(1.35);
+            animation: slowOrganicFloat 45s ease-in-out infinite alternate;
             will-change: transform, opacity;
+            contain: paint;
         }
 
         #bg-back { z-index: 1; }
         #bg-front { z-index: 2; opacity: 0; }
         #bg-front.fade-in { opacity: 1; }
 
-        @keyframes slowRotateGlow {
-            0% { transform: rotate(0deg) scale(1.35); }
-            50% { transform: rotate(180deg) scale(1.55); }
-            100% { transform: rotate(360deg) scale(1.35); }
+        @keyframes slowOrganicFloat {
+            0% { transform: scale(1.32) translate3d(0%, 0%, 0) rotate(0deg); }
+            50% { transform: scale(1.45) translate3d(-3%, 2%, 0) rotate(2deg); }
+            100% { transform: scale(1.38) translate3d(2%, -3%, 0) rotate(-1.5deg); }
         }
 
+        /* Ambient Dynamic Mesh Orbs (Smooth Glow) */
         .ambient-mesh-overlay {
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(circle at 20% 30%, rgba(var(--color-primary-rgb), 0.45) 0%, transparent 60%),
-                        radial-gradient(circle at 80% 70%, rgba(var(--color-secondary-rgb), 0.4) 0%, transparent 60%);
-            mix-blend-mode: screen;
-            opacity: 0.85;
-            transition: background 1.2s cubic-bezier(0.25, 1, 0.5, 1);
-            z-index: 3;
-            pointer-events: none;
+            position: absolute; inset: 0; pointer-events: none; z-index: 3;
+            mix-blend-mode: screen; opacity: 0.88;
+        }
+        .mesh-orb {
+            position: absolute; border-radius: 50%; filter: blur(90px);
+            will-change: transform; pointer-events: none;
+        }
+        .mesh-orb-1 {
+            top: -10%; left: -10%; width: 70vw; height: 70vw;
+            background: radial-gradient(circle, rgba(var(--color-primary-rgb), 0.5) 0%, transparent 70%);
+            animation: orbFloat1 28s ease-in-out infinite alternate;
+        }
+        .mesh-orb-2 {
+            bottom: -15%; right: -10%; width: 75vw; height: 75vw;
+            background: radial-gradient(circle, rgba(var(--color-secondary-rgb), 0.45) 0%, transparent 70%);
+            animation: orbFloat2 32s ease-in-out infinite alternate;
+        }
+        @keyframes orbFloat1 {
+            0% { transform: translate3d(0, 0, 0) scale(1); }
+            100% { transform: translate3d(12vw, 10vh, 0) scale(1.15); }
+        }
+        @keyframes orbFloat2 {
+            0% { transform: translate3d(0, 0, 0) scale(1); }
+            100% { transform: translate3d(-10vw, -12vh, 0) scale(1.18); }
         }
 
         .ambient-contrast-mask {
             position: absolute; inset: 0;
-            background: radial-gradient(circle at 50% 35%, rgba(5, 5, 8, 0.25) 0%, rgba(5, 5, 8, 0.82) 100%), rgba(0, 0, 0, 0.3);
+            background: radial-gradient(circle at 50% 35%, rgba(5, 5, 8, 0.22) 0%, rgba(5, 5, 8, 0.82) 100%), rgba(0, 0, 0, 0.28);
             z-index: 4;
             pointer-events: none;
         }
@@ -633,11 +650,14 @@
 </head>
 <body>
 
-    <!-- DYNAMIC GLASSY MUSIC BACKGROUND -->
+    <!-- DYNAMIC GLASSY MUSIC BACKGROUND (TRUE TONES) -->
     <div id="ambient-bg">
         <div id="bg-back" class="ambient-bg-layer"></div>
         <div id="bg-front" class="ambient-bg-layer"></div>
-        <div class="ambient-mesh-overlay"></div>
+        <div class="ambient-mesh-overlay">
+            <div class="mesh-orb mesh-orb-1"></div>
+            <div class="mesh-orb mesh-orb-2"></div>
+        </div>
         <div class="ambient-contrast-mask"></div>
         <div class="noise-overlay"></div>
     </div>
@@ -831,7 +851,7 @@
         </div>
     </div>
 
-    <!-- Hidden Canvas for Color Extraction -->
+    <!-- Hidden Canvas for Color Extraction Engine -->
     <canvas id="color-extractor" style="display:none;"></canvas>
 
     <script>
@@ -849,7 +869,7 @@
         };
 
         /* ==================================================================
-           TRUE-TO-SOURCE COLOR EXTRACTOR (No artificial over-saturation)
+           TRUE-TO-SOURCE COLOR EXTRACTOR (100% Faithful RGB)
            ================================================================== */
         class TrueColorExtractor {
             static extract(imgUrl) {
@@ -859,52 +879,65 @@
                     img.onload = () => {
                         try {
                             const canvas = document.createElement('canvas');
-                            const ctx = canvas.getContext('2d');
+                            const ctx = canvas.getContext('2d', { willReadFrequently: true });
                             const size = 64;
                             canvas.width = size;
                             canvas.height = size;
                             ctx.drawImage(img, 0, 0, size, size);
                             const data = ctx.getImageData(0, 0, size, size).data;
 
-                            const colorBins = {};
+                            const colorBins = new Map();
+                            
                             for (let i = 0; i < data.length; i += 16) {
                                 const r = data[i], g = data[i+1], b = data[i+2], a = data[i+3];
                                 if (a < 128) continue;
                                 
                                 const max = Math.max(r, g, b);
                                 const min = Math.min(r, g, b);
-                                if (max < 16 && min < 16) continue;
-                                if (min > 245) continue;
+                                const delta = max - min;
+                                const luma = 0.299 * r + 0.587 * g + 0.114 * b;
 
-                                const qR = Math.floor(r / 16) * 16 + 8;
-                                const qG = Math.floor(g / 16) * 16 + 8;
-                                const qB = Math.floor(b / 16) * 16 + 8;
-                                const key = `${qR},${qG},${qB}`;
+                                if (luma < 18 || luma > 240) continue;
 
-                                if (!colorBins[key]) colorBins[key] = { r: qR, g: qG, b: qB, count: 0 };
-                                colorBins[key].count++;
+                                const qR = (r >> 4) << 4;
+                                const qG = (g >> 4) << 4;
+                                const qB = (b >> 4) << 4;
+                                const key = (qR << 16) | (qG << 8) | qB;
+
+                                const bin = colorBins.get(key) || { r: 0, g: 0, b: 0, count: 0, chroma: 0 };
+                                bin.r += r;
+                                bin.g += g;
+                                bin.b += b;
+                                bin.chroma += delta;
+                                bin.count++;
+                                colorBins.set(key, bin);
                             }
 
-                            const sorted = Object.values(colorBins).sort((a, b) => b.count - a.count);
+                            const sorted = Array.from(colorBins.values())
+                                .map(b => {
+                                    const avgR = Math.round(b.r / b.count);
+                                    const avgG = Math.round(b.g / b.count);
+                                    const avgB = Math.round(b.b / b.count);
+                                    const avgChroma = b.chroma / b.count;
+                                    const score = b.count * (1 + avgChroma / 64);
+                                    return { r: avgR, g: avgG, b: avgB, score };
+                                })
+                                .sort((a, b) => b.score - a.score);
 
-                            const primary = sorted[0] || { r: 130, g: 95, b: 175 };
-                            
+                            const primary = sorted[0] || { r: 125, g: 85, b: 165 };
+
                             let secondary = sorted[1] || primary;
                             for (let i = 1; i < sorted.length; i++) {
-                                const dist = Math.sqrt(
-                                    Math.pow(sorted[i].r - primary.r, 2) +
-                                    Math.pow(sorted[i].g - primary.g, 2) +
-                                    Math.pow(sorted[i].b - primary.b, 2)
-                                );
-                                if (dist > 40) {
+                                const dist = Math.hypot(sorted[i].r - primary.r, sorted[i].g - primary.g, sorted[i].b - primary.b);
+                                if (dist > 35) {
                                     secondary = sorted[i];
                                     break;
                                 }
                             }
 
-                            const darkR = Math.max(6, Math.min(18, Math.round(primary.r * 0.08)));
-                            const darkG = Math.max(6, Math.min(18, Math.round(primary.g * 0.08)));
-                            const darkB = Math.max(8, Math.min(22, Math.round(primary.b * 0.1)));
+                            const darkR = Math.max(5, Math.min(18, Math.round(primary.r * 0.07)));
+                            const darkG = Math.max(5, Math.min(18, Math.round(primary.g * 0.07)));
+                            const darkB = Math.max(8, Math.min(22, Math.round(primary.b * 0.09)));
 
                             resolve({
                                 primary: `${primary.r}, ${primary.g}, ${primary.b}`,
@@ -913,17 +946,17 @@
                             });
                         } catch(e) {
                             resolve({
-                                primary: "130, 95, 175",
-                                secondary: "85, 60, 120",
-                                dark: "#07070a"
+                                primary: "125, 85, 165",
+                                secondary: "75, 50, 110",
+                                dark: "#060609"
                             });
                         }
                     };
                     img.onerror = () => {
                         resolve({
-                            primary: "130, 95, 175",
-                            secondary: "85, 60, 120",
-                            dark: "#07070a"
+                            primary: "125, 85, 165",
+                            secondary: "75, 50, 110",
+                            dark: "#060609"
                         });
                     };
                     img.src = imgUrl;
@@ -1127,15 +1160,6 @@
             return sec || 0;
         }
 
-        function getAttributeInsensitive(element, attrName) {
-            if (!element || !element.attributes) return '';
-            for (let i = 0; i < element.attributes.length; i++) {
-                const attr = element.attributes[i];
-                if (attr.localName === attrName || attr.name === attrName || attr.name.endsWith(':' + attrName)) return attr.value;
-            }
-            return '';
-        }
-
         function parseToAMLLLines(text, url) {
             const rawLines = [];
             const parser = new DOMParser();
@@ -1248,10 +1272,11 @@
 
         function fmt(s) { return `${Math.floor(s/60)}:${Math.floor(s%60).toString().padStart(2,'0')}`; }
 
+        let lastRoundedTime = -1;
         function renderLoop(rafTime) {
             if (!rafTime) rafTime = performance.now();
             
-            if(audio.duration && !isNaN(audio.duration)) {
+            if (audio.duration && !isNaN(audio.duration)) {
                 let cur = audio.currentTime; 
                 const now = performance.now();
                 if (cur !== lastAudioTime) { 
@@ -1263,20 +1288,26 @@
                 }
                 
                 const dur = audio.duration; 
-                const pct = (cur/dur)*100;
+                const pct = (cur / dur) * 100;
                 
                 document.getElementById('bar-fill-mini').style.width = `${pct}%`;
                 document.getElementById('bar-fill-desk').style.width = `${pct}%`;
                 document.getElementById('bar-fill-np').style.width = `${pct}%`;
                 
-                document.getElementById('time-curr-desk').innerText = fmt(cur);
-                document.getElementById('time-tot-desk').innerText = "-" + fmt(dur-cur);
-                document.getElementById('time-curr-np').innerText = fmt(cur);
-                document.getElementById('time-tot-np').innerText = "-" + fmt(dur-cur);
+                const curRounded = Math.floor(cur);
+                if (curRounded !== lastRoundedTime) {
+                    lastRoundedTime = curRounded;
+                    const curStr = fmt(cur);
+                    const totStr = "-" + fmt(dur - cur);
+                    document.getElementById('time-curr-desk').innerText = curStr;
+                    document.getElementById('time-tot-desk').innerText = totStr;
+                    document.getElementById('time-curr-np').innerText = curStr;
+                    document.getElementById('time-tot-np').innerText = totStr;
+                }
                 
-                if(isNPOpen && lyricPlayer) { 
+                if (isNPOpen && lyricPlayer) { 
                     const visualTime = cur + 0.1;
-                    const deltaMs = _lyricLastFrameMs ? Math.min(100, rafTime - _lyricLastFrameMs) : (1000/60);
+                    const deltaMs = _lyricLastFrameMs ? Math.min(100, rafTime - _lyricLastFrameMs) : (1000 / 60);
                     _lyricLastFrameMs = rafTime;
                     lyricPlayer.setCurrentTime(visualTime * 1000);
                     lyricPlayer.update(deltaMs);
@@ -1294,42 +1325,42 @@
             const app = document.getElementById('app-wrapper');
             
             np.addEventListener('touchstart', e => {
-                if(e.target.closest('#lyrics-scroller') && document.getElementById('lyrics-scroller').scrollTop > 0) return;
-                if(np.scrollTop > 0) return; 
+                if (e.target.closest('#lyrics-scroller') && document.getElementById('lyrics-scroller').scrollTop > 0) return;
+                if (np.scrollTop > 0) return; 
                 
                 sY = e.touches[0].clientY; cY = sY;
                 np.style.transition = 'none'; app.style.transition = 'none';
                 app.style.visibility = 'visible';
-            }, {passive:true});
+            }, { passive: true });
             
             np.addEventListener('touchmove', e => {
-                if(!isNPOpen || sY===0) return;
-                if(e.target.closest('.scrubber-bg') || e.target.closest('.np-progress-track') || e.target.closest('.vol-slider')) return;
+                if (!isNPOpen || sY === 0) return;
+                if (e.target.closest('.scrubber-bg') || e.target.closest('.np-progress-track') || e.target.closest('.vol-slider')) return;
                 
                 cY = e.touches[0].clientY; let d = cY - sY;
-                if(d > 0 && np.scrollTop <= 0) { 
-                    np.style.transform = `translateY(${d}px)`;
+                if (d > 0 && np.scrollTop <= 0) { 
+                    np.style.transform = `translate3d(0, ${d}px, 0)`;
                     const progress = Math.min(1, d / (window.innerHeight * 0.45));
                     app.style.opacity = (progress * 0.9).toString();
-                    app.style.transform = `scale(${0.92 + progress * 0.08}) translateY(${-2 + progress * 2}vh)`;
+                    app.style.transform = `scale(${0.92 + progress * 0.08}) translate3d(0, ${-2 + progress * 2}vh, 0)`;
                 }
-            }, {passive:true});
+            }, { passive: true });
             
             np.addEventListener('touchend', e => {
-                if(!isNPOpen || sY===0) return;
-                if(e.target.closest('.scrubber-bg') || e.target.closest('.np-progress-track') || e.target.closest('.vol-slider')) return;
+                if (!isNPOpen || sY === 0) return;
+                if (e.target.closest('.scrubber-bg') || e.target.closest('.np-progress-track') || e.target.closest('.vol-slider')) return;
                 let d = cY - sY; sY = 0;
                 np.style.transition = ''; app.style.transition = '';
                 
-                if(d > 120) {
+                if (d > 120) {
                     toggleNP();
                 } else { 
                     np.style.transform = ''; 
                     app.style.opacity = '0';
                     app.style.visibility = 'hidden';
-                    app.style.transform = 'scale(0.92) translateY(-2vh)'; 
+                    app.style.transform = 'scale(0.92) translate3d(0, -2vh, 0)'; 
                 }
-            }, {passive:true});
+            }, { passive: true });
         }
 
         /* ==================================================================
