@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>VIVETMP Music - COSAS QUE NO TE DIJE</title>
+    <title>VIVETMP Music - Glassy Edition</title>
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,8 +13,10 @@
     <!-- Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
-    <!-- Apple Music-like Lyrics Engine -->
+    <!-- Apple Music-like Lyrics engine -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@applemusic-like-lyrics/core@0.5.1/dist/style.css">
+    
+    <!-- Synchronous promise initialization for ESM lyrics engine -->
     <script>
         window.__AMLLResolver = null;
         window.__AMLLReady = new Promise((resolve) => {
@@ -32,39 +34,42 @@
     
     <style>
         /* ==================================================================
-           SISTEMA DE DISEÑO APPLE MUSIC & VARIABLES DINÁMICAS
+           PREMIUM GLASSY DESIGN SYSTEM & TRUE-TO-SOURCE PALETTE
            ================================================================== */
         :root {
-            /* Colores base dinámicos extraídos fielmente de la portada */
-            --color-primary-rgb: 72, 76, 86;
-            --color-secondary-rgb: 98, 102, 114;
-            --color-accent-rgb: 130, 136, 150;
-            --bg-ambient-deep: #08090c;
-
+            --color-primary-rgb: 130, 95, 175;
+            --color-secondary-rgb: 85, 60, 120;
+            --bg-ambient-deep: #07070a;
+            
             --bg-deep: var(--bg-ambient-deep);
-            --bg-glass-card: rgba(255, 255, 255, 0.06);
-            --bg-glass-heavy: rgba(18, 20, 26, 0.78);
+            --bg-surface: #0e0e13;
+            --bg-glass-heavy: rgba(18, 18, 24, 0.72);
+            --bg-glass-card: rgba(255, 255, 255, 0.05);
             --bg-glass-hover: rgba(255, 255, 255, 0.12);
-
+            
             --text-primary: #ffffff;
-            --text-secondary: rgba(255, 255, 255, 0.7);
-            --text-tertiary: rgba(255, 255, 255, 0.42);
-
-            --border-subtle: rgba(255, 255, 255, 0.1);
-            --border-highlight: rgba(255, 255, 255, 0.2);
-            --shadow-float: 0 30px 70px rgba(0, 0, 0, 0.55);
-
+            --text-secondary: rgba(255, 255, 255, 0.68);
+            --text-tertiary: rgba(255, 255, 255, 0.4);
+            
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --border-highlight: rgba(255, 255, 255, 0.18);
+            --shadow-float: 0 25px 50px rgba(0, 0, 0, 0.6);
+            --shadow-glow: 0 0 35px var(--accent-glow);
+            
             --accent-1: rgb(var(--color-primary-rgb));
+            --accent-2: rgb(var(--color-secondary-rgb));
             --accent-glow: rgba(var(--color-primary-rgb), 0.35);
-
-            --font-display: -apple-system, BlinkMacSystemFont, 'Outfit', 'Helvetica Neue', sans-serif;
-            --font-main: -apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', 'Helvetica Neue', sans-serif;
-
+            
+            --font-display: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Outfit', sans-serif;
+            --font-main: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Plus Jakarta Sans', sans-serif;
+            
             --ease-fluid: cubic-bezier(0.2, 0.8, 0.2, 1);
             --ease-snappy: cubic-bezier(0.3, 1.2, 0.4, 1);
             --ease-cinematic: cubic-bezier(0.25, 1, 0.5, 1);
             
+            --sidebar-width: clamp(210px, 16vw, 270px);
             --player-height: clamp(74px, 9vh, 88px);
+            --nav-height-mob: clamp(65px, 9vh, 78px);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -79,10 +84,11 @@
             display: flex;
             user-select: none;
             -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         /* ==================================================================
-           FONDO AMBIENTAL DINÁMICO (FIEL AL TONO REAL DE LA PORTADA)
+           GLASSY MUSIC DYNAMIC BACKGROUND (NanKillBro / Merge Theme Style)
            ================================================================== */
         #ambient-bg {
             position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
@@ -92,16 +98,16 @@
 
         .ambient-bg-layer {
             position: absolute;
-            inset: -40%;
+            inset: -45%;
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
-            filter: blur(80px) brightness(0.7);
-            -webkit-filter: blur(80px) brightness(0.7);
+            filter: blur(80px) saturate(180%) brightness(0.65);
+            -webkit-filter: blur(80px) saturate(180%) brightness(0.65);
             transition: opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1);
             opacity: 1;
             transform-origin: center center;
-            animation: ambientDrift 80s linear infinite;
+            animation: slowRotateGlow 75s linear infinite;
             will-change: transform, opacity;
         }
 
@@ -109,19 +115,19 @@
         #bg-front { z-index: 2; opacity: 0; }
         #bg-front.fade-in { opacity: 1; }
 
-        @keyframes ambientDrift {
+        @keyframes slowRotateGlow {
             0% { transform: rotate(0deg) scale(1.35); }
             50% { transform: rotate(180deg) scale(1.55); }
             100% { transform: rotate(360deg) scale(1.35); }
         }
 
         .ambient-mesh-overlay {
-            position: absolute; inset: 0;
-            background: radial-gradient(circle at 20% 25%, rgba(var(--color-primary-rgb), 0.5) 0%, transparent 60%),
-                        radial-gradient(circle at 80% 75%, rgba(var(--color-secondary-rgb), 0.45) 0%, transparent 65%),
-                        radial-gradient(circle at 50% 50%, rgba(var(--color-accent-rgb), 0.25) 0%, transparent 70%);
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 20% 30%, rgba(var(--color-primary-rgb), 0.45) 0%, transparent 60%),
+                        radial-gradient(circle at 80% 70%, rgba(var(--color-secondary-rgb), 0.4) 0%, transparent 60%);
             mix-blend-mode: screen;
-            opacity: 0.9;
+            opacity: 0.85;
             transition: background 1.2s cubic-bezier(0.25, 1, 0.5, 1);
             z-index: 3;
             pointer-events: none;
@@ -129,7 +135,7 @@
 
         .ambient-contrast-mask {
             position: absolute; inset: 0;
-            background: radial-gradient(circle at 50% 35%, rgba(5, 6, 8, 0.15) 0%, rgba(5, 6, 8, 0.75) 100%), rgba(0, 0, 0, 0.25);
+            background: radial-gradient(circle at 50% 35%, rgba(5, 5, 8, 0.25) 0%, rgba(5, 5, 8, 0.82) 100%), rgba(0, 0, 0, 0.3);
             z-index: 4;
             pointer-events: none;
         }
@@ -140,298 +146,494 @@
         }
 
         /* ==================================================================
-           UI 1: HOME VIEW
+           APP LAYOUT
            ================================================================== */
         #app-wrapper {
-            display: flex; flex-direction: column; width: 100vw; height: 100vh; height: 100dvh;
-            position: relative; z-index: 10;
-            opacity: 1; visibility: visible;
-            transition: transform 0.6s var(--ease-cinematic), opacity 0.35s ease, visibility 0.35s;
+            display: flex; width: 100vw; height: 100vh; height: 100dvh; position: relative; z-index: 10;
+            background: transparent; opacity: 1; visibility: visible;
+            transition: transform 0.65s var(--ease-cinematic), border-radius 0.65s var(--ease-cinematic), opacity 0.4s ease, visibility 0.4s;
+            transform-origin: center center;
         }
-
+        
         #app-wrapper.scaled {
-            transform: scale(0.93) translateY(-2vh);
+            transform: scale(0.92) translateY(-2vh);
+            border-radius: clamp(24px, 3vw, 40px);
+            overflow: hidden; pointer-events: none;
             opacity: 0 !important; visibility: hidden !important;
-            pointer-events: none;
+            box-shadow: 0 40px 100px rgba(0,0,0,1);
         }
 
-        .home-topbar {
-            width: 100%; display: flex; align-items: center; justify-content: space-between;
-            padding: clamp(16px, 3vh, 32px) clamp(20px, 4vw, 56px);
-            z-index: 20;
-        }
-        .brand {
-            font-family: var(--font-display); font-size: clamp(20px, 2vw, 26px); font-weight: 900;
-            display: flex; align-items: center; gap: 10px; color: #fff; letter-spacing: -0.02em;
-        }
-        .brand i { font-size: 28px; color: var(--accent-1); }
-
-        .top-badge {
-            display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px;
+        #sidebar {
+            width: var(--sidebar-width); height: calc(100vh - var(--player-height) - clamp(24px, 4vh, 48px));
+            margin: clamp(12px, 2vh, 24px) 0 clamp(12px, 2vh, 24px) clamp(12px, 2vw, 24px); 
+            padding: clamp(24px, 3vh, 40px) clamp(16px, 1.5vw, 24px);
+            display: flex; flex-direction: column; gap: clamp(24px, 4vh, 48px);
             background: var(--bg-glass-card); border: 1px solid var(--border-subtle);
-            border-radius: 100px; font-size: 11px; font-weight: 700; letter-spacing: 1px;
-            color: var(--text-secondary); backdrop-filter: blur(20px);
+            border-radius: clamp(20px, 2vw, 28px); backdrop-filter: blur(40px) saturate(180%); -webkit-backdrop-filter: blur(40px) saturate(180%);
+            flex-shrink: 0; z-index: 20; position: relative;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
         }
+        #sidebar::before { content: ''; position: absolute; inset: 0; border-radius: inherit; background: linear-gradient(180deg, rgba(255,255,255,0.06) 0%, transparent 100%); pointer-events: none; }
+        
+        .brand { font-family: var(--font-display); font-size: clamp(20px, 1.8vw, 26px); font-weight: 900; letter-spacing: -0.02em; display: flex; align-items: center; gap: 12px; color: #fff; text-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+        .brand i { font-size: clamp(24px, 2.2vw, 32px); color: var(--accent-1); filter: drop-shadow(0 0 12px var(--accent-glow)); }
+        
+        .nav-menu { display: flex; flex-direction: column; gap: clamp(6px, 1vh, 10px); position: relative; z-index: 2; }
+        .nav-item {
+            display: flex; align-items: center; gap: 16px; padding: clamp(12px, 1.5vh, 16px) clamp(14px, 1.5vw, 20px); 
+            font-size: clamp(14px, 1.05vw, 15px); font-weight: 600; color: var(--text-secondary);
+            border-radius: 14px; cursor: pointer; transition: all 0.35s var(--ease-snappy); position: relative; overflow: hidden;
+        }
+        .nav-item i { font-size: clamp(20px, 1.6vw, 24px); transition: transform 0.4s var(--ease-snappy); }
+        .nav-item::before { content: ''; position: absolute; inset: 0; background: var(--bg-glass-hover); opacity: 0; transition: 0.3s; z-index: -1; }
+        .nav-item:hover { color: var(--text-primary); transform: translateX(6px); }
+        .nav-item:hover::before { opacity: 1; }
+        .nav-item:hover i { transform: scale(1.12) rotate(-5deg); color: var(--accent-1); }
+        .nav-item.active { color: #fff; background: rgba(255,255,255,0.12); box-shadow: inset 0 1px 1px rgba(255,255,255,0.15); }
+        .nav-item.active i { color: var(--accent-1); filter: drop-shadow(0 0 8px var(--accent-glow)); }
 
-        .home-hero-container {
-            flex: 1; display: flex; align-items: center; justify-content: center;
-            padding: 0 clamp(16px, 4vw, 40px) calc(var(--player-height) + 30px);
+        #main-content {
+            flex: 1; height: 100%; position: relative; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth;
+            padding: clamp(24px, 4vh, 48px) clamp(16px, 3.5vw, 5vw) calc(var(--player-height) + clamp(40px, 6vh, 80px));
+            mask-image: linear-gradient(to bottom, transparent 0%, black 3%, black 92%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 3%, black 92%, transparent 100%);
         }
-
-        .showcase-card {
-            display: flex; align-items: center; gap: clamp(28px, 4vw, 56px);
-            background: var(--bg-glass-card); border: 1px solid var(--border-highlight);
-            border-radius: clamp(24px, 3vw, 40px); padding: clamp(24px, 3.5vw, 48px);
-            backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
-            box-shadow: var(--shadow-float); max-width: 960px; width: 100%;
-        }
-
-        .showcase-art-wrap {
-            width: clamp(200px, 26vw, 320px); height: clamp(200px, 26vw, 320px);
-            aspect-ratio: 1; border-radius: clamp(18px, 2vw, 28px);
-            overflow: hidden; position: relative; flex-shrink: 0;
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            cursor: pointer;
-        }
-        .showcase-art { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s var(--ease-fluid); }
-        .showcase-art-wrap:hover .showcase-art { transform: scale(1.05); }
-
-        .showcase-info { display: flex; flex-direction: column; gap: 10px; flex: 1; min-width: 0; }
-        .meta-tag { font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: var(--text-tertiary); }
-        .showcase-title {
-            font-family: var(--font-display); font-size: clamp(28px, 4vw, 48px); font-weight: 900;
-            letter-spacing: -0.03em; line-height: 1.1; color: #fff; word-break: break-word;
-        }
-        .showcase-artist {
-            font-size: clamp(16px, 1.6vw, 22px); font-weight: 600; color: var(--text-secondary);
-        }
-        .showcase-badges { display: flex; align-items: center; gap: 10px; margin-top: 4px; }
-        .hi-res-pill {
-            display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 6px;
-            background: rgba(255, 255, 255, 0.08); border: 1px solid var(--border-subtle);
-            font-size: 10px; font-weight: 800; letter-spacing: 1px; color: rgba(255, 255, 255, 0.85);
-        }
-
-        .showcase-actions { display: flex; align-items: center; gap: 16px; margin-top: 18px; }
-        .btn-play-hero {
-            display: inline-flex; align-items: center; gap: 10px; padding: 14px 34px;
-            border-radius: 100px; background: #ffffff; color: #000; border: none;
-            font-family: var(--font-display); font-size: 15px; font-weight: 800; cursor: pointer;
-            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.25); transition: all 0.3s var(--ease-snappy);
-        }
-        .btn-play-hero:hover { transform: translateY(-2px) scale(1.03); box-shadow: 0 15px 35px rgba(255, 255, 255, 0.35); }
-        .btn-lyrics-hero {
-            display: inline-flex; align-items: center; gap: 8px; padding: 14px 24px;
-            border-radius: 100px; background: rgba(255, 255, 255, 0.08); color: #fff; border: 1px solid var(--border-highlight);
-            font-size: 14px; font-weight: 700; cursor: pointer; backdrop-filter: blur(20px); transition: all 0.3s var(--ease-snappy);
-        }
-        .btn-lyrics-hero:hover { background: rgba(255, 255, 255, 0.16); transform: translateY(-2px); }
-
-        /* Barra flotante inferior */
-        .player-wrapper {
-            position: fixed; bottom: clamp(14px, 2.5vh, 28px); left: 0; width: 100%;
-            display: flex; justify-content: center; z-index: 50; pointer-events: none;
-            padding: 0 clamp(16px, 3vw, 32px);
-            transition: transform 0.4s var(--ease-cinematic), opacity 0.3s;
-        }
-        body.np-active .player-wrapper { opacity: 0; pointer-events: none; transform: translateY(40px); }
-
-        .player-pill {
-            pointer-events: auto; width: 100%; max-width: 980px; height: var(--player-height);
-            background: var(--bg-glass-heavy); backdrop-filter: blur(45px) saturate(180%);
-            border: 1px solid var(--border-highlight); border-radius: 24px;
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 8px 24px; box-shadow: 0 30px 60px rgba(0,0,0,0.6); gap: 16px;
-        }
-
-        .pill-info { display: flex; align-items: center; gap: 14px; width: 30%; cursor: pointer; min-width: 140px; }
-        .pill-img { width: 48px; height: 48px; border-radius: 10px; object-fit: cover; border: 1px solid rgba(255,255,255,0.15); flex-shrink: 0; }
-        .pill-meta { display: flex; flex-direction: column; overflow: hidden; }
-        .pill-title { font-family: var(--font-display); font-size: 14px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .pill-artist { font-size: 12px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-        .pill-controls { display: flex; flex-direction: column; align-items: center; width: 40%; gap: 6px; }
-        .pill-buttons { display: flex; align-items: center; gap: 24px; font-size: 20px; color: var(--text-secondary); }
-        .pill-buttons i { cursor: pointer; transition: 0.2s; }
-        .pill-buttons i:hover { color: #fff; transform: scale(1.15); }
-        .pill-play-btn {
-            width: 38px; height: 38px; border-radius: 50%; background: #fff; color: #000;
-            display: flex; align-items: center; justify-content: center; font-size: 18px; cursor: pointer;
-            transition: transform 0.25s var(--ease-snappy);
-        }
-        .pill-play-btn i { margin-left: 2px; }
-        .pill-play-btn:hover { transform: scale(1.1); }
-
-        .scrubber-wrap { display: flex; align-items: center; gap: 10px; width: 100%; font-size: 11px; font-weight: 700; color: var(--text-tertiary); }
-        .scrubber-bar { flex: 1; height: 4px; background: rgba(255,255,255,0.15); border-radius: 100px; cursor: pointer; position: relative; }
-        .scrubber-fill { width: 0%; height: 100%; background: #fff; border-radius: 100px; }
-
-        .pill-actions { display: flex; align-items: center; justify-content: flex-end; width: 30%; gap: 16px; color: var(--text-secondary); font-size: 18px; }
-        .vol-slider { width: 75px; height: 4px; background: rgba(255,255,255,0.15); border-radius: 100px; cursor: pointer; position: relative; }
-        .vol-fill { width: 75%; height: 100%; background: #fff; border-radius: 100px; }
-        .btn-expand { cursor: pointer; transition: 0.2s; }
-        .btn-expand:hover { color: #fff; transform: scale(1.15); }
+        #main-content::-webkit-scrollbar { display: none; }
+        
+        .view-section { display: flex; flex-direction: column; width: 100%; max-width: 1400px; margin: 0 auto; gap: clamp(28px, 4vh, 48px); }
 
         /* ==================================================================
-           UI 2: FULLSCREEN NOW PLAYING (ESTILO APPLE MUSIC DESKTOP)
+           REWORKED HOME UI (GLASSY FEATURED BILLBOARD)
+           ================================================================== */
+        .home-hero-card {
+            display: grid;
+            grid-template-columns: minmax(260px, 360px) 1fr;
+            gap: clamp(24px, 3.5vw, 48px);
+            align-items: center;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-highlight);
+            border-radius: clamp(24px, 3vw, 36px);
+            padding: clamp(20px, 3.5vw, 40px);
+            backdrop-filter: blur(45px) saturate(180%);
+            -webkit-backdrop-filter: blur(45px) saturate(180%);
+            box-shadow: 0 35px 80px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-art-wrapper {
+            position: relative; width: 100%; aspect-ratio: 1;
+            border-radius: clamp(18px, 2vw, 26px); overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.65), 0 10px 20px rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.18);
+            cursor: pointer;
+        }
+        .hero-art-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s var(--ease-fluid); }
+        .hero-art-wrapper:hover .hero-art-img { transform: scale(1.05); }
+
+        .hero-content {
+            display: flex; flex-direction: column; gap: 16px;
+        }
+        .hero-tag {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 6px 14px; border-radius: 100px;
+            background: rgba(255,255,255,0.08); border: 1px solid var(--border-subtle);
+            font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px;
+            color: var(--accent-1); width: fit-content;
+        }
+
+        .hero-title {
+            font-family: var(--font-display);
+            font-size: clamp(28px, 4.2vw, 56px);
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            line-height: 1.08;
+            background: linear-gradient(to right, #ffffff, #d5d5d5);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        .hero-artist {
+            font-size: clamp(16px, 1.8vw, 24px);
+            font-weight: 700;
+            color: var(--text-secondary);
+            display: flex; align-items: center; gap: 10px;
+        }
+
+        .hero-stats-row {
+            display: flex; align-items: center; gap: 12px; font-size: 13px; font-weight: 600; color: var(--text-tertiary);
+        }
+        .hero-pill {
+            padding: 4px 10px; border-radius: 6px; background: rgba(255,255,255,0.08);
+            color: rgba(255,255,255,0.85); font-size: 11px; font-weight: 700;
+        }
+
+        .hero-btn-row {
+            display: flex; align-items: center; gap: 16px; margin-top: 12px; flex-wrap: wrap;
+        }
+        .btn-play-hero {
+            background: #fff; color: #000; font-family: var(--font-display); font-weight: 800;
+            font-size: 16px; padding: 16px 36px; border-radius: 100px;
+            display: inline-flex; align-items: center; gap: 10px; cursor: pointer;
+            transition: all 0.35s var(--ease-snappy); border: none; outline: none;
+            box-shadow: 0 15px 30px rgba(255,255,255,0.25);
+        }
+        .btn-play-hero:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 20px 40px rgba(255,255,255,0.4); }
+        .btn-play-hero:active { transform: scale(0.96); }
+
+        .btn-lyrics-hero {
+            background: rgba(255,255,255,0.08); color: #fff; font-family: var(--font-display); font-weight: 700;
+            font-size: 15px; padding: 16px 28px; border-radius: 100px;
+            display: inline-flex; align-items: center; gap: 10px; cursor: pointer;
+            transition: all 0.35s var(--ease-snappy); border: 1px solid var(--border-highlight);
+            backdrop-filter: blur(20px);
+        }
+        .btn-lyrics-hero:hover { background: rgba(255,255,255,0.16); transform: translateY(-3px); }
+
+        /* LIVE EQUALIZER VISUALIZER INSIDE HERO */
+        .live-eq {
+            display: inline-flex; align-items: flex-end; gap: 4px; height: 20px;
+        }
+        .live-eq span {
+            width: 4px; height: 100%; background: var(--accent-1); border-radius: 2px;
+            animation: eqBounce 1.2s ease-in-out infinite alternate;
+            transform-origin: bottom;
+        }
+        .live-eq span:nth-child(2) { animation-delay: 0.2s; height: 60%; }
+        .live-eq span:nth-child(3) { animation-delay: 0.4s; height: 90%; }
+        .live-eq span:nth-child(4) { animation-delay: 0.1s; height: 40%; }
+        @keyframes eqBounce {
+            0% { transform: scaleY(0.2); }
+            100% { transform: scaleY(1); }
+        }
+
+        /* SECTION DETAILS GRID */
+        .home-details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: clamp(20px, 3vw, 32px);
+            width: 100%;
+        }
+
+        .detail-glass-card {
+            background: var(--bg-glass-card); border: 1px solid var(--border-subtle);
+            border-radius: clamp(20px, 2.5vw, 28px); padding: clamp(20px, 2.5vw, 32px);
+            backdrop-filter: blur(35px); -webkit-backdrop-filter: blur(35px);
+            display: flex; flex-direction: column; gap: 16px;
+        }
+        .detail-glass-card h3 {
+            font-size: 20px; font-weight: 800; font-family: var(--font-display);
+            display: flex; align-items: center; gap: 10px; color: #fff;
+        }
+        .detail-glass-card p {
+            font-size: 14px; line-height: 1.6; color: var(--text-secondary);
+        }
+
+        /* ==================================================================
+           PERSISTENT BOTTOM PLAYER
+           ================================================================== */
+        .player-wrapper { 
+            position: fixed; bottom: clamp(12px, 2.5vh, 32px); left: 0; width: 100%; display: flex; justify-content: center; z-index: 50; pointer-events: none; padding: 0 clamp(12px, 2.5vw, 32px);
+            transition: transform 0.5s var(--ease-cinematic), opacity 0.35s ease;
+        }
+        
+        body.np-active .player-wrapper {
+            opacity: 0 !important; pointer-events: none !important; transform: translateY(35px) scale(0.95);
+        }
+
+        .player-pill { pointer-events: auto; width: 100%; max-width: 1100px; height: var(--player-height); background: var(--bg-glass-heavy); backdrop-filter: blur(40px) saturate(200%); -webkit-backdrop-filter: blur(40px) saturate(200%); border: 1px solid var(--border-highlight); border-radius: clamp(18px, 2vw, 24px); display: flex; align-items: center; justify-content: space-between; padding: 8px clamp(12px, 1.8vw, 24px); box-shadow: 0 30px 60px rgba(0,0,0,0.6), inset 0 1px 2px rgba(255,255,255,0.15); transition: transform 0.4s var(--ease-snappy), border-color 0.3s; position: relative; overflow: hidden; gap: 12px; }
+        .player-pill:hover { transform: translateY(-3px); border-color: rgba(255,255,255,0.25); }
+        .progress-mini-wrapper { position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: rgba(255,255,255,0.05); }
+        .progress-mini-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent-1), var(--accent-2)); transition: width 0.1s linear; }
+
+        .player-info { display: flex; align-items: center; gap: clamp(10px, 1.2vw, 16px); flex: 1; max-width: 32%; min-width: 140px; cursor: pointer; transition: 0.3s; padding: 4px clamp(4px, 0.8vw, 8px); border-radius: 14px; overflow: hidden; }
+        .player-info:hover { background: rgba(255,255,255,0.08); }
+        .player-img { width: clamp(44px, 4.5vh, 56px); height: clamp(44px, 4.5vh, 56px); aspect-ratio: 1; border-radius: 10px; object-fit: cover; box-shadow: 0 8px 16px rgba(0,0,0,0.4); transition: transform 0.4s var(--ease-snappy); flex-shrink: 0; }
+        .player-info:hover .player-img { transform: scale(1.06) rotate(2deg); }
+        .player-meta { display: flex; flex-direction: column; gap: 2px; overflow: hidden; min-width: 0; }
+        .player-title { font-family: var(--font-display); font-size: clamp(13px, 1.1vw, 16px); font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .player-artist { font-size: clamp(11px, 0.9vw, 13px); font-weight: 500; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        .player-controls { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1.4; max-width: 46%; gap: 8px; }
+        .controls-buttons { display: flex; align-items: center; gap: clamp(16px, 2.2vw, 32px); font-size: clamp(18px, 1.8vw, 24px); color: var(--text-secondary); }
+        .controls-buttons i { cursor: pointer; transition: all 0.25s var(--ease-snappy); }
+        .controls-buttons i:hover { color: #fff; transform: scale(1.15); }
+        .btn-play-circle { width: clamp(40px, 4vh, 50px); height: clamp(40px, 4vh, 50px); background: #fff; color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: clamp(18px, 1.8vw, 22px); cursor: pointer; transition: all 0.35s var(--ease-snappy); box-shadow: 0 10px 20px rgba(255,255,255,0.2); flex-shrink: 0; }
+        .btn-play-circle i { margin-left: 2px; }
+        .btn-play-circle:hover { transform: scale(1.08); box-shadow: 0 12px 24px rgba(255,255,255,0.4); }
+
+        .scrubber-container { display: flex; align-items: center; gap: clamp(8px, 1.2vw, 14px); width: 100%; max-width: 460px; font-size: clamp(11px, 0.85vw, 13px); font-weight: 600; color: rgba(255,255,255,0.6); font-variant-numeric: tabular-nums; }
+        .scrubber-bg { flex: 1; height: 5px; background: rgba(255,255,255,0.15); border-radius: 4px; cursor: pointer; position: relative; transition: height 0.25s var(--ease-snappy); overflow: visible; }
+        .scrubber-bg:hover { height: 8px; background: rgba(255,255,255,0.25); }
+        .scrubber-fill { width: 0%; height: 100%; background: #fff; border-radius: 4px; transition: width 0.1s linear; position: relative; }
+        .scrubber-fill::after { content: ''; position: absolute; right: -6px; top: 50%; transform: translateY(-50%) scale(0); width: 12px; height: 12px; background: #fff; border-radius: 50%; transition: transform 0.25s var(--ease-snappy); }
+        .scrubber-bg:hover .scrubber-fill::after { transform: translateY(-50%) scale(1); }
+
+        .player-actions { display: flex; align-items: center; justify-content: flex-end; flex: 1; max-width: 25%; gap: clamp(12px, 1.5vw, 20px); color: var(--text-secondary); font-size: clamp(18px, 1.6vw, 22px); }
+        .player-actions i { cursor: pointer; transition: 0.25s; }
+        .player-actions i:hover { color: #fff; transform: scale(1.1); }
+        .vol-slider { width: clamp(60px, 6vw, 90px); height: 5px; background: rgba(255,255,255,0.15); border-radius: 3px; cursor: pointer; transition: height 0.25s var(--ease-snappy); position: relative;}
+        .vol-slider:hover { height: 8px; background: rgba(255,255,255,0.25); }
+        .vol-fill { width: 75%; height: 100%; background: #fff; border-radius: 3px; }
+        .btn-fullscreen { width: clamp(34px, 3.5vh, 40px); height: clamp(34px, 3.5vh, 40px); border-radius: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.35s var(--ease-snappy); flex-shrink: 0; }
+        .btn-fullscreen:hover { background: rgba(255,255,255,0.15); transform: scale(1.08); color: #fff; }
+        .mobile-play-btn { display: none; }
+
+        /* ==================================================================
+           FULLSCREEN NOW PLAYING (COVER ART + APPLE MUSIC LYRICS)
            ================================================================== */
         #np-fs {
-            position: fixed; inset: 0; z-index: 100; transform: translateY(100%);
-            opacity: 0; visibility: hidden;
-            transition: transform 0.65s var(--ease-cinematic), opacity 0.35s ease, visibility 0.35s;
-            display: flex; flex-direction: column; overflow: hidden;
-            background: transparent; font-family: var(--font-display);
+            position: fixed; inset: 0; z-index: 100; transform: translateY(100%); opacity: 0; visibility: hidden;
+            transition: transform 0.65s var(--ease-cinematic), opacity 0.35s ease, visibility 0.35s; display: flex; flex-direction: column; 
+            overflow: hidden; background: transparent; font-family: var(--font-display);
             padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
         }
         #np-fs.active { transform: translateY(0); opacity: 1; visibility: visible; }
 
-        .np-header {
-            position: absolute; top: clamp(16px, 3vh, 32px); left: 0; width: 100%;
+        .np-top-header {
+            position: absolute; top: clamp(14px, 2.8vh, 28px); left: 0; width: 100%;
             display: flex; align-items: center; justify-content: space-between;
-            padding: 0 clamp(20px, 4vw, 64px); z-index: 30;
-        }
-        .btn-close-fs {
-            width: 44px; height: 44px; border-radius: 50%; background: rgba(255, 255, 255, 0.08);
-            border: 1px solid var(--border-highlight); display: flex; align-items: center; justify-content: center;
-            color: #fff; font-size: 22px; cursor: pointer; backdrop-filter: blur(25px);
-            transition: all 0.3s var(--ease-snappy);
-        }
-        .btn-close-fs:hover { background: rgba(255, 255, 255, 0.18); transform: scale(1.08); }
-
-        .fs-tag {
-            font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase;
-            padding: 6px 16px; border-radius: 100px; background: rgba(255, 255, 255, 0.06);
-            border: 1px solid var(--border-subtle); color: var(--text-secondary); backdrop-filter: blur(20px);
+            padding: 0 clamp(20px, 4vw, 64px);
+            z-index: 30; pointer-events: auto;
         }
 
-        /* Disposición 2 Columnas de Apple Music */
-        .fs-layout {
-            display: grid; grid-template-columns: minmax(380px, 44%) 1fr;
-            width: 100%; height: 100%; max-width: 1750px; margin: 0 auto;
-            padding: clamp(70px, 9vh, 96px) clamp(24px, 4vw, 72px) clamp(24px, 4vh, 48px);
-            gap: clamp(32px, 5vw, 80px); align-items: center; box-sizing: border-box;
-        }
-
-        /* Columna Izquierda: Portada + Controles */
-        .fs-left-pane {
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            width: 100%; max-width: 480px; margin: 0 auto;
-        }
-
-        .fs-art-wrap {
-            width: min(100%, min(420px, 42vh)); height: min(100%, min(420px, 42vh));
-            aspect-ratio: 1; border-radius: clamp(18px, 2vw, 28px);
-            overflow: hidden; position: relative;
-            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
-            border: 1px solid rgba(255, 255, 255, 0.16);
-            cursor: pointer; transition: transform 0.4s var(--ease-cinematic);
-        }
-        .fs-art-wrap:hover { transform: scale(1.02); }
-        .fs-art { width: 100%; height: 100%; object-fit: cover; }
-
-        .fs-info-block { width: 100%; margin-top: clamp(20px, 2.8vh, 32px); display: flex; flex-direction: column; gap: 4px; }
-        .fs-title-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-        .fs-title { font-size: clamp(22px, 2.4vw, 32px); font-weight: 800; color: #fff; letter-spacing: -0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .fs-artist { font-size: clamp(15px, 1.3vw, 19px); color: var(--text-secondary); font-weight: 600; }
-        .fs-heart-btn { font-size: 24px; color: rgba(255,255,255,0.4); cursor: pointer; transition: 0.25s; }
-        .fs-heart-btn.active { color: #FF2E93; transform: scale(1.15); }
-
-        /* Scrubber Fullscreen */
-        .fs-scrubber { width: 100%; margin-top: 18px; display: flex; flex-direction: column; gap: 6px; }
-        .fs-progress-track {
-            width: 100%; height: 5px; background: rgba(255, 255, 255, 0.15); border-radius: 100px;
-            cursor: pointer; position: relative; transition: height 0.2s;
-        }
-        .fs-progress-track:hover { height: 8px; }
-        .fs-progress-fill { width: 0%; height: 100%; border-radius: 100px; background: #ffffff; }
-        .fs-time-row { display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: var(--text-tertiary); font-variant-numeric: tabular-nums; }
-
-        /* Controles multimedia Fullscreen */
-        .fs-controls {
-            display: flex; align-items: center; justify-content: center; gap: clamp(20px, 3vw, 36px);
-            margin-top: 14px; width: 100%;
-        }
-        .fs-ctrl-btn { font-size: 24px; color: var(--text-secondary); cursor: pointer; transition: 0.25s; }
-        .fs-ctrl-btn:hover { color: #fff; transform: scale(1.15); }
-        .fs-play-btn-large {
-            width: clamp(54px, 6vh, 66px); height: clamp(54px, 6vh, 66px);
-            border-radius: 50%; background: #ffffff; color: #000;
+        .np-btn-icon {
+            width: clamp(40px, 4.4vh, 48px); height: clamp(40px, 4.4vh, 48px);
+            background: rgba(255, 255, 255, 0.08); border: 1px solid var(--border-highlight);
+            border-radius: 50%; cursor: pointer;
             display: flex; align-items: center; justify-content: center;
-            font-size: clamp(22px, 2.5vh, 28px); cursor: pointer; transition: transform 0.25s var(--ease-snappy);
-            box-shadow: 0 10px 25px rgba(255, 255, 255, 0.25);
+            font-size: clamp(20px, 2.2vh, 24px); color: #fff;
+            transition: all 0.3s var(--ease-snappy); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
         }
-        .fs-play-btn-large i { margin-left: 3px; }
-        .fs-play-btn-large:hover { transform: scale(1.08); }
+        .np-btn-icon:hover { transform: scale(1.1); background: rgba(255,255,255,0.18); border-color: rgba(255,255,255,0.35); }
 
-        /* Volumen centrado Fullscreen */
-        .fs-volume-box {
-            display: flex; align-items: center; justify-content: center; gap: 12px;
-            width: 100%; max-width: 260px; margin: 16px auto 0 auto; color: var(--text-tertiary); font-size: 16px;
+        .np-context-pill {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 8px 18px; border-radius: 100px;
+            background: rgba(255, 255, 255, 0.06); border: 1px solid var(--border-subtle);
+            backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+            font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px;
+            color: var(--text-secondary);
         }
-        .fs-vol-slider { flex: 1; height: 4px; background: rgba(255,255,255,0.15); border-radius: 100px; cursor: pointer; }
-        .fs-vol-fill { width: 75%; height: 100%; background: #fff; border-radius: 100px; }
+        .np-context-pill span { color: #fff; }
 
-        /* Columna Derecha: Letras Apple Music Sincronizadas y Espaciadas */
-        .fs-right-pane {
-            width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center;
+        /* Fullscreen Layout: Cover & Controls Deck (Left) | Lyrics (Right) */
+        .np-layout { 
+            position: relative; z-index: 10; 
+            display: grid;
+            grid-template-columns: minmax(360px, 440px) 1fr;
+            width: 100%; height: 100%; 
+            max-width: 1800px; 
+            margin: 0 auto; 
+            padding: clamp(65px, 8.5vh, 88px) clamp(24px, 4vw, 72px) clamp(20px, 3.5vh, 40px);
+            gap: clamp(28px, 4vw, 64px);
+            align-items: center;
+            box-sizing: border-box;
+        }
+        
+        .np-left-pane {
+            width: 100%; height: 100%;
+            display: flex; flex-direction: column; 
+            align-items: center; justify-content: center;
+            max-width: 460px; margin: 0 auto;
+        }
+
+        .np-left-card {
+            display: flex; flex-direction: column; align-items: center; width: 100%;
+            background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: clamp(24px, 2.5vw, 36px); padding: clamp(20px, 3vh, 32px);
+            backdrop-filter: blur(45px) saturate(180%); -webkit-backdrop-filter: blur(45px) saturate(180%);
+            box-shadow: 0 35px 80px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+            transition: all 0.4s var(--ease-snappy);
+        }
+
+        /* Large Cover Art Container */
+        .np-art-wrap {
+            width: min(100%, min(360px, 36vh));
+            height: min(100%, min(360px, 36vh));
+            aspect-ratio: 1 / 1;
+            border-radius: clamp(18px, 2vw, 26px);
+            position: relative; overflow: hidden;
+            background: #0d0d12;
+            box-shadow: 0 30px 70px rgba(0,0,0,0.7), 0 10px 25px rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.18);
+            cursor: pointer;
+        }
+        .np-art-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s var(--ease-fluid); }
+        .np-art-wrap:hover .np-art-img { transform: scale(1.04); }
+
+        .np-info-block { display: flex; flex-direction: column; width: 100%; margin-top: clamp(14px, 2vh, 22px); }
+
+        .np-track-row-meta {
+            display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 14px;
+        }
+        .np-track-texts { display: flex; flex-direction: column; gap: 3px; min-width: 0; flex: 1; }
+        .np-track-title { font-size: clamp(20px, 2vw, 26px); font-weight: 800; color: #fff; letter-spacing: -0.015em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .np-track-artist { font-size: clamp(14px, 1.2vw, 17px); color: var(--text-secondary); font-weight: 600; letter-spacing: -0.01em; }
+        
+        .np-btn-heart {
+            font-size: 24px; color: rgba(255,255,255,0.35); cursor: pointer; transition: all 0.3s var(--ease-snappy);
+            padding: 6px; border-radius: 50%;
+        }
+        .np-btn-heart:hover { color: var(--accent-1); transform: scale(1.2); }
+        .np-btn-heart.active { color: var(--accent-1); filter: drop-shadow(0 0 10px var(--accent-glow)); }
+
+        .np-badges-row {
+            display: flex; align-items: center; gap: 8px; margin-top: 10px;
+        }
+        .np-badge-pill {
+            font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;
+            padding: 3px 8px; border-radius: 6px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15);
+            color: rgba(255,255,255,0.85);
+        }
+
+        /* Scrubber Deck */
+        .np-scrubber-deck { display: flex; flex-direction: column; gap: 6px; width: 100%; margin-top: clamp(14px, 2vh, 22px); }
+        .np-progress-track {
+            width: 100%; height: 5px; background: rgba(255,255,255,0.15); border-radius: 100px; cursor: pointer; position: relative; transition: height 0.2s var(--ease-snappy); overflow: visible;
+        }
+        .np-progress-track:hover { height: 8px; }
+        .np-progress-fill {
+            width: 0%; height: 100%; border-radius: 100px; background: #fff; position: relative; transition: width 0.1s linear;
+        }
+        .np-progress-fill::after {
+            content: ''; position: absolute; right: -6px; top: 50%; transform: translateY(-50%) scale(0); width: 13px; height: 13px; background: #fff; border-radius: 50%; box-shadow: 0 2px 10px rgba(0,0,0,0.5); transition: transform 0.2s var(--ease-snappy);
+        }
+        .np-progress-track:hover .np-progress-fill::after { transform: translateY(-50%) scale(1); }
+        .np-time-row { display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: var(--text-tertiary); font-variant-numeric: tabular-nums; letter-spacing: 0.03em; margin-top: 2px;}
+
+        /* Floating Media Controls */
+        .np-main-controls { 
+            display: flex; justify-content: center; align-items: center; gap: clamp(16px, 2.5vw, 32px); 
+            margin-top: clamp(12px, 1.8vh, 20px); width: 100%;
+        }
+        .np-ctrl-btn {
+            font-size: clamp(20px, 2vw, 24px); color: var(--text-secondary); cursor: pointer; transition: all 0.25s var(--ease-snappy);
+        }
+        .np-ctrl-btn:hover { color: #fff; transform: scale(1.18); }
+        
+        .np-play-btn-large {
+            width: clamp(50px, 5.5vh, 62px); height: clamp(50px, 5.5vh, 62px);
+            background: #fff; color: #000; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: clamp(22px, 2.4vh, 28px); cursor: pointer;
+            box-shadow: 0 12px 30px rgba(255,255,255,0.3); transition: all 0.35s var(--ease-snappy);
+        }
+        .np-play-btn-large i { margin-left: 3px; }
+        .np-play-btn-large:hover { transform: scale(1.08); box-shadow: 0 15px 35px rgba(255,255,255,0.5); }
+
+        /* Integrated Volume Deck (Centered) */
+        .np-volume-deck {
+            display: flex; align-items: center; justify-content: center; gap: 14px; width: 100%; max-width: 260px;
+            margin: clamp(14px, 2vh, 20px) auto 0 auto; color: var(--text-tertiary); font-size: 16px;
+        }
+        .np-volume-deck i { transition: 0.2s; }
+        .np-volume-deck:hover i { color: #fff; }
+        .np-volume-deck .vol-slider {
+            flex: 1; height: 5px; background: rgba(255,255,255,0.15); border-radius: 3px; cursor: pointer; transition: height 0.2s var(--ease-snappy); position: relative;
+        }
+        .np-volume-deck .vol-slider:hover { height: 8px; background: rgba(255,255,255,0.25); }
+
+        /* Right Pane: Glassy Apple Music Lyrics Container */
+        .np-right-pane { 
+            position: relative;
+            width: 100%;
+            height: 100%; display: flex; flex-direction: column; justify-content: center;
+            background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: clamp(24px, 2.5vw, 36px); padding: clamp(20px, 3vh, 40px);
+            backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
             overflow: hidden;
-            mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,1) 10%, rgba(0,0,0,1) 88%, transparent 100%);
-            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,1) 10%, rgba(0,0,0,1) 88%, transparent 100%);
+            mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,1) 8%, rgba(0,0,0,1) 90%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,1) 8%, rgba(0,0,0,1) 90%, transparent 100%);
         }
-        .lyrics-scroll-area { position: relative; height: 100%; width: 100%; overflow: hidden; }
+        .lyrics-scroll-area {
+            position: relative; height: 100%; width: 100%; overflow: hidden; padding: 0; margin: 0;
+        }
+
         #lyrics-content { width: 100%; height: 100%; }
-
-        /* ESPACIADO AMPLIADO Y SIN AMONTONAMIENTO PARA LAS LETRAS (ESTÁNDAR APPLE MUSIC) */
         #lyrics-content .amll-lyric-player {
-            --amll-lp-color: rgba(255, 255, 255, 0.42) !important;
+            --amll-lp-color: #ffffff !important;
             --amll-lp-active-color: #ffffff !important;
-            --amll-lp-font-size: clamp(28px, 3.2vw, 44px) !important;
-            --amll-lp-line-height: 1.7 !important;
-            --amll-lp-line-spacing: clamp(32px, 5vh, 56px) !important;
-            --amll-lp-padding: clamp(20px, 3.5vh, 48px) !important;
-            --amll-lp-hover-bg-color: rgba(255, 255, 255, 0.08);
+            --amll-lp-font-size: clamp(26px, 3vw, 50px) !important;
+            --amll-lp-hover-bg-color: rgba(255,255,255,0.08);
             font-weight: 800 !important;
-            letter-spacing: -0.015em;
+            letter-spacing: -0.02em;
+        }
+        #lyrics-content .amll-lyric-player .amll-lyric-line {
+            margin-bottom: clamp(14px, 2vh, 24px) !important;
         }
 
-        #lyrics-content .amll-lyric-player .amll-lyric-line,
-        #lyrics-content .amll-lyric-player .amll-lyric-line-wrapper,
-        #lyrics-content .amll-lyric-player .amll-lyric-line-content {
-            padding-top: clamp(12px, 1.8vh, 22px) !important;
-            padding-bottom: clamp(12px, 1.8vh, 22px) !important;
-            line-height: 1.65 !important;
+        .lyrics-empty-state {
+            height: 100%; display: flex; align-items: center; justify-content: center;
+        }
+        .lyrics-empty-state p {
+            color: rgba(255,255,255,0.35); font-size: clamp(20px, 2.5vw, 32px); font-weight: 800;
         }
 
         /* ==================================================================
-           RESPONSIVE MOBILE
+           RESPONSIVE BREAKPOINTS
            ================================================================== */
-        @media (max-width: 900px) {
-            .showcase-card { flex-direction: column; text-align: center; gap: 24px; }
-            .showcase-art-wrap { width: 220px; height: 220px; }
-            .showcase-actions { justify-content: center; }
-            .showcase-badges { justify-content: center; }
+        .mobile-nav { display: none; }
 
-            .pill-info { width: 65%; }
-            .pill-controls { display: none; }
-            .pill-actions { width: auto; }
-            .pill-vol { display: none; }
-
-            #np-fs { overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; }
-            .fs-layout { display: flex; flex-direction: column; padding: 75px 20px 32px; gap: 24px; height: auto; min-height: 100%; }
-            .fs-left-pane { max-width: 100%; }
-            .fs-art-wrap { width: min(240px, 55vw); height: min(240px, 55vw); }
-            .fs-right-pane { width: 100%; height: 440px; min-height: 380px; }
-            #lyrics-content .amll-lyric-player {
-                --amll-lp-font-size: 24px !important;
-                --amll-lp-line-spacing: 24px !important;
+        @media (max-width: 1024px) {
+            #sidebar { display: none; }
+            #main-content { 
+                padding: clamp(24px, 4vh, 36px) clamp(16px, 4vw, 24px) calc(var(--player-height) + var(--nav-height-mob) + 20px); 
             }
+            
+            .home-hero-card { grid-template-columns: 1fr; text-align: center; justify-items: center; }
+            .hero-art-wrapper { max-width: 280px; }
+            .hero-btn-row { justify-content: center; }
+            .hero-stats-row { justify-content: center; }
+            .hero-artist { justify-content: center; }
+
+            .mobile-nav {
+                display: flex; position: fixed; bottom: 0; left: 0; width: 100%; height: var(--nav-height-mob);
+                background: rgba(10, 10, 14, 0.75); backdrop-filter: blur(40px) saturate(200%); -webkit-backdrop-filter: blur(40px) saturate(200%);
+                border-top: 1px solid rgba(255,255,255,0.08); z-index: 60;
+                justify-content: space-around; align-items: center; padding-bottom: env(safe-area-inset-bottom);
+                transition: transform 0.4s var(--ease-cinematic), opacity 0.3s;
+            }
+            
+            body.np-active .mobile-nav {
+                transform: translateY(100%); opacity: 0; pointer-events: none;
+            }
+
+            .nav-item-mob { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-secondary); font-size: 11px; font-weight: 600; cursor: pointer; }
+            .nav-item-mob i { font-size: clamp(22px, 3vh, 26px); }
+            .nav-item-mob.active { color: var(--text-primary); }
+            .nav-item-mob.active i { color: var(--accent-1); }
+
+            .player-wrapper { bottom: calc(var(--nav-height-mob) + clamp(8px, 1.5vh, 16px)); padding: 0 clamp(8px, 2vw, 16px); }
+            .player-pill { height: clamp(64px, 8vh, 72px); padding: 6px 16px 6px 6px; border-radius: 18px; background: rgba(20, 20, 25, 0.85); }
+            .player-img { width: clamp(48px, 6vh, 56px); height: clamp(48px, 6vh, 56px); border-radius: 12px; }
+            .player-controls, .player-actions { display: none; }
+            .player-info { max-width: 80%; width: 80%; }
+            .mobile-play-btn { display: flex; position: absolute; right: 16px; width: clamp(38px, 4.8vh, 44px); height: clamp(38px, 4.8vh, 44px); background: #fff; color: #000; border-radius: 50%; align-items: center; justify-content: center; font-size: 18px; box-shadow: 0 5px 15px rgba(0,0,0,0.4); }
+            .mobile-play-btn i { margin-left: 2px; }
+
+            /* NOW PLAYING MOBILE */
+            #np-fs { overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; } 
+            
+            .np-layout { 
+                display: flex; flex-direction: column; 
+                padding: clamp(60px, 8vh, 80px) clamp(16px, 5vw, 32px) clamp(32px, 4vh, 48px); 
+                gap: 24px; height: auto; min-height: 100%; justify-content: flex-start;
+            }
+            .np-left-pane { max-width: 100%; width: 100%; height: auto; }
+            .np-left-card { padding: 20px 16px; border-radius: 24px; }
+            .np-art-wrap { width: clamp(200px, 55vw, 280px); height: clamp(200px, 55vw, 280px); }
+            .np-volume-deck { display: none; }
+            
+            .np-right-pane { width: 100%; max-width: 500px; flex: none; height: clamp(260px, 45vh, 420px); border-radius: 24px; padding: 16px; }
+            #lyrics-content .amll-lyric-player { --amll-lp-font-size: clamp(22px, 5.5vw, 30px) !important; }
         }
     </style>
 </head>
 <body>
 
-    <!-- FONDO DINÁMICO DE GLASSY-MUSIC (Merge Theme / NanKillBro) -->
+    <!-- DYNAMIC GLASSY MUSIC BACKGROUND -->
     <div id="ambient-bg">
         <div id="bg-back" class="ambient-bg-layer"></div>
         <div id="bg-front" class="ambient-bg-layer"></div>
@@ -440,158 +642,214 @@
         <div class="noise-overlay"></div>
     </div>
 
-    <!-- UI 1: MAIN HOME SHOWCASE -->
+    <!-- MAIN APP SHELL -->
     <div id="app-wrapper">
-        <header class="home-topbar">
+        <!-- SIDEBAR -->
+        <aside id="sidebar">
             <div class="brand"><i class="ph-fill ph-waveform"></i> VIVETMP</div>
-            <div class="top-badge"><i class="ph-fill ph-seal-check"></i> OFFICIAL RELEASE</div>
-        </header>
+            <nav class="nav-menu">
+                <div class="nav-item active"><i class="ph-fill ph-house"></i> Home</div>
+                <div class="nav-item" onclick="toggleNP()"><i class="ph-fill ph-text-t"></i> Lyrics</div>
+            </nav>
+        </aside>
 
-        <main class="home-hero-container">
-            <div class="showcase-card">
-                <div class="showcase-art-wrap" onclick="togglePlay()">
-                    <img src="https://file.garden/alq0ENqplE9QfqJV/COSAS%20QUE%20NO%20TE%20DIJE_640x640.jpg" class="showcase-art" alt="Portada">
-                </div>
-                <div class="showcase-info">
-                    <span class="meta-tag">Canción Destacada</span>
-                    <h1 class="showcase-title">COSAS QUE NO TE DIJE</h1>
-                    <h2 class="showcase-artist">SAIKO</h2>
-                    <div class="showcase-badges">
-                        <div class="hi-res-pill"><i class="ph-fill ph-waveform"></i> Lossless ALAC 24-bit/96kHz</div>
+        <!-- MAIN SCROLLING CONTENT (REWORKED HOME) -->
+        <main id="main-content">
+            <section class="view-section">
+                <!-- HERO BILLBOARD -->
+                <div class="home-hero-card">
+                    <div class="hero-art-wrapper" onclick="togglePlay()">
+                        <img src="https://file.garden/alq0ENqplE9QfqJV/COSAS%20QUE%20NO%20TE%20DIJE_640x640.jpg" class="hero-art-img" alt="Cover">
                     </div>
-                    <div class="showcase-actions">
-                        <button class="btn-play-hero" onclick="togglePlay()">
-                            <i class="ph-fill ph-play" id="hero-play-icon"></i> Reproducir
-                        </button>
-                        <button class="btn-lyrics-hero" onclick="toggleNP()">
-                            <i class="ph-bold ph-quotes"></i> Ver Letras
-                        </button>
+                    
+                    <div class="hero-content">
+                        <div class="hero-tag"><i class="ph-fill ph-sparkle"></i> Featured Release</div>
+                        <h1 class="hero-title">COSAS QUE NO TE DIJE</h1>
+                        <div class="hero-artist">
+                            <span>SAIKO</span>
+                            <i class="ph-fill ph-seal-check" style="color:var(--accent-1); font-size:22px;"></i>
+                        </div>
+
+                        <div class="hero-stats-row">
+                            <span class="hero-pill">Single</span>
+                            <span class="hero-pill"><i class="ph-fill ph-waveform"></i> Lossless ALAC 24-bit/96kHz</span>
+                            <span>2024</span>
+                            <div class="live-eq" id="hero-live-eq" style="display:none;">
+                                <span></span><span></span><span></span><span></span>
+                            </div>
+                        </div>
+
+                        <div class="hero-btn-row">
+                            <button class="btn-play-hero" onclick="togglePlay()">
+                                <i class="ph-fill ph-play" id="hero-play-icon"></i>
+                                <span id="hero-play-text">Listen Now</span>
+                            </button>
+                            <button class="btn-lyrics-hero" onclick="toggleNP()">
+                                <i class="ph-fill ph-text-t"></i> Immersive Lyrics
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
+
+                <!-- RELEASE & ARTIST DETAILS GRID -->
+                <div class="home-details-grid">
+                    <div class="detail-glass-card">
+                        <h3><i class="ph-fill ph-microphone-stage" style="color:var(--accent-1);"></i> About the Artist</h3>
+                        <p>
+                            SAIKO es una de las figuras más vanguardistas de la escena urbana actual. "COSAS QUE NO TE DIJE" combina texturas melancólicas, producción refinada y líricas honestas que definen su identidad sonora.
+                        </p>
+                    </div>
+
+                    <div class="detail-glass-card">
+                        <h3><i class="ph-fill ph-faders" style="color:var(--accent-1);"></i> Master Quality Audio</h3>
+                        <p>
+                            Reproducción en alta fidelidad sin compresión destructiva, ecualización dinámica estéreo con DSP y sincronización de letras palabra por palabra impulsada por el motor AMLL.
+                        </p>
+                    </div>
+                </div>
+            </section>
         </main>
     </div>
+
+    <!-- MOBILE BOTTOM NAV -->
+    <nav class="mobile-nav">
+        <div class="nav-item-mob active"><i class="ph-fill ph-house"></i>Home</div>
+        <div class="nav-item-mob" onclick="toggleNP()"><i class="ph-fill ph-text-t"></i>Lyrics</div>
+    </nav>
 
     <!-- PERSISTENT BOTTOM PLAYER -->
     <div class="player-wrapper">
         <div class="player-pill">
-            <div class="pill-info" onclick="toggleNP()">
-                <img src="https://file.garden/alq0ENqplE9QfqJV/COSAS%20QUE%20NO%20TE%20DIJE_640x640.jpg" class="pill-img" alt="Thumbnail">
-                <div class="pill-meta">
-                    <span class="pill-title">COSAS QUE NO TE DIJE</span>
-                    <span class="pill-artist">SAIKO</span>
+            <div class="progress-mini-wrapper"><div class="progress-mini-fill" id="bar-fill-mini"></div></div>
+            
+            <div class="player-info" onclick="toggleNP()">
+                <img src="https://file.garden/alq0ENqplE9QfqJV/COSAS%20QUE%20NO%20TE%20DIJE_640x640.jpg" id="player-img" class="player-img">
+                <div class="player-meta">
+                    <div class="player-title" id="player-title">COSAS QUE NO TE DIJE</div>
+                    <div class="player-artist" id="player-artist">SAIKO</div>
                 </div>
             </div>
 
-            <div class="pill-controls">
-                <div class="pill-buttons">
-                    <i class="ph-fill ph-skip-back" onclick="replaySong()"></i>
-                    <div class="pill-play-btn" onclick="togglePlay()">
-                        <i class="ph-fill ph-play" id="pill-play-icon"></i>
-                    </div>
-                    <i class="ph-fill ph-skip-forward" onclick="replaySong()"></i>
+            <div class="mobile-play-btn" onclick="togglePlay()" id="btn-play-mob"><i class="ph-fill ph-play" id="icon-play-mob"></i></div>
+
+            <div class="player-controls">
+                <div class="controls-buttons">
+                    <i class="ph-fill ph-shuffle"></i>
+                    <i class="ph-fill ph-skip-back" onclick="seekRelative(-10)"></i>
+                    <div class="btn-play-circle" onclick="togglePlay()"><i class="ph-fill ph-play" id="icon-play-desk"></i></div>
+                    <i class="ph-fill ph-skip-forward" onclick="seekRelative(10)"></i>
+                    <i class="ph-bold ph-repeat"></i>
                 </div>
-                <div class="scrubber-wrap">
-                    <span id="pill-time-curr">0:00</span>
-                    <div class="scrubber-bar" onclick="seek(event, this)">
-                        <div class="scrubber-fill" id="pill-bar-fill"></div>
-                    </div>
-                    <span id="pill-time-tot">-0:00</span>
+                <div class="scrubber-container">
+                    <span id="time-curr-desk">0:00</span>
+                    <div class="scrubber-bg" onclick="seek(event, this)"><div class="scrubber-fill" id="bar-fill-desk"></div></div>
+                    <span id="time-tot-desk">-0:00</span>
                 </div>
             </div>
 
-            <div class="pill-actions">
-                <i class="ph-fill ph-speaker-low pill-vol"></i>
-                <div class="vol-slider pill-vol" onclick="changeVolume(event, this)">
-                    <div class="vol-fill" id="pill-vol-fill"></div>
-                </div>
-                <i class="ph-bold ph-arrows-out-simple btn-expand" onclick="toggleNP()" title="Abrir Pantalla Completa"></i>
+            <div class="player-actions">
+                <i class="ph-fill ph-speaker-low"></i>
+                <div class="vol-slider" onclick="changeVolume(event, this)"><div class="vol-fill" id="vol-fill-desk"></div></div>
+                <div class="btn-fullscreen" onclick="toggleNP()"><i class="ph-bold ph-arrows-out-simple"></i></div>
             </div>
         </div>
     </div>
 
-    <!-- UI 2: FULLSCREEN NOW PLAYING (ESTILO APPLE MUSIC) -->
+    <!-- FULLSCREEN NOW PLAYING OVERLAY (SONG - COVER - LYRICS) -->
     <div id="np-fs">
-        <header class="np-header">
-            <button class="btn-close-fs" onclick="toggleNP()" title="Cerrar (Esc)">
-                <i class="ph-bold ph-caret-down"></i>
-            </button>
-            <div class="fs-tag">Reproduciendo • SAIKO</div>
-            <div style="width:44px;"></div>
+        <!-- Top Glass Header -->
+        <header class="np-top-header">
+            <button class="np-btn-icon" onclick="toggleNP()" title="Close (Esc)"><i class="ph-bold ph-caret-down"></i></button>
+            <div class="np-context-pill">Playing <span>Single</span></div>
+            <button class="np-btn-icon" title="AirPlay / Audio"><i class="ph-bold ph-airplay"></i></button>
         </header>
 
-        <div class="fs-layout">
-            <!-- Izquierda: Portada + Info + Controles -->
-            <div class="fs-left-pane">
-                <div class="fs-art-wrap" onclick="togglePlay()">
-                    <img src="https://file.garden/alq0ENqplE9QfqJV/COSAS%20QUE%20NO%20TE%20DIJE_640x640.jpg" class="fs-art" alt="Portada">
-                </div>
-
-                <div class="fs-info-block">
-                    <div class="fs-title-row">
-                        <div>
-                            <h2 class="fs-title">COSAS QUE NO TE DIJE</h2>
-                            <p class="fs-artist">SAIKO</p>
-                        </div>
-                        <i class="ph-fill ph-heart fs-heart-btn" onclick="toggleHeart(this)"></i>
+        <div class="np-layout">
+            <!-- Left Deck: Artwork, Meta, Scrubber, Media Controls & Volume -->
+            <div class="np-left-pane">
+                <div class="np-left-card">
+                    <!-- Crisp Cover Artwork Container -->
+                    <div class="np-art-wrap" onclick="togglePlay()">
+                        <img src="https://file.garden/alq0ENqplE9QfqJV/COSAS%20QUE%20NO%20TE%20DIJE_640x640.jpg" id="np-art-large" class="np-art-img" alt="Cover">
                     </div>
+                    
+                    <!-- Track Meta Row -->
+                    <div class="np-info-block">
+                        <div class="np-track-row-meta">
+                            <div class="np-track-texts">
+                                <h2 class="np-track-title">COSAS QUE NO TE DIJE</h2>
+                                <p class="np-track-artist">SAIKO</p>
+                            </div>
+                            <i class="ph-fill ph-heart np-btn-heart" id="np-heart-btn" onclick="toggleHeart(this)"></i>
+                        </div>
 
-                    <div class="fs-scrubber">
-                        <div class="fs-progress-track" onclick="seek(event, this)">
-                            <div class="fs-progress-fill" id="fs-bar-fill"></div>
+                        <div class="np-badges-row">
+                            <div class="np-badge-pill"><i class="ph-fill ph-waveform"></i> Lossless ALAC 24-bit/96kHz</div>
+                            <div class="np-badge-pill">Master Quality</div>
                         </div>
-                        <div class="fs-time-row">
-                            <span id="fs-time-curr">0:00</span>
-                            <span id="fs-time-tot">-0:00</span>
-                        </div>
-                    </div>
 
-                    <div class="fs-controls">
-                        <i class="ph-bold ph-shuffle fs-ctrl-btn"></i>
-                        <i class="ph-fill ph-skip-back fs-ctrl-btn" onclick="replaySong()"></i>
-                        <div class="fs-play-btn-large" onclick="togglePlay()">
-                            <i class="ph-fill ph-play" id="fs-play-icon"></i>
+                        <!-- Scrubber Deck -->
+                        <div class="np-scrubber-deck">
+                            <div class="np-progress-track" id="np-progress-track" onclick="seek(event, this)">
+                                <div class="np-progress-fill" id="bar-fill-np"></div>
+                            </div>
+                            <div class="np-time-row">
+                                <span id="time-curr-np">0:00</span>
+                                <span id="time-tot-np">-0:00</span>
+                            </div>
                         </div>
-                        <i class="ph-fill ph-skip-forward fs-ctrl-btn" onclick="replaySong()"></i>
-                        <i class="ph-bold ph-repeat fs-ctrl-btn"></i>
-                    </div>
 
-                    <div class="fs-volume-box">
-                        <i class="ph-fill ph-speaker-low"></i>
-                        <div class="fs-vol-slider" onclick="changeVolume(event, this)">
-                            <div class="fs-vol-fill" id="fs-vol-fill"></div>
+                        <!-- Main Controls Deck -->
+                        <div class="np-main-controls">
+                            <i class="ph-bold ph-shuffle np-ctrl-btn" title="Shuffle"></i>
+                            <i class="ph-fill ph-skip-back np-ctrl-btn" onclick="seekRelative(-10)" title="Rewind 10s"></i>
+                            <div class="np-play-btn-large" id="icon-play-np" onclick="togglePlay()" title="Play / Pause">
+                                <i class="ph-fill ph-play"></i>
+                            </div>
+                            <i class="ph-fill ph-skip-forward np-ctrl-btn" onclick="seekRelative(10)" title="Forward 10s"></i>
+                            <i class="ph-bold ph-repeat np-ctrl-btn" title="Repeat"></i>
                         </div>
-                        <i class="ph-fill ph-speaker-high"></i>
+
+                        <!-- Centered Volume Deck -->
+                        <div class="np-volume-deck">
+                            <i class="ph-fill ph-speaker-low"></i>
+                            <div class="vol-slider" onclick="changeVolume(event, this)">
+                                <div class="vol-fill" id="vol-fill-np" style="width:75%;"></div>
+                            </div>
+                            <i class="ph-fill ph-speaker-high"></i>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Derecha: Letras Apple Music Sincronizadas -->
-            <div class="fs-right-pane">
-                <div class="lyrics-scroll-area">
+            <!-- Right Deck: Glassy Apple Music Lyrics Container -->
+            <div class="np-right-pane">
+                <div class="lyrics-scroll-area" id="lyrics-scroller">
                     <div id="lyrics-content"></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Canvas oculto para extracción analítica de color -->
+    <!-- Hidden Canvas for Color Extraction -->
     <canvas id="color-extractor" style="display:none;"></canvas>
 
     <script>
         /* ==================================================================
-           DATOS DE LA CANCIÓN
+           SINGLE EXCLUSIVE TRACK DATA (COSAS QUE NO TE DIJE - SAIKO)
            ================================================================== */
+        const cosasQueNoTeDijeCoverUrl = "https://file.garden/alq0ENqplE9QfqJV/COSAS%20QUE%20NO%20TE%20DIJE_640x640.jpg";
+        
         const currentSong = {
             title: "COSAS QUE NO TE DIJE",
             artist: "SAIKO",
             url: "https://file.garden/alq0ENqplE9QfqJV/COSAS%20QUE%20NO%20TE%20DIJE_spotdown.org.mp3",
             lrc: "https://file.garden/alq0ENqplE9QfqJV/SAIKO%20-%20COSAS%20QUE%20NO%20TE%20DIJE.ttml",
-            cover: "https://file.garden/alq0ENqplE9QfqJV/COSAS%20QUE%20NO%20TE%20DIJE_640x640.jpg"
+            cover: cosasQueNoTeDijeCoverUrl
         };
 
         /* ==================================================================
-           EXTRACTOR DE COLOR FIEL Y NATURAL (Sin saturación artificial)
+           TRUE-TO-SOURCE COLOR EXTRACTOR (No artificial over-saturation)
            ================================================================== */
         class TrueColorExtractor {
             static extract(imgUrl) {
@@ -600,77 +858,73 @@
                     img.crossOrigin = "anonymous";
                     img.onload = () => {
                         try {
-                            const canvas = document.getElementById('color-extractor');
+                            const canvas = document.createElement('canvas');
                             const ctx = canvas.getContext('2d');
-                            const size = 48;
+                            const size = 64;
                             canvas.width = size;
                             canvas.height = size;
                             ctx.drawImage(img, 0, 0, size, size);
                             const data = ctx.getImageData(0, 0, size, size).data;
 
                             const colorBins = {};
-                            for (let i = 0; i < data.length; i += 4) {
-                                if (data[i + 3] < 128) continue;
-                                const r = data[i];
-                                const g = data[i + 1];
-                                const b = data[i + 2];
+                            for (let i = 0; i < data.length; i += 16) {
+                                const r = data[i], g = data[i+1], b = data[i+2], a = data[i+3];
+                                if (a < 128) continue;
+                                
+                                const max = Math.max(r, g, b);
+                                const min = Math.min(r, g, b);
+                                if (max < 16 && min < 16) continue;
+                                if (min > 245) continue;
 
-                                const qr = Math.round(r / 16) * 16;
-                                const qg = Math.round(g / 16) * 16;
-                                const qb = Math.round(b / 16) * 16;
-                                const key = `${qr},${qg},${qb}`;
+                                const qR = Math.floor(r / 16) * 16 + 8;
+                                const qG = Math.floor(g / 16) * 16 + 8;
+                                const qB = Math.floor(b / 16) * 16 + 8;
+                                const key = `${qR},${qG},${qB}`;
 
-                                if (!colorBins[key]) {
-                                    colorBins[key] = { r: 0, g: 0, b: 0, count: 0 };
-                                }
-                                colorBins[key].r += r;
-                                colorBins[key].g += g;
-                                colorBins[key].b += b;
+                                if (!colorBins[key]) colorBins[key] = { r: qR, g: qG, b: qB, count: 0 };
                                 colorBins[key].count++;
                             }
 
-                            const sorted = Object.values(colorBins)
-                                .map(c => ({
-                                    r: Math.round(c.r / c.count),
-                                    g: Math.round(c.g / c.count),
-                                    b: Math.round(c.b / c.count),
-                                    count: c.count
-                                }))
-                                .sort((a, b) => b.count - a.count);
+                            const sorted = Object.values(colorBins).sort((a, b) => b.count - a.count);
 
-                            const primary = sorted[0] || { r: 72, g: 76, b: 86 };
-
-                            let secondary = sorted.find(c => {
+                            const primary = sorted[0] || { r: 130, g: 95, b: 175 };
+                            
+                            let secondary = sorted[1] || primary;
+                            for (let i = 1; i < sorted.length; i++) {
                                 const dist = Math.sqrt(
-                                    Math.pow(c.r - primary.r, 2) +
-                                    Math.pow(c.g - primary.g, 2) +
-                                    Math.pow(c.b - primary.b, 2)
+                                    Math.pow(sorted[i].r - primary.r, 2) +
+                                    Math.pow(sorted[i].g - primary.g, 2) +
+                                    Math.pow(sorted[i].b - primary.b, 2)
                                 );
-                                return dist > 35;
-                            }) || sorted[1] || primary;
+                                if (dist > 40) {
+                                    secondary = sorted[i];
+                                    break;
+                                }
+                            }
 
-                            let accent = sorted.find(c => {
-                                const dist1 = Math.sqrt(Math.pow(c.r - primary.r, 2) + Math.pow(c.g - primary.g, 2) + Math.pow(c.b - primary.b, 2));
-                                const dist2 = Math.sqrt(Math.pow(c.r - secondary.r, 2) + Math.pow(c.g - secondary.g, 2) + Math.pow(c.b - secondary.b, 2));
-                                return dist1 > 30 && dist2 > 30;
-                            }) || secondary;
-
-                            const darkR = Math.max(5, Math.round(primary.r * 0.1));
-                            const darkG = Math.max(5, Math.round(primary.g * 0.1));
-                            const darkB = Math.max(8, Math.round(primary.b * 0.14));
+                            const darkR = Math.max(6, Math.min(18, Math.round(primary.r * 0.08)));
+                            const darkG = Math.max(6, Math.min(18, Math.round(primary.g * 0.08)));
+                            const darkB = Math.max(8, Math.min(22, Math.round(primary.b * 0.1)));
 
                             resolve({
                                 primary: `${primary.r}, ${primary.g}, ${primary.b}`,
                                 secondary: `${secondary.r}, ${secondary.g}, ${secondary.b}`,
-                                accent: `${accent.r}, ${accent.g}, ${accent.b}`,
                                 dark: `rgb(${darkR}, ${darkG}, ${darkB})`
                             });
                         } catch(e) {
-                            resolve({ primary: "72, 76, 86", secondary: "98, 102, 114", accent: "130, 136, 150", dark: "#08090c" });
+                            resolve({
+                                primary: "130, 95, 175",
+                                secondary: "85, 60, 120",
+                                dark: "#07070a"
+                            });
                         }
                     };
                     img.onerror = () => {
-                        resolve({ primary: "72, 76, 86", secondary: "98, 102, 114", accent: "130, 136, 150", dark: "#08090c" });
+                        resolve({
+                            primary: "130, 95, 175",
+                            secondary: "85, 60, 120",
+                            dark: "#07070a"
+                        });
                     };
                     img.src = imgUrl;
                 });
@@ -678,28 +932,40 @@
         }
 
         /* ==================================================================
-           MOTOR DE AUDIO & ESTADO
+           AUDIO ENGINE & STATE
            ================================================================== */
         let isNPOpen = false;
+        let audio = new Audio(); audio.crossOrigin = "anonymous";
+        let audioCtx, masterGain, masterCompressor, analyser;
         let globalVolume = 0.75;
-        let audio = new Audio();
-        audio.crossOrigin = "anonymous";
-        audio.src = currentSong.url;
-
-        let audioCtx, masterGain;
+        let lastAudioTime = 0;
+        let lastTimeUpdate = 0;
         let _lyricLastFrameMs = null;
-        let currentCoverBg = "";
 
         function initAudioEngine() {
             if (audioCtx) return;
             const AudioContext = window.AudioContext || window.webkitAudioContext;
             audioCtx = new AudioContext();
+            
+            masterCompressor = audioCtx.createDynamicsCompressor();
+            masterCompressor.threshold.value = -3;
+            masterCompressor.knee.value = 10;
+            masterCompressor.ratio.value = 5;
+            masterCompressor.attack.value = 0.003;
+            masterCompressor.release.value = 0.25;
+            
             masterGain = audioCtx.createGain();
             masterGain.gain.value = globalVolume;
-
+            
+            analyser = audioCtx.createAnalyser();
+            analyser.fftSize = 64;
+            analyser.smoothingTimeConstant = 0.8;
+            
             const source = audioCtx.createMediaElementSource(audio);
-            source.connect(masterGain);
-            masterGain.connect(audioCtx.destination);
+            source.connect(masterCompressor);
+            masterCompressor.connect(masterGain);
+            masterGain.connect(analyser);
+            analyser.connect(audioCtx.destination);
         }
 
         function ensureAudioContext() {
@@ -709,29 +975,54 @@
 
         function haptic() { if (navigator.vibrate) navigator.vibrate(10); }
 
+        async function updateCoverBackground(coverUrl) {
+            const bgFront = document.getElementById('bg-front');
+            if (!bgFront) return;
+
+            bgFront.style.backgroundImage = `url("${coverUrl}")`;
+            bgFront.classList.add('fade-in');
+
+            const palette = await TrueColorExtractor.extract(coverUrl);
+            document.documentElement.style.setProperty('--color-primary-rgb', palette.primary);
+            document.documentElement.style.setProperty('--color-secondary-rgb', palette.secondary);
+            document.documentElement.style.setProperty('--accent-1', `rgb(${palette.primary})`);
+            document.documentElement.style.setProperty('--accent-2', `rgb(${palette.secondary})`);
+            document.documentElement.style.setProperty('--accent-glow', `rgba(${palette.primary}, 0.35)`);
+            document.documentElement.style.setProperty('--bg-ambient-deep', palette.dark);
+        }
+
+        /* ==================================================================
+           PLAYBACK CONTROLS
+           ================================================================== */
         function togglePlay() {
             ensureAudioContext(); haptic();
-            if (audio.paused) {
-                audio.play().catch(() => {});
-                setPlayIcons(true);
-            } else {
-                audio.pause();
-                setPlayIcons(false);
+            if (!audio.src) {
+                audio.src = currentSong.url;
+            }
+
+            if (audio.paused) { 
+                audio.play().catch(e=>{}); 
+                setPlayIcon(true); 
+            } else { 
+                audio.pause(); 
+                setPlayIcon(false); 
             }
         }
 
-        function replaySong() {
-            haptic();
-            audio.currentTime = 0;
-            if (audio.paused) audio.play();
-            setPlayIcons(true);
+        function seekRelative(offset) {
+            if (!audio.duration) return;
+            audio.currentTime = Math.max(0, Math.min(audio.duration, audio.currentTime + offset));
         }
 
-        function setPlayIcons(isPlaying) {
-            const icon = isPlaying ? "ph-fill ph-pause" : "ph-fill ph-play";
-            document.getElementById('hero-play-icon').className = icon;
-            document.getElementById('pill-play-icon').className = icon;
-            document.querySelector('#np-fs .fs-play-btn-large i').className = icon;
+        function setPlayIcon(playing) {
+            const iconClass = playing ? "ph-fill ph-pause" : "ph-fill ph-play";
+            document.getElementById('icon-play-mob').className = iconClass;
+            document.getElementById('icon-play-desk').className = iconClass;
+            document.getElementById('hero-play-icon').className = iconClass;
+            document.querySelector('#icon-play-np i').className = iconClass;
+            
+            document.getElementById('hero-play-text').innerText = playing ? "Pause Track" : "Listen Now";
+            document.getElementById('hero-live-eq').style.display = playing ? "inline-flex" : "none";
         }
 
         function toggleHeart(el) {
@@ -739,55 +1030,50 @@
             el.classList.toggle('active');
         }
 
-        function seek(e, el) {
-            if (!audio.duration) return;
-            const r = el.getBoundingClientRect();
-            audio.currentTime = ((e.clientX - r.left) / r.width) * audio.duration;
+        function seek(e, el) { 
+            if(!audio.duration) return; 
+            const r = el.getBoundingClientRect(); 
+            audio.currentTime = ((e.clientX - r.left) / r.width) * audio.duration; 
         }
-
+        
         function changeVolume(e, el) {
-            const r = el.getBoundingClientRect();
-            let vol = (e.clientX - r.left) / r.width;
+            const r = el.getBoundingClientRect(); let vol = (e.clientX - r.left) / r.width;
             setVolumeLevel(vol);
         }
-
+        
         function setVolumeLevel(vol) {
-            if (vol < 0) vol = 0; if (vol > 1) vol = 1;
-            globalVolume = vol;
-            document.getElementById('pill-vol-fill').style.width = `${vol * 100}%`;
-            document.getElementById('fs-vol-fill').style.width = `${vol * 100}%`;
-            if (audioCtx && masterGain) {
-                masterGain.gain.linearRampToValueAtTime(vol, audioCtx.currentTime + 0.05);
-            } else {
-                audio.volume = vol;
-            }
+            if(vol < 0) vol = 0; if(vol > 1) vol = 1; globalVolume = vol;
+            document.getElementById('vol-fill-desk').style.width = `${vol*100}%`;
+            const npVol = document.getElementById('vol-fill-np');
+            if (npVol) npVol.style.width = `${vol*100}%`;
+            if(audioCtx && masterGain) masterGain.gain.linearRampToValueAtTime(vol, audioCtx.currentTime + 0.1); 
+            else audio.volume = vol;
         }
 
         function toggleNP() {
-            haptic();
-            isNPOpen = !isNPOpen;
-            const np = document.getElementById('np-fs');
+            haptic(); isNPOpen = !isNPOpen;
+            const np = document.getElementById('np-fs'); 
             const app = document.getElementById('app-wrapper');
-
-            if (isNPOpen) {
+            
+            if (isNPOpen) { 
                 _lyricLastFrameMs = null;
                 document.body.classList.add('np-active');
-                np.classList.add('active');
-                app.classList.add('scaled');
-                setTimeout(() => { if (lyricPlayer) lyricPlayer.calcLayout(true, true); }, 100);
-            } else {
+                np.classList.add('active'); 
+                app.classList.add('scaled'); 
+                setTimeout(() => { if(lyricPlayer) lyricPlayer.calcLayout(true, true); }, 150);
+            } 
+            else { 
                 document.body.classList.remove('np-active');
-                np.classList.remove('active');
-                app.classList.remove('scaled');
+                np.classList.remove('active'); 
+                app.classList.remove('scaled'); 
+                app.style.opacity = '';
+                app.style.visibility = '';
+                app.style.transform = '';
             }
         }
 
         window.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && isNPOpen) toggleNP();
-            if (e.code === 'Space' && e.target.tagName !== 'INPUT') {
-                e.preventDefault();
-                togglePlay();
-            }
         });
 
         /* ==================================================================
@@ -798,6 +1084,8 @@
         async function ensureLyricPlayer() {
             if (lyricPlayer) return lyricPlayer;
             const LyricPlayerCtor = await window.__AMLLReady;
+            if (!LyricPlayerCtor) throw new Error("AMLL Core not loaded");
+            
             lyricPlayer = new LyricPlayerCtor();
             lyricPlayer.setEnableSpring(true);
             lyricPlayer.setEnableBlur(true);
@@ -811,195 +1099,253 @@
                 if (line) {
                     audio.currentTime = line.startTime / 1000;
                     audio.play();
-                    setPlayIcons(true);
+                    setPlayIcon(true);
                 }
             });
 
+            let rTimeout;
             window.addEventListener('resize', () => {
-                if (lyricPlayer) lyricPlayer.calcLayout(true, true);
+                clearTimeout(rTimeout);
+                rTimeout = setTimeout(() => {
+                    if (lyricPlayer) lyricPlayer.calcLayout(true, true);
+                }, 100);
             });
 
             return lyricPlayer;
         }
 
         function parseTTMLTime(str) {
-            if (!str) return 0;
+            if(!str) return 0;
             str = str.toString().trim();
             if (str.endsWith('ms')) return parseFloat(str.replace('ms', '')) / 1000;
-            str = str.replace(/s$/, '');
+            str = str.replace(/s$/, ''); 
             const parts = str.split(':');
             let sec = 0;
-            if (parts.length === 3) sec = parseInt(parts[0], 10) * 3600 + parseInt(parts[1], 10) * 60 + parseFloat(parts[2].replace(',', '.'));
-            else if (parts.length === 2) sec = parseInt(parts[0], 10) * 60 + parseFloat(parts[1].replace(',', '.'));
+            if(parts.length === 3) sec = parseInt(parts[0], 10) * 3600 + parseInt(parts[1], 10) * 60 + parseFloat(parts[2].replace(',', '.'));
+            else if(parts.length === 2) sec = parseInt(parts[0], 10) * 60 + parseFloat(parts[1].replace(',', '.'));
             else sec = parseFloat(str.replace(',', '.'));
             return sec || 0;
         }
 
-        function parseToAMLLLines(text) {
+        function getAttributeInsensitive(element, attrName) {
+            if (!element || !element.attributes) return '';
+            for (let i = 0; i < element.attributes.length; i++) {
+                const attr = element.attributes[i];
+                if (attr.localName === attrName || attr.name === attrName || attr.name.endsWith(':' + attrName)) return attr.value;
+            }
+            return '';
+        }
+
+        function parseToAMLLLines(text, url) {
             const rawLines = [];
             const parser = new DOMParser();
             const xmlDoc = parser.parseFromString(text, "text/xml");
-            const pElements = Array.from(xmlDoc.getElementsByTagName('p'));
+            
+            let pTags = xmlDoc.getElementsByTagNameNS ? xmlDoc.getElementsByTagNameNS('*', 'p') : [];
+            if (pTags.length === 0) pTags = xmlDoc.getElementsByTagName('p');
+            const pElements = Array.from(pTags);
 
             pElements.forEach(p => {
                 const beginAttr = p.getAttribute('begin') || p.getAttribute('t');
                 if (!beginAttr) return;
+
                 const pBegin = parseTTMLTime(beginAttr);
                 const endAttr = p.getAttribute('end');
                 const pEnd = endAttr ? parseTTMLTime(endAttr) : 0;
 
                 let words = [];
-                Array.from(p.childNodes).forEach(node => {
+                const childNodes = Array.from(p.childNodes);
+
+                childNodes.forEach(node => {
+                    const localName = node.localName ? node.localName.toLowerCase() : (node.nodeName ? node.nodeName.toLowerCase() : '');
                     if (node.nodeType === Node.TEXT_NODE) {
-                        let val = node.nodeValue.replace(/[\r\n\t]+/g, ' ');
-                        if (val.trim()) words.push({ time: pBegin, dur: 0, text: val });
-                    } else if (node.nodeType === Node.ELEMENT_NODE && (node.localName === 'span' || node.localName === 's')) {
-                        const sBegin = parseTTMLTime(node.getAttribute('begin') || node.getAttribute('t')) || pBegin;
-                        const dur = parseTTMLTime(node.getAttribute('dur') || node.getAttribute('d')) || 0;
-                        words.push({ time: sBegin, dur, text: node.textContent || "" });
+                        let val = node.nodeValue;
+                        if(val) {
+                            val = val.replace(/[\r\n\t]+/g, ' ').replace(/\s{2,}/g, ' ');
+                            if(val === ' ') {
+                                if(words.length > 0) words[words.length - 1].text += ' ';
+                            } else if (val.trim() !== '') {
+                                words.push({ time: pBegin, dur: 0, text: val });
+                            }
+                        }
+                    } else if (node.nodeType === Node.ELEMENT_NODE && (localName === 'span' || localName === 's' || localName.endsWith(':span') || localName.endsWith(':s'))) {
+                        const sBeginAttr = node.getAttribute('begin') || node.getAttribute('t');
+                        const sBegin = sBeginAttr ? parseTTMLTime(sBeginAttr) : pBegin;
+                        const sEndAttr = node.getAttribute('end');
+                        const sDurAttr = node.getAttribute('d') || node.getAttribute('dur');
+
+                        let dur = 0;
+                        if(sEndAttr) dur = parseTTMLTime(sEndAttr) - sBegin;
+                        else if(sDurAttr) dur = parseTTMLTime(sDurAttr);
+
+                        words.push({ time: sBegin, dur: dur, text: node.textContent || "" });
                     }
                 });
 
-                if (words.length === 0 && p.textContent.trim()) {
-                    words.push({ time: pBegin, dur: pEnd > pBegin ? pEnd - pBegin : 0, text: p.textContent.trim() });
+                if (words.length === 0) {
+                    const cleanLine = (p.textContent || "").trim();
+                    if (cleanLine) words.push({ time: pBegin, dur: pEnd > pBegin ? pEnd - pBegin : 0, text: cleanLine });
                 }
 
-                if (words.length > 0) {
+                if(words.length > 0) {
+                    const cleanLine = words.map(w => w.text).join('').trim();
+                    if (!cleanLine) return;
                     rawLines.push({ time: pBegin, words, dur: pEnd > pBegin ? pEnd - pBegin : 0 });
                 }
             });
 
             rawLines.forEach((l, i) => {
-                let nTime = (i < rawLines.length - 1) ? rawLines[i + 1].time : l.time + 6;
-                if (!l.dur) l.dur = Math.max(0, nTime - l.time);
-                for (let j = 0; j < l.words.length; j++) {
-                    if (!l.words[j].dur || l.words[j].dur <= 0) {
-                        l.words[j].dur = (j < l.words.length - 1) ? Math.max(0.05, l.words[j + 1].time - l.words[j].time) : Math.min(2.5, nTime - l.words[j].time);
+                let nTime = (i < rawLines.length - 1) ? rawLines[i+1].time : l.time + 8;
+                if(!l.dur) l.dur = Math.max(0, nTime - l.time);
+
+                for(let j=0; j<l.words.length; j++) {
+                    if(!l.words[j].dur || l.words[j].dur <= 0) {
+                        if(j < l.words.length - 1) l.words[j].dur = Math.max(0.05, l.words[j+1].time - l.words[j].time);
+                        else l.words[j].dur = Math.min(2.5, Math.max(0.05, nTime - l.words[j].time));
                     }
                 }
             });
 
-            return rawLines.map(l => ({
-                words: l.words.map(w => ({
-                    startTime: Math.round(w.time * 1000),
-                    endTime: Math.round((w.time + w.dur) * 1000),
-                    word: w.text
-                })),
-                text: l.words.map(w => w.text).join('').trim(),
-                translatedLyric: '',
-                romanLyric: '',
-                startTime: Math.round(l.time * 1000),
-                endTime: Math.round((l.time + l.dur) * 1000),
-                isBG: false,
-                isDuet: false
-            }));
+            return rawLines.map(l => {
+                const lineText = l.words.map(w => w.text).join('').trim();
+                return {
+                    words: l.words.map(w => ({
+                        startTime: Math.round(w.time * 1000),
+                        endTime: Math.round((w.time + w.dur) * 1000),
+                        word: w.text
+                    })),
+                    text: lineText,
+                    translatedLyric: '',
+                    romanLyric: '',
+                    startTime: Math.round(l.time * 1000),
+                    endTime: Math.round((l.time + l.dur) * 1000),
+                    isBG: false,
+                    isDuet: false
+                };
+            });
         }
 
-        async function loadLyrics() {
+        async function fetchLyrics(url) {
+            const container = document.getElementById('lyrics-content');
+            let player;
             try {
-                const player = await ensureLyricPlayer();
-                const res = await fetch(currentSong.lrc);
-                const text = await res.text();
-                const lines = parseToAMLLLines(text);
-                player.setLyricLines(lines, 0);
+                player = await ensureLyricPlayer();
+            } catch(e) {
+                console.error("Failed to initialize AMLL lyric player:", e);
+                return;
+            }
+
+            try {
+                const res = await fetch(url); 
+                const text = await res.text(); 
+                const lyricLines = parseToAMLLLines(text, url);
+                player.setLyricLines(lyricLines, audio.currentTime * 1000);
                 player.calcLayout(true, true);
-            } catch (e) {
-                console.error("Error al cargar letras:", e);
+            } catch(e) {
+                player.setLyricLines([]);
             }
         }
 
-        function fmt(s) {
-            return `${Math.floor(s / 60)}:${Math.floor(s % 60).toString().padStart(2, '0')}`;
-        }
+        function fmt(s) { return `${Math.floor(s/60)}:${Math.floor(s%60).toString().padStart(2,'0')}`; }
 
         function renderLoop(rafTime) {
             if (!rafTime) rafTime = performance.now();
-
-            if (audio.duration && !isNaN(audio.duration)) {
-                const cur = audio.currentTime;
-                const dur = audio.duration;
-                const pct = (cur / dur) * 100;
-
-                document.getElementById('pill-bar-fill').style.width = `${pct}%`;
-                document.getElementById('fs-bar-fill').style.width = `${pct}%`;
-
-                document.getElementById('pill-time-curr').innerText = fmt(cur);
-                document.getElementById('pill-time-tot').innerText = "-" + fmt(dur - cur);
-                document.getElementById('fs-time-curr').innerText = fmt(cur);
-                document.getElementById('fs-time-tot').innerText = "-" + fmt(dur - cur);
-
-                if (isNPOpen && lyricPlayer) {
-                    const deltaMs = _lyricLastFrameMs ? Math.min(100, rafTime - _lyricLastFrameMs) : (1000 / 60);
+            
+            if(audio.duration && !isNaN(audio.duration)) {
+                let cur = audio.currentTime; 
+                const now = performance.now();
+                if (cur !== lastAudioTime) { 
+                    lastAudioTime = cur; 
+                    lastTimeUpdate = now; 
+                } else if (!audio.paused) {
+                    let extrapolated = lastAudioTime + (now - lastTimeUpdate) / 1000;
+                    if (extrapolated - lastAudioTime < 0.3) cur = extrapolated;
+                }
+                
+                const dur = audio.duration; 
+                const pct = (cur/dur)*100;
+                
+                document.getElementById('bar-fill-mini').style.width = `${pct}%`;
+                document.getElementById('bar-fill-desk').style.width = `${pct}%`;
+                document.getElementById('bar-fill-np').style.width = `${pct}%`;
+                
+                document.getElementById('time-curr-desk').innerText = fmt(cur);
+                document.getElementById('time-tot-desk').innerText = "-" + fmt(dur-cur);
+                document.getElementById('time-curr-np').innerText = fmt(cur);
+                document.getElementById('time-tot-np').innerText = "-" + fmt(dur-cur);
+                
+                if(isNPOpen && lyricPlayer) { 
+                    const visualTime = cur + 0.1;
+                    const deltaMs = _lyricLastFrameMs ? Math.min(100, rafTime - _lyricLastFrameMs) : (1000/60);
                     _lyricLastFrameMs = rafTime;
-                    lyricPlayer.setCurrentTime((cur + 0.08) * 1000);
+                    lyricPlayer.setCurrentTime(visualTime * 1000);
                     lyricPlayer.update(deltaMs);
                 }
             }
             requestAnimationFrame(renderLoop);
         }
 
-        /* Gesto deslizar hacia abajo para cerrar Fullscreen */
+        /* ==================================================================
+           GESTURES (DRAG-TO-CLOSE NOW PLAYING)
+           ================================================================== */
         function setupGestures() {
-            let sY = 0, cY = 0;
-            const np = document.getElementById('np-fs');
-
+            let sY=0, cY=0; 
+            const np = document.getElementById('np-fs'); 
+            const app = document.getElementById('app-wrapper');
+            
             np.addEventListener('touchstart', e => {
-                if (e.target.closest('#lyrics-content')) return;
+                if(e.target.closest('#lyrics-scroller') && document.getElementById('lyrics-scroller').scrollTop > 0) return;
+                if(np.scrollTop > 0) return; 
+                
                 sY = e.touches[0].clientY; cY = sY;
-                np.style.transition = 'none';
-            }, { passive: true });
-
+                np.style.transition = 'none'; app.style.transition = 'none';
+                app.style.visibility = 'visible';
+            }, {passive:true});
+            
             np.addEventListener('touchmove', e => {
-                if (!isNPOpen || sY === 0) return;
-                cY = e.touches[0].clientY;
-                let d = cY - sY;
-                if (d > 0) np.style.transform = `translateY(${d}px)`;
-            }, { passive: true });
-
-            np.addEventListener('touchend', () => {
-                if (!isNPOpen || sY === 0) return;
+                if(!isNPOpen || sY===0) return;
+                if(e.target.closest('.scrubber-bg') || e.target.closest('.np-progress-track') || e.target.closest('.vol-slider')) return;
+                
+                cY = e.touches[0].clientY; let d = cY - sY;
+                if(d > 0 && np.scrollTop <= 0) { 
+                    np.style.transform = `translateY(${d}px)`;
+                    const progress = Math.min(1, d / (window.innerHeight * 0.45));
+                    app.style.opacity = (progress * 0.9).toString();
+                    app.style.transform = `scale(${0.92 + progress * 0.08}) translateY(${-2 + progress * 2}vh)`;
+                }
+            }, {passive:true});
+            
+            np.addEventListener('touchend', e => {
+                if(!isNPOpen || sY===0) return;
+                if(e.target.closest('.scrubber-bg') || e.target.closest('.np-progress-track') || e.target.closest('.vol-slider')) return;
                 let d = cY - sY; sY = 0;
-                np.style.transition = '';
-                if (d > 120) toggleNP();
-                else np.style.transform = '';
-            }, { passive: true });
+                np.style.transition = ''; app.style.transition = '';
+                
+                if(d > 120) {
+                    toggleNP();
+                } else { 
+                    np.style.transform = ''; 
+                    app.style.opacity = '0';
+                    app.style.visibility = 'hidden';
+                    app.style.transform = 'scale(0.92) translateY(-2vh)'; 
+                }
+            }, {passive:true});
         }
 
-        async function updateCoverBackground(coverUrl) {
-            if (!coverUrl) return;
-            const bgBack = document.getElementById('bg-back');
-            const bgFront = document.getElementById('bg-front');
-            if (!bgBack || !bgFront) return;
+        /* ==================================================================
+           INITIALIZATION
+           ================================================================== */
+        function init() {
+            audio.src = currentSong.url;
+            updateCoverBackground(currentSong.cover);
+            fetchLyrics(currentSong.lrc);
 
-            if (currentCoverBg) {
-                bgBack.style.backgroundImage = `url("${currentCoverBg}")`;
-            }
-            bgFront.style.backgroundImage = `url("${coverUrl}")`;
-            bgFront.classList.remove('fade-in');
-            void bgFront.offsetWidth;
-            bgFront.classList.add('fade-in');
-            currentCoverBg = coverUrl;
-
-            const palette = await TrueColorExtractor.extract(coverUrl);
-            document.documentElement.style.setProperty('--color-primary-rgb', palette.primary);
-            document.documentElement.style.setProperty('--color-secondary-rgb', palette.secondary);
-            document.documentElement.style.setProperty('--color-accent-rgb', palette.accent);
-            document.documentElement.style.setProperty('--accent-1', `rgb(${palette.primary})`);
-            document.documentElement.style.setProperty('--accent-2', `rgb(${palette.secondary})`);
-            document.documentElement.style.setProperty('--accent-glow', `rgba(${palette.primary}, 0.35)`);
-            document.documentElement.style.setProperty('--bg-ambient-deep', palette.dark);
-        }
-
-        /* Inicialización */
-        async function init() {
             document.body.addEventListener('click', ensureAudioContext, { once: true });
             document.body.addEventListener('touchstart', ensureAudioContext, { once: true });
 
-            await updateCoverBackground(currentSong.cover);
-            setVolumeLevel(globalVolume);
-            loadLyrics();
-            setupGestures();
             requestAnimationFrame(renderLoop);
+            setupGestures();
+            setVolumeLevel(globalVolume);
         }
 
         window.onload = init;
