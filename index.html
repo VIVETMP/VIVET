@@ -32,31 +32,29 @@
     
     <style>
         /* ==================================================================
-           SISTEMA DE DISEÑO GLASSY & VARIABLES DINÁMICAS (Merge Theme)
+           SISTEMA DE DISEÑO APPLE MUSIC & VARIABLES DINÁMICAS
            ================================================================== */
         :root {
-            --color-primary-rgb: 75, 78, 88;
-            --color-secondary-rgb: 105, 110, 122;
-            --color-accent-rgb: 140, 145, 160;
-            --bg-ambient-deep: #070709;
+            /* Colores base dinámicos extraídos fielmente de la portada */
+            --color-primary-rgb: 72, 76, 86;
+            --color-secondary-rgb: 98, 102, 114;
+            --color-accent-rgb: 130, 136, 150;
+            --bg-ambient-deep: #08090c;
 
             --bg-deep: var(--bg-ambient-deep);
-            --bg-surface: #0e0e13;
-            --bg-glass-panel: rgba(255, 255, 255, 0.05);
-            --bg-glass-card: rgba(255, 255, 255, 0.07);
-            --bg-glass-heavy: rgba(18, 18, 24, 0.72);
+            --bg-glass-card: rgba(255, 255, 255, 0.06);
+            --bg-glass-heavy: rgba(18, 20, 26, 0.78);
             --bg-glass-hover: rgba(255, 255, 255, 0.12);
 
             --text-primary: #ffffff;
             --text-secondary: rgba(255, 255, 255, 0.7);
             --text-tertiary: rgba(255, 255, 255, 0.42);
 
-            --border-subtle: rgba(255, 255, 255, 0.09);
-            --border-highlight: rgba(255, 255, 255, 0.18);
-            --shadow-float: 0 30px 60px rgba(0, 0, 0, 0.45);
+            --border-subtle: rgba(255, 255, 255, 0.1);
+            --border-highlight: rgba(255, 255, 255, 0.2);
+            --shadow-float: 0 30px 70px rgba(0, 0, 0, 0.55);
 
             --accent-1: rgb(var(--color-primary-rgb));
-            --accent-2: rgb(var(--color-secondary-rgb));
             --accent-glow: rgba(var(--color-primary-rgb), 0.35);
 
             --font-display: -apple-system, BlinkMacSystemFont, 'Outfit', 'Helvetica Neue', sans-serif;
@@ -84,7 +82,7 @@
         }
 
         /* ==================================================================
-           FONDO DINÁMICO DE GLASSY-MUSIC (NanKillBro / Merge Theme)
+           FONDO AMBIENTAL DINÁMICO (FIEL AL TONO REAL DE LA PORTADA)
            ================================================================== */
         #ambient-bg {
             position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
@@ -94,16 +92,16 @@
 
         .ambient-bg-layer {
             position: absolute;
-            inset: -45%;
+            inset: -40%;
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
-            filter: blur(80px) saturate(220%) brightness(0.65);
-            -webkit-filter: blur(80px) saturate(220%) brightness(0.65);
+            filter: blur(80px) brightness(0.7);
+            -webkit-filter: blur(80px) brightness(0.7);
             transition: opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1);
             opacity: 1;
             transform-origin: center center;
-            animation: slowRotateGlow 75s linear infinite;
+            animation: ambientDrift 80s linear infinite;
             will-change: transform, opacity;
         }
 
@@ -111,18 +109,16 @@
         #bg-front { z-index: 2; opacity: 0; }
         #bg-front.fade-in { opacity: 1; }
 
-        @keyframes slowRotateGlow {
-            0% { transform: rotate(0deg) scale(1.4); }
-            50% { transform: rotate(180deg) scale(1.6); }
-            100% { transform: rotate(360deg) scale(1.4); }
+        @keyframes ambientDrift {
+            0% { transform: rotate(0deg) scale(1.35); }
+            50% { transform: rotate(180deg) scale(1.55); }
+            100% { transform: rotate(360deg) scale(1.35); }
         }
 
-        /* Malla radial dinámica multipunto con colores extraídos */
         .ambient-mesh-overlay {
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(circle at 18% 28%, rgba(var(--color-primary-rgb), 0.45) 0%, transparent 60%),
-                        radial-gradient(circle at 82% 72%, rgba(var(--color-secondary-rgb), 0.4) 0%, transparent 60%),
+            position: absolute; inset: 0;
+            background: radial-gradient(circle at 20% 25%, rgba(var(--color-primary-rgb), 0.5) 0%, transparent 60%),
+                        radial-gradient(circle at 80% 75%, rgba(var(--color-secondary-rgb), 0.45) 0%, transparent 65%),
                         radial-gradient(circle at 50% 50%, rgba(var(--color-accent-rgb), 0.25) 0%, transparent 70%);
             mix-blend-mode: screen;
             opacity: 0.9;
@@ -133,7 +129,7 @@
 
         .ambient-contrast-mask {
             position: absolute; inset: 0;
-            background: radial-gradient(circle at 50% 35%, rgba(5, 5, 8, 0.2) 0%, rgba(5, 5, 8, 0.8) 100%), rgba(0, 0, 0, 0.28);
+            background: radial-gradient(circle at 50% 35%, rgba(5, 6, 8, 0.15) 0%, rgba(5, 6, 8, 0.75) 100%), rgba(0, 0, 0, 0.25);
             z-index: 4;
             pointer-events: none;
         }
@@ -144,7 +140,7 @@
         }
 
         /* ==================================================================
-           UI 1: HOME SHOWCASE (MINIMAL LUXURY VIEW)
+           UI 1: HOME VIEW
            ================================================================== */
         #app-wrapper {
             display: flex; flex-direction: column; width: 100vw; height: 100vh; height: 100dvh;
@@ -172,7 +168,7 @@
 
         .top-badge {
             display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px;
-            background: var(--bg-glass-panel); border: 1px solid var(--border-subtle);
+            background: var(--bg-glass-card); border: 1px solid var(--border-subtle);
             border-radius: 100px; font-size: 11px; font-weight: 700; letter-spacing: 1px;
             color: var(--text-secondary); backdrop-filter: blur(20px);
         }
@@ -278,7 +274,7 @@
         .btn-expand:hover { color: #fff; transform: scale(1.15); }
 
         /* ==================================================================
-           UI 2: FULLSCREEN REWORKED (ARTWORK + SPACED LYRICS)
+           UI 2: FULLSCREEN NOW PLAYING (ESTILO APPLE MUSIC DESKTOP)
            ================================================================== */
         #np-fs {
             position: fixed; inset: 0; z-index: 100; transform: translateY(100%);
@@ -309,37 +305,39 @@
             border: 1px solid var(--border-subtle); color: var(--text-secondary); backdrop-filter: blur(20px);
         }
 
+        /* Disposición 2 Columnas de Apple Music */
         .fs-layout {
-            display: grid; grid-template-columns: minmax(360px, 45%) 1fr;
-            width: 100%; height: 100%; max-width: 1700px; margin: 0 auto;
-            padding: clamp(70px, 10vh, 96px) clamp(24px, 4vw, 64px) clamp(24px, 4vh, 48px);
-            gap: clamp(32px, 5vw, 72px); align-items: center; box-sizing: border-box;
+            display: grid; grid-template-columns: minmax(380px, 44%) 1fr;
+            width: 100%; height: 100%; max-width: 1750px; margin: 0 auto;
+            padding: clamp(70px, 9vh, 96px) clamp(24px, 4vw, 72px) clamp(24px, 4vh, 48px);
+            gap: clamp(32px, 5vw, 80px); align-items: center; box-sizing: border-box;
         }
 
-        /* Panel Izquierdo */
+        /* Columna Izquierda: Portada + Controles */
         .fs-left-pane {
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             width: 100%; max-width: 480px; margin: 0 auto;
         }
 
         .fs-art-wrap {
-            width: min(100%, min(380px, 38vh)); height: min(100%, min(380px, 38vh));
-            aspect-ratio: 1; border-radius: clamp(20px, 2.5vw, 32px);
+            width: min(100%, min(420px, 42vh)); height: min(100%, min(420px, 42vh));
+            aspect-ratio: 1; border-radius: clamp(18px, 2vw, 28px);
             overflow: hidden; position: relative;
-            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
+            border: 1px solid rgba(255, 255, 255, 0.16);
             cursor: pointer; transition: transform 0.4s var(--ease-cinematic);
         }
         .fs-art-wrap:hover { transform: scale(1.02); }
         .fs-art { width: 100%; height: 100%; object-fit: cover; }
 
-        .fs-info-block { width: 100%; margin-top: clamp(18px, 2.5vh, 28px); display: flex; flex-direction: column; gap: 6px; }
+        .fs-info-block { width: 100%; margin-top: clamp(20px, 2.8vh, 32px); display: flex; flex-direction: column; gap: 4px; }
         .fs-title-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-        .fs-title { font-size: clamp(22px, 2.4vw, 30px); font-weight: 800; color: #fff; letter-spacing: -0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .fs-artist { font-size: clamp(15px, 1.3vw, 18px); color: var(--text-secondary); font-weight: 600; }
+        .fs-title { font-size: clamp(22px, 2.4vw, 32px); font-weight: 800; color: #fff; letter-spacing: -0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .fs-artist { font-size: clamp(15px, 1.3vw, 19px); color: var(--text-secondary); font-weight: 600; }
         .fs-heart-btn { font-size: 24px; color: rgba(255,255,255,0.4); cursor: pointer; transition: 0.25s; }
         .fs-heart-btn.active { color: #FF2E93; transform: scale(1.15); }
 
+        /* Scrubber Fullscreen */
         .fs-scrubber { width: 100%; margin-top: 18px; display: flex; flex-direction: column; gap: 6px; }
         .fs-progress-track {
             width: 100%; height: 5px; background: rgba(255, 255, 255, 0.15); border-radius: 100px;
@@ -349,6 +347,7 @@
         .fs-progress-fill { width: 0%; height: 100%; border-radius: 100px; background: #ffffff; }
         .fs-time-row { display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: var(--text-tertiary); font-variant-numeric: tabular-nums; }
 
+        /* Controles multimedia Fullscreen */
         .fs-controls {
             display: flex; align-items: center; justify-content: center; gap: clamp(20px, 3vw, 36px);
             margin-top: 14px; width: 100%;
@@ -356,7 +355,7 @@
         .fs-ctrl-btn { font-size: 24px; color: var(--text-secondary); cursor: pointer; transition: 0.25s; }
         .fs-ctrl-btn:hover { color: #fff; transform: scale(1.15); }
         .fs-play-btn-large {
-            width: clamp(52px, 5.8vh, 64px); height: clamp(52px, 5.8vh, 64px);
+            width: clamp(54px, 6vh, 66px); height: clamp(54px, 6vh, 66px);
             border-radius: 50%; background: #ffffff; color: #000;
             display: flex; align-items: center; justify-content: center;
             font-size: clamp(22px, 2.5vh, 28px); cursor: pointer; transition: transform 0.25s var(--ease-snappy);
@@ -365,6 +364,7 @@
         .fs-play-btn-large i { margin-left: 3px; }
         .fs-play-btn-large:hover { transform: scale(1.08); }
 
+        /* Volumen centrado Fullscreen */
         .fs-volume-box {
             display: flex; align-items: center; justify-content: center; gap: 12px;
             width: 100%; max-width: 260px; margin: 16px auto 0 auto; color: var(--text-tertiary); font-size: 16px;
@@ -372,38 +372,35 @@
         .fs-vol-slider { flex: 1; height: 4px; background: rgba(255,255,255,0.15); border-radius: 100px; cursor: pointer; }
         .fs-vol-fill { width: 75%; height: 100%; background: #fff; border-radius: 100px; }
 
-        /* Panel Derecho: Letras Apple Music Sincronizadas y Espaciadas */
+        /* Columna Derecha: Letras Apple Music Sincronizadas y Espaciadas */
         .fs-right-pane {
             width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center;
-            background: rgba(255, 255, 255, 0.035); border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: clamp(24px, 3vw, 36px); padding: clamp(20px, 3vh, 40px);
-            backdrop-filter: blur(35px); -webkit-backdrop-filter: blur(35px);
             overflow: hidden;
-            mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,1) 8%, rgba(0,0,0,1) 90%, transparent 100%);
-            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,1) 8%, rgba(0,0,0,1) 90%, transparent 100%);
+            mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,1) 10%, rgba(0,0,0,1) 88%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,1) 10%, rgba(0,0,0,1) 88%, transparent 100%);
         }
         .lyrics-scroll-area { position: relative; height: 100%; width: 100%; overflow: hidden; }
         #lyrics-content { width: 100%; height: 100%; }
 
-        /* ESPACIADO AMPLIADO Y GENEROSO PARA LAS LÍNEAS DE LETRAS */
+        /* ESPACIADO AMPLIADO Y SIN AMONTONAMIENTO PARA LAS LETRAS (ESTÁNDAR APPLE MUSIC) */
         #lyrics-content .amll-lyric-player {
-            --amll-lp-color: #ffffff !important;
+            --amll-lp-color: rgba(255, 255, 255, 0.42) !important;
             --amll-lp-active-color: #ffffff !important;
-            --amll-lp-font-size: clamp(28px, 3.2vw, 48px) !important;
+            --amll-lp-font-size: clamp(28px, 3.2vw, 44px) !important;
+            --amll-lp-line-height: 1.7 !important;
+            --amll-lp-line-spacing: clamp(32px, 5vh, 56px) !important;
+            --amll-lp-padding: clamp(20px, 3.5vh, 48px) !important;
             --amll-lp-hover-bg-color: rgba(255, 255, 255, 0.08);
             font-weight: 800 !important;
-            letter-spacing: -0.02em;
+            letter-spacing: -0.015em;
         }
-        
-        /* Margen y respiro entre cada verso */
+
         #lyrics-content .amll-lyric-player .amll-lyric-line,
         #lyrics-content .amll-lyric-player .amll-lyric-line-wrapper,
         #lyrics-content .amll-lyric-player .amll-lyric-line-content {
-            margin-top: clamp(12px, 1.8vh, 22px) !important;
-            margin-bottom: clamp(18px, 2.6vh, 32px) !important;
-            padding-top: clamp(6px, 1vh, 12px) !important;
-            padding-bottom: clamp(6px, 1vh, 12px) !important;
-            line-height: 1.45 !important;
+            padding-top: clamp(12px, 1.8vh, 22px) !important;
+            padding-bottom: clamp(12px, 1.8vh, 22px) !important;
+            line-height: 1.65 !important;
         }
 
         /* ==================================================================
@@ -424,18 +421,17 @@
             .fs-layout { display: flex; flex-direction: column; padding: 75px 20px 32px; gap: 24px; height: auto; min-height: 100%; }
             .fs-left-pane { max-width: 100%; }
             .fs-art-wrap { width: min(240px, 55vw); height: min(240px, 55vw); }
-            .fs-right-pane { width: 100%; height: 420px; min-height: 380px; }
-            #lyrics-content .amll-lyric-player { --amll-lp-font-size: 24px !important; }
-            #lyrics-content .amll-lyric-player .amll-lyric-line {
-                margin-top: 10px !important;
-                margin-bottom: 16px !important;
+            .fs-right-pane { width: 100%; height: 440px; min-height: 380px; }
+            #lyrics-content .amll-lyric-player {
+                --amll-lp-font-size: 24px !important;
+                --amll-lp-line-spacing: 24px !important;
             }
         }
     </style>
 </head>
 <body>
 
-    <!-- FONDO DINÁMICO DE GLASSY-MUSIC (NanKillBro / Merge Theme) -->
+    <!-- FONDO DINÁMICO DE GLASSY-MUSIC (Merge Theme / NanKillBro) -->
     <div id="ambient-bg">
         <div id="bg-back" class="ambient-bg-layer"></div>
         <div id="bg-front" class="ambient-bg-layer"></div>
@@ -444,7 +440,7 @@
         <div class="noise-overlay"></div>
     </div>
 
-    <!-- UI 1: MAIN HOME VIEW -->
+    <!-- UI 1: MAIN HOME SHOWCASE -->
     <div id="app-wrapper">
         <header class="home-topbar">
             <div class="brand"><i class="ph-fill ph-waveform"></i> VIVETMP</div>
@@ -514,7 +510,7 @@
         </div>
     </div>
 
-    <!-- UI 2: FULLSCREEN NOW PLAYING & LYRICS -->
+    <!-- UI 2: FULLSCREEN NOW PLAYING (ESTILO APPLE MUSIC) -->
     <div id="np-fs">
         <header class="np-header">
             <button class="btn-close-fs" onclick="toggleNP()" title="Cerrar (Esc)">
@@ -525,7 +521,7 @@
         </header>
 
         <div class="fs-layout">
-            <!-- Izquierda: Portada + Controles -->
+            <!-- Izquierda: Portada + Info + Controles -->
             <div class="fs-left-pane">
                 <div class="fs-art-wrap" onclick="togglePlay()">
                     <img src="https://file.garden/alq0ENqplE9QfqJV/COSAS%20QUE%20NO%20TE%20DIJE_640x640.jpg" class="fs-art" alt="Portada">
@@ -570,7 +566,7 @@
                 </div>
             </div>
 
-            <!-- Derecha: Letras Sincronizadas Apple Music -->
+            <!-- Derecha: Letras Apple Music Sincronizadas -->
             <div class="fs-right-pane">
                 <div class="lyrics-scroll-area">
                     <div id="lyrics-content"></div>
@@ -595,9 +591,9 @@
         };
 
         /* ==================================================================
-           EXTRACTOR DE COLOR DE GLASSY-MUSIC (NanKillBro / Merge Theme)
+           EXTRACTOR DE COLOR FIEL Y NATURAL (Sin saturación artificial)
            ================================================================== */
-        class GlassyColorExtractor {
+        class TrueColorExtractor {
             static extract(imgUrl) {
                 return new Promise((resolve) => {
                     const img = new Image();
@@ -606,56 +602,62 @@
                         try {
                             const canvas = document.getElementById('color-extractor');
                             const ctx = canvas.getContext('2d');
-                            const size = 64;
+                            const size = 48;
                             canvas.width = size;
                             canvas.height = size;
                             ctx.drawImage(img, 0, 0, size, size);
-                            const imgData = ctx.getImageData(0, 0, size, size).data;
+                            const data = ctx.getImageData(0, 0, size, size).data;
 
-                            const buckets = [];
-                            for (let i = 0; i < 16; i++) buckets.push([]);
+                            const colorBins = {};
+                            for (let i = 0; i < data.length; i += 4) {
+                                if (data[i + 3] < 128) continue;
+                                const r = data[i];
+                                const g = data[i + 1];
+                                const b = data[i + 2];
 
-                            for (let i = 0; i < imgData.length; i += 16) {
-                                const r = imgData[i];
-                                const g = imgData[i + 1];
-                                const b = imgData[i + 2];
-                                const a = imgData[i + 3];
+                                const qr = Math.round(r / 16) * 16;
+                                const qg = Math.round(g / 16) * 16;
+                                const qb = Math.round(b / 16) * 16;
+                                const key = `${qr},${qg},${qb}`;
 
-                                if (a < 128) continue;
-
-                                const hsl = GlassyColorExtractor.rgbToHsl(r, g, b);
-                                if (hsl.l < 0.1 || hsl.l > 0.95) continue;
-
-                                const bucketIdx = Math.floor((hsl.h * 16)) % 16;
-                                buckets[bucketIdx].push({ r, g, b, ...hsl });
+                                if (!colorBins[key]) {
+                                    colorBins[key] = { r: 0, g: 0, b: 0, count: 0 };
+                                }
+                                colorBins[key].r += r;
+                                colorBins[key].g += g;
+                                colorBins[key].b += b;
+                                colorBins[key].count++;
                             }
 
-                            const scored = buckets
-                                .filter(b => b.length > 0)
-                                .map(b => {
-                                    let totalR = 0, totalG = 0, totalB = 0, totalSat = 0, totalLight = 0;
-                                    for (let c of b) {
-                                        totalR += c.r; totalG += c.g; totalB += c.b;
-                                        totalSat += c.s; totalLight += c.l;
-                                    }
-                                    const count = b.length;
-                                    const avgR = Math.round(totalR / count);
-                                    const avgG = Math.round(totalG / count);
-                                    const avgB = Math.round(totalB / count);
-                                    const avgSat = totalSat / count;
-                                    const avgLight = totalLight / count;
-                                    const score = count * (avgSat + 0.35) * (1 - Math.abs(avgLight - 0.5));
-                                    return { r: avgR, g: avgG, b: avgB, s: avgSat, l: avgLight, score, count };
-                                })
-                                .sort((a, b) => b.score - a.score);
+                            const sorted = Object.values(colorBins)
+                                .map(c => ({
+                                    r: Math.round(c.r / c.count),
+                                    g: Math.round(c.g / c.count),
+                                    b: Math.round(c.b / c.count),
+                                    count: c.count
+                                }))
+                                .sort((a, b) => b.count - a.count);
 
-                            let primary = scored[0] || { r: 75, g: 78, b: 88 };
-                            let secondary = scored[1] || { r: Math.round(primary.r * 0.7), g: Math.round(primary.g * 0.5), b: 180 };
-                            let accent = scored[2] || { r: 127, g: 73, b: 180 };
+                            const primary = sorted[0] || { r: 72, g: 76, b: 86 };
 
-                            const darkR = Math.max(5, Math.round(primary.r * 0.08));
-                            const darkG = Math.max(5, Math.round(primary.g * 0.08));
-                            const darkB = Math.max(8, Math.round(primary.b * 0.12));
+                            let secondary = sorted.find(c => {
+                                const dist = Math.sqrt(
+                                    Math.pow(c.r - primary.r, 2) +
+                                    Math.pow(c.g - primary.g, 2) +
+                                    Math.pow(c.b - primary.b, 2)
+                                );
+                                return dist > 35;
+                            }) || sorted[1] || primary;
+
+                            let accent = sorted.find(c => {
+                                const dist1 = Math.sqrt(Math.pow(c.r - primary.r, 2) + Math.pow(c.g - primary.g, 2) + Math.pow(c.b - primary.b, 2));
+                                const dist2 = Math.sqrt(Math.pow(c.r - secondary.r, 2) + Math.pow(c.g - secondary.g, 2) + Math.pow(c.b - secondary.b, 2));
+                                return dist1 > 30 && dist2 > 30;
+                            }) || secondary;
+
+                            const darkR = Math.max(5, Math.round(primary.r * 0.1));
+                            const darkG = Math.max(5, Math.round(primary.g * 0.1));
+                            const darkB = Math.max(8, Math.round(primary.b * 0.14));
 
                             resolve({
                                 primary: `${primary.r}, ${primary.g}, ${primary.b}`,
@@ -663,44 +665,15 @@
                                 accent: `${accent.r}, ${accent.g}, ${accent.b}`,
                                 dark: `rgb(${darkR}, ${darkG}, ${darkB})`
                             });
-                        } catch (e) {
-                            resolve({
-                                primary: "75, 78, 88",
-                                secondary: "105, 110, 122",
-                                accent: "140, 145, 160",
-                                dark: "#070709"
-                            });
+                        } catch(e) {
+                            resolve({ primary: "72, 76, 86", secondary: "98, 102, 114", accent: "130, 136, 150", dark: "#08090c" });
                         }
                     };
                     img.onerror = () => {
-                        resolve({
-                            primary: "75, 78, 88",
-                            secondary: "105, 110, 122",
-                            accent: "140, 145, 160",
-                            dark: "#070709"
-                        });
+                        resolve({ primary: "72, 76, 86", secondary: "98, 102, 114", accent: "130, 136, 150", dark: "#08090c" });
                     };
                     img.src = imgUrl;
                 });
-            }
-
-            static rgbToHsl(r, g, b) {
-                r /= 255; g /= 255; b /= 255;
-                const max = Math.max(r, g, b), min = Math.min(r, g, b);
-                let h, s, l = (max + min) / 2;
-                if (max === min) {
-                    h = s = 0;
-                } else {
-                    const d = max - min;
-                    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-                    switch (max) {
-                        case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-                        case g: h = (b - r) / d + 2; break;
-                        case b: h = (r - g) / d + 4; break;
-                    }
-                    h /= 6;
-                }
-                return { h, s, l };
             }
         }
 
@@ -758,7 +731,7 @@
             const icon = isPlaying ? "ph-fill ph-pause" : "ph-fill ph-play";
             document.getElementById('hero-play-icon').className = icon;
             document.getElementById('pill-play-icon').className = icon;
-            document.getElementById('fs-play-icon').className = icon;
+            document.querySelector('#np-fs .fs-play-btn-large i').className = icon;
         }
 
         function toggleHeart(el) {
@@ -801,7 +774,7 @@
                 document.body.classList.add('np-active');
                 np.classList.add('active');
                 app.classList.add('scaled');
-                setTimeout(() => { if (lyricPlayer) lyricPlayer.calcLayout(true, true); }, 150);
+                setTimeout(() => { if (lyricPlayer) lyricPlayer.calcLayout(true, true); }, 100);
             } else {
                 document.body.classList.remove('np-active');
                 np.classList.remove('active');
@@ -965,7 +938,7 @@
             requestAnimationFrame(renderLoop);
         }
 
-        /* Gesto deslizar para cerrar Fullscreen */
+        /* Gesto deslizar hacia abajo para cerrar Fullscreen */
         function setupGestures() {
             let sY = 0, cY = 0;
             const np = document.getElementById('np-fs');
@@ -1007,13 +980,13 @@
             bgFront.classList.add('fade-in');
             currentCoverBg = coverUrl;
 
-            const palette = await GlassyColorExtractor.extract(coverUrl);
+            const palette = await TrueColorExtractor.extract(coverUrl);
             document.documentElement.style.setProperty('--color-primary-rgb', palette.primary);
             document.documentElement.style.setProperty('--color-secondary-rgb', palette.secondary);
             document.documentElement.style.setProperty('--color-accent-rgb', palette.accent);
             document.documentElement.style.setProperty('--accent-1', `rgb(${palette.primary})`);
             document.documentElement.style.setProperty('--accent-2', `rgb(${palette.secondary})`);
-            document.documentElement.style.setProperty('--accent-glow', `rgba(${palette.primary}, 0.45)`);
+            document.documentElement.style.setProperty('--accent-glow', `rgba(${palette.primary}, 0.35)`);
             document.documentElement.style.setProperty('--bg-ambient-deep', palette.dark);
         }
 
