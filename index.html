@@ -32,13 +32,14 @@
 
     <style>
         /* ==========================================================================
-           APPLE DESIGN SYSTEM & THEME PALETTE
+           APPLE DESIGN SYSTEM & CUSTOM PALETTE THEME
            ========================================================================== */
         :root {
-            --color-primary: rgb(130, 88, 168);
-            --color-secondary: rgb(78, 52, 112);
-            --color-tertiary: rgb(160, 115, 195);
-            --color-quaternary: rgb(40, 26, 62);
+            --color-1: #2D4BA6;
+            --color-2: #2E3D59;
+            --color-3: #F2E307;
+            --color-4: #D9CB07;
+            --color-5: #BFA006;
             
             --app-bg-dark: #07070b;
             --glass-topbar: rgba(18, 18, 24, 0.45);
@@ -51,7 +52,7 @@
             --text-tertiary: rgba(255, 255, 255, 0.45);
             
             --apple-red: #fc3c44;
-            --apple-accent: var(--color-primary);
+            --apple-accent: var(--color-1);
             
             --font-apple: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", "Plus Jakarta Sans", sans-serif;
             --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Outfit", sans-serif;
@@ -221,7 +222,7 @@
             width: 100%;
         }
 
-        /* LEFT: ARTWORK, INFO & FULL PLAYBACK DECK */
+        /* LEFT: ARTWORK, METADATA & FULL PLAYBACK DECK */
         .song-left-pane {
             display: flex;
             flex-direction: column;
@@ -546,16 +547,29 @@
             height: 100%;
         }
 
-        /* Apple Music Typography & Spacing for AMLL */
+        /* Apple Music Typography & Pure White Filling for Words */
         #lyrics-mount .amll-lyric-player {
             --amll-lp-color: rgba(255, 255, 255, 0.42) !important;
             --amll-lp-active-color: #ffffff !important;
-            --amll-lp-font-size: clamp(26px, 2.6vw, 44px) !important;
+            --amll-lp-font-size: clamp(28px, 2.7vw, 46px) !important;
             --amll-lp-hover-bg-color: rgba(255, 255, 255, 0.08);
             font-weight: 800 !important;
             letter-spacing: -0.025em;
             line-height: 1.38;
         }
+
+        /* Solid pure white filling for active karaoke words */
+        #lyrics-mount .amll-lyric-player .amll-lyric-word {
+            color: inherit;
+            transition: color 0.12s ease, opacity 0.12s ease, text-shadow 0.2s ease;
+        }
+        #lyrics-mount .amll-lyric-player .amll-lyric-word.active,
+        #lyrics-mount .amll-lyric-player .amll-lyric-word[data-active="true"],
+        #lyrics-mount .amll-lyric-player .amll-lyric-line.active {
+            color: #ffffff !important;
+            text-shadow: 0 0 24px rgba(255, 255, 255, 0.55);
+        }
+        
         #lyrics-mount .amll-lyric-player .amll-lyric-line {
             margin-bottom: clamp(16px, 2.2vh, 28px) !important;
             transition: transform 0.35s var(--ease-apple), opacity 0.35s ease, filter 0.35s ease;
@@ -688,113 +702,35 @@
         </main>
     </div>
 
-    <!-- HIDDEN CANVAS FOR COLOR EXTRACTION -->
-    <canvas id="color-extractor-canvas" style="display:none;"></canvas>
-
     <script>
         /* ==========================================================================
-           SONG CONFIGURATION
+           SONG CONFIGURATION & EXPLICIT COLOR PALETTE
            ========================================================================== */
         const currentTrack = {
             title: "COSAS QUE NO TE DIJE",
             artist: "SAIKO",
             url: "https://file.garden/alq0ENqplE9QfqJV/COSAS%20QUE%20NO%20TE%20DIJE_spotdown.org.mp3",
             cover: "https://file.garden/alq0ENqplE9QfqJV/COSAS%20QUE%20NO%20TE%20DIJE_640x640.jpg",
-            ttml: "https://file.garden/alq0ENqplE9QfqJV/SAIKO%20-%20COSAS%20QUE%20NO%20TE%20DIJE.ttml"
+            ttml: "https://file.garden/alq0ENqplE9QfqJV/SAIKO%20-%20COSAS%20QUE%20NO%20TE%20DIJE.ttml",
+            // Paleta exacta de 5 colores proporcionada:
+            palette: [
+                "#2D4BA6",
+                "#2E3D59",
+                "#F2E307",
+                "#D9CB07",
+                "#BFA006"
+            ]
         };
 
-        /* ==========================================================================
-           TRUE-TO-SOURCE COLOR EXTRACTOR (ACCURATE & NATURAL RGB)
-           ========================================================================== */
-        class TrueColorExtractor {
-            static extract(imgSrc) {
-                return new Promise((resolve) => {
-                    const img = new Image();
-                    img.crossOrigin = "anonymous";
-                    img.onload = () => {
-                        try {
-                            const canvas = document.getElementById('color-extractor-canvas') || document.createElement('canvas');
-                            const ctx = canvas.getContext('2d', { willReadFrequently: true });
-                            const size = 64;
-                            canvas.width = size;
-                            canvas.height = size;
-                            ctx.drawImage(img, 0, 0, size, size);
-                            const imgData = ctx.getImageData(0, 0, size, size).data;
-
-                            const bins = new Map();
-                            for (let i = 0; i < imgData.length; i += 16) {
-                                const r = imgData[i], g = imgData[i+1], b = imgData[i+2], a = imgData[i+3];
-                                if (a < 128) continue;
-                                
-                                const qR = (r >> 4) << 4;
-                                const qG = (g >> 4) << 4;
-                                const qB = (b >> 4) << 4;
-                                const key = (qR << 16) | (qG << 8) | qB;
-
-                                const bin = bins.get(key) || { r: 0, g: 0, b: 0, count: 0 };
-                                bin.r += r;
-                                bin.g += g;
-                                bin.b += b;
-                                bin.count++;
-                                bins.set(key, bin);
-                            }
-
-                            const clusters = Array.from(bins.values()).map(b => ({
-                                r: Math.round(b.r / b.count),
-                                g: Math.round(b.g / b.count),
-                                b: Math.round(b.b / b.count),
-                                count: b.count
-                            })).sort((a, b) => b.count - a.count);
-
-                            if (clusters.length === 0) {
-                                resolve([
-                                    { r: 130, g: 88, b: 168 },
-                                    { r: 78, g: 52, b: 112 },
-                                    { r: 160, g: 115, b: 195 },
-                                    { r: 40, g: 26, b: 62 }
-                                ]);
-                                return;
-                            }
-
-                            const chosen = [clusters[0]];
-                            for (let i = 1; i < clusters.length && chosen.length < 4; i++) {
-                                const c = clusters[i];
-                                let distinct = true;
-                                for (const prev of chosen) {
-                                    const dist = Math.hypot(c.r - prev.r, c.g - prev.g, c.b - prev.b);
-                                    if (dist < 32) {
-                                        distinct = false;
-                                        break;
-                                    }
-                                }
-                                if (distinct) chosen.push(c);
-                            }
-
-                            while (chosen.length < 4) {
-                                chosen.push(chosen[chosen.length - 1]);
-                            }
-
-                            resolve(chosen);
-                        } catch (e) {
-                            resolve([
-                                { r: 130, g: 88, b: 168 },
-                                { r: 78, g: 52, b: 112 },
-                                { r: 160, g: 115, b: 195 },
-                                { r: 40, g: 26, b: 62 }
-                            ]);
-                        }
-                    };
-                    img.onerror = () => {
-                        resolve([
-                            { r: 130, g: 88, b: 168 },
-                            { r: 78, g: 52, b: 112 },
-                            { r: 160, g: 115, b: 195 },
-                            { r: 40, g: 26, b: 62 }
-                        ]);
-                    };
-                    img.src = imgSrc;
-                });
-            }
+        function hexToRgb(hex) {
+            hex = hex.replace(/^#/, '');
+            if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
+            const num = parseInt(hex, 16);
+            return {
+                r: (num >> 16) & 255,
+                g: (num >> 8) & 255,
+                b: num & 255
+            };
         }
 
         /* ==========================================================================
@@ -808,13 +744,13 @@
 
                 this.startTime = performance.now();
                 this.colors = [
-                    [0.51, 0.35, 0.66],
-                    [0.31, 0.20, 0.44],
-                    [0.63, 0.45, 0.76],
-                    [0.16, 0.10, 0.24]
+                    [0.176, 0.294, 0.651],
+                    [0.180, 0.239, 0.349],
+                    [0.949, 0.890, 0.027],
+                    [0.851, 0.796, 0.027],
+                    [0.749, 0.627, 0.024]
                 ];
                 this.texture = null;
-                this.audioBass = 0;
 
                 this.initShaders();
                 this.initBuffers();
@@ -842,6 +778,7 @@
                     uniform vec3 u_color2;
                     uniform vec3 u_color3;
                     uniform vec3 u_color4;
+                    uniform vec3 u_color5;
                     uniform float u_audio_bass;
                     varying vec2 v_uv;
 
@@ -881,28 +818,33 @@
                         vec2 uv = gl_FragCoord.xy / u_resolution.xy;
                         vec2 st = (gl_FragCoord.xy - 0.5 * u_resolution.xy) / min(u_resolution.x, u_resolution.y);
 
-                        float t = u_time * 0.12;
-                        float bass = u_audio_bass * 0.12;
+                        float t = u_time * 0.10;
+                        float bass = u_audio_bass * 0.14;
 
-                        vec2 q = vec2(snoise(st * 1.5 + vec2(0.0, t * 0.8)), snoise(st * 1.5 + vec2(5.2, t * 0.9)));
-                        vec2 r = vec2(snoise(st * 2.2 + 3.0 * q + vec2(1.7, t * 1.1 + bass)), snoise(st * 2.2 + 3.0 * q + vec2(8.3, t * 1.0 - bass)));
-                        float f = 0.5 + 0.5 * snoise(st * 1.2 + 3.5 * r + vec2(t * 0.5));
+                        vec2 q = vec2(snoise(st * 1.4 + vec2(0.0, t * 0.7)), snoise(st * 1.4 + vec2(5.2, t * 0.8)));
+                        vec2 r = vec2(snoise(st * 2.0 + 3.0 * q + vec2(1.7, t * 1.0 + bass)), snoise(st * 2.0 + 3.0 * q + vec2(8.3, t * 0.9 - bass)));
+                        float f = 0.5 + 0.5 * snoise(st * 1.2 + 3.5 * r + vec2(t * 0.45));
 
-                        vec2 center1 = vec2(sin(t * 0.7) * 0.35, cos(t * 0.85) * 0.35);
-                        vec2 center2 = vec2(cos(t * 0.9) * 0.4, sin(t * 0.65) * 0.4);
-                        vec2 d1 = st - center1; float angle1 = atan(d1.y, d1.x) + length(d1) * 2.2 + t * 0.8;
-                        vec2 d2 = st - center2; float angle2 = atan(d2.y, d2.x) - length(d2) * 2.0 - t * 0.7;
+                        vec2 center1 = vec2(sin(t * 0.6) * 0.35, cos(t * 0.75) * 0.35);
+                        vec2 center2 = vec2(cos(t * 0.8) * 0.4, sin(t * 0.55) * 0.4);
+                        vec2 d1 = st - center1; float angle1 = atan(d1.y, d1.x) + length(d1) * 2.2 + t * 0.7;
+                        vec2 d2 = st - center2; float angle2 = atan(d2.y, d2.x) - length(d2) * 2.0 - t * 0.6;
 
-                        vec2 warpedUV = uv + 0.16 * q + 0.12 * r + 0.08 * vec2(cos(angle1), sin(angle2));
+                        vec2 warpedUV = uv + 0.15 * q + 0.10 * r + 0.07 * vec2(cos(angle1), sin(angle2));
                         
                         vec4 tex1 = texture2D(u_texture, fract(warpedUV));
                         vec4 tex2 = texture2D(u_texture, fract(warpedUV * 0.7 + vec2(0.2, 0.2)));
                         vec3 texMix = mix(tex1.rgb, tex2.rgb, 0.5 + 0.5 * sin(t + q.x));
 
-                        vec3 c1 = mix(u_color1, u_color2, smoothstep(0.1, 0.9, f + q.x * 0.3));
-                        vec3 c2 = mix(u_color3, u_color4, smoothstep(0.1, 0.9, f + r.y * 0.3));
-                        vec3 finalColor = mix(c1, c2, 0.5 + 0.5 * cos(t * 0.6 + r.x));
-                        finalColor = mix(finalColor, texMix, 0.52);
+                        float p1 = smoothstep(0.0, 0.35, f);
+                        float p2 = smoothstep(0.25, 0.65, f + q.x * 0.3);
+                        float p3 = smoothstep(0.5, 0.85, f + r.y * 0.3);
+
+                        vec3 colA = mix(u_color1, u_color2, p1);
+                        vec3 colB = mix(u_color3, u_color4, p2);
+                        vec3 colC = mix(colB, u_color5, p3);
+                        vec3 finalColor = mix(colA, colC, 0.5 + 0.5 * cos(t * 0.5 + r.x));
+                        finalColor = mix(finalColor, texMix, 0.45);
 
                         float vignette = smoothstep(1.6, 0.2, length(st * 0.8));
                         finalColor *= (0.75 + 0.25 * vignette);
@@ -931,6 +873,7 @@
                     c2: gl.getUniformLocation(this.program, 'u_color2'),
                     c3: gl.getUniformLocation(this.program, 'u_color3'),
                     c4: gl.getUniformLocation(this.program, 'u_color4'),
+                    c5: gl.getUniformLocation(this.program, 'u_color5'),
                     bass: gl.getUniformLocation(this.program, 'u_audio_bass')
                 };
             }
@@ -970,12 +913,15 @@
                 img.src = imgUrl;
             }
 
-            setPalette(palette) {
-                this.colors = palette.map(c => [c.r / 255, c.g / 255, c.b / 255]);
-                document.documentElement.style.setProperty('--color-primary', `rgb(${palette[0].r}, ${palette[0].g}, ${palette[0].b})`);
-                document.documentElement.style.setProperty('--color-secondary', `rgb(${palette[1].r}, ${palette[1].g}, ${palette[1].b})`);
-                document.documentElement.style.setProperty('--color-tertiary', `rgb(${palette[2].r}, ${palette[2].g}, ${palette[2].b})`);
-                document.documentElement.style.setProperty('--color-quaternary', `rgb(${palette[3].r}, ${palette[3].g}, ${palette[3].b})`);
+            setPaletteHex(hexArray) {
+                const rgbObjs = hexArray.map(hexToRgb);
+                this.colors = rgbObjs.map(c => [c.r / 255, c.g / 255, c.b / 255]);
+                
+                document.documentElement.style.setProperty('--color-1', hexArray[0]);
+                document.documentElement.style.setProperty('--color-2', hexArray[1]);
+                document.documentElement.style.setProperty('--color-3', hexArray[2]);
+                document.documentElement.style.setProperty('--color-4', hexArray[3]);
+                document.documentElement.style.setProperty('--color-5', hexArray[4]);
             }
 
             handleResize() {
@@ -1000,6 +946,7 @@
                 gl.uniform3fv(this.locations.c2, this.colors[1]);
                 gl.uniform3fv(this.locations.c3, this.colors[2]);
                 gl.uniform3fv(this.locations.c4, this.colors[3]);
+                gl.uniform3fv(this.locations.c5, this.colors[4]);
 
                 if (this.texture) {
                     gl.activeTexture(gl.TEXTURE0);
@@ -1165,7 +1112,6 @@
             return parseFloat(str.replace(',', '.')) || 0;
         }
 
-        /* TTML Parser con espaciado inteligente para evitar palabras pegadas */
         function parseTTMLToAMLL(xmlText) {
             const rawLines = [];
             const parser = new DOMParser();
@@ -1215,7 +1161,7 @@
                 }
 
                 if (rawWords.length > 0) {
-                    // Corrección de espaciado entre palabras consecutivas
+                    // Smart spacing between words to ensure clear lyrics
                     for (let i = 0; i < rawWords.length - 1; i++) {
                         let cur = rawWords[i];
                         let next = rawWords[i + 1];
@@ -1273,7 +1219,7 @@
         }
 
         /* ==========================================================================
-           MAIN RENDER LOOP (60FPS RAFTIME + AUDIO TIMELINE + LYRICS UPDATE)
+           MAIN RENDER LOOP
            ========================================================================== */
         function formatTime(sec) {
             const m = Math.floor(sec / 60);
@@ -1336,13 +1282,12 @@
             audio.src = currentTrack.url;
             setVolume(globalVolume);
 
-            // WebGL Fluid Background
+            // Initialize GPU Fluid Shader
             fluidBgInstance = new AppleFluidBackground('webgl-canvas');
             fluidBgInstance.loadCoverTexture(currentTrack.cover);
-
-            // True Palette Extraction
-            const palette = await TrueColorExtractor.extract(currentTrack.cover);
-            fluidBgInstance.setPalette(palette);
+            
+            // Apply Explicit 5-Color Palette
+            fluidBgInstance.setPaletteHex(currentTrack.palette);
 
             // AMLL Lyrics
             await loadTrackLyrics(currentTrack.ttml);
