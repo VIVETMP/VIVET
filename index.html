@@ -1,22 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>VIVETMP Music - Glassy Edition</title>
+    <title>Apple Music</title>
     
-    <!-- Fonts -->
+    <!-- Apple SF Pro & Modern Typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     
-    <!-- Icons -->
+    <!-- Phosphor Icons Premium -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
-    <!-- Real Apple Music-like Lyrics engine -->
+    <!-- Apple Music Like Lyrics Engine (AMLL) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@applemusic-like-lyrics/core@0.5.1/dist/style.css">
-    
-    <!-- Synchronous promise initialization for ESM lyrics engine -->
     <script>
         window.__AMLLResolver = null;
         window.__AMLLReady = new Promise((resolve) => {
@@ -31,1100 +29,1465 @@
             window.__AMLLReady = Promise.resolve(LyricPlayer);
         }
     </script>
-    
+
     <style>
-        /* ==================================================================
-           PREMIUM DESIGN SYSTEM & TRUE-TO-SOURCE PALETTE
-           ================================================================== */
+        /* ==========================================================================
+           APPLE DESIGN SYSTEM & TRUE COLOR THEME
+           ========================================================================== */
         :root {
-            --color-primary-rgb: 125, 85, 165;
-            --color-secondary-rgb: 75, 50, 110;
-            --bg-ambient-deep: #060609;
+            --color-primary: rgb(130, 88, 168);
+            --color-secondary: rgb(78, 52, 112);
+            --color-tertiary: rgb(160, 115, 195);
+            --color-quaternary: rgb(40, 26, 62);
             
-            --bg-deep: var(--bg-ambient-deep);
-            --bg-surface: #0e0e13;
-            --bg-glass-heavy: rgba(18, 18, 24, 0.72);
-            --bg-glass-card: rgba(255, 255, 255, 0.05);
-            --bg-glass-hover: rgba(255, 255, 255, 0.12);
-            
-            --text-primary: #ffffff;
-            --text-secondary: rgba(255, 255, 255, 0.68);
-            --text-tertiary: rgba(255, 255, 255, 0.4);
+            --app-bg-dark: #08080c;
+            --glass-base: rgba(18, 18, 26, 0.45);
+            --glass-topbar: rgba(22, 22, 30, 0.55);
+            --glass-sidebar: rgba(16, 16, 22, 0.40);
+            --glass-card: rgba(255, 255, 255, 0.06);
+            --glass-card-hover: rgba(255, 255, 255, 0.10);
+            --glass-pill: rgba(255, 255, 255, 0.12);
             
             --border-subtle: rgba(255, 255, 255, 0.08);
-            --border-highlight: rgba(255, 255, 255, 0.18);
-            --shadow-float: 0 25px 50px rgba(0, 0, 0, 0.6);
-            --shadow-glow: 0 0 35px var(--accent-glow);
+            --border-highlight: rgba(255, 255, 255, 0.16);
             
-            --accent-1: rgb(var(--color-primary-rgb));
-            --accent-2: rgb(var(--color-secondary-rgb));
-            --accent-glow: rgba(var(--color-primary-rgb), 0.35);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.72);
+            --text-tertiary: rgba(255, 255, 255, 0.45);
             
-            --font-display: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Outfit', sans-serif;
-            --font-main: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Plus Jakarta Sans', sans-serif;
+            --apple-red: #fc3c44;
+            --apple-accent: var(--color-primary);
             
-            --ease-fluid: cubic-bezier(0.2, 0.8, 0.2, 1);
-            --ease-snappy: cubic-bezier(0.3, 1.2, 0.4, 1);
-            --ease-cinematic: cubic-bezier(0.25, 1, 0.5, 1);
+            --font-apple: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", "Plus Jakarta Sans", sans-serif;
+            --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Outfit", sans-serif;
             
-            --sidebar-width: clamp(210px, 16vw, 270px);
-            --player-height: clamp(74px, 9vh, 88px);
-            --nav-height-mob: clamp(65px, 9vh, 78px);
+            --sidebar-width: 250px;
+            --topbar-height: 56px;
+            
+            --ease-apple: cubic-bezier(0.25, 1, 0.5, 1);
+            --ease-snappy: cubic-bezier(0.3, 1.3, 0.4, 1);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
         body {
-            font-family: var(--font-main);
-            background-color: var(--bg-deep);
+            font-family: var(--font-apple);
+            background-color: var(--app-bg-dark);
             color: var(--text-primary);
-            height: 100vh; height: 100dvh;
+            height: 100vh;
+            height: 100dvh;
             width: 100vw;
             overflow: hidden;
             display: flex;
-            user-select: none;
+            flex-direction: column;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
 
-        /* ==================================================================
-           HIGH-PERFORMANCE DYNAMIC AMBIENT BACKGROUND
-           ================================================================== */
-        #ambient-bg {
-            position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
-            background: var(--bg-ambient-deep);
-            transition: background 1.2s var(--ease-cinematic);
+        /* ==========================================================================
+           APPLE MUSIC 2026 FLUID SHADER BACKGROUND (GPU ACCELERATED WEBGL)
+           ========================================================================== */
+        #fluid-bg-container {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+            background: var(--app-bg-dark);
         }
 
-        .ambient-bg-layer {
+        #webgl-canvas {
             position: absolute;
-            inset: -35%;
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            filter: blur(85px) saturate(160%) brightness(0.7);
-            -webkit-filter: blur(85px) saturate(160%) brightness(0.7);
-            transition: opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1);
-            opacity: 1;
-            transform: translate3d(0, 0, 0) scale(1.35);
-            animation: slowOrganicFloat 45s ease-in-out infinite alternate;
-            will-change: transform, opacity;
-            contain: paint;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+            filter: blur(40px) saturate(130%) brightness(0.85);
+            transform: scale(1.15);
+            transition: opacity 0.8s ease;
         }
 
-        #bg-back { z-index: 1; }
-        #bg-front { z-index: 2; opacity: 0; }
-        #bg-front.fade-in { opacity: 1; }
-
-        @keyframes slowOrganicFloat {
-            0% { transform: scale(1.32) translate3d(0%, 0%, 0) rotate(0deg); }
-            50% { transform: scale(1.45) translate3d(-3%, 2%, 0) rotate(2deg); }
-            100% { transform: scale(1.38) translate3d(2%, -3%, 0) rotate(-1.5deg); }
+        .ambient-dim-overlay {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 45% 40%, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.55) 100%);
+            z-index: 2;
         }
 
-        /* Ambient Dynamic Mesh Orbs (Smooth Glow) */
-        .ambient-mesh-overlay {
-            position: absolute; inset: 0; pointer-events: none; z-index: 3;
-            mix-blend-mode: screen; opacity: 0.88;
-        }
-        .mesh-orb {
-            position: absolute; border-radius: 50%; filter: blur(90px);
-            will-change: transform; pointer-events: none;
-        }
-        .mesh-orb-1 {
-            top: -10%; left: -10%; width: 70vw; height: 70vw;
-            background: radial-gradient(circle, rgba(var(--color-primary-rgb), 0.5) 0%, transparent 70%);
-            animation: orbFloat1 28s ease-in-out infinite alternate;
-        }
-        .mesh-orb-2 {
-            bottom: -15%; right: -10%; width: 75vw; height: 75vw;
-            background: radial-gradient(circle, rgba(var(--color-secondary-rgb), 0.45) 0%, transparent 70%);
-            animation: orbFloat2 32s ease-in-out infinite alternate;
-        }
-        @keyframes orbFloat1 {
-            0% { transform: translate3d(0, 0, 0) scale(1); }
-            100% { transform: translate3d(12vw, 10vh, 0) scale(1.15); }
-        }
-        @keyframes orbFloat2 {
-            0% { transform: translate3d(0, 0, 0) scale(1); }
-            100% { transform: translate3d(-10vw, -12vh, 0) scale(1.18); }
-        }
-
-        .ambient-contrast-mask {
-            position: absolute; inset: 0;
-            background: radial-gradient(circle at 50% 35%, rgba(5, 5, 8, 0.22) 0%, rgba(5, 5, 8, 0.82) 100%), rgba(0, 0, 0, 0.28);
-            z-index: 4;
+        .noise-texture {
+            position: absolute;
+            inset: 0;
+            z-index: 3;
+            opacity: 0.035;
+            mix-blend-mode: overlay;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
             pointer-events: none;
         }
 
-        .noise-overlay {
-            position: absolute; inset: 0; z-index: 5; opacity: 0.035; mix-blend-mode: overlay; pointer-events: none;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-        }
-
-        /* ==================================================================
-           APP LAYOUT
-           ================================================================== */
-        #app-wrapper {
-            display: flex; width: 100vw; height: 100vh; height: 100dvh; position: relative; z-index: 10;
-            background: transparent; opacity: 1; visibility: visible;
-            transition: transform 0.65s var(--ease-cinematic), border-radius 0.65s var(--ease-cinematic), opacity 0.4s ease, visibility 0.4s;
-            transform-origin: center center;
-        }
-        
-        #app-wrapper.scaled {
-            transform: scale(0.92) translateY(-2vh);
-            border-radius: clamp(24px, 3vw, 40px);
-            overflow: hidden; pointer-events: none;
-            opacity: 0 !important; visibility: hidden !important;
-            box-shadow: 0 40px 100px rgba(0,0,0,1);
-        }
-
-        #sidebar {
-            width: var(--sidebar-width); height: calc(100vh - var(--player-height) - clamp(24px, 4vh, 48px));
-            margin: clamp(12px, 2vh, 24px) 0 clamp(12px, 2vh, 24px) clamp(12px, 2vw, 24px); 
-            padding: clamp(24px, 3vh, 40px) clamp(16px, 1.5vw, 24px);
-            display: flex; flex-direction: column; gap: clamp(24px, 4vh, 48px);
-            background: var(--bg-glass-card); border: 1px solid var(--border-subtle);
-            border-radius: clamp(20px, 2vw, 28px); backdrop-filter: blur(40px) saturate(180%); -webkit-backdrop-filter: blur(40px) saturate(180%);
-            flex-shrink: 0; z-index: 20; position: relative;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
-        }
-        #sidebar::before { content: ''; position: absolute; inset: 0; border-radius: inherit; background: linear-gradient(180deg, rgba(255,255,255,0.06) 0%, transparent 100%); pointer-events: none; }
-        
-        .brand { font-family: var(--font-display); font-size: clamp(20px, 1.8vw, 26px); font-weight: 900; letter-spacing: -0.02em; display: flex; align-items: center; gap: 12px; color: #fff; text-shadow: 0 4px 20px rgba(0,0,0,0.5); }
-        .brand i { font-size: clamp(24px, 2.2vw, 32px); color: var(--accent-1); filter: drop-shadow(0 0 12px var(--accent-glow)); }
-        
-        .nav-menu { display: flex; flex-direction: column; gap: clamp(6px, 1vh, 10px); position: relative; z-index: 2; }
-        .nav-item {
-            display: flex; align-items: center; gap: 16px; padding: clamp(12px, 1.5vh, 16px) clamp(14px, 1.5vw, 20px); 
-            font-size: clamp(14px, 1.05vw, 15px); font-weight: 600; color: var(--text-secondary);
-            border-radius: 14px; cursor: pointer; transition: all 0.35s var(--ease-snappy); position: relative; overflow: hidden;
-        }
-        .nav-item i { font-size: clamp(20px, 1.6vw, 24px); transition: transform 0.4s var(--ease-snappy); }
-        .nav-item::before { content: ''; position: absolute; inset: 0; background: var(--bg-glass-hover); opacity: 0; transition: 0.3s; z-index: -1; }
-        .nav-item:hover { color: var(--text-primary); transform: translateX(6px); }
-        .nav-item:hover::before { opacity: 1; }
-        .nav-item:hover i { transform: scale(1.12) rotate(-5deg); color: var(--accent-1); }
-        .nav-item.active { color: #fff; background: rgba(255,255,255,0.12); box-shadow: inset 0 1px 1px rgba(255,255,255,0.15); }
-        .nav-item.active i { color: var(--accent-1); filter: drop-shadow(0 0 8px var(--accent-glow)); }
-
-        #main-content {
-            flex: 1; height: 100%; position: relative; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth;
-            padding: clamp(24px, 4vh, 48px) clamp(16px, 3.5vw, 5vw) calc(var(--player-height) + clamp(40px, 6vh, 80px));
-            mask-image: linear-gradient(to bottom, transparent 0%, black 3%, black 92%, transparent 100%);
-            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 3%, black 92%, transparent 100%);
-        }
-        #main-content::-webkit-scrollbar { display: none; }
-        
-        .view-section { display: flex; flex-direction: column; width: 100%; max-width: 1400px; margin: 0 auto; gap: clamp(28px, 4vh, 48px); }
-
-        /* ==================================================================
-           REWORKED HOME UI (GLASSY FEATURED BILLBOARD)
-           ================================================================== */
-        .home-hero-card {
-            display: grid;
-            grid-template-columns: minmax(260px, 360px) 1fr;
-            gap: clamp(24px, 3.5vw, 48px);
-            align-items: center;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid var(--border-highlight);
-            border-radius: clamp(24px, 3vw, 36px);
-            padding: clamp(20px, 3.5vw, 40px);
-            backdrop-filter: blur(45px) saturate(180%);
-            -webkit-backdrop-filter: blur(45px) saturate(180%);
-            box-shadow: 0 35px 80px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+        /* ==========================================================================
+           DESKTOP APP WINDOW LAYOUT (macOS STYLE)
+           ========================================================================== */
+        #app-shell {
             position: relative;
+            z-index: 10;
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            display: flex;
+            flex-direction: column;
             overflow: hidden;
         }
 
-        .hero-art-wrapper {
-            position: relative; width: 100%; aspect-ratio: 1;
-            border-radius: clamp(18px, 2vw, 26px); overflow: hidden;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.65), 0 10px 20px rgba(0,0,0,0.4);
-            border: 1px solid rgba(255,255,255,0.18);
+        /* ==========================================================================
+           TOPBAR / PLAYER CONTROLLER
+           ========================================================================== */
+        .app-topbar {
+            height: var(--topbar-height);
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            background: var(--glass-topbar);
+            backdrop-filter: blur(50px) saturate(180%);
+            -webkit-backdrop-filter: blur(50px) saturate(180%);
+            border-bottom: 1px solid var(--border-subtle);
+            flex-shrink: 0;
+            z-index: 40;
+            gap: 16px;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            min-width: 220px;
+        }
+
+        /* macOS Traffic Lights */
+        .traffic-lights {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding-left: 4px;
+        }
+        .traffic-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            cursor: pointer;
+            position: relative;
+            transition: transform 0.15s ease;
+        }
+        .traffic-dot:hover { transform: scale(1.1); }
+        .dot-close { background-color: #ff5f56; border: 0.5px solid #e0443e; }
+        .dot-minimize { background-color: #ffbd2e; border: 0.5px solid #dea123; }
+        .dot-maximize { background-color: #27c93f; border: 0.5px solid #1aab29; }
+
+        .nav-history-buttons {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-nav-hist {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+        .btn-nav-hist:hover { background: rgba(255,255,255,0.12); color: #fff; }
+
+        /* Topbar Central Apple Music LCD Player Pill */
+        .topbar-center {
+            flex: 1;
+            max-width: 580px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .top-player-pill {
+            width: 100%;
+            height: 38px;
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid var(--border-subtle);
+            border-radius: 10px;
+            padding: 4px 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+            box-shadow: inset 0 1px 1px rgba(255,255,255,0.05);
+            overflow: hidden;
+        }
+        .top-player-thumb {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            object-fit: cover;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+            flex-shrink: 0;
             cursor: pointer;
         }
-        .hero-art-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s var(--ease-fluid); }
-        .hero-art-wrapper:hover .hero-art-img { transform: scale(1.05); }
-
-        .hero-content {
-            display: flex; flex-direction: column; gap: 16px;
+        .top-player-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            min-width: 0;
+            font-size: 13px;
         }
-        .hero-tag {
-            display: inline-flex; align-items: center; gap: 8px;
-            padding: 6px 14px; border-radius: 100px;
-            background: rgba(255,255,255,0.08); border: 1px solid var(--border-subtle);
-            font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px;
-            color: var(--accent-1); width: fit-content;
-        }
-
-        .hero-title {
-            font-family: var(--font-display);
-            font-size: clamp(28px, 4.2vw, 56px);
-            font-weight: 900;
-            letter-spacing: -0.03em;
-            line-height: 1.08;
-            background: linear-gradient(to right, #ffffff, #d5d5d5);
-            -webkit-background-clip: text;
-            color: transparent;
-        }
-        .hero-artist {
-            font-size: clamp(16px, 1.8vw, 24px);
+        .top-player-title {
             font-weight: 700;
+            color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .top-player-separator {
+            color: var(--text-tertiary);
+            font-size: 11px;
+        }
+        .top-player-artist {
+            font-weight: 500;
             color: var(--text-secondary);
-            display: flex; align-items: center; gap: 10px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
-        .hero-stats-row {
-            display: flex; align-items: center; gap: 12px; font-size: 13px; font-weight: 600; color: var(--text-tertiary);
-        }
-        .hero-pill {
-            padding: 4px 10px; border-radius: 6px; background: rgba(255,255,255,0.08);
-            color: rgba(255,255,255,0.85); font-size: 11px; font-weight: 700;
-        }
-
-        .hero-btn-row {
-            display: flex; align-items: center; gap: 16px; margin-top: 12px; flex-wrap: wrap;
-        }
-        .btn-play-hero {
-            background: #fff; color: #000; font-family: var(--font-display); font-weight: 800;
-            font-size: 16px; padding: 16px 36px; border-radius: 100px;
-            display: inline-flex; align-items: center; gap: 10px; cursor: pointer;
-            transition: all 0.35s var(--ease-snappy); border: none; outline: none;
-            box-shadow: 0 15px 30px rgba(255,255,255,0.25);
-        }
-        .btn-play-hero:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 20px 40px rgba(255,255,255,0.4); }
-        .btn-play-hero:active { transform: scale(0.96); }
-
-        .btn-lyrics-hero {
-            background: rgba(255,255,255,0.08); color: #fff; font-family: var(--font-display); font-weight: 700;
-            font-size: 15px; padding: 16px 28px; border-radius: 100px;
-            display: inline-flex; align-items: center; gap: 10px; cursor: pointer;
-            transition: all 0.35s var(--ease-snappy); border: 1px solid var(--border-highlight);
-            backdrop-filter: blur(20px);
-        }
-        .btn-lyrics-hero:hover { background: rgba(255,255,255,0.16); transform: translateY(-3px); }
-
-        /* LIVE EQUALIZER VISUALIZER INSIDE HERO */
-        .live-eq {
-            display: inline-flex; align-items: flex-end; gap: 4px; height: 20px;
-        }
-        .live-eq span {
-            width: 4px; height: 100%; background: var(--accent-1); border-radius: 2px;
-            animation: eqBounce 1.2s ease-in-out infinite alternate;
-            transform-origin: bottom;
-        }
-        .live-eq span:nth-child(2) { animation-delay: 0.2s; height: 60%; }
-        .live-eq span:nth-child(3) { animation-delay: 0.4s; height: 90%; }
-        .live-eq span:nth-child(4) { animation-delay: 0.1s; height: 40%; }
-        @keyframes eqBounce {
-            0% { transform: scaleY(0.2); }
-            100% { transform: scaleY(1); }
-        }
-
-        /* SECTION DETAILS GRID */
-        .home-details-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: clamp(20px, 3vw, 32px);
-            width: 100%;
-        }
-
-        .detail-glass-card {
-            background: var(--bg-glass-card); border: 1px solid var(--border-subtle);
-            border-radius: clamp(20px, 2.5vw, 28px); padding: clamp(20px, 2.5vw, 32px);
-            backdrop-filter: blur(35px); -webkit-backdrop-filter: blur(35px);
-            display: flex; flex-direction: column; gap: 16px;
-        }
-        .detail-glass-card h3 {
-            font-size: 20px; font-weight: 800; font-family: var(--font-display);
-            display: flex; align-items: center; gap: 10px; color: #fff;
-        }
-        .detail-glass-card p {
-            font-size: 14px; line-height: 1.6; color: var(--text-secondary);
-        }
-
-        /* ==================================================================
-           PERSISTENT BOTTOM PLAYER
-           ================================================================== */
-        .player-wrapper { 
-            position: fixed; bottom: clamp(12px, 2.5vh, 32px); left: 0; width: 100%; display: flex; justify-content: center; z-index: 50; pointer-events: none; padding: 0 clamp(12px, 2.5vw, 32px);
-            transition: transform 0.5s var(--ease-cinematic), opacity 0.35s ease;
-        }
-        
-        body.np-active .player-wrapper {
-            opacity: 0 !important; pointer-events: none !important; transform: translateY(35px) scale(0.95);
-        }
-
-        .player-pill { pointer-events: auto; width: 100%; max-width: 1100px; height: var(--player-height); background: var(--bg-glass-heavy); backdrop-filter: blur(40px) saturate(200%); -webkit-backdrop-filter: blur(40px) saturate(200%); border: 1px solid var(--border-highlight); border-radius: clamp(18px, 2vw, 24px); display: flex; align-items: center; justify-content: space-between; padding: 8px clamp(12px, 1.8vw, 24px); box-shadow: 0 30px 60px rgba(0,0,0,0.6), inset 0 1px 2px rgba(255,255,255,0.15); transition: transform 0.4s var(--ease-snappy), border-color 0.3s; position: relative; overflow: hidden; gap: 12px; }
-        .player-pill:hover { transform: translateY(-3px); border-color: rgba(255,255,255,0.25); }
-        .progress-mini-wrapper { position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: rgba(255,255,255,0.05); }
-        .progress-mini-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent-1), var(--accent-2)); transition: width 0.1s linear; }
-
-        .player-info { display: flex; align-items: center; gap: clamp(10px, 1.2vw, 16px); flex: 1; max-width: 32%; min-width: 140px; cursor: pointer; transition: 0.3s; padding: 4px clamp(4px, 0.8vw, 8px); border-radius: 14px; overflow: hidden; }
-        .player-info:hover { background: rgba(255,255,255,0.08); }
-        .player-img { width: clamp(44px, 4.5vh, 56px); height: clamp(44px, 4.5vh, 56px); aspect-ratio: 1; border-radius: 10px; object-fit: cover; box-shadow: 0 8px 16px rgba(0,0,0,0.4); transition: transform 0.4s var(--ease-snappy); flex-shrink: 0; }
-        .player-info:hover .player-img { transform: scale(1.06) rotate(2deg); }
-        .player-meta { display: flex; flex-direction: column; gap: 2px; overflow: hidden; min-width: 0; }
-        .player-title { font-family: var(--font-display); font-size: clamp(13px, 1.1vw, 16px); font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .player-artist { font-size: clamp(11px, 0.9vw, 13px); font-weight: 500; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-        .player-controls { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1.4; max-width: 46%; gap: 8px; }
-        .controls-buttons { display: flex; align-items: center; gap: clamp(16px, 2.2vw, 32px); font-size: clamp(18px, 1.8vw, 24px); color: var(--text-secondary); }
-        .controls-buttons i { cursor: pointer; transition: all 0.25s var(--ease-snappy); }
-        .controls-buttons i:hover { color: #fff; transform: scale(1.15); }
-        .btn-play-circle { width: clamp(40px, 4vh, 50px); height: clamp(40px, 4vh, 50px); background: #fff; color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: clamp(18px, 1.8vw, 22px); cursor: pointer; transition: all 0.35s var(--ease-snappy); box-shadow: 0 10px 20px rgba(255,255,255,0.2); flex-shrink: 0; }
-        .btn-play-circle i { margin-left: 2px; }
-        .btn-play-circle:hover { transform: scale(1.08); box-shadow: 0 12px 24px rgba(255,255,255,0.4); }
-
-        .scrubber-container { display: flex; align-items: center; gap: clamp(8px, 1.2vw, 14px); width: 100%; max-width: 460px; font-size: clamp(11px, 0.85vw, 13px); font-weight: 600; color: rgba(255,255,255,0.6); font-variant-numeric: tabular-nums; }
-        .scrubber-bg { flex: 1; height: 5px; background: rgba(255,255,255,0.15); border-radius: 4px; cursor: pointer; position: relative; transition: height 0.25s var(--ease-snappy); overflow: visible; }
-        .scrubber-bg:hover { height: 8px; background: rgba(255,255,255,0.25); }
-        .scrubber-fill { width: 0%; height: 100%; background: #fff; border-radius: 4px; transition: width 0.1s linear; position: relative; }
-        .scrubber-fill::after { content: ''; position: absolute; right: -6px; top: 50%; transform: translateY(-50%) scale(0); width: 12px; height: 12px; background: #fff; border-radius: 50%; transition: transform 0.25s var(--ease-snappy); }
-        .scrubber-bg:hover .scrubber-fill::after { transform: translateY(-50%) scale(1); }
-
-        .player-actions { display: flex; align-items: center; justify-content: flex-end; flex: 1; max-width: 25%; gap: clamp(12px, 1.5vw, 20px); color: var(--text-secondary); font-size: clamp(18px, 1.6vw, 22px); }
-        .player-actions i { cursor: pointer; transition: 0.25s; }
-        .player-actions i:hover { color: #fff; transform: scale(1.1); }
-        .vol-slider { width: clamp(60px, 6vw, 90px); height: 5px; background: rgba(255,255,255,0.15); border-radius: 3px; cursor: pointer; transition: height 0.25s var(--ease-snappy); position: relative;}
-        .vol-slider:hover { height: 8px; background: rgba(255,255,255,0.25); }
-        .vol-fill { width: 75%; height: 100%; background: #fff; border-radius: 3px; }
-        .btn-fullscreen { width: clamp(34px, 3.5vh, 40px); height: clamp(34px, 3.5vh, 40px); border-radius: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.35s var(--ease-snappy); flex-shrink: 0; }
-        .btn-fullscreen:hover { background: rgba(255,255,255,0.15); transform: scale(1.08); color: #fff; }
-        .mobile-play-btn { display: none; }
-
-        /* ==================================================================
-           FULLSCREEN NOW PLAYING (COVER ART + APPLE MUSIC LYRICS)
-           ================================================================== */
-        #np-fs {
-            position: fixed; inset: 0; z-index: 100; transform: translateY(100%); opacity: 0; visibility: hidden;
-            transition: transform 0.65s var(--ease-cinematic), opacity 0.35s ease, visibility 0.35s; display: flex; flex-direction: column; 
-            overflow: hidden; background: transparent; font-family: var(--font-display);
-            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-        }
-        #np-fs.active { transform: translateY(0); opacity: 1; visibility: visible; }
-
-        .np-top-header {
-            position: absolute; top: clamp(14px, 2.8vh, 28px); left: 0; width: 100%;
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 0 clamp(20px, 4vw, 64px);
-            z-index: 30; pointer-events: auto;
-        }
-
-        .np-btn-icon {
-            width: clamp(40px, 4.4vh, 48px); height: clamp(40px, 4.4vh, 48px);
-            background: rgba(255, 255, 255, 0.08); border: 1px solid var(--border-highlight);
-            border-radius: 50%; cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            font-size: clamp(20px, 2.2vh, 24px); color: #fff;
-            transition: all 0.3s var(--ease-snappy); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-        }
-        .np-btn-icon:hover { transform: scale(1.1); background: rgba(255,255,255,0.18); border-color: rgba(255,255,255,0.35); }
-
-        .np-context-pill {
-            display: inline-flex; align-items: center; gap: 8px;
-            padding: 8px 18px; border-radius: 100px;
-            background: rgba(255, 255, 255, 0.06); border: 1px solid var(--border-subtle);
-            backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
-            font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px;
-            color: var(--text-secondary);
-        }
-        .np-context-pill span { color: #fff; }
-
-        /* Fullscreen Layout: Cover & Controls Deck (Left) | Lyrics (Right) */
-        .np-layout { 
-            position: relative; z-index: 10; 
-            display: grid;
-            grid-template-columns: minmax(360px, 440px) 1fr;
-            width: 100%; height: 100%; 
-            max-width: 1800px; 
-            margin: 0 auto; 
-            padding: clamp(65px, 8.5vh, 88px) clamp(24px, 4vw, 72px) clamp(20px, 3.5vh, 40px);
-            gap: clamp(28px, 4vw, 64px);
+        .top-player-controls {
+            display: flex;
             align-items: center;
-            box-sizing: border-box;
+            gap: 10px;
+            font-size: 16px;
+            color: var(--text-secondary);
         }
-        
-        .np-left-pane {
-            width: 100%; height: 100%;
-            display: flex; flex-direction: column; 
-            align-items: center; justify-content: center;
-            max-width: 460px; margin: 0 auto;
-        }
-
-        .np-left-card {
-            display: flex; flex-direction: column; align-items: center; width: 100%;
-            background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: clamp(24px, 2.5vw, 36px); padding: clamp(20px, 3vh, 32px);
-            backdrop-filter: blur(45px) saturate(180%); -webkit-backdrop-filter: blur(45px) saturate(180%);
-            box-shadow: 0 35px 80px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.15);
-            transition: all 0.4s var(--ease-snappy);
-        }
-
-        /* Large Cover Art Container */
-        .np-art-wrap {
-            width: min(100%, min(360px, 36vh));
-            height: min(100%, min(360px, 36vh));
-            aspect-ratio: 1 / 1;
-            border-radius: clamp(18px, 2vw, 26px);
-            position: relative; overflow: hidden;
-            background: #0d0d12;
-            box-shadow: 0 30px 70px rgba(0,0,0,0.7), 0 10px 25px rgba(0,0,0,0.4);
-            border: 1px solid rgba(255,255,255,0.18);
+        .top-player-controls i {
             cursor: pointer;
+            transition: color 0.15s ease, transform 0.15s ease;
         }
-        .np-art-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s var(--ease-fluid); }
-        .np-art-wrap:hover .np-art-img { transform: scale(1.04); }
-
-        .np-info-block { display: flex; flex-direction: column; width: 100%; margin-top: clamp(14px, 2vh, 22px); }
-
-        .np-track-row-meta {
-            display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 14px;
+        .top-player-controls i:hover {
+            color: #fff;
+            transform: scale(1.15);
         }
-        .np-track-texts { display: flex; flex-direction: column; gap: 3px; min-width: 0; flex: 1; }
-        .np-track-title { font-size: clamp(20px, 2vw, 26px); font-weight: 800; color: #fff; letter-spacing: -0.015em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .np-track-artist { font-size: clamp(14px, 1.2vw, 17px); color: var(--text-secondary); font-weight: 600; letter-spacing: -0.01em; }
+        .top-play-btn {
+            font-size: 18px;
+            color: #fff;
+        }
+
+        /* Topbar Right Quick Actions & Volume */
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 14px;
+            min-width: 220px;
+        }
+
+        .top-volume-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            font-size: 16px;
+        }
+        .top-volume-container i { cursor: pointer; }
+        .top-volume-container i:hover { color: #fff; }
         
-        .np-btn-heart {
-            font-size: 24px; color: rgba(255,255,255,0.35); cursor: pointer; transition: all 0.3s var(--ease-snappy);
-            padding: 6px; border-radius: 50%;
+        .volume-bar {
+            width: 80px;
+            height: 4px;
+            background: rgba(255,255,255,0.18);
+            border-radius: 2px;
+            cursor: pointer;
+            position: relative;
+            transition: height 0.15s ease;
         }
-        .np-btn-heart:hover { color: var(--accent-1); transform: scale(1.2); }
-        .np-btn-heart.active { color: var(--accent-1); filter: drop-shadow(0 0 10px var(--accent-glow)); }
+        .volume-bar:hover { height: 6px; }
+        .volume-fill {
+            width: 75%;
+            height: 100%;
+            background: #fff;
+            border-radius: 2px;
+            position: relative;
+        }
 
-        .np-badges-row {
-            display: flex; align-items: center; gap: 8px; margin-top: 10px;
+        .topbar-action-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.2s ease;
         }
-        .np-badge-pill {
-            font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;
-            padding: 3px 8px; border-radius: 6px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15);
-            color: rgba(255,255,255,0.85);
+        .topbar-action-btn:hover {
+            background: rgba(255,255,255,0.08);
+            color: #fff;
+        }
+        .topbar-action-btn.active {
+            background: rgba(255,255,255,0.18);
+            color: #fff;
+            box-shadow: inset 0 1px 1px rgba(255,255,255,0.15);
         }
 
-        /* Scrubber Deck */
-        .np-scrubber-deck { display: flex; flex-direction: column; gap: 6px; width: 100%; margin-top: clamp(14px, 2vh, 22px); }
-        .np-progress-track {
-            width: 100%; height: 5px; background: rgba(255,255,255,0.15); border-radius: 100px; cursor: pointer; position: relative; transition: height 0.2s var(--ease-snappy); overflow: visible;
+        /* ==========================================================================
+           MAIN BODY (SIDEBAR + SPLIT VIEW CONTENT)
+           ========================================================================== */
+        .app-body {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+            position: relative;
         }
-        .np-progress-track:hover { height: 8px; }
-        .np-progress-fill {
-            width: 0%; height: 100%; border-radius: 100px; background: #fff; position: relative; transition: width 0.1s linear;
-        }
-        .np-progress-fill::after {
-            content: ''; position: absolute; right: -6px; top: 50%; transform: translateY(-50%) scale(0); width: 13px; height: 13px; background: #fff; border-radius: 50%; box-shadow: 0 2px 10px rgba(0,0,0,0.5); transition: transform 0.2s var(--ease-snappy);
-        }
-        .np-progress-track:hover .np-progress-fill::after { transform: translateY(-50%) scale(1); }
-        .np-time-row { display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: var(--text-tertiary); font-variant-numeric: tabular-nums; letter-spacing: 0.03em; margin-top: 2px;}
 
-        /* Floating Media Controls */
-        .np-main-controls { 
-            display: flex; justify-content: center; align-items: center; gap: clamp(16px, 2.5vw, 32px); 
-            margin-top: clamp(12px, 1.8vh, 20px); width: 100%;
+        /* Sidebar macOS Style */
+        .app-sidebar {
+            width: var(--sidebar-width);
+            height: 100%;
+            background: var(--glass-sidebar);
+            backdrop-filter: blur(45px);
+            -webkit-backdrop-filter: blur(45px);
+            border-right: 1px solid var(--border-subtle);
+            display: flex;
+            flex-direction: column;
+            padding: 16px 12px;
+            gap: 20px;
+            flex-shrink: 0;
+            overflow-y: auto;
         }
-        .np-ctrl-btn {
-            font-size: clamp(20px, 2vw, 24px); color: var(--text-secondary); cursor: pointer; transition: all 0.25s var(--ease-snappy);
-        }
-        .np-ctrl-btn:hover { color: #fff; transform: scale(1.18); }
-        
-        .np-play-btn-large {
-            width: clamp(50px, 5.5vh, 62px); height: clamp(50px, 5.5vh, 62px);
-            background: #fff; color: #000; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: clamp(22px, 2.4vh, 28px); cursor: pointer;
-            box-shadow: 0 12px 30px rgba(255,255,255,0.3); transition: all 0.35s var(--ease-snappy);
-        }
-        .np-play-btn-large i { margin-left: 3px; }
-        .np-play-btn-large:hover { transform: scale(1.08); box-shadow: 0 15px 35px rgba(255,255,255,0.5); }
+        .app-sidebar::-webkit-scrollbar { display: none; }
 
-        /* Integrated Volume Deck (Centered) */
-        .np-volume-deck {
-            display: flex; align-items: center; justify-content: center; gap: 14px; width: 100%; max-width: 260px;
-            margin: clamp(14px, 2vh, 20px) auto 0 auto; color: var(--text-tertiary); font-size: 16px;
-        }
-        .np-volume-deck i { transition: 0.2s; }
-        .np-volume-deck:hover i { color: #fff; }
-        .np-volume-deck .vol-slider {
-            flex: 1; height: 5px; background: rgba(255,255,255,0.15); border-radius: 3px; cursor: pointer; transition: height 0.2s var(--ease-snappy); position: relative;
-        }
-        .np-volume-deck .vol-slider:hover { height: 8px; background: rgba(255,255,255,0.25); }
-
-        /* Right Pane: Glassy Apple Music Lyrics Container */
-        .np-right-pane { 
+        .search-box {
             position: relative;
             width: 100%;
-            height: 100%; display: flex; flex-direction: column; justify-content: center;
-            background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: clamp(24px, 2.5vw, 36px); padding: clamp(20px, 3vh, 40px);
-            backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
-            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
+        }
+        .search-input {
+            width: 100%;
+            height: 32px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 0 10px 0 32px;
+            font-family: inherit;
+            font-size: 13px;
+            color: #fff;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+        .search-input::placeholder { color: var(--text-tertiary); }
+        .search-input:focus {
+            background: rgba(255, 255, 255, 0.14);
+            border-color: rgba(255, 255, 255, 0.25);
+        }
+        .search-icon {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 14px;
+            color: var(--text-tertiary);
+            pointer-events: none;
+        }
+
+        .nav-group {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .nav-group-title {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-tertiary);
+            padding: 6px 12px;
+        }
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 7px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.18s ease;
+        }
+        .nav-item i {
+            font-size: 17px;
+            color: var(--apple-red);
+        }
+        .nav-item:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.08);
+        }
+        .nav-item.active {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.16);
+            box-shadow: inset 0 1px 1px rgba(255,255,255,0.1);
+        }
+
+        .sidebar-bottom-badge {
+            margin-top: auto;
+            padding: 10px 12px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border-subtle);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .badge-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 15px;
+        }
+        .badge-texts { display: flex; flex-direction: column; }
+        .badge-title { font-size: 11px; font-weight: 700; color: #fff; }
+        .badge-sub { font-size: 10px; color: var(--text-tertiary); }
+
+        /* ==========================================================================
+           MAIN STAGE: APPLE MUSIC SPLIT VIEW (COVER & CONTROLS LEFT | LYRICS RIGHT)
+           ========================================================================== */
+        .main-stage {
+            flex: 1;
+            height: 100%;
+            display: grid;
+            grid-template-columns: minmax(360px, 460px) 1fr;
+            padding: 24px 36px 32px 36px;
+            gap: 40px;
+            align-items: center;
             overflow: hidden;
-            mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,1) 8%, rgba(0,0,0,1) 90%, transparent 100%);
-            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,1) 8%, rgba(0,0,0,1) 90%, transparent 100%);
-        }
-        .lyrics-scroll-area {
-            position: relative; height: 100%; width: 100%; overflow: hidden; padding: 0; margin: 0;
+            position: relative;
         }
 
-        #lyrics-content { width: 100%; height: 100%; }
-        #lyrics-content .amll-lyric-player {
-            --amll-lp-color: #ffffff !important;
-            --amll-lp-active-color: #ffffff !important;
-            --amll-lp-font-size: clamp(26px, 3vw, 50px) !important;
-            --amll-lp-hover-bg-color: rgba(255,255,255,0.08);
-            font-weight: 800 !important;
+        /* LEFT COLUMN: ARTWORK & COMPLETE PLAYBACK CONTROLS */
+        .left-deck {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 440px;
+            margin: 0 auto;
+            height: 100%;
+            position: relative;
+        }
+
+        .artwork-container {
+            width: 100%;
+            max-width: 360px;
+            aspect-ratio: 1 / 1;
+            border-radius: 18px;
+            position: relative;
+            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.6), 0 10px 25px rgba(0,0,0,0.4);
+            border: 1px solid var(--border-highlight);
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.4s var(--ease-apple), box-shadow 0.4s ease;
+        }
+        .artwork-container:hover {
+            transform: scale(1.02);
+            box-shadow: 0 35px 85px rgba(0, 0, 0, 0.75), 0 12px 30px rgba(0,0,0,0.5);
+        }
+        .artwork-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* Ambient Glow Reflection beneath cover */
+        .artwork-glow {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            bottom: -20px;
+            background-size: cover;
+            background-position: center;
+            filter: blur(50px) saturate(160%);
+            opacity: 0.55;
+            z-index: -1;
+            border-radius: 30px;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+
+        .track-metadata {
+            width: 100%;
+            margin-top: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .track-title-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+        .track-title {
+            font-family: var(--font-display);
+            font-size: 26px;
+            font-weight: 800;
             letter-spacing: -0.02em;
+            color: #ffffff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
-        #lyrics-content .amll-lyric-player .amll-lyric-line {
-            margin-bottom: clamp(14px, 2vh, 24px) !important;
+        .btn-heart {
+            font-size: 22px;
+            color: var(--text-tertiary);
+            cursor: pointer;
+            transition: transform 0.25s var(--ease-snappy), color 0.25s ease;
+            flex-shrink: 0;
+            padding: 4px;
+        }
+        .btn-heart:hover { color: #fff; transform: scale(1.2); }
+        .btn-heart.active { color: var(--apple-red); transform: scale(1.15); filter: drop-shadow(0 0 8px rgba(252, 60, 68, 0.5)); }
+
+        .track-artist {
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .track-badges {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 6px;
+        }
+        .apple-badge {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            padding: 2px 7px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.12);
+            color: rgba(255, 255, 255, 0.9);
+            border: 1px solid var(--border-subtle);
         }
 
-        .lyrics-empty-state {
-            height: 100%; display: flex; align-items: center; justify-content: center;
+        /* Scrubber Track */
+        .playback-scrubber-deck {
+            width: 100%;
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
         }
-        .lyrics-empty-state p {
-            color: rgba(255,255,255,0.35); font-size: clamp(20px, 2.5vw, 32px); font-weight: 800;
+        .scrubber-bar-bg {
+            width: 100%;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.18);
+            border-radius: 4px;
+            cursor: pointer;
+            position: relative;
+            transition: height 0.15s ease;
+        }
+        .scrubber-bar-bg:hover { height: 8px; }
+        .scrubber-fill-bar {
+            height: 100%;
+            width: 0%;
+            background: #ffffff;
+            border-radius: 4px;
+            position: relative;
+            transition: width 0.1s linear;
+        }
+        .scrubber-fill-bar::after {
+            content: '';
+            position: absolute;
+            right: -6px;
+            top: 50%;
+            transform: translateY(-50%) scale(0);
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+            transition: transform 0.18s var(--ease-snappy);
+        }
+        .scrubber-bar-bg:hover .scrubber-fill-bar::after {
+            transform: translateY(-50%) scale(1);
+        }
+        .scrubber-times {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-tertiary);
+            font-variant-numeric: tabular-nums;
         }
 
-        /* ==================================================================
-           RESPONSIVE BREAKPOINTS
-           ================================================================== */
-        .mobile-nav { display: none; }
+        /* Controls Deck */
+        .playback-controls-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+            width: 100%;
+            margin-top: 14px;
+        }
+        .ctrl-icon-btn {
+            font-size: 22px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: transform 0.2s var(--ease-snappy), color 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .ctrl-icon-btn:hover {
+            color: #fff;
+            transform: scale(1.18);
+        }
+        .ctrl-icon-btn.active {
+            color: var(--apple-red);
+        }
 
+        .btn-play-pause-main {
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            background: #ffffff;
+            color: #000000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.25);
+            transition: transform 0.25s var(--ease-snappy), box-shadow 0.25s ease;
+        }
+        .btn-play-pause-main i { margin-left: 2px; }
+        .btn-play-pause-main:hover {
+            transform: scale(1.08);
+            box-shadow: 0 14px 40px rgba(255, 255, 255, 0.4);
+        }
+        .btn-play-pause-main:active {
+            transform: scale(0.95);
+        }
+
+        /* RIGHT COLUMN: APPLE MUSIC SYNCHRONIZED LYRICS ENGINE (AMLL) */
+        .right-lyrics-deck {
+            height: 100%;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-subtle);
+            border-radius: 28px;
+            padding: 24px 32px;
+            backdrop-filter: blur(40px) saturate(160%);
+            -webkit-backdrop-filter: blur(40px) saturate(160%);
+            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .lyrics-top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-subtle);
+            margin-bottom: 12px;
+            flex-shrink: 0;
+        }
+        .lyrics-title-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .lyrics-label {
+            font-family: var(--font-display);
+            font-size: 18px;
+            font-weight: 800;
+            color: #fff;
+        }
+        .lyrics-live-tag {
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 3px 8px;
+            border-radius: 100px;
+            background: rgba(252, 60, 68, 0.2);
+            color: #ff5f67;
+            border: 1px solid rgba(252, 60, 68, 0.35);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .live-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #ff5f67;
+            animation: livePulse 1.5s infinite;
+        }
+        @keyframes livePulse {
+            0% { transform: scale(0.9); opacity: 0.6; }
+            50% { transform: scale(1.3); opacity: 1; }
+            100% { transform: scale(0.9); opacity: 0.6; }
+        }
+
+        .lyrics-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .lyrics-tool-btn {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 6px 12px;
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .lyrics-tool-btn:hover {
+            background: rgba(255, 255, 255, 0.16);
+            color: #fff;
+        }
+
+        /* AMLL Lyric Container */
+        .lyrics-viewport {
+            flex: 1;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            mask-image: linear-gradient(to bottom, transparent 0%, black 8%, black 90%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 8%, black 90%, transparent 100%);
+        }
+
+        #lyrics-mount {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Real Apple Music Typography for AMLL */
+        #lyrics-mount .amll-lyric-player {
+            --amll-lp-color: rgba(255, 255, 255, 0.45) !important;
+            --amll-lp-active-color: #ffffff !important;
+            --amll-lp-font-size: clamp(28px, 2.5vw, 42px) !important;
+            --amll-lp-hover-bg-color: rgba(255, 255, 255, 0.08);
+            font-weight: 800 !important;
+            letter-spacing: -0.025em;
+            line-height: 1.35;
+        }
+        #lyrics-mount .amll-lyric-player .amll-lyric-line {
+            margin-bottom: clamp(16px, 2.2vh, 26px) !important;
+            transition: transform 0.35s var(--ease-apple), opacity 0.35s ease, filter 0.35s ease;
+        }
+
+        /* ==========================================================================
+           FULLSCREEN CINEMATIC MODE (macOS FULL SCREEN)
+           ========================================================================== */
+        #fullscreen-view {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            background: transparent;
+            display: none;
+            flex-direction: column;
+            padding: 32px 64px;
+        }
+        #fullscreen-view.active {
+            display: flex;
+        }
+
+        /* ==========================================================================
+           RESPONSIVE BREAKPOINTS (TABLETS & PHONES)
+           ========================================================================== */
         @media (max-width: 1024px) {
-            #sidebar { display: none; }
-            #main-content { 
-                padding: clamp(24px, 4vh, 36px) clamp(16px, 4vw, 24px) calc(var(--player-height) + var(--nav-height-mob) + 20px); 
+            .app-sidebar { display: none; }
+            .topbar-left { min-width: auto; }
+            .main-stage {
+                grid-template-columns: 1fr;
+                padding: 16px;
+                gap: 24px;
+                overflow-y: auto;
             }
-            
-            .home-hero-card { grid-template-columns: 1fr; text-align: center; justify-items: center; }
-            .hero-art-wrapper { max-width: 280px; }
-            .hero-btn-row { justify-content: center; }
-            .hero-stats-row { justify-content: center; }
-            .hero-artist { justify-content: center; }
-
-            .mobile-nav {
-                display: flex; position: fixed; bottom: 0; left: 0; width: 100%; height: var(--nav-height-mob);
-                background: rgba(10, 10, 14, 0.75); backdrop-filter: blur(40px) saturate(200%); -webkit-backdrop-filter: blur(40px) saturate(200%);
-                border-top: 1px solid rgba(255,255,255,0.08); z-index: 60;
-                justify-content: space-around; align-items: center; padding-bottom: env(safe-area-inset-bottom);
-                transition: transform 0.4s var(--ease-cinematic), opacity 0.3s;
+            .left-deck { max-width: 340px; }
+            .artwork-container { max-width: 240px; }
+            .right-lyrics-deck { min-height: 380px; }
+            #lyrics-mount .amll-lyric-player {
+                --amll-lp-font-size: 24px !important;
             }
-            
-            body.np-active .mobile-nav {
-                transform: translateY(100%); opacity: 0; pointer-events: none;
-            }
-
-            .nav-item-mob { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-secondary); font-size: 11px; font-weight: 600; cursor: pointer; }
-            .nav-item-mob i { font-size: clamp(22px, 3vh, 26px); }
-            .nav-item-mob.active { color: var(--text-primary); }
-            .nav-item-mob.active i { color: var(--accent-1); }
-
-            .player-wrapper { bottom: calc(var(--nav-height-mob) + clamp(8px, 1.5vh, 16px)); padding: 0 clamp(8px, 2vw, 16px); }
-            .player-pill { height: clamp(64px, 8vh, 72px); padding: 6px 16px 6px 6px; border-radius: 18px; background: rgba(20, 20, 25, 0.85); }
-            .player-img { width: clamp(48px, 6vh, 56px); height: clamp(48px, 6vh, 56px); border-radius: 12px; }
-            .player-controls, .player-actions { display: none; }
-            .player-info { max-width: 80%; width: 80%; }
-            .mobile-play-btn { display: flex; position: absolute; right: 16px; width: clamp(38px, 4.8vh, 44px); height: clamp(38px, 4.8vh, 44px); background: #fff; color: #000; border-radius: 50%; align-items: center; justify-content: center; font-size: 18px; box-shadow: 0 5px 15px rgba(0,0,0,0.4); }
-            .mobile-play-btn i { margin-left: 2px; }
-
-            /* NOW PLAYING MOBILE */
-            #np-fs { overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; } 
-            
-            .np-layout { 
-                display: flex; flex-direction: column; 
-                padding: clamp(60px, 8vh, 80px) clamp(16px, 5vw, 32px) clamp(32px, 4vh, 48px); 
-                gap: 24px; height: auto; min-height: 100%; justify-content: flex-start;
-            }
-            .np-left-pane { max-width: 100%; width: 100%; height: auto; }
-            .np-left-card { padding: 20px 16px; border-radius: 24px; }
-            .np-art-wrap { width: clamp(200px, 55vw, 280px); height: clamp(200px, 55vw, 280px); }
-            .np-volume-deck { display: none; }
-            
-            .np-right-pane { width: 100%; max-width: 500px; flex: none; height: clamp(260px, 45vh, 420px); border-radius: 24px; padding: 16px; }
-            #lyrics-content .amll-lyric-player { --amll-lp-font-size: clamp(22px, 5.5vw, 30px) !important; }
         }
     </style>
 </head>
 <body>
 
-    <!-- DYNAMIC GLASSY MUSIC BACKGROUND (TRUE TONES) -->
-    <div id="ambient-bg">
-        <div id="bg-back" class="ambient-bg-layer"></div>
-        <div id="bg-front" class="ambient-bg-layer"></div>
-        <div class="ambient-mesh-overlay">
-            <div class="mesh-orb mesh-orb-1"></div>
-            <div class="mesh-orb mesh-orb-2"></div>
-        </div>
-        <div class="ambient-contrast-mask"></div>
-        <div class="noise-overlay"></div>
+    <!-- APPLE MUSIC 2026 DYNAMIC FLUID BACKGROUND -->
+    <div id="fluid-bg-container">
+        <canvas id="webgl-canvas"></canvas>
+        <div class="ambient-dim-overlay"></div>
+        <div class="noise-texture"></div>
     </div>
 
-    <!-- MAIN APP SHELL -->
-    <div id="app-wrapper">
-        <!-- SIDEBAR -->
-        <aside id="sidebar">
-            <div class="brand"><i class="ph-fill ph-waveform"></i> VIVETMP</div>
-            <nav class="nav-menu">
-                <div class="nav-item active"><i class="ph-fill ph-house"></i> Home</div>
-                <div class="nav-item" onclick="toggleNP()"><i class="ph-fill ph-text-t"></i> Lyrics</div>
-            </nav>
-        </aside>
-
-        <!-- MAIN SCROLLING CONTENT (REWORKED HOME) -->
-        <main id="main-content">
-            <section class="view-section">
-                <!-- HERO BILLBOARD -->
-                <div class="home-hero-card">
-                    <div class="hero-art-wrapper" onclick="togglePlay()">
-                        <img src="https://file.garden/alq0ENqplE9QfqJV/COSAS%20QUE%20NO%20TE%20DIJE_640x640.jpg" class="hero-art-img" alt="Cover">
-                    </div>
-                    
-                    <div class="hero-content">
-                        <div class="hero-tag"><i class="ph-fill ph-sparkle"></i> Featured Release</div>
-                        <h1 class="hero-title">COSAS QUE NO TE DIJE</h1>
-                        <div class="hero-artist">
-                            <span>SAIKO</span>
-                            <i class="ph-fill ph-seal-check" style="color:var(--accent-1); font-size:22px;"></i>
-                        </div>
-
-                        <div class="hero-stats-row">
-                            <span class="hero-pill">Single</span>
-                            <span class="hero-pill"><i class="ph-fill ph-waveform"></i> Lossless ALAC 24-bit/96kHz</span>
-                            <span>2024</span>
-                            <div class="live-eq" id="hero-live-eq" style="display:none;">
-                                <span></span><span></span><span></span><span></span>
-                            </div>
-                        </div>
-
-                        <div class="hero-btn-row">
-                            <button class="btn-play-hero" onclick="togglePlay()">
-                                <i class="ph-fill ph-play" id="hero-play-icon"></i>
-                                <span id="hero-play-text">Listen Now</span>
-                            </button>
-                            <button class="btn-lyrics-hero" onclick="toggleNP()">
-                                <i class="ph-fill ph-text-t"></i> Immersive Lyrics
-                            </button>
-                        </div>
-                    </div>
+    <!-- macOS DESKTOP APPLICATION SHELL -->
+    <div id="app-shell">
+        
+        <!-- TOPBAR CONTROLLER -->
+        <header class="app-topbar">
+            <!-- Left: macOS Traffic Lights & History Navigation -->
+            <div class="topbar-left">
+                <div class="traffic-lights">
+                    <span class="traffic-dot dot-close" title="Close"></span>
+                    <span class="traffic-dot dot-minimize" title="Minimize"></span>
+                    <span class="traffic-dot dot-maximize" onclick="toggleFullscreen()" title="Full Screen"></span>
                 </div>
-
-                <!-- RELEASE & ARTIST DETAILS GRID -->
-                <div class="home-details-grid">
-                    <div class="detail-glass-card">
-                        <h3><i class="ph-fill ph-microphone-stage" style="color:var(--accent-1);"></i> About the Artist</h3>
-                        <p>
-                            SAIKO es una de las figuras más vanguardistas de la escena urbana actual. "COSAS QUE NO TE DIJE" combina texturas melancólicas, producción refinada y líricas honestas que definen su identidad sonora.
-                        </p>
-                    </div>
-
-                    <div class="detail-glass-card">
-                        <h3><i class="ph-fill ph-faders" style="color:var(--accent-1);"></i> Master Quality Audio</h3>
-                        <p>
-                            Reproducción en alta fidelidad sin compresión destructiva, ecualización dinámica estéreo con DSP y sincronización de letras palabra por palabra impulsada por el motor AMLL.
-                        </p>
-                    </div>
-                </div>
-            </section>
-        </main>
-    </div>
-
-    <!-- MOBILE BOTTOM NAV -->
-    <nav class="mobile-nav">
-        <div class="nav-item-mob active"><i class="ph-fill ph-house"></i>Home</div>
-        <div class="nav-item-mob" onclick="toggleNP()"><i class="ph-fill ph-text-t"></i>Lyrics</div>
-    </nav>
-
-    <!-- PERSISTENT BOTTOM PLAYER -->
-    <div class="player-wrapper">
-        <div class="player-pill">
-            <div class="progress-mini-wrapper"><div class="progress-mini-fill" id="bar-fill-mini"></div></div>
-            
-            <div class="player-info" onclick="toggleNP()">
-                <img src="https://file.garden/alq0ENqplE9QfqJV/COSAS%20QUE%20NO%20TE%20DIJE_640x640.jpg" id="player-img" class="player-img">
-                <div class="player-meta">
-                    <div class="player-title" id="player-title">COSAS QUE NO TE DIJE</div>
-                    <div class="player-artist" id="player-artist">SAIKO</div>
+                <div class="nav-history-buttons">
+                    <button class="btn-nav-hist" title="Back"><i class="ph-bold ph-caret-left"></i></button>
+                    <button class="btn-nav-hist" title="Forward"><i class="ph-bold ph-caret-right"></i></button>
                 </div>
             </div>
 
-            <div class="mobile-play-btn" onclick="togglePlay()" id="btn-play-mob"><i class="ph-fill ph-play" id="icon-play-mob"></i></div>
-
-            <div class="player-controls">
-                <div class="controls-buttons">
-                    <i class="ph-fill ph-shuffle"></i>
-                    <i class="ph-fill ph-skip-back" onclick="seekRelative(-10)"></i>
-                    <div class="btn-play-circle" onclick="togglePlay()"><i class="ph-fill ph-play" id="icon-play-desk"></i></div>
-                    <i class="ph-fill ph-skip-forward" onclick="seekRelative(10)"></i>
-                    <i class="ph-bold ph-repeat"></i>
-                </div>
-                <div class="scrubber-container">
-                    <span id="time-curr-desk">0:00</span>
-                    <div class="scrubber-bg" onclick="seek(event, this)"><div class="scrubber-fill" id="bar-fill-desk"></div></div>
-                    <span id="time-tot-desk">-0:00</span>
+            <!-- Center: Apple Music LCD Player Pill -->
+            <div class="topbar-center">
+                <div class="top-player-pill">
+                    <img src="https://file.garden/alq0ENqplE9QfqJV/COSAS%20QUE%20NO%20TE%20DIJE_640x640.jpg" class="top-player-thumb" alt="Thumbnail" onclick="togglePlay()">
+                    <div class="top-player-info">
+                        <span class="top-player-title" id="top-title">COSAS QUE NO TE DIJE</span>
+                        <span class="top-player-separator">—</span>
+                        <span class="top-player-artist" id="top-artist">SAIKO</span>
+                    </div>
+                    <div class="top-player-controls">
+                        <i class="ph-fill ph-skip-back" onclick="seekRelative(-10)" title="Rewind 10s"></i>
+                        <i class="ph-fill ph-play top-play-btn" id="top-play-icon" onclick="togglePlay()" title="Play"></i>
+                        <i class="ph-fill ph-skip-forward" onclick="seekRelative(10)" title="Fast Forward 10s"></i>
+                    </div>
                 </div>
             </div>
 
-            <div class="player-actions">
-                <i class="ph-fill ph-speaker-low"></i>
-                <div class="vol-slider" onclick="changeVolume(event, this)"><div class="vol-fill" id="vol-fill-desk"></div></div>
-                <div class="btn-fullscreen" onclick="toggleNP()"><i class="ph-bold ph-arrows-out-simple"></i></div>
-            </div>
-        </div>
-    </div>
+            <!-- Right: Volume & Quick Controls -->
+            <div class="topbar-right">
+                <div class="top-volume-container">
+                    <i class="ph-fill ph-speaker-simple-low" onclick="toggleMute()" id="top-speaker-icon"></i>
+                    <div class="volume-bar" onclick="handleVolumeClick(event, this)">
+                        <div class="volume-fill" id="vol-fill-top"></div>
+                    </div>
+                    <i class="ph-fill ph-speaker-simple-high"></i>
+                </div>
 
-    <!-- FULLSCREEN NOW PLAYING OVERLAY (SONG - COVER - LYRICS) -->
-    <div id="np-fs">
-        <!-- Top Glass Header -->
-        <header class="np-top-header">
-            <button class="np-btn-icon" onclick="toggleNP()" title="Close (Esc)"><i class="ph-bold ph-caret-down"></i></button>
-            <div class="np-context-pill">Playing <span>Single</span></div>
-            <button class="np-btn-icon" title="AirPlay / Audio"><i class="ph-bold ph-airplay"></i></button>
+                <button class="topbar-action-btn active" id="btn-lyrics-top" title="Lyrics"><i class="ph-fill ph-quotes"></i></button>
+                <button class="topbar-action-btn" title="AirPlay"><i class="ph-bold ph-airplay"></i></button>
+                <button class="topbar-action-btn" onclick="toggleFullscreen()" title="Full Screen"><i class="ph-bold ph-arrows-out-simple"></i></button>
+            </div>
         </header>
 
-        <div class="np-layout">
-            <!-- Left Deck: Artwork, Meta, Scrubber, Media Controls & Volume -->
-            <div class="np-left-pane">
-                <div class="np-left-card">
-                    <!-- Crisp Cover Artwork Container -->
-                    <div class="np-art-wrap" onclick="togglePlay()">
-                        <img src="https://file.garden/alq0ENqplE9QfqJV/COSAS%20QUE%20NO%20TE%20DIJE_640x640.jpg" id="np-art-large" class="np-art-img" alt="Cover">
-                    </div>
-                    
-                    <!-- Track Meta Row -->
-                    <div class="np-info-block">
-                        <div class="np-track-row-meta">
-                            <div class="np-track-texts">
-                                <h2 class="np-track-title">COSAS QUE NO TE DIJE</h2>
-                                <p class="np-track-artist">SAIKO</p>
-                            </div>
-                            <i class="ph-fill ph-heart np-btn-heart" id="np-heart-btn" onclick="toggleHeart(this)"></i>
-                        </div>
+        <!-- MAIN BODY -->
+        <div class="app-body">
+            
+            <!-- APPLE MUSIC SIDEBAR -->
+            <aside class="app-sidebar">
+                <div class="search-box">
+                    <i class="ph-bold ph-magnifying-glass search-icon"></i>
+                    <input type="text" class="search-input" placeholder="Search">
+                </div>
 
-                        <div class="np-badges-row">
-                            <div class="np-badge-pill"><i class="ph-fill ph-waveform"></i> Lossless ALAC 24-bit/96kHz</div>
-                            <div class="np-badge-pill">Master Quality</div>
-                        </div>
+                <div class="nav-group">
+                    <span class="nav-group-title">Apple Music</span>
+                    <div class="nav-item"><i class="ph-fill ph-house"></i> Home</div>
+                    <div class="nav-item"><i class="ph-fill ph-squares-four"></i> Browse</div>
+                    <div class="nav-item"><i class="ph-fill ph-broadcast"></i> Radio</div>
+                </div>
 
-                        <!-- Scrubber Deck -->
-                        <div class="np-scrubber-deck">
-                            <div class="np-progress-track" id="np-progress-track" onclick="seek(event, this)">
-                                <div class="np-progress-fill" id="bar-fill-np"></div>
-                            </div>
-                            <div class="np-time-row">
-                                <span id="time-curr-np">0:00</span>
-                                <span id="time-tot-np">-0:00</span>
-                            </div>
-                        </div>
+                <div class="nav-group">
+                    <span class="nav-group-title">Library</span>
+                    <div class="nav-item"><i class="ph-fill ph-clock-counter-clockwise"></i> Recently Added</div>
+                    <div class="nav-item"><i class="ph-fill ph-microphone-stage"></i> Artists</div>
+                    <div class="nav-item"><i class="ph-fill ph-disc"></i> Albums</div>
+                    <div class="nav-item active"><i class="ph-fill ph-music-notes"></i> Songs</div>
+                </div>
 
-                        <!-- Main Controls Deck -->
-                        <div class="np-main-controls">
-                            <i class="ph-bold ph-shuffle np-ctrl-btn" title="Shuffle"></i>
-                            <i class="ph-fill ph-skip-back np-ctrl-btn" onclick="seekRelative(-10)" title="Rewind 10s"></i>
-                            <div class="np-play-btn-large" id="icon-play-np" onclick="togglePlay()" title="Play / Pause">
-                                <i class="ph-fill ph-play"></i>
-                            </div>
-                            <i class="ph-fill ph-skip-forward np-ctrl-btn" onclick="seekRelative(10)" title="Forward 10s"></i>
-                            <i class="ph-bold ph-repeat np-ctrl-btn" title="Repeat"></i>
-                        </div>
+                <div class="nav-group">
+                    <span class="nav-group-title">Playlists</span>
+                    <div class="nav-item"><i class="ph-fill ph-playlist"></i> SAIKO Essentials</div>
+                    <div class="nav-item"><i class="ph-fill ph-playlist"></i> Top 100 Global</div>
+                    <div class="nav-item"><i class="ph-fill ph-playlist"></i> Chill Vibes</div>
+                </div>
 
-                        <!-- Centered Volume Deck -->
-                        <div class="np-volume-deck">
-                            <i class="ph-fill ph-speaker-low"></i>
-                            <div class="vol-slider" onclick="changeVolume(event, this)">
-                                <div class="vol-fill" id="vol-fill-np" style="width:75%;"></div>
-                            </div>
-                            <i class="ph-fill ph-speaker-high"></i>
-                        </div>
+                <div class="sidebar-bottom-badge">
+                    <div class="badge-icon"><i class="ph-fill ph-waveform"></i></div>
+                    <div class="badge-texts">
+                        <span class="badge-title">Lossless Audio</span>
+                        <span class="badge-sub">ALAC 24-bit/96kHz</span>
                     </div>
                 </div>
-            </div>
+            </aside>
 
-            <!-- Right Deck: Glassy Apple Music Lyrics Container -->
-            <div class="np-right-pane">
-                <div class="lyrics-scroll-area" id="lyrics-scroller">
-                    <div id="lyrics-content"></div>
-                </div>
-            </div>
+            <!-- MAIN STAGE: SPLIT VIEW (LEFT: ARTWORK + CONTROLS | RIGHT: AMLL LYRICS) -->
+            <main class="main-stage">
+                
+                <!-- LEFT COLUMN -->
+                <section class="left-deck">
+                    <div class="artwork-container" onclick="togglePlay()">
+                        <img src="https://file.garden/alq0ENqplE9QfqJV/COSAS%20QUE%20NO%20TE%20DIJE_640x640.jpg" id="main-art-img" class="artwork-img" alt="Cover">
+                    </div>
+                    <div class="artwork-glow" id="artwork-ambient-glow" style="background-image: url('https://file.garden/alq0ENqplE9QfqJV/COSAS%20QUE%20NO%20TE%20DIJE_640x640.jpg');"></div>
+
+                    <div class="track-metadata">
+                        <div class="track-title-row">
+                            <h1 class="track-title">COSAS QUE NO TE DIJE</h1>
+                            <i class="ph-fill ph-heart btn-heart" id="btn-heart" onclick="toggleHeart(this)"></i>
+                        </div>
+                        <div class="track-artist">
+                            <span>SAIKO</span>
+                            <i class="ph-fill ph-seal-check" style="color:#27c93f; font-size: 16px;"></i>
+                        </div>
+                        <div class="track-badges">
+                            <span class="apple-badge"><i class="ph-fill ph-waveform"></i> Lossless</span>
+                            <span class="apple-badge">Apple Digital Master</span>
+                        </div>
+                    </div>
+
+                    <!-- Scrubber Timeline -->
+                    <div class="playback-scrubber-deck">
+                        <div class="scrubber-bar-bg" onclick="handleSeekClick(event, this)">
+                            <div class="scrubber-fill-bar" id="scrubber-fill"></div>
+                        </div>
+                        <div class="scrubber-times">
+                            <span id="time-elapsed">0:00</span>
+                            <span id="time-remaining">-0:00</span>
+                        </div>
+                    </div>
+
+                    <!-- Controls Deck -->
+                    <div class="playback-controls-row">
+                        <i class="ph-bold ph-shuffle ctrl-icon-btn" title="Shuffle"></i>
+                        <i class="ph-fill ph-skip-back ctrl-icon-btn" onclick="seekRelative(-10)" title="Rewind 10s"></i>
+                        <div class="btn-play-pause-main" onclick="togglePlay()" title="Play / Pause">
+                            <i class="ph-fill ph-play" id="main-play-icon"></i>
+                        </div>
+                        <i class="ph-fill ph-skip-forward ctrl-icon-btn" onclick="seekRelative(10)" title="Fast Forward 10s"></i>
+                        <i class="ph-bold ph-repeat ctrl-icon-btn" title="Repeat"></i>
+                    </div>
+                </section>
+
+                <!-- RIGHT COLUMN: APPLE MUSIC LIVE LYRICS (AMLL) -->
+                <section class="right-lyrics-deck">
+                    <div class="lyrics-top-bar">
+                        <div class="lyrics-title-group">
+                            <span class="lyrics-label">Lyrics</span>
+                            <div class="lyrics-live-tag"><span class="live-dot"></span> Synced</div>
+                        </div>
+                        <div class="lyrics-actions">
+                            <button class="lyrics-tool-btn" onclick="toggleFullscreen()"><i class="ph-bold ph-arrows-out-simple"></i> Expand</button>
+                        </div>
+                    </div>
+
+                    <div class="lyrics-viewport">
+                        <div id="lyrics-mount"></div>
+                    </div>
+                </section>
+            </main>
         </div>
     </div>
 
-    <!-- Hidden Canvas for Color Extraction Engine -->
-    <canvas id="color-extractor" style="display:none;"></canvas>
+    <!-- HIDDEN CANVAS FOR COLOR EXTRACTION -->
+    <canvas id="color-extractor-canvas" style="display:none;"></canvas>
 
     <script>
-        /* ==================================================================
-           SINGLE EXCLUSIVE TRACK DATA (COSAS QUE NO TE DIJE - SAIKO)
-           ================================================================== */
-        const cosasQueNoTeDijeCoverUrl = "https://file.garden/alq0ENqplE9QfqJV/COSAS%20QUE%20NO%20TE%20DIJE_640x640.jpg";
-        
-        const currentSong = {
+        /* ==========================================================================
+           SONG & RESOURCE CONFIGURATION
+           ========================================================================== */
+        const currentTrack = {
             title: "COSAS QUE NO TE DIJE",
             artist: "SAIKO",
             url: "https://file.garden/alq0ENqplE9QfqJV/COSAS%20QUE%20NO%20TE%20DIJE_spotdown.org.mp3",
-            lrc: "https://file.garden/alq0ENqplE9QfqJV/SAIKO%20-%20COSAS%20QUE%20NO%20TE%20DIJE.ttml",
-            cover: cosasQueNoTeDijeCoverUrl
+            cover: "https://file.garden/alq0ENqplE9QfqJV/COSAS%20QUE%20NO%20TE%20DIJE_640x640.jpg",
+            ttml: "https://file.garden/alq0ENqplE9QfqJV/SAIKO%20-%20COSAS%20QUE%20NO%20TE%20DIJE.ttml"
         };
 
-        /* ==================================================================
-           TRUE-TO-SOURCE COLOR EXTRACTOR (100% Faithful RGB)
-           ================================================================== */
+        /* ==========================================================================
+           TRUE COLOR EXTRACTOR (ACCURATE & NATURAL RGB FROM COVER ART)
+           ========================================================================== */
         class TrueColorExtractor {
-            static extract(imgUrl) {
+            static extract(imgSrc) {
                 return new Promise((resolve) => {
                     const img = new Image();
                     img.crossOrigin = "anonymous";
                     img.onload = () => {
                         try {
-                            const canvas = document.createElement('canvas');
+                            const canvas = document.getElementById('color-extractor-canvas') || document.createElement('canvas');
                             const ctx = canvas.getContext('2d', { willReadFrequently: true });
                             const size = 64;
                             canvas.width = size;
                             canvas.height = size;
                             ctx.drawImage(img, 0, 0, size, size);
-                            const data = ctx.getImageData(0, 0, size, size).data;
+                            const imgData = ctx.getImageData(0, 0, size, size).data;
 
-                            const colorBins = new Map();
-                            
-                            for (let i = 0; i < data.length; i += 16) {
-                                const r = data[i], g = data[i+1], b = data[i+2], a = data[i+3];
+                            const bins = new Map();
+                            for (let i = 0; i < imgData.length; i += 16) {
+                                const r = imgData[i], g = imgData[i+1], b = imgData[i+2], a = imgData[i+3];
                                 if (a < 128) continue;
                                 
-                                const max = Math.max(r, g, b);
-                                const min = Math.min(r, g, b);
-                                const delta = max - min;
-                                const luma = 0.299 * r + 0.587 * g + 0.114 * b;
-
-                                if (luma < 18 || luma > 240) continue;
-
                                 const qR = (r >> 4) << 4;
                                 const qG = (g >> 4) << 4;
                                 const qB = (b >> 4) << 4;
                                 const key = (qR << 16) | (qG << 8) | qB;
 
-                                const bin = colorBins.get(key) || { r: 0, g: 0, b: 0, count: 0, chroma: 0 };
+                                const bin = bins.get(key) || { r: 0, g: 0, b: 0, count: 0 };
                                 bin.r += r;
                                 bin.g += g;
                                 bin.b += b;
-                                bin.chroma += delta;
                                 bin.count++;
-                                colorBins.set(key, bin);
+                                bins.set(key, bin);
                             }
 
-                            const sorted = Array.from(colorBins.values())
-                                .map(b => {
-                                    const avgR = Math.round(b.r / b.count);
-                                    const avgG = Math.round(b.g / b.count);
-                                    const avgB = Math.round(b.b / b.count);
-                                    const avgChroma = b.chroma / b.count;
-                                    const score = b.count * (1 + avgChroma / 64);
-                                    return { r: avgR, g: avgG, b: avgB, score };
-                                })
-                                .sort((a, b) => b.score - a.score);
+                            const clusters = Array.from(bins.values()).map(b => ({
+                                r: Math.round(b.r / b.count),
+                                g: Math.round(b.g / b.count),
+                                b: Math.round(b.b / b.count),
+                                count: b.count
+                            })).sort((a, b) => b.count - a.count);
 
-                            const primary = sorted[0] || { r: 125, g: 85, b: 165 };
+                            if (clusters.length === 0) {
+                                resolve([
+                                    { r: 130, g: 88, b: 168 },
+                                    { r: 78, g: 52, b: 112 },
+                                    { r: 160, g: 115, b: 195 },
+                                    { r: 40, g: 26, b: 62 }
+                                ]);
+                                return;
+                            }
 
-                            let secondary = sorted[1] || primary;
-                            for (let i = 1; i < sorted.length; i++) {
-                                const dist = Math.hypot(sorted[i].r - primary.r, sorted[i].g - primary.g, sorted[i].b - primary.b);
-                                if (dist > 35) {
-                                    secondary = sorted[i];
-                                    break;
+                            const chosen = [clusters[0]];
+                            for (let i = 1; i < clusters.length && chosen.length < 4; i++) {
+                                const c = clusters[i];
+                                let distinct = true;
+                                for (const prev of chosen) {
+                                    const dist = Math.hypot(c.r - prev.r, c.g - prev.g, c.b - prev.b);
+                                    if (dist < 32) {
+                                        distinct = false;
+                                        break;
+                                    }
                                 }
+                                if (distinct) chosen.push(c);
                             }
 
-                            const darkR = Math.max(5, Math.min(18, Math.round(primary.r * 0.07)));
-                            const darkG = Math.max(5, Math.min(18, Math.round(primary.g * 0.07)));
-                            const darkB = Math.max(8, Math.min(22, Math.round(primary.b * 0.09)));
+                            while (chosen.length < 4) {
+                                chosen.push(chosen[chosen.length - 1]);
+                            }
 
-                            resolve({
-                                primary: `${primary.r}, ${primary.g}, ${primary.b}`,
-                                secondary: `${secondary.r}, ${secondary.g}, ${secondary.b}`,
-                                dark: `rgb(${darkR}, ${darkG}, ${darkB})`
-                            });
-                        } catch(e) {
-                            resolve({
-                                primary: "125, 85, 165",
-                                secondary: "75, 50, 110",
-                                dark: "#060609"
-                            });
+                            resolve(chosen);
+                        } catch (e) {
+                            resolve([
+                                { r: 130, g: 88, b: 168 },
+                                { r: 78, g: 52, b: 112 },
+                                { r: 160, g: 115, b: 195 },
+                                { r: 40, g: 26, b: 62 }
+                            ]);
                         }
                     };
                     img.onerror = () => {
-                        resolve({
-                            primary: "125, 85, 165",
-                            secondary: "75, 50, 110",
-                            dark: "#060609"
-                        });
+                        resolve([
+                            { r: 130, g: 88, b: 168 },
+                            { r: 78, g: 52, b: 112 },
+                            { r: 160, g: 115, b: 195 },
+                            { r: 40, g: 26, b: 62 }
+                        ]);
                     };
-                    img.src = imgUrl;
+                    img.src = imgSrc;
                 });
             }
         }
 
-        /* ==================================================================
-           AUDIO ENGINE & STATE
-           ================================================================== */
-        let isNPOpen = false;
-        let audio = new Audio(); audio.crossOrigin = "anonymous";
-        let audioCtx, masterGain, masterCompressor, analyser;
+        /* ==========================================================================
+           APPLE MUSIC 2026 FLUID SHADER (GPU WEBGL 60FPS)
+           ========================================================================== */
+        class AppleFluidBackground {
+            constructor(canvasId) {
+                this.canvas = document.getElementById(canvasId);
+                this.gl = this.canvas.getContext('webgl', { antialias: true, alpha: false, depth: false });
+                if (!this.gl) return;
+
+                this.startTime = performance.now();
+                this.colors = [
+                    [0.51, 0.35, 0.66],
+                    [0.31, 0.20, 0.44],
+                    [0.63, 0.45, 0.76],
+                    [0.16, 0.10, 0.24]
+                ];
+                this.texture = null;
+                this.audioBass = 0;
+
+                this.initShaders();
+                this.initBuffers();
+                this.handleResize();
+                window.addEventListener('resize', () => this.handleResize());
+            }
+
+            initShaders() {
+                const gl = this.gl;
+                const vsSource = `
+                    attribute vec2 a_position;
+                    varying vec2 v_uv;
+                    void main() {
+                        v_uv = (a_position + 1.0) * 0.5;
+                        gl_Position = vec4(a_position, 0.0, 1.0);
+                    }
+                `;
+
+                const fsSource = `
+                    precision highp float;
+                    uniform vec2 u_resolution;
+                    uniform float u_time;
+                    uniform sampler2D u_texture;
+                    uniform vec3 u_color1;
+                    uniform vec3 u_color2;
+                    uniform vec3 u_color3;
+                    uniform vec3 u_color4;
+                    uniform float u_audio_bass;
+                    varying vec2 v_uv;
+
+                    vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+                    vec2 mod289(vec2 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+                    vec3 permute(vec3 x) { return mod289(((x*34.0)+1.0)*x); }
+
+                    float snoise(vec2 v) {
+                        const vec4 C = vec4(0.211324865405187, 0.366025403784439, -0.577350269189626, 0.024390243902439);
+                        vec2 i  = floor(v + dot(v, C.yy));
+                        vec2 x0 = v -   i + dot(i, C.xx);
+                        vec2 i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+                        vec4 x12 = x0.xyxy + C.xxzz;
+                        x12.xy -= i1;
+                        i = mod289(i);
+                        vec3 p = permute(permute(i.y + vec3(0.0, i1.y, 1.0)) + i.x + vec3(0.0, i1.x, 1.0));
+                        vec3 m = max(0.5 - vec3(dot(x0, x0), dot(x12.xy, x12.xy), dot(x12.zw, x12.zw)), 0.0);
+                        m = m*m; m = m*m;
+                        vec3 x = 2.0 * fract(p * C.www) - 1.0;
+                        vec3 h = abs(x) - 0.5;
+                        vec3 ox = floor(x + 0.5);
+                        vec3 a0 = x - ox;
+                        m *= 1.79284291400159 - 0.85373472095314 * (a0*a0 + h*h);
+                        vec3 g;
+                        g.x  = a0.x  * x0.x  + h.x  * x0.y;
+                        g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+                        return 130.0 * dot(m, g);
+                    }
+
+                    float hash(vec2 p) {
+                        p = fract(p * vec2(123.34, 456.21));
+                        p += dot(p, p + 45.32);
+                        return fract(p.x * p.y);
+                    }
+
+                    void main() {
+                        vec2 uv = gl_FragCoord.xy / u_resolution.xy;
+                        vec2 st = (gl_FragCoord.xy - 0.5 * u_resolution.xy) / min(u_resolution.x, u_resolution.y);
+
+                        float t = u_time * 0.12;
+                        float bass = u_audio_bass * 0.12;
+
+                        // Fluid domain warping
+                        vec2 q = vec2(snoise(st * 1.5 + vec2(0.0, t * 0.8)), snoise(st * 1.5 + vec2(5.2, t * 0.9)));
+                        vec2 r = vec2(snoise(st * 2.2 + 3.0 * q + vec2(1.7, t * 1.1 + bass)), snoise(st * 2.2 + 3.0 * q + vec2(8.3, t * 1.0 - bass)));
+                        float f = 0.5 + 0.5 * snoise(st * 1.2 + 3.5 * r + vec2(t * 0.5));
+
+                        // Organic vortex twists
+                        vec2 center1 = vec2(sin(t * 0.7) * 0.35, cos(t * 0.85) * 0.35);
+                        vec2 center2 = vec2(cos(t * 0.9) * 0.4, sin(t * 0.65) * 0.4);
+                        vec2 d1 = st - center1; float angle1 = atan(d1.y, d1.x) + length(d1) * 2.2 + t * 0.8;
+                        vec2 d2 = st - center2; float angle2 = atan(d2.y, d2.x) - length(d2) * 2.0 - t * 0.7;
+
+                        vec2 warpedUV = uv + 0.16 * q + 0.12 * r + 0.08 * vec2(cos(angle1), sin(angle2));
+                        
+                        vec4 tex1 = texture2D(u_texture, fract(warpedUV));
+                        vec4 tex2 = texture2D(u_texture, fract(warpedUV * 0.7 + vec2(0.2, 0.2)));
+                        vec3 texMix = mix(tex1.rgb, tex2.rgb, 0.5 + 0.5 * sin(t + q.x));
+
+                        vec3 c1 = mix(u_color1, u_color2, smoothstep(0.1, 0.9, f + q.x * 0.3));
+                        vec3 c2 = mix(u_color3, u_color4, smoothstep(0.1, 0.9, f + r.y * 0.3));
+                        vec3 finalColor = mix(c1, c2, 0.5 + 0.5 * cos(t * 0.6 + r.x));
+                        finalColor = mix(finalColor, texMix, 0.52);
+
+                        // Organic vignette
+                        float vignette = smoothstep(1.6, 0.2, length(st * 0.8));
+                        finalColor *= (0.75 + 0.25 * vignette);
+
+                        // Micro-dither
+                        float dither = (hash(gl_FragCoord.xy + fract(u_time)) - 0.5) * (1.2 / 255.0);
+                        finalColor += dither;
+
+                        gl_FragColor = vec4(finalColor, 1.0);
+                    }
+                `;
+
+                const vs = this.compileShader(gl.VERTEX_SHADER, vsSource);
+                const fs = this.compileShader(gl.FRAGMENT_SHADER, fsSource);
+                this.program = gl.createProgram();
+                gl.attachShader(this.program, vs);
+                gl.attachShader(this.program, fs);
+                gl.linkProgram(this.program);
+                gl.useProgram(this.program);
+
+                this.locations = {
+                    pos: gl.getAttribLocation(this.program, 'a_position'),
+                    res: gl.getUniformLocation(this.program, 'u_resolution'),
+                    time: gl.getUniformLocation(this.program, 'u_time'),
+                    tex: gl.getUniformLocation(this.program, 'u_texture'),
+                    c1: gl.getUniformLocation(this.program, 'u_color1'),
+                    c2: gl.getUniformLocation(this.program, 'u_color2'),
+                    c3: gl.getUniformLocation(this.program, 'u_color3'),
+                    c4: gl.getUniformLocation(this.program, 'u_color4'),
+                    bass: gl.getUniformLocation(this.program, 'u_audio_bass')
+                };
+            }
+
+            compileShader(type, src) {
+                const s = this.gl.createShader(type);
+                this.gl.shaderSource(s, src);
+                this.gl.compileShader(s);
+                return s;
+            }
+
+            initBuffers() {
+                const gl = this.gl;
+                const buf = gl.createBuffer();
+                gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+                gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+                    -1, -1, 1, -1, -1, 1,
+                    -1, 1, 1, -1, 1, 1
+                ]), gl.STATIC_DRAW);
+                gl.enableVertexAttribArray(this.locations.pos);
+                gl.vertexAttribPointer(this.locations.pos, 2, gl.FLOAT, false, 0, 0);
+            }
+
+            loadCoverTexture(imgUrl) {
+                const gl = this.gl;
+                const img = new Image();
+                img.crossOrigin = "anonymous";
+                img.onload = () => {
+                    this.texture = gl.createTexture();
+                    gl.bindTexture(gl.TEXTURE_2D, this.texture);
+                    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+                    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+                    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+                    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+                    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+                };
+                img.src = imgUrl;
+            }
+
+            setPalette(palette) {
+                this.colors = palette.map(c => [c.r / 255, c.g / 255, c.b / 255]);
+                
+                // Set CSS variables for glass reflections
+                document.documentElement.style.setProperty('--color-primary', `rgb(${palette[0].r}, ${palette[0].g}, ${palette[0].b})`);
+                document.documentElement.style.setProperty('--color-secondary', `rgb(${palette[1].r}, ${palette[1].g}, ${palette[1].b})`);
+                document.documentElement.style.setProperty('--color-tertiary', `rgb(${palette[2].r}, ${palette[2].g}, ${palette[2].b})`);
+                document.documentElement.style.setProperty('--color-quaternary', `rgb(${palette[3].r}, ${palette[3].g}, ${palette[3].b})`);
+            }
+
+            handleResize() {
+                const w = window.innerWidth;
+                const h = window.innerHeight;
+                this.canvas.width = Math.floor(w * 0.5);
+                this.canvas.height = Math.floor(h * 0.5);
+                if (this.gl) this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
+            }
+
+            render(bassValue = 0) {
+                if (!this.gl) return;
+                const gl = this.gl;
+                const now = (performance.now() - this.startTime) / 1000.0;
+
+                gl.useProgram(this.program);
+                gl.uniform2f(this.locations.res, this.canvas.width, this.canvas.height);
+                gl.uniform1f(this.locations.time, now);
+                gl.uniform1f(this.locations.bass, bassValue);
+
+                gl.uniform3fv(this.locations.c1, this.colors[0]);
+                gl.uniform3fv(this.locations.c2, this.colors[1]);
+                gl.uniform3fv(this.locations.c3, this.colors[2]);
+                gl.uniform3fv(this.locations.c4, this.colors[3]);
+
+                if (this.texture) {
+                    gl.activeTexture(gl.TEXTURE0);
+                    gl.bindTexture(gl.TEXTURE_2D, this.texture);
+                    gl.uniform1i(this.locations.tex, 0);
+                }
+
+                gl.drawArrays(gl.TRIANGLES, 0, 6);
+            }
+        }
+
+        /* ==========================================================================
+           AUDIO ENGINE (WEB AUDIO API + DSP)
+           ========================================================================== */
+        let audio = new Audio();
+        audio.crossOrigin = "anonymous";
+        let audioCtx, analyser, dataArray;
         let globalVolume = 0.75;
-        let lastAudioTime = 0;
-        let lastTimeUpdate = 0;
+        let isMuted = false;
+        let fluidBgInstance = null;
+
+        function initAudioContext() {
+            if (audioCtx) return;
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                audioCtx = new AudioContext();
+                analyser = audioCtx.createAnalyser();
+                analyser.fftSize = 64;
+                analyser.smoothingTimeConstant = 0.8;
+                dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+                const src = audioCtx.createMediaElementSource(audio);
+                src.connect(analyser);
+                analyser.connect(audioCtx.destination);
+            } catch (e) {
+                console.warn("Audio Context init error", e);
+            }
+        }
+
+        function ensureAudioPlayable() {
+            initAudioContext();
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        /* ==========================================================================
+           PLAYBACK CONTROLS
+           ========================================================================== */
+        function togglePlay() {
+            ensureAudioPlayable();
+            if (!audio.src) {
+                audio.src = currentTrack.url;
+            }
+
+            if (audio.paused) {
+                audio.play().then(() => updatePlayIcons(true)).catch(() => {});
+            } else {
+                audio.pause();
+                updatePlayIcons(false);
+            }
+        }
+
+        function updatePlayIcons(playing) {
+            const iconClass = playing ? "ph-fill ph-pause" : "ph-fill ph-play";
+            document.getElementById('top-play-icon').className = iconClass + " top-play-btn";
+            document.getElementById('main-play-icon').className = iconClass;
+        }
+
+        function seekRelative(seconds) {
+            if (!audio.duration) return;
+            audio.currentTime = Math.max(0, Math.min(audio.duration, audio.currentTime + seconds));
+        }
+
+        function handleSeekClick(e, el) {
+            if (!audio.duration) return;
+            const rect = el.getBoundingClientRect();
+            const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+            audio.currentTime = pct * audio.duration;
+        }
+
+        function handleVolumeClick(e, el) {
+            const rect = el.getBoundingClientRect();
+            const vol = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+            setVolume(vol);
+        }
+
+        function setVolume(v) {
+            globalVolume = v;
+            audio.volume = v;
+            document.getElementById('vol-fill-top').style.width = `${v * 100}%`;
+            isMuted = (v === 0);
+            updateSpeakerIcon();
+        }
+
+        function toggleMute() {
+            if (isMuted) {
+                setVolume(globalVolume || 0.75);
+            } else {
+                audio.volume = 0;
+                document.getElementById('vol-fill-top').style.width = '0%';
+                isMuted = true;
+                updateSpeakerIcon();
+            }
+        }
+
+        function updateSpeakerIcon() {
+            const icon = document.getElementById('top-speaker-icon');
+            if (isMuted || audio.volume === 0) icon.className = "ph-fill ph-speaker-simple-none";
+            else if (audio.volume < 0.5) icon.className = "ph-fill ph-speaker-simple-low";
+            else icon.className = "ph-fill ph-speaker-simple-high";
+        }
+
+        function toggleHeart(btn) {
+            btn.classList.toggle('active');
+        }
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(() => {});
+            } else {
+                document.exitFullscreen().catch(() => {});
+            }
+        }
+
+        /* ==========================================================================
+           LYRICS ENGINE INTEGRATION (@applemusic-like-lyrics/core)
+           ========================================================================== */
+        let lyricPlayer = null;
         let _lyricLastFrameMs = null;
 
-        function initAudioEngine() {
-            if (audioCtx) return;
-            const AudioContext = window.AudioContext || window.webkitAudioContext;
-            audioCtx = new AudioContext();
-            
-            masterCompressor = audioCtx.createDynamicsCompressor();
-            masterCompressor.threshold.value = -3;
-            masterCompressor.knee.value = 10;
-            masterCompressor.ratio.value = 5;
-            masterCompressor.attack.value = 0.003;
-            masterCompressor.release.value = 0.25;
-            
-            masterGain = audioCtx.createGain();
-            masterGain.gain.value = globalVolume;
-            
-            analyser = audioCtx.createAnalyser();
-            analyser.fftSize = 64;
-            analyser.smoothingTimeConstant = 0.8;
-            
-            const source = audioCtx.createMediaElementSource(audio);
-            source.connect(masterCompressor);
-            masterCompressor.connect(masterGain);
-            masterGain.connect(analyser);
-            analyser.connect(audioCtx.destination);
-        }
-
-        function ensureAudioContext() {
-            initAudioEngine();
-            if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
-        }
-
-        function haptic() { if (navigator.vibrate) navigator.vibrate(10); }
-
-        async function updateCoverBackground(coverUrl) {
-            const bgFront = document.getElementById('bg-front');
-            if (!bgFront) return;
-
-            bgFront.style.backgroundImage = `url("${coverUrl}")`;
-            bgFront.classList.add('fade-in');
-
-            const palette = await TrueColorExtractor.extract(coverUrl);
-            document.documentElement.style.setProperty('--color-primary-rgb', palette.primary);
-            document.documentElement.style.setProperty('--color-secondary-rgb', palette.secondary);
-            document.documentElement.style.setProperty('--accent-1', `rgb(${palette.primary})`);
-            document.documentElement.style.setProperty('--accent-2', `rgb(${palette.secondary})`);
-            document.documentElement.style.setProperty('--accent-glow', `rgba(${palette.primary}, 0.35)`);
-            document.documentElement.style.setProperty('--bg-ambient-deep', palette.dark);
-        }
-
-        /* ==================================================================
-           PLAYBACK CONTROLS
-           ================================================================== */
-        function togglePlay() {
-            ensureAudioContext(); haptic();
-            if (!audio.src) {
-                audio.src = currentSong.url;
-            }
-
-            if (audio.paused) { 
-                audio.play().catch(e=>{}); 
-                setPlayIcon(true); 
-            } else { 
-                audio.pause(); 
-                setPlayIcon(false); 
-            }
-        }
-
-        function seekRelative(offset) {
-            if (!audio.duration) return;
-            audio.currentTime = Math.max(0, Math.min(audio.duration, audio.currentTime + offset));
-        }
-
-        function setPlayIcon(playing) {
-            const iconClass = playing ? "ph-fill ph-pause" : "ph-fill ph-play";
-            document.getElementById('icon-play-mob').className = iconClass;
-            document.getElementById('icon-play-desk').className = iconClass;
-            document.getElementById('hero-play-icon').className = iconClass;
-            document.querySelector('#icon-play-np i').className = iconClass;
-            
-            document.getElementById('hero-play-text').innerText = playing ? "Pause Track" : "Listen Now";
-            document.getElementById('hero-live-eq').style.display = playing ? "inline-flex" : "none";
-        }
-
-        function toggleHeart(el) {
-            haptic();
-            el.classList.toggle('active');
-        }
-
-        function seek(e, el) { 
-            if(!audio.duration) return; 
-            const r = el.getBoundingClientRect(); 
-            audio.currentTime = ((e.clientX - r.left) / r.width) * audio.duration; 
-        }
-        
-        function changeVolume(e, el) {
-            const r = el.getBoundingClientRect(); let vol = (e.clientX - r.left) / r.width;
-            setVolumeLevel(vol);
-        }
-        
-        function setVolumeLevel(vol) {
-            if(vol < 0) vol = 0; if(vol > 1) vol = 1; globalVolume = vol;
-            document.getElementById('vol-fill-desk').style.width = `${vol*100}%`;
-            const npVol = document.getElementById('vol-fill-np');
-            if (npVol) npVol.style.width = `${vol*100}%`;
-            if(audioCtx && masterGain) masterGain.gain.linearRampToValueAtTime(vol, audioCtx.currentTime + 0.1); 
-            else audio.volume = vol;
-        }
-
-        function toggleNP() {
-            haptic(); isNPOpen = !isNPOpen;
-            const np = document.getElementById('np-fs'); 
-            const app = document.getElementById('app-wrapper');
-            
-            if (isNPOpen) { 
-                _lyricLastFrameMs = null;
-                document.body.classList.add('np-active');
-                np.classList.add('active'); 
-                app.classList.add('scaled'); 
-                setTimeout(() => { if(lyricPlayer) lyricPlayer.calcLayout(true, true); }, 150);
-            } 
-            else { 
-                document.body.classList.remove('np-active');
-                np.classList.remove('active'); 
-                app.classList.remove('scaled'); 
-                app.style.opacity = '';
-                app.style.visibility = '';
-                app.style.transform = '';
-            }
-        }
-
-        window.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && isNPOpen) toggleNP();
-        });
-
-        /* ==================================================================
-           LYRICS ENGINE — @applemusic-like-lyrics/core
-           ================================================================== */
-        let lyricPlayer = null;
-
-        async function ensureLyricPlayer() {
+        async function initLyricsPlayer() {
             if (lyricPlayer) return lyricPlayer;
             const LyricPlayerCtor = await window.__AMLLReady;
-            if (!LyricPlayerCtor) throw new Error("AMLL Core not loaded");
-            
+            if (!LyricPlayerCtor) return null;
+
             lyricPlayer = new LyricPlayerCtor();
             lyricPlayer.setEnableSpring(true);
             lyricPlayer.setEnableBlur(true);
             lyricPlayer.setEnableScale(true);
 
-            document.getElementById('lyrics-content').appendChild(lyricPlayer.getElement());
+            document.getElementById('lyrics-mount').appendChild(lyricPlayer.getElement());
 
             lyricPlayer.addEventListener('line-click', (evt) => {
                 const lines = lyricPlayer.getLyricLines();
@@ -1132,254 +1495,189 @@
                 if (line) {
                     audio.currentTime = line.startTime / 1000;
                     audio.play();
-                    setPlayIcon(true);
+                    updatePlayIcons(true);
                 }
-            });
-
-            let rTimeout;
-            window.addEventListener('resize', () => {
-                clearTimeout(rTimeout);
-                rTimeout = setTimeout(() => {
-                    if (lyricPlayer) lyricPlayer.calcLayout(true, true);
-                }, 100);
             });
 
             return lyricPlayer;
         }
 
         function parseTTMLTime(str) {
-            if(!str) return 0;
+            if (!str) return 0;
             str = str.toString().trim();
             if (str.endsWith('ms')) return parseFloat(str.replace('ms', '')) / 1000;
-            str = str.replace(/s$/, ''); 
+            str = str.replace(/s$/, '');
             const parts = str.split(':');
-            let sec = 0;
-            if(parts.length === 3) sec = parseInt(parts[0], 10) * 3600 + parseInt(parts[1], 10) * 60 + parseFloat(parts[2].replace(',', '.'));
-            else if(parts.length === 2) sec = parseInt(parts[0], 10) * 60 + parseFloat(parts[1].replace(',', '.'));
-            else sec = parseFloat(str.replace(',', '.'));
-            return sec || 0;
+            if (parts.length === 3) return parseInt(parts[0], 10) * 3600 + parseInt(parts[1], 10) * 60 + parseFloat(parts[2].replace(',', '.'));
+            if (parts.length === 2) return parseInt(parts[0], 10) * 60 + parseFloat(parts[1].replace(',', '.'));
+            return parseFloat(str.replace(',', '.')) || 0;
         }
 
-        function parseToAMLLLines(text, url) {
+        function parseTTMLToAMLL(xmlText) {
             const rawLines = [];
             const parser = new DOMParser();
-            const xmlDoc = parser.parseFromString(text, "text/xml");
-            
+            const xmlDoc = parser.parseFromString(xmlText, "text/xml");
+
             let pTags = xmlDoc.getElementsByTagNameNS ? xmlDoc.getElementsByTagNameNS('*', 'p') : [];
             if (pTags.length === 0) pTags = xmlDoc.getElementsByTagName('p');
-            const pElements = Array.from(pTags);
 
-            pElements.forEach(p => {
+            Array.from(pTags).forEach(p => {
                 const beginAttr = p.getAttribute('begin') || p.getAttribute('t');
                 if (!beginAttr) return;
 
                 const pBegin = parseTTMLTime(beginAttr);
-                const endAttr = p.getAttribute('end');
-                const pEnd = endAttr ? parseTTMLTime(endAttr) : 0;
+                const pEnd = p.getAttribute('end') ? parseTTMLTime(p.getAttribute('end')) : 0;
 
                 let words = [];
-                const childNodes = Array.from(p.childNodes);
-
-                childNodes.forEach(node => {
+                Array.from(p.childNodes).forEach(node => {
                     const localName = node.localName ? node.localName.toLowerCase() : (node.nodeName ? node.nodeName.toLowerCase() : '');
                     if (node.nodeType === Node.TEXT_NODE) {
-                        let val = node.nodeValue;
-                        if(val) {
-                            val = val.replace(/[\r\n\t]+/g, ' ').replace(/\s{2,}/g, ' ');
-                            if(val === ' ') {
-                                if(words.length > 0) words[words.length - 1].text += ' ';
-                            } else if (val.trim() !== '') {
-                                words.push({ time: pBegin, dur: 0, text: val });
-                            }
-                        }
-                    } else if (node.nodeType === Node.ELEMENT_NODE && (localName === 'span' || localName === 's' || localName.endsWith(':span') || localName.endsWith(':s'))) {
-                        const sBeginAttr = node.getAttribute('begin') || node.getAttribute('t');
-                        const sBegin = sBeginAttr ? parseTTMLTime(sBeginAttr) : pBegin;
-                        const sEndAttr = node.getAttribute('end');
-                        const sDurAttr = node.getAttribute('d') || node.getAttribute('dur');
-
-                        let dur = 0;
-                        if(sEndAttr) dur = parseTTMLTime(sEndAttr) - sBegin;
-                        else if(sDurAttr) dur = parseTTMLTime(sDurAttr);
-
-                        words.push({ time: sBegin, dur: dur, text: node.textContent || "" });
+                        let val = node.nodeValue ? node.nodeValue.replace(/[\r\n\t]+/g, ' ') : '';
+                        if (val.trim() !== '') words.push({ time: pBegin, dur: 0, text: val });
+                    } else if (node.nodeType === Node.ELEMENT_NODE && (localName === 'span' || localName === 's')) {
+                        const sBegin = node.getAttribute('begin') ? parseTTMLTime(node.getAttribute('begin')) : pBegin;
+                        const sEnd = node.getAttribute('end') ? parseTTMLTime(node.getAttribute('end')) : 0;
+                        const sDur = node.getAttribute('dur') ? parseTTMLTime(node.getAttribute('dur')) : (sEnd > sBegin ? sEnd - sBegin : 0);
+                        words.push({ time: sBegin, dur: sDur, text: node.textContent || "" });
                     }
                 });
 
                 if (words.length === 0) {
-                    const cleanLine = (p.textContent || "").trim();
-                    if (cleanLine) words.push({ time: pBegin, dur: pEnd > pBegin ? pEnd - pBegin : 0, text: cleanLine });
+                    const clean = (p.textContent || "").trim();
+                    if (clean) words.push({ time: pBegin, dur: pEnd > pBegin ? pEnd - pBegin : 0, text: clean });
                 }
 
-                if(words.length > 0) {
-                    const cleanLine = words.map(w => w.text).join('').trim();
-                    if (!cleanLine) return;
+                if (words.length > 0) {
                     rawLines.push({ time: pBegin, words, dur: pEnd > pBegin ? pEnd - pBegin : 0 });
                 }
             });
 
             rawLines.forEach((l, i) => {
-                let nTime = (i < rawLines.length - 1) ? rawLines[i+1].time : l.time + 8;
-                if(!l.dur) l.dur = Math.max(0, nTime - l.time);
-
-                for(let j=0; j<l.words.length; j++) {
-                    if(!l.words[j].dur || l.words[j].dur <= 0) {
-                        if(j < l.words.length - 1) l.words[j].dur = Math.max(0.05, l.words[j+1].time - l.words[j].time);
-                        else l.words[j].dur = Math.min(2.5, Math.max(0.05, nTime - l.words[j].time));
+                const nTime = (i < rawLines.length - 1) ? rawLines[i + 1].time : l.time + 6;
+                if (!l.dur) l.dur = Math.max(0, nTime - l.time);
+                for (let j = 0; j < l.words.length; j++) {
+                    if (!l.words[j].dur || l.words[j].dur <= 0) {
+                        l.words[j].dur = (j < l.words.length - 1) ? Math.max(0.05, l.words[j + 1].time - l.words[j].time) : Math.min(2.0, nTime - l.words[j].time);
                     }
                 }
             });
 
-            return rawLines.map(l => {
-                const lineText = l.words.map(w => w.text).join('').trim();
-                return {
-                    words: l.words.map(w => ({
-                        startTime: Math.round(w.time * 1000),
-                        endTime: Math.round((w.time + w.dur) * 1000),
-                        word: w.text
-                    })),
-                    text: lineText,
-                    translatedLyric: '',
-                    romanLyric: '',
-                    startTime: Math.round(l.time * 1000),
-                    endTime: Math.round((l.time + l.dur) * 1000),
-                    isBG: false,
-                    isDuet: false
-                };
-            });
+            return rawLines.map(l => ({
+                words: l.words.map(w => ({
+                    startTime: Math.round(w.time * 1000),
+                    endTime: Math.round((w.time + w.dur) * 1000),
+                    word: w.text
+                })),
+                text: l.words.map(w => w.text).join('').trim(),
+                translatedLyric: '',
+                romanLyric: '',
+                startTime: Math.round(l.time * 1000),
+                endTime: Math.round((l.time + l.dur) * 1000),
+                isBG: false,
+                isDuet: false
+            }));
         }
 
-        async function fetchLyrics(url) {
-            const container = document.getElementById('lyrics-content');
-            let player;
-            try {
-                player = await ensureLyricPlayer();
-            } catch(e) {
-                console.error("Failed to initialize AMLL lyric player:", e);
-                return;
-            }
+        async function loadTrackLyrics(ttmlUrl) {
+            const player = await initLyricsPlayer();
+            if (!player) return;
 
             try {
-                const res = await fetch(url); 
-                const text = await res.text(); 
-                const lyricLines = parseToAMLLLines(text, url);
-                player.setLyricLines(lyricLines, audio.currentTime * 1000);
+                const res = await fetch(ttmlUrl);
+                const text = await res.text();
+                const lines = parseTTMLToAMLL(text);
+                player.setLyricLines(lines, audio.currentTime * 1000);
                 player.calcLayout(true, true);
-            } catch(e) {
+            } catch (e) {
                 player.setLyricLines([]);
             }
         }
 
-        function fmt(s) { return `${Math.floor(s/60)}:${Math.floor(s%60).toString().padStart(2,'0')}`; }
+        /* ==========================================================================
+           MAIN RENDER LOOP (60FPS RAFTIME + AUDIO TIMELINE + LYRICS UPDATE)
+           ========================================================================== */
+        function formatTime(sec) {
+            const m = Math.floor(sec / 60);
+            const s = Math.floor(sec % 60).toString().padStart(2, '0');
+            return `${m}:${s}`;
+        }
 
-        let lastRoundedTime = -1;
-        function renderLoop(rafTime) {
+        function animationLoop(rafTime) {
             if (!rafTime) rafTime = performance.now();
-            
+
+            // Calculate audio bass energy for fluid mesh reaction
+            let bassValue = 0;
+            if (analyser && dataArray && !audio.paused) {
+                analyser.getByteFrequencyData(dataArray);
+                let sum = 0;
+                for (let i = 0; i < 6; i++) sum += dataArray[i];
+                bassValue = sum / (6 * 255.0);
+            }
+
+            if (fluidBgInstance) {
+                fluidBgInstance.render(bassValue);
+            }
+
+            // Sync Scrubber & Time
             if (audio.duration && !isNaN(audio.duration)) {
-                let cur = audio.currentTime; 
-                const now = performance.now();
-                if (cur !== lastAudioTime) { 
-                    lastAudioTime = cur; 
-                    lastTimeUpdate = now; 
-                } else if (!audio.paused) {
-                    let extrapolated = lastAudioTime + (now - lastTimeUpdate) / 1000;
-                    if (extrapolated - lastAudioTime < 0.3) cur = extrapolated;
-                }
-                
-                const dur = audio.duration; 
+                const cur = audio.currentTime;
+                const dur = audio.duration;
                 const pct = (cur / dur) * 100;
-                
-                document.getElementById('bar-fill-mini').style.width = `${pct}%`;
-                document.getElementById('bar-fill-desk').style.width = `${pct}%`;
-                document.getElementById('bar-fill-np').style.width = `${pct}%`;
-                
-                const curRounded = Math.floor(cur);
-                if (curRounded !== lastRoundedTime) {
-                    lastRoundedTime = curRounded;
-                    const curStr = fmt(cur);
-                    const totStr = "-" + fmt(dur - cur);
-                    document.getElementById('time-curr-desk').innerText = curStr;
-                    document.getElementById('time-tot-desk').innerText = totStr;
-                    document.getElementById('time-curr-np').innerText = curStr;
-                    document.getElementById('time-tot-np').innerText = totStr;
-                }
-                
-                if (isNPOpen && lyricPlayer) { 
-                    const visualTime = cur + 0.1;
+
+                document.getElementById('scrubber-fill').style.width = `${pct}%`;
+                document.getElementById('time-elapsed').innerText = formatTime(cur);
+                document.getElementById('time-remaining').innerText = "-" + formatTime(Math.max(0, dur - cur));
+
+                if (lyricPlayer) {
                     const deltaMs = _lyricLastFrameMs ? Math.min(100, rafTime - _lyricLastFrameMs) : (1000 / 60);
                     _lyricLastFrameMs = rafTime;
-                    lyricPlayer.setCurrentTime(visualTime * 1000);
+                    lyricPlayer.setCurrentTime((cur + 0.08) * 1000);
                     lyricPlayer.update(deltaMs);
                 }
             }
-            requestAnimationFrame(renderLoop);
+
+            requestAnimationFrame(animationLoop);
         }
 
-        /* ==================================================================
-           GESTURES (DRAG-TO-CLOSE NOW PLAYING)
-           ================================================================== */
-        function setupGestures() {
-            let sY=0, cY=0; 
-            const np = document.getElementById('np-fs'); 
-            const app = document.getElementById('app-wrapper');
-            
-            np.addEventListener('touchstart', e => {
-                if (e.target.closest('#lyrics-scroller') && document.getElementById('lyrics-scroller').scrollTop > 0) return;
-                if (np.scrollTop > 0) return; 
-                
-                sY = e.touches[0].clientY; cY = sY;
-                np.style.transition = 'none'; app.style.transition = 'none';
-                app.style.visibility = 'visible';
-            }, { passive: true });
-            
-            np.addEventListener('touchmove', e => {
-                if (!isNPOpen || sY === 0) return;
-                if (e.target.closest('.scrubber-bg') || e.target.closest('.np-progress-track') || e.target.closest('.vol-slider')) return;
-                
-                cY = e.touches[0].clientY; let d = cY - sY;
-                if (d > 0 && np.scrollTop <= 0) { 
-                    np.style.transform = `translate3d(0, ${d}px, 0)`;
-                    const progress = Math.min(1, d / (window.innerHeight * 0.45));
-                    app.style.opacity = (progress * 0.9).toString();
-                    app.style.transform = `scale(${0.92 + progress * 0.08}) translate3d(0, ${-2 + progress * 2}vh, 0)`;
-                }
-            }, { passive: true });
-            
-            np.addEventListener('touchend', e => {
-                if (!isNPOpen || sY === 0) return;
-                if (e.target.closest('.scrubber-bg') || e.target.closest('.np-progress-track') || e.target.closest('.vol-slider')) return;
-                let d = cY - sY; sY = 0;
-                np.style.transition = ''; app.style.transition = '';
-                
-                if (d > 120) {
-                    toggleNP();
-                } else { 
-                    np.style.transform = ''; 
-                    app.style.opacity = '0';
-                    app.style.visibility = 'hidden';
-                    app.style.transform = 'scale(0.92) translate3d(0, -2vh, 0)'; 
-                }
-            }, { passive: true });
-        }
+        /* ==========================================================================
+           KEYBOARD SHORTCUTS (APPLE MUSIC DESKTOP STANDARD)
+           ========================================================================== */
+        window.addEventListener('keydown', (e) => {
+            if (e.target.tagName === 'INPUT') return;
+            if (e.code === 'Space') { e.preventDefault(); togglePlay(); }
+            else if (e.code === 'ArrowRight') { seekRelative(5); }
+            else if (e.code === 'ArrowLeft') { seekRelative(-5); }
+            else if (e.code === 'ArrowUp') { e.preventDefault(); setVolume(Math.min(1, globalVolume + 0.05)); }
+            else if (e.code === 'ArrowDown') { e.preventDefault(); setVolume(Math.max(0, globalVolume - 0.05)); }
+            else if (e.key === 'm' || e.key === 'M') { toggleMute(); }
+            else if (e.key === 'f' || e.key === 'F') { toggleFullscreen(); }
+        });
 
-        /* ==================================================================
+        /* ==========================================================================
            INITIALIZATION
-           ================================================================== */
-        function init() {
-            audio.src = currentSong.url;
-            updateCoverBackground(currentSong.cover);
-            fetchLyrics(currentSong.lrc);
+           ========================================================================== */
+        async function initApp() {
+            audio.src = currentTrack.url;
+            setVolume(globalVolume);
 
-            document.body.addEventListener('click', ensureAudioContext, { once: true });
-            document.body.addEventListener('touchstart', ensureAudioContext, { once: true });
+            // Initialize GPU Fluid Shader
+            fluidBgInstance = new AppleFluidBackground('webgl-canvas');
+            fluidBgInstance.loadCoverTexture(currentTrack.cover);
 
-            requestAnimationFrame(renderLoop);
-            setupGestures();
-            setVolumeLevel(globalVolume);
+            // Extract Genuine True Colors from Cover
+            const palette = await TrueColorExtractor.extract(currentTrack.cover);
+            fluidBgInstance.setPalette(palette);
+
+            // Initialize AMLL Lyrics
+            await loadTrackLyrics(currentTrack.ttml);
+
+            document.body.addEventListener('click', ensureAudioPlayable, { once: true });
+            document.body.addEventListener('touchstart', ensureAudioPlayable, { once: true });
+
+            requestAnimationFrame(animationLoop);
         }
 
-        window.onload = init;
+        window.onload = initApp;
     </script>
 </body>
 </html>
