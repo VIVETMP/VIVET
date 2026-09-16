@@ -3,19 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Apple Music — Modo Oculto</title>
+  <title>Apple Music — Modo Oculto (AMLL Engine)</title>
 
-  <!-- Fuentes Apple / Inter -->
+  <!-- Fuentes Apple System / SF Pro Display -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Estilos base de AMLL (Apple Music-like Lyrics) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@applemusic-like-lyrics/core/dist/style.css">
 
   <style>
     :root {
       --font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, sans-serif;
       --text-main: #ffffff;
       --text-secondary: rgba(255, 255, 255, 0.65);
-      --text-muted: rgba(255, 255, 255, 0.35);
+      --text-muted: rgba(255, 255, 255, 0.32);
       --accent-color: #fa2d48;
     }
 
@@ -31,7 +34,7 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
-      background-color: #0d0e12;
+      background-color: #0c0d11;
       font-family: var(--font-family);
       color: var(--text-main);
       -webkit-font-smoothing: antialiased;
@@ -55,31 +58,31 @@
       inset: 0;
       background-size: cover;
       background-position: center;
-      filter: blur(90px) saturate(200%) brightness(0.65);
+      filter: blur(95px) saturate(210%) brightness(0.6);
       transform-origin: center center;
     }
 
     .bg-layer-1 {
-      animation: ambientPan1 32s infinite alternate ease-in-out;
+      animation: ambientDrift1 30s infinite alternate ease-in-out;
       opacity: 0.85;
     }
 
     .bg-layer-2 {
-      animation: ambientPan2 45s infinite alternate ease-in-out;
+      animation: ambientDrift2 42s infinite alternate ease-in-out;
       mix-blend-mode: color-dodge;
-      opacity: 0.4;
-      filter: blur(120px) saturate(220%) brightness(0.8);
+      opacity: 0.35;
+      filter: blur(125px) saturate(240%) brightness(0.75);
     }
 
     .bg-orb {
       position: absolute;
-      width: 50vw;
-      height: 50vw;
+      width: 55vw;
+      height: 55vw;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(250, 45, 72, 0.25) 0%, rgba(13, 14, 18, 0) 70%);
-      animation: orbFloat 24s infinite alternate ease-in-out;
+      background: radial-gradient(circle, rgba(250, 45, 72, 0.28) 0%, rgba(13, 14, 18, 0) 70%);
+      animation: orbFloat 22s infinite alternate ease-in-out;
       mix-blend-mode: screen;
-      filter: blur(60px);
+      filter: blur(65px);
     }
 
     .vignette-overlay {
@@ -88,8 +91,8 @@
       z-index: 1;
       pointer-events: none;
       background: 
-        radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.7) 100%),
-        linear-gradient(180deg, rgba(0,0,0,0.35) 0%, transparent 40%, rgba(0,0,0,0.65) 100%);
+        radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.75) 100%),
+        linear-gradient(180deg, rgba(0,0,0,0.4) 0%, transparent 40%, rgba(0,0,0,0.7) 100%);
     }
 
     body.is-paused .bg-layer,
@@ -97,16 +100,16 @@
       animation-play-state: paused !important;
     }
 
-    @keyframes ambientPan1 {
+    @keyframes ambientDrift1 {
       0% { transform: scale(1.2) translate(-3%, -2%) rotate(0deg); }
-      50% { transform: scale(1.35) translate(4%, 3%) rotate(4deg); }
+      50% { transform: scale(1.36) translate(4%, 3%) rotate(4deg); }
       100% { transform: scale(1.22) translate(-2%, 4%) rotate(-3deg); }
     }
 
-    @keyframes ambientPan2 {
-      0% { transform: scale(1.4) translate(4%, 3%) rotate(0deg); }
-      50% { transform: scale(1.18) translate(-4%, -3%) rotate(-6deg); }
-      100% { transform: scale(1.38) translate(2%, -4%) rotate(3deg); }
+    @keyframes ambientDrift2 {
+      0% { transform: scale(1.38) translate(4%, 3%) rotate(0deg); }
+      50% { transform: scale(1.16) translate(-4%, -3%) rotate(-5deg); }
+      100% { transform: scale(1.35) translate(2%, -4%) rotate(3deg); }
     }
 
     @keyframes orbFloat {
@@ -115,7 +118,7 @@
     }
 
     /* ============================================================
-       CONTENEDOR PRINCIPAL: APPLE MUSIC DESKTOP FULLSCREEN
+       CONTENEDOR APPLE MUSIC DESKTOP FULLSCREEN
        ============================================================ */
     .apple-player-app {
       position: relative;
@@ -124,18 +127,18 @@
       height: 100vh;
       display: flex;
       flex-direction: column;
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
     }
 
-    /* Barra superior macOS */
+    /* Barra Superior macOS */
     .top-mac-bar {
       height: 52px;
       padding: 0 28px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
     }
 
     .mac-dots {
@@ -177,12 +180,6 @@
       fill: currentColor;
     }
 
-    .top-actions {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
     .icon-btn {
       background: none;
       border: none;
@@ -206,7 +203,7 @@
     }
 
     /* ============================================================
-       CUERPO: PORTADA ABAJO-IZQ / LYRICS A LA DERECHA
+       COLUMNA IZQ: PORTADA Y CONTROLES | COLUMNA DER: LYRICS
        ============================================================ */
     .player-main-content {
       flex: 1;
@@ -221,7 +218,6 @@
       width: 100%;
     }
 
-    /* Columna Izquierda */
     .left-player-panel {
       display: flex;
       flex-direction: column;
@@ -240,7 +236,7 @@
       margin-bottom: 32px;
       border-radius: 18px;
       box-shadow: 
-        0 24px 60px -10px rgba(0, 0, 0, 0.7),
+        0 24px 60px -10px rgba(0, 0, 0, 0.75),
         0 10px 25px rgba(0, 0, 0, 0.4),
         0 0 0 1px rgba(255, 255, 255, 0.12);
       transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.45s ease;
@@ -301,7 +297,7 @@
       color: var(--text-secondary);
     }
 
-    /* Barra de progreso */
+    /* Barra de Progreso */
     .scrubber-container {
       width: 100%;
       margin-bottom: 20px;
@@ -360,7 +356,6 @@
       font-variant-numeric: tabular-nums;
     }
 
-    /* Controles */
     .playback-controls {
       width: 100%;
       display: flex;
@@ -445,7 +440,7 @@
     }
 
     /* ============================================================
-       COLUMNA DERECHA: LETRAS DINÁMICAS ESTILO AMLL
+       MOTOR DE ANIMACIÓN DE LETRAS APPLE MUSIC & AMLL
        ============================================================ */
     .right-lyrics-panel {
       position: relative;
@@ -453,24 +448,24 @@
       display: flex;
       flex-direction: column;
       overflow: hidden;
+      /* Máscara de desvanecimiento superior e inferior oficial Apple Music */
       mask-image: linear-gradient(to bottom, 
         transparent 0%, 
-        rgba(0, 0, 0, 1) 14%, 
-        rgba(0, 0, 0, 1) 84%, 
+        rgba(0, 0, 0, 1) 12%, 
+        rgba(0, 0, 0, 1) 85%, 
         transparent 100%);
       -webkit-mask-image: linear-gradient(to bottom, 
         transparent 0%, 
-        rgba(0, 0, 0, 1) 14%, 
-        rgba(0, 0, 0, 1) 84%, 
+        rgba(0, 0, 0, 1) 12%, 
+        rgba(0, 0, 0, 1) 85%, 
         transparent 100%);
     }
 
     .lyrics-scroll-stage {
       flex: 1;
-      overflow-y: auto;
+      overflow-y: scroll;
       overflow-x: hidden;
-      padding: 140px 40px 260px 20px;
-      scroll-behavior: smooth;
+      padding: 180px 40px 300px 20px;
       scrollbar-width: none;
     }
 
@@ -478,57 +473,107 @@
       display: none;
     }
 
-    .lyric-row {
-      margin-bottom: 34px;
-      font-size: clamp(30px, 3.1vw, 46px);
+    /* Línea de letra AMLL */
+    .amll-lyric-line {
+      margin-bottom: 38px;
+      font-size: clamp(32px, 3.2vw, 48px);
       font-weight: 700;
-      line-height: 1.35;
-      letter-spacing: -0.8px;
+      line-height: 1.34;
+      letter-spacing: -0.9px;
       color: var(--text-muted);
-      filter: blur(1.8px);
       transform-origin: left center;
-      transform: scale(0.97);
       transition: 
-        color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.4s cubic-bezier(0.25, 1, 0.5, 1),
         filter 0.4s ease,
-        transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        opacity 0.4s ease;
       cursor: pointer;
       display: flex;
       flex-wrap: wrap;
+      align-items: baseline;
       gap: 10px;
+      will-change: transform, filter, opacity;
     }
 
-    .lyric-row:hover {
-      color: rgba(255, 255, 255, 0.7);
-      filter: blur(0px);
+    .amll-lyric-line:hover {
+      filter: blur(0px) !important;
+      opacity: 0.8 !important;
     }
 
-    .lyric-row.is-active {
-      color: #ffffff;
-      filter: blur(0px);
-      transform: scale(1.04);
-      font-weight: 800;
-      text-shadow: 0 0 35px rgba(255, 255, 255, 0.35);
-    }
-
-    .lyric-word {
+    /* Barrido progresivo de cada palabra (Apple Music Karaoke Sweep) */
+    .amll-lyric-word {
       display: inline-block;
       position: relative;
-      transition: color 0.15s ease, transform 0.2s ease;
+      background: linear-gradient(
+        90deg,
+        #ffffff 0%,
+        #ffffff var(--sweep-progress, 0%),
+        rgba(255, 255, 255, 0.32) calc(var(--sweep-progress, 0%) + 1%),
+        rgba(255, 255, 255, 0.32) 100%
+      );
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      will-change: background, filter, transform;
     }
 
-    .lyric-row.is-active .lyric-word.word-passed {
-      color: #ffffff;
+    /* Palabra cantada al 100% */
+    .amll-lyric-word.word-done {
+      --sweep-progress: 100% !important;
+      -webkit-text-fill-color: #ffffff;
     }
 
-    .lyric-row.is-active .lyric-word.word-current {
-      color: #ffffff;
-      transform: translateY(-1px);
-      text-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
+    /* Palabra que se está cantando en este instante con brillo */
+    .amll-lyric-word.word-singing {
+      filter: drop-shadow(0 0 16px rgba(255, 255, 255, 0.5));
     }
 
-    .lyric-row.is-active .lyric-word.word-future {
-      color: rgba(255, 255, 255, 0.45);
+    /* Palabra no alcanzada */
+    .amll-lyric-word.word-pending {
+      --sweep-progress: 0% !important;
+      -webkit-text-fill-color: rgba(255, 255, 255, 0.32);
+    }
+
+    /* Puntos de intermedio instrumental estilo AMLL */
+    .amll-interlude-dots {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      height: 36px;
+      margin-bottom: 30px;
+      opacity: 0.35;
+      transition: opacity 0.3s ease;
+    }
+
+    .amll-interlude-dots.is-active {
+      opacity: 0.95;
+    }
+
+    .amll-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: #ffffff;
+      transform: scale(0.85);
+    }
+
+    .amll-interlude-dots.is-active .amll-dot {
+      animation: amllDotPulse 1.4s infinite ease-in-out both;
+    }
+
+    .amll-interlude-dots.is-active .amll-dot:nth-child(1) { animation-delay: 0s; }
+    .amll-interlude-dots.is-active .amll-dot:nth-child(2) { animation-delay: 0.25s; }
+    .amll-interlude-dots.is-active .amll-dot:nth-child(3) { animation-delay: 0.5s; }
+
+    @keyframes amllDotPulse {
+      0%, 80%, 100% {
+        transform: scale(0.8);
+        opacity: 0.3;
+      }
+      40% {
+        transform: scale(1.35);
+        opacity: 1;
+        box-shadow: 0 0 12px rgba(255, 255, 255, 0.8);
+      }
     }
 
     @media (max-width: 950px) {
@@ -554,7 +599,7 @@
       .right-lyrics-panel {
         height: 55vh;
       }
-      .lyric-row {
+      .amll-lyric-line {
         font-size: 26px;
         justify-content: center;
       }
@@ -568,18 +613,17 @@
     <source src="https://file.garden/aqbkhK4DJSCL_vig/Yan%20Block%20-%20Modo%20Oculto%20(Video%20Oficial)%20-%20Yan%20Block%20(youtube).mp3" type="audio/mpeg">
   </audio>
 
-  <!-- FONDO DINÁMICO ESTILO BEAUTIFIER -->
+  <!-- FONDO TIPO BEAUTIFIER -->
   <div class="beautifier-bg" id="beautifierBg">
-    <div class="bg-layer bg-layer-1" id="bgLayer1" style="background-image: url('https://file.garden/aqbkhK4DJSCL_vig/MODO%20OCULTO.jpg');"></div>
-    <div class="bg-layer bg-layer-2" id="bgLayer2" style="background-image: url('https://file.garden/aqbkhK4DJSCL_vig/MODO%20OCULTO.jpg');"></div>
+    <div class="bg-layer bg-layer-1" style="background-image: url('https://file.garden/aqbkhK4DJSCL_vig/MODO%20OCULTO.jpg');"></div>
+    <div class="bg-layer bg-layer-2" style="background-image: url('https://file.garden/aqbkhK4DJSCL_vig/MODO%20OCULTO.jpg');"></div>
     <div class="bg-orb"></div>
   </div>
   <div class="vignette-overlay"></div>
 
-  <!-- APLICACIÓN PRINCIPAL -->
+  <!-- APLICACIÓN -->
   <div class="apple-player-app">
 
-    <!-- BARRA SUPERIOR -->
     <header class="top-mac-bar">
       <div class="mac-dots">
         <div class="mac-dot dot-red" title="Cerrar"></div>
@@ -591,7 +635,7 @@
         <svg class="apple-music-logo" viewBox="0 0 170 170">
           <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.69-3.04-7.69-7.85-12-14.44-6.19-9.45-11-20.28-14.42-32.51-3.42-12.22-5.13-23.77-5.13-34.64 0-14.78 3.59-27.18 10.77-37.21 7.18-10.02 16.32-15.17 27.42-15.44 5.33 0 10.89 1.34 16.68 4.02 5.79 2.68 9.53 4.08 11.22 4.2 1.48-.13 5.43-1.6 11.85-4.42 6.42-2.82 12.02-4.14 16.8-3.95 12.7.74 22.84 5.4 30.42 13.98-11.08 6.72-16.51 16.03-16.29 27.93.22 9.57 3.96 17.58 11.22 24.03 7.26 6.45 15.79 10.08 25.59 10.89-2.12 6.52-4.68 13.11-7.69 19.78zM119.22 31.05c0-7.39 2.66-14.38 7.98-20.97 5.32-6.59 11.93-10.42 19.83-11.48.21 1.06.32 2.01.32 2.85 0 7.39-2.77 14.59-8.31 21.6-5.54 7.01-12.24 11.03-20.1 12.06-.21-1.38-.32-2.74-.32-4.06z"/>
         </svg>
-        <span id="statusBarText">Modo Oculto — Yan Block</span>
+        <span>Modo Oculto — Yan Block</span>
       </div>
 
       <div class="top-actions">
@@ -601,10 +645,9 @@
       </div>
     </header>
 
-    <!-- CUERPO PRINCIPAL -->
     <main class="player-main-content">
 
-      <!-- COLUMNA IZQUIERDA -->
+      <!-- PORTADA Y CONTROLES (IZQUIERDA) -->
       <section class="left-player-panel">
         <div class="cover-wrapper" id="coverContainer">
           <img class="cover-img" id="trackCover" src="https://file.garden/aqbkhK4DJSCL_vig/MODO%20OCULTO.jpg" alt="Portada">
@@ -618,7 +661,6 @@
           <div class="track-artist">Yan Block</div>
         </div>
 
-        <!-- Barra de progreso -->
         <div class="scrubber-container">
           <div class="progress-bar-rail" id="progressRail">
             <div class="progress-bar-fill" id="progressFill">
@@ -631,7 +673,6 @@
           </div>
         </div>
 
-        <!-- Controles -->
         <div class="playback-controls">
           <button class="icon-btn ctrl-secondary" id="shuffleBtn" title="Aleatorio">
             <svg viewBox="0 0 24 24"><path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/></svg>
@@ -655,7 +696,6 @@
           </button>
         </div>
 
-        <!-- Fila de volumen -->
         <div class="bottom-accessories">
           <div class="volume-box">
             <button class="icon-btn" id="volumeMuteBtn" title="Silenciar">
@@ -668,10 +708,10 @@
         </div>
       </section>
 
-      <!-- COLUMNA DERECHA (LETRAS AMLL) -->
+      <!-- LYRICS ENGINE AMLL (DERECHA) -->
       <section class="right-lyrics-panel" id="lyricsContainer">
         <div class="lyrics-scroll-stage" id="lyricsStage">
-          <!-- El contenido se descarga e inyecta dinámicamente desde el TTML -->
+          <!-- Cargado en tiempo real desde el TTML -->
         </div>
       </section>
 
@@ -679,7 +719,7 @@
   </div>
 
   <script>
-    // ÚNICAMENTE ENLACES DE RECURSOS (SIN LETRAS DENTRO DEL CÓDIGO)
+    // URL DIRECTA DEL TTML (CERO LETRAS ESCRITAS EN EL CÓDIGO)
     const TTML_URL = "https://file.garden/aqbkhK4DJSCL_vig/Modo%20Oculto.ttml";
 
     // Elementos DOM
@@ -701,11 +741,61 @@
     let isPlaying = false;
     let duration = 0;
     let parsedLyrics = [];
-    let currentLineIndex = -1;
-    let userScrolling = false;
-    let scrollTimeout = null;
+    let activeLineIndex = -1;
+    let userManualScroll = false;
+    let userScrollTimer = null;
 
-    // Convertidor de marcas de tiempo TTML (00:00.000 / 00:00:00.000 / ms / s) a milisegundos
+    // ============================================================
+    // OSCILADOR DE RESORTE FÍSICO AMLL (SPRING PHYSICS SCROLL)
+    // ============================================================
+    class AMLLSpringScroller {
+      constructor(container, stiffness = 140, damping = 22) {
+        this.container = container;
+        this.stiffness = stiffness; // Rigidez del resorte
+        this.damping = damping;     // Amortiguación
+        this.currentY = 0;
+        this.targetY = 0;
+        this.velocity = 0;
+        this.lastTime = performance.now();
+      }
+
+      setTarget(y) {
+        this.targetY = y;
+      }
+
+      step(now) {
+        const dt = Math.min((now - this.lastTime) / 1000, 0.064);
+        this.lastTime = now;
+
+        if (userManualScroll) {
+          this.currentY = this.container.scrollTop;
+          this.velocity = 0;
+          return;
+        }
+
+        // Ecuación de resorte amortiguado de Hooke
+        const displacement = this.currentY - this.targetY;
+        const springForce = -this.stiffness * displacement;
+        const dampingForce = -this.damping * this.velocity;
+        const acceleration = springForce + dampingForce;
+
+        this.velocity += acceleration * dt;
+        this.currentY += this.velocity * dt;
+
+        if (Math.abs(displacement) < 0.2 && Math.abs(this.velocity) < 0.2) {
+          this.currentY = this.targetY;
+          this.velocity = 0;
+        }
+
+        this.container.scrollTop = this.currentY;
+      }
+    }
+
+    const springScroller = new AMLLSpringScroller(lyricsStage);
+
+    // ============================================================
+    // PARSER TTML ESPECIFICACIÓN AMLL / ITUNES
+    // ============================================================
     function parseTimeToMs(t) {
       if (!t) return 0;
       t = t.trim();
@@ -720,10 +810,9 @@
       return parseFloat(t) * 1000 || 0;
     }
 
-    // Analizador de archivo TTML (especificación AMLL / iTunes Lyric TTML)
-    function parseTTML(xmlString) {
+    function parseTTML(xmlText) {
       const parser = new DOMParser();
-      const xmlDoc = parser.parseFromString(xmlString, "application/xml");
+      const xmlDoc = parser.parseFromString(xmlText, "application/xml");
       const pElements = xmlDoc.querySelectorAll('p');
       const lines = [];
 
@@ -747,7 +836,6 @@
             });
           });
         } else {
-          // Si el TTML no contiene spans por palabra, crea la unidad de la línea
           words.push({
             text: p.textContent.trim(),
             startTime: startMs,
@@ -759,153 +847,218 @@
           id: p.getAttribute('itunes:key') || `line_${idx}`,
           startTime: startMs,
           endTime: endMs,
-          words: words
+          words: words,
+          domElement: null
         });
       });
 
       return lines;
     }
 
-    // Renderizado en el DOM estilo Apple Music
-    function renderLyrics(lines) {
+    // ============================================================
+    // CONSTRUCCIÓN DEL DOM ESTILO APPLE MUSIC & AMLL
+    // ============================================================
+    function buildLyricDOM(lines) {
       lyricsStage.innerHTML = '';
       if (!lines || lines.length === 0) {
-        lyricsStage.innerHTML = '<div class="lyric-row is-active">Letra no disponible</div>';
+        lyricsStage.innerHTML = '<div class="amll-lyric-line is-active">Letra no disponible</div>';
         return;
       }
 
-      lines.forEach((line, lineIdx) => {
-        const row = document.createElement('div');
-        row.className = 'lyric-row';
-        row.dataset.index = lineIdx;
+      lines.forEach((line, idx) => {
+        // Interludio instrumental previo si el espacio con el verso anterior es mayor a 4.5s
+        if (idx > 0) {
+          const prevLine = lines[idx - 1];
+          if (line.startTime - prevLine.endTime > 4500) {
+            const dots = document.createElement('div');
+            dots.className = 'amll-interlude-dots';
+            dots.dataset.interludeStart = prevLine.endTime;
+            dots.dataset.interludeEnd = line.startTime;
+            dots.innerHTML = `
+              <div class="amll-dot"></div>
+              <div class="amll-dot"></div>
+              <div class="amll-dot"></div>
+            `;
+            lyricsStage.appendChild(dots);
+          }
+        }
 
+        const lineEl = document.createElement('div');
+        lineEl.className = 'amll-lyric-line';
+        lineEl.dataset.index = idx;
+
+        // Inyectar spans con soporte para barrido de gradiente AMLL
         line.words.forEach((w, wIdx) => {
-          const wordSpan = document.createElement('span');
-          wordSpan.className = 'lyric-word word-future';
-          wordSpan.dataset.wordIndex = wIdx;
-          wordSpan.textContent = w.text;
-          row.appendChild(wordSpan);
+          const wordEl = document.createElement('span');
+          wordEl.className = 'amll-lyric-word word-pending';
+          wordEl.dataset.wordIndex = wIdx;
+          wordEl.textContent = w.text;
+          lineEl.appendChild(wordEl);
         });
 
-        // Al hacer clic en un verso: Salto instantáneo (Seek)
-        row.addEventListener('click', () => {
+        // Al hacer clic: salto exacto con física inmediata
+        lineEl.addEventListener('click', () => {
           audio.currentTime = (line.startTime / 1000);
           if (!isPlaying) togglePlay();
-          highlightLine(lineIdx, true);
+          snapToLine(idx);
         });
 
-        lyricsStage.appendChild(row);
+        lyricsStage.appendChild(lineEl);
+        line.domElement = lineEl;
       });
     }
 
-    // Descarga directa del enlace .ttml
-    async function loadLyricsFromUrl() {
-      lyricsStage.innerHTML = '<div class="lyric-row is-active">Cargando letra...</div>';
+    // ============================================================
+    // CARGA REMOTA DE LA LETRA (TTML)
+    // ============================================================
+    async function fetchTTMLLyrics() {
+      lyricsStage.innerHTML = '<div class="amll-lyric-line is-active">Cargando letra...</div>';
       try {
-        const response = await fetch(TTML_URL);
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        const ttmlText = await response.text();
-        parsedLyrics = parseTTML(ttmlText);
-        renderLyrics(parsedLyrics);
+        let response;
+        try {
+          response = await fetch(TTML_URL);
+        } catch (e) {
+          // Fallback a proxy CORS si se abre desde archivo local file://
+          response = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(TTML_URL)}`);
+        }
+        const xmlText = await response.text();
+        parsedLyrics = parseTTML(xmlText);
+        buildLyricDOM(parsedLyrics);
       } catch (err) {
-        console.error("Error al descargar el archivo TTML:", err);
-        lyricsStage.innerHTML = '<div class="lyric-row is-active">No se pudo cargar la letra desde el enlace TTML.</div>';
+        console.error("Error al cargar TTML:", err);
+        lyricsStage.innerHTML = '<div class="amll-lyric-line is-active">No se pudo cargar la letra desde el servidor.</div>';
       }
     }
 
-    // Actualización de tiempos y animación de palabras
-    function updatePlayback(currentTimeSec) {
-      const currentMs = currentTimeSec * 1000;
+    // ============================================================
+    // LOOP DE ANIMACIÓN Y RENDERIZADO 60FPS (AMLL CORE ENGINE)
+    // ============================================================
+    function renderFrame(now) {
+      // 1. Paso del resorte físico de scroll
+      springScroller.step(now);
 
-      if (duration > 0) {
-        const pct = (currentTimeSec / duration) * 100;
-        progressFill.style.width = `${Math.min(pct, 100)}%`;
-        currentTimeEl.textContent = formatTime(currentTimeSec);
+      const currentMs = audio.currentTime * 1000;
 
-        const remSec = Math.max(0, duration - currentTimeSec);
-        remainingTimeEl.textContent = `-${formatTime(remSec)}`;
-      }
-
-      if (parsedLyrics.length === 0) return;
-
-      // Localizar verso actual
-      let activeIdx = -1;
+      // 2. Localizar verso activo en este milisegundo
+      let currentIdx = -1;
       for (let i = 0; i < parsedLyrics.length; i++) {
         const line = parsedLyrics[i];
         if (currentMs >= line.startTime && currentMs <= line.endTime + 350) {
-          activeIdx = i;
+          currentIdx = i;
           break;
         } else if (currentMs < line.startTime) {
           break;
         }
       }
 
-      if (activeIdx !== -1 && activeIdx !== currentLineIndex) {
-        highlightLine(activeIdx, false);
+      if (currentIdx !== activeLineIndex) {
+        activeLineIndex = currentIdx;
+        if (activeLineIndex !== -1) {
+          snapToLine(activeLineIndex);
+        }
       }
 
-      // Sincronización palabra por palabra de la línea activa
-      if (currentLineIndex !== -1 && parsedLyrics[currentLineIndex]) {
-        const activeLine = parsedLyrics[currentLineIndex];
-        const lineEl = lyricsStage.children[currentLineIndex];
-        if (lineEl) {
-          const wordEls = lineEl.querySelectorAll('.lyric-word');
-          activeLine.words.forEach((w, wIdx) => {
-            const el = wordEls[wIdx];
-            if (!el) return;
-            if (currentMs >= w.endTime) {
-              el.className = 'lyric-word word-passed';
-            } else if (currentMs >= w.startTime && currentMs < w.endTime) {
-              el.className = 'lyric-word word-current';
+      // 3. Efectos de profundidad de campo (Blur & Scale según distancia)
+      if (parsedLyrics.length > 0) {
+        parsedLyrics.forEach((line, i) => {
+          if (!line.domElement) return;
+          if (activeLineIndex === -1) {
+            line.domElement.style.filter = 'blur(1.5px)';
+            line.domElement.style.opacity = '0.35';
+            line.domElement.style.transform = 'scale(0.96)';
+          } else {
+            const distance = Math.abs(i - activeLineIndex);
+            if (distance === 0) {
+              line.domElement.style.filter = 'blur(0px)';
+              line.domElement.style.opacity = '1';
+              line.domElement.style.transform = 'scale(1.05)';
+            } else if (distance === 1) {
+              line.domElement.style.filter = 'blur(1.6px)';
+              line.domElement.style.opacity = '0.52';
+              line.domElement.style.transform = 'scale(0.98)';
+            } else if (distance === 2) {
+              line.domElement.style.filter = 'blur(2.8px)';
+              line.domElement.style.opacity = '0.32';
+              line.domElement.style.transform = 'scale(0.95)';
             } else {
-              el.className = 'lyric-word word-future';
+              line.domElement.style.filter = 'blur(4px)';
+              line.domElement.style.opacity = '0.18';
+              line.domElement.style.transform = 'scale(0.92)';
+            }
+          }
+        });
+      }
+
+      // 4. Barrido de gradiente palabra por palabra (Apple Music Sweep)
+      if (activeLineIndex !== -1 && parsedLyrics[activeLineIndex]) {
+        const activeLine = parsedLyrics[activeLineIndex];
+        const lineEl = activeLine.domElement;
+        if (lineEl) {
+          const wordSpans = lineEl.querySelectorAll('.amll-lyric-word');
+          activeLine.words.forEach((w, wIdx) => {
+            const span = wordSpans[wIdx];
+            if (!span) return;
+
+            if (currentMs >= w.endTime) {
+              span.className = 'amll-lyric-word word-done';
+              span.style.setProperty('--sweep-progress', '100%');
+            } else if (currentMs >= w.startTime && currentMs < w.endTime) {
+              span.className = 'amll-lyric-word word-singing';
+              const progress = Math.max(0, Math.min(1, (currentMs - w.startTime) / (w.endTime - w.startTime)));
+              span.style.setProperty('--sweep-progress', `${(progress * 100).toFixed(1)}%`);
+            } else {
+              span.className = 'amll-lyric-word word-pending';
+              span.style.setProperty('--sweep-progress', '0%');
             }
           });
         }
       }
-    }
 
-    function highlightLine(index, forceScroll) {
-      currentLineIndex = index;
-      const allRows = lyricsStage.querySelectorAll('.lyric-row');
-      allRows.forEach((r, idx) => {
-        if (idx === index) {
-          r.classList.add('is-active');
+      // 5. Animación de los puntos de interludio
+      const interludeEls = lyricsStage.querySelectorAll('.amll-interlude-dots');
+      interludeEls.forEach(el => {
+        const start = parseFloat(el.dataset.interludeStart);
+        const end = parseFloat(el.dataset.interludeEnd);
+        if (currentMs >= start && currentMs < end) {
+          el.classList.add('is-active');
         } else {
-          r.classList.remove('is-active');
-          r.querySelectorAll('.lyric-word').forEach(w => {
-            w.className = 'lyric-word ' + (idx < index ? 'word-passed' : 'word-future');
-          });
+          el.classList.remove('is-active');
         }
       });
 
-      if (!userScrolling || forceScroll) {
-        const activeRow = allRows[index];
-        if (activeRow) {
-          const stageHeight = lyricsStage.clientHeight;
-          const rowTop = activeRow.offsetTop;
-          const rowHeight = activeRow.clientHeight;
-          const scrollTarget = rowTop - (stageHeight * 0.35) + (rowHeight / 2);
-          lyricsStage.scrollTo({
-            top: Math.max(0, scrollTarget),
-            behavior: 'smooth'
-          });
-        }
-      }
+      requestAnimationFrame(renderFrame);
     }
 
-    lyricsStage.addEventListener('wheel', () => {
-      userScrolling = true;
-      clearTimeout(scrollTimeout);
-      scrollTimeout = setTimeout(() => { userScrolling = false; }, 2600);
-    });
+    // Calcula la posición focal y asigna el destino al oscilador de resorte
+    function snapToLine(index) {
+      const line = parsedLyrics[index];
+      if (!line || !line.domElement) return;
 
-    lyricsStage.addEventListener('touchstart', () => {
-      userScrolling = true;
-      clearTimeout(scrollTimeout);
-      scrollTimeout = setTimeout(() => { userScrolling = false; }, 2600);
-    });
+      const stageHeight = lyricsStage.clientHeight;
+      const rowTop = line.domElement.offsetTop;
+      const rowHeight = line.domElement.clientHeight;
 
+      // Posición focal Apple Music (~32% desde la parte superior)
+      const targetScroll = rowTop - (stageHeight * 0.32) + (rowHeight / 2);
+      springScroller.setTarget(Math.max(0, targetScroll));
+    }
+
+    // Control de scroll manual
+    function markUserScrolling() {
+      userManualScroll = true;
+      clearTimeout(userScrollTimer);
+      userScrollTimer = setTimeout(() => {
+        userManualScroll = false;
+        if (activeLineIndex !== -1) snapToLine(activeLineIndex);
+      }, 2800);
+    }
+
+    lyricsStage.addEventListener('wheel', markUserScrolling, { passive: true });
+    lyricsStage.addEventListener('touchstart', markUserScrolling, { passive: true });
+
+    // ============================================================
+    // CONTROLES DE REPRODUCCIÓN Y EVENTOS
+    // ============================================================
     function formatTime(seconds) {
       const min = Math.floor(seconds / 60);
       const sec = Math.floor(seconds % 60);
@@ -940,7 +1093,13 @@
     });
 
     audio.addEventListener('timeupdate', () => {
-      updatePlayback(audio.currentTime);
+      if (duration > 0) {
+        const pct = (audio.currentTime / duration) * 100;
+        progressFill.style.width = `${Math.min(pct, 100)}%`;
+        currentTimeEl.textContent = formatTime(audio.currentTime);
+        const remSec = Math.max(0, duration - audio.currentTime);
+        remainingTimeEl.textContent = `-${formatTime(remSec)}`;
+      }
     });
 
     audio.addEventListener('ended', () => {
@@ -948,14 +1107,13 @@
       audio.play();
     });
 
-    // Control de barra de progreso
+    // Scrubber
     function handleScrub(e) {
       const rect = progressRail.getBoundingClientRect();
       const clientX = e.touches ? e.touches[0].clientX : e.clientX;
       const offsetX = Math.max(0, Math.min(clientX - rect.left, rect.width));
       const percentage = offsetX / rect.width;
       audio.currentTime = percentage * duration;
-      updatePlayback(audio.currentTime);
     }
 
     progressRail.addEventListener('mousedown', (e) => {
@@ -1019,9 +1177,10 @@
       }
     });
 
-    // Cargar directamente la letra desde el enlace TTML
-    loadLyricsFromUrl();
+    // Iniciar carga del TTML y loop de animación a 60 FPS
     document.body.classList.add('is-paused');
+    fetchTTMLLyrics();
+    requestAnimationFrame(renderFrame);
   </script>
 </body>
 </html>
