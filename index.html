@@ -3,26 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Apple Music — Modo Oculto (Yan Block)</title>
+  <title>Apple Music — Modo Oculto</title>
 
-  <!-- Fuentes Apple SF Pro / Inter -->
+  <!-- Fuentes Apple / Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <!-- Estilos base de AMLL (Apple Music-like Lyrics) -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@applemusic-like-lyrics/core/dist/style.css">
-
   <style>
     :root {
       --font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, sans-serif;
-      --apple-blur: 50px;
       --text-main: #ffffff;
       --text-secondary: rgba(255, 255, 255, 0.65);
       --text-muted: rgba(255, 255, 255, 0.35);
-      --glass-bg: rgba(255, 255, 255, 0.08);
-      --glass-border: rgba(255, 255, 255, 0.12);
-      --accent-color: #fa2d48; /* Rojo icónico de Apple Music */
+      --accent-color: #fa2d48;
     }
 
     * {
@@ -48,9 +42,9 @@
        ============================================================ */
     .beautifier-bg {
       position: fixed;
-      inset: -20%;
-      width: 140%;
-      height: 140%;
+      inset: -25%;
+      width: 150%;
+      height: 150%;
       z-index: 0;
       pointer-events: none;
       overflow: hidden;
@@ -61,49 +55,43 @@
       inset: 0;
       background-size: cover;
       background-position: center;
-      filter: blur(85px) saturate(190%) brightness(0.65);
+      filter: blur(90px) saturate(200%) brightness(0.65);
       transform-origin: center center;
-      transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    /* Capa primaria: zoom lento y rotación suave */
     .bg-layer-1 {
-      animation: ambientPan1 35s infinite alternate ease-in-out;
+      animation: ambientPan1 32s infinite alternate ease-in-out;
       opacity: 0.85;
     }
 
-    /* Capa secundaria: movimiento en contraposición con mezcla */
     .bg-layer-2 {
-      animation: ambientPan2 48s infinite alternate ease-in-out;
+      animation: ambientPan2 45s infinite alternate ease-in-out;
       mix-blend-mode: color-dodge;
-      opacity: 0.35;
-      filter: blur(110px) saturate(220%) brightness(0.8);
+      opacity: 0.4;
+      filter: blur(120px) saturate(220%) brightness(0.8);
     }
 
-    /* Esferas de luz sutil para mayor profundidad */
     .bg-orb {
       position: absolute;
       width: 50vw;
       height: 50vw;
       border-radius: 50%;
       background: radial-gradient(circle, rgba(250, 45, 72, 0.25) 0%, rgba(13, 14, 18, 0) 70%);
-      animation: orbFloat 25s infinite alternate ease-in-out;
+      animation: orbFloat 24s infinite alternate ease-in-out;
       mix-blend-mode: screen;
       filter: blur(60px);
     }
 
-    /* Superposición de grano cinematográfico y viñeta Apple Music */
     .vignette-overlay {
       position: fixed;
       inset: 0;
       z-index: 1;
       pointer-events: none;
       background: 
-        radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.15) 0%, rgba(0, 0, 0, 0.65) 100%),
-        linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.6) 100%);
+        radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.7) 100%),
+        linear-gradient(180deg, rgba(0,0,0,0.35) 0%, transparent 40%, rgba(0,0,0,0.65) 100%);
     }
 
-    /* Control de pausa en animaciones de fondo */
     body.is-paused .bg-layer,
     body.is-paused .bg-orb {
       animation-play-state: paused !important;
@@ -136,11 +124,11 @@
       height: 100vh;
       display: flex;
       flex-direction: column;
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
     }
 
-    /* Barra superior estilo macOS / Apple Music */
+    /* Barra superior macOS */
     .top-mac-bar {
       height: 52px;
       padding: 0 28px;
@@ -174,12 +162,11 @@
       align-items: center;
       gap: 10px;
       background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.12);
       padding: 6px 16px;
       border-radius: 30px;
       font-size: 13px;
       font-weight: 600;
-      letter-spacing: 0.2px;
       color: rgba(255, 255, 255, 0.9);
       backdrop-filter: blur(20px);
     }
@@ -219,7 +206,7 @@
     }
 
     /* ============================================================
-       CUERPO PRINCIPAL (PORTADA Y CONTROLES IZQ / LETRAS DER)
+       CUERPO: PORTADA ABAJO-IZQ / LYRICS A LA DERECHA
        ============================================================ */
     .player-main-content {
       flex: 1;
@@ -234,7 +221,7 @@
       width: 100%;
     }
 
-    /* Columna Izquierda: Portada + Info + Controles */
+    /* Columna Izquierda */
     .left-player-panel {
       display: flex;
       flex-direction: column;
@@ -245,7 +232,6 @@
       padding-bottom: 20px;
     }
 
-    /* Portada estilo Apple Music */
     .cover-wrapper {
       position: relative;
       width: 100%;
@@ -258,6 +244,7 @@
         0 10px 25px rgba(0, 0, 0, 0.4),
         0 0 0 1px rgba(255, 255, 255, 0.12);
       transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.45s ease;
+      cursor: pointer;
     }
 
     .cover-wrapper:hover {
@@ -276,7 +263,6 @@
       display: block;
     }
 
-    /* Información de la pista */
     .track-details {
       width: 100%;
       margin-bottom: 22px;
@@ -295,7 +281,6 @@
       font-weight: 700;
       letter-spacing: -0.5px;
       color: #fff;
-      line-height: 1.2;
     }
 
     .lossless-pill {
@@ -314,14 +299,9 @@
       font-size: 19px;
       font-weight: 500;
       color: var(--text-secondary);
-      cursor: pointer;
-      transition: color 0.2s;
-    }
-    .track-artist:hover {
-      color: #fff;
     }
 
-    /* Barra de Progreso Apple Music */
+    /* Barra de progreso */
     .scrubber-container {
       width: 100%;
       margin-bottom: 20px;
@@ -380,7 +360,7 @@
       font-variant-numeric: tabular-nums;
     }
 
-    /* Controles de Reproducción */
+    /* Controles */
     .playback-controls {
       width: 100%;
       display: flex;
@@ -409,10 +389,6 @@
       background: #f5f5f7;
     }
 
-    .play-pause-circle:active {
-      transform: scale(0.95);
-    }
-
     .play-pause-circle svg {
       width: 24px;
       height: 24px;
@@ -425,12 +401,10 @@
     .ctrl-secondary:hover {
       color: #ffffff;
     }
-
     .ctrl-secondary.active {
       color: var(--accent-color);
     }
 
-    /* Fila de Volumen y Accesorios */
     .bottom-accessories {
       width: 100%;
       display: flex;
@@ -471,7 +445,7 @@
     }
 
     /* ============================================================
-       COLUMNA DERECHA: MOTOR DE LETRAS ESTILO APPLE MUSIC (AMLL)
+       COLUMNA DERECHA: LETRAS DINÁMICAS ESTILO AMLL
        ============================================================ */
     .right-lyrics-panel {
       position: relative;
@@ -479,34 +453,31 @@
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      /* Máscara de desvanecimiento superior e inferior oficial de Apple */
       mask-image: linear-gradient(to bottom, 
         transparent 0%, 
-        rgba(0, 0, 0, 1) 12%, 
-        rgba(0, 0, 0, 1) 85%, 
+        rgba(0, 0, 0, 1) 14%, 
+        rgba(0, 0, 0, 1) 84%, 
         transparent 100%);
       -webkit-mask-image: linear-gradient(to bottom, 
         transparent 0%, 
-        rgba(0, 0, 0, 1) 12%, 
-        rgba(0, 0, 0, 1) 85%, 
+        rgba(0, 0, 0, 1) 14%, 
+        rgba(0, 0, 0, 1) 84%, 
         transparent 100%);
     }
 
-    /* Contenedor de scroll para las letras */
     .lyrics-scroll-stage {
       flex: 1;
       overflow-y: auto;
       overflow-x: hidden;
-      padding: 120px 40px 240px 20px;
+      padding: 140px 40px 260px 20px;
       scroll-behavior: smooth;
-      scrollbar-width: none; /* Ocultar barra Firefox */
+      scrollbar-width: none;
     }
 
     .lyrics-scroll-stage::-webkit-scrollbar {
-      display: none; /* Ocultar barra Chrome/Safari */
+      display: none;
     }
 
-    /* Líneas de letra */
     .lyric-row {
       margin-bottom: 34px;
       font-size: clamp(30px, 3.1vw, 46px);
@@ -520,8 +491,7 @@
       transition: 
         color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
         filter 0.4s ease,
-        transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-        opacity 0.4s ease;
+        transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
       cursor: pointer;
       display: flex;
       flex-wrap: wrap;
@@ -529,11 +499,10 @@
     }
 
     .lyric-row:hover {
-      color: rgba(255, 255, 255, 0.65);
+      color: rgba(255, 255, 255, 0.7);
       filter: blur(0px);
     }
 
-    /* Estado activo estilo Apple Music */
     .lyric-row.is-active {
       color: #ffffff;
       filter: blur(0px);
@@ -542,7 +511,6 @@
       text-shadow: 0 0 35px rgba(255, 255, 255, 0.35);
     }
 
-    /* Palabra individual para sincronización karaoke */
     .lyric-word {
       display: inline-block;
       position: relative;
@@ -563,9 +531,6 @@
       color: rgba(255, 255, 255, 0.45);
     }
 
-    /* ============================================================
-       RESPONSIVIDAD Y DISPOSITIVOS
-       ============================================================ */
     @media (max-width: 950px) {
       .player-main-content {
         grid-template-columns: 1fr;
@@ -598,12 +563,12 @@
 </head>
 <body>
 
-  <!-- ELEMENTO DE AUDIO OCULTO -->
+  <!-- ELEMENTO DE AUDIO -->
   <audio id="audioElement" preload="metadata" crossorigin="anonymous">
     <source src="https://file.garden/aqbkhK4DJSCL_vig/Yan%20Block%20-%20Modo%20Oculto%20(Video%20Oficial)%20-%20Yan%20Block%20(youtube).mp3" type="audio/mpeg">
   </audio>
 
-  <!-- FONDO ANIMADO TIPO YOUTUBE MUSIC BEAUTIFIER -->
+  <!-- FONDO DINÁMICO ESTILO BEAUTIFIER -->
   <div class="beautifier-bg" id="beautifierBg">
     <div class="bg-layer bg-layer-1" id="bgLayer1" style="background-image: url('https://file.garden/aqbkhK4DJSCL_vig/MODO%20OCULTO.jpg');"></div>
     <div class="bg-layer bg-layer-2" id="bgLayer2" style="background-image: url('https://file.garden/aqbkhK4DJSCL_vig/MODO%20OCULTO.jpg');"></div>
@@ -614,7 +579,7 @@
   <!-- APLICACIÓN PRINCIPAL -->
   <div class="apple-player-app">
 
-    <!-- BARRA SUPERIOR MACOS -->
+    <!-- BARRA SUPERIOR -->
     <header class="top-mac-bar">
       <div class="mac-dots">
         <div class="mac-dot dot-red" title="Cerrar"></div>
@@ -626,7 +591,7 @@
         <svg class="apple-music-logo" viewBox="0 0 170 170">
           <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.69-3.04-7.69-7.85-12-14.44-6.19-9.45-11-20.28-14.42-32.51-3.42-12.22-5.13-23.77-5.13-34.64 0-14.78 3.59-27.18 10.77-37.21 7.18-10.02 16.32-15.17 27.42-15.44 5.33 0 10.89 1.34 16.68 4.02 5.79 2.68 9.53 4.08 11.22 4.2 1.48-.13 5.43-1.6 11.85-4.42 6.42-2.82 12.02-4.14 16.8-3.95 12.7.74 22.84 5.4 30.42 13.98-11.08 6.72-16.51 16.03-16.29 27.93.22 9.57 3.96 17.58 11.22 24.03 7.26 6.45 15.79 10.08 25.59 10.89-2.12 6.52-4.68 13.11-7.69 19.78zM119.22 31.05c0-7.39 2.66-14.38 7.98-20.97 5.32-6.59 11.93-10.42 19.83-11.48.21 1.06.32 2.01.32 2.85 0 7.39-2.77 14.59-8.31 21.6-5.54 7.01-12.24 11.03-20.1 12.06-.21-1.38-.32-2.74-.32-4.06z"/>
         </svg>
-        <span>Modo Oculto — Yan Block</span>
+        <span id="statusBarText">Modo Oculto — Yan Block</span>
       </div>
 
       <div class="top-actions">
@@ -636,24 +601,24 @@
       </div>
     </header>
 
-    <!-- ÁREA PRINCIPAL DIVIDIDA (APPLE MUSIC DESKTOP STYLE) -->
+    <!-- CUERPO PRINCIPAL -->
     <main class="player-main-content">
 
-      <!-- COLUMNA IZQUIERDA: PORTADA, INFORMACIÓN Y CONTROLES -->
+      <!-- COLUMNA IZQUIERDA -->
       <section class="left-player-panel">
         <div class="cover-wrapper" id="coverContainer">
-          <img class="cover-img" id="trackCover" src="https://file.garden/aqbkhK4DJSCL_vig/MODO%20OCULTO.jpg" alt="Portada Modo Oculto">
+          <img class="cover-img" id="trackCover" src="https://file.garden/aqbkhK4DJSCL_vig/MODO%20OCULTO.jpg" alt="Portada">
         </div>
 
         <div class="track-details">
           <div class="track-title-row">
-            <h1 class="track-title" id="trackTitle">Modo Oculto</h1>
+            <h1 class="track-title">Modo Oculto</h1>
             <span class="lossless-pill">Lossless</span>
           </div>
-          <div class="track-artist" id="trackArtist">Yan Block</div>
+          <div class="track-artist">Yan Block</div>
         </div>
 
-        <!-- Barra de progreso Apple -->
+        <!-- Barra de progreso -->
         <div class="scrubber-container">
           <div class="progress-bar-rail" id="progressRail">
             <div class="progress-bar-fill" id="progressFill">
@@ -662,11 +627,11 @@
           </div>
           <div class="time-indicators">
             <span id="currentTime">0:00</span>
-            <span id="remainingTime">-2:44</span>
+            <span id="remainingTime">-0:00</span>
           </div>
         </div>
 
-        <!-- Controles de transporte -->
+        <!-- Controles -->
         <div class="playback-controls">
           <button class="icon-btn ctrl-secondary" id="shuffleBtn" title="Aleatorio">
             <svg viewBox="0 0 24 24"><path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/></svg>
@@ -703,208 +668,21 @@
         </div>
       </section>
 
-      <!-- COLUMNA DERECHA: LETRAS DINÁMICAS ESTILO APPLE MUSIC -->
+      <!-- COLUMNA DERECHA (LETRAS AMLL) -->
       <section class="right-lyrics-panel" id="lyricsContainer">
         <div class="lyrics-scroll-stage" id="lyricsStage">
-          <!-- Las líneas se inyectan dinámicamente mediante el motor AMLL / TTML -->
-          <div class="lyric-row is-active">Cargando letra sincronizada...</div>
+          <!-- El contenido se descarga e inyecta dinámicamente desde el TTML -->
         </div>
       </section>
 
     </main>
   </div>
 
-  <!-- SCRIPT CON PARSER TTML Y MOTOR DE LETRAS FLUIDO -->
-  <script type="module">
-    // URLs provistas por el usuario
-    const TRACK_DATA = {
-      title: "Modo Oculto",
-      artist: "Yan Block",
-      audioUrl: "https://file.garden/aqbkhK4DJSCL_vig/Yan%20Block%20-%20Modo%20Oculto%20(Video%20Oficial)%20-%20Yan%20Block%20(youtube).mp3",
-      coverUrl: "https://file.garden/aqbkhK4DJSCL_vig/MODO%20OCULTO.jpg",
-      ttmlUrl: "https://file.garden/aqbkhK4DJSCL_vig/Modo%20Oculto.ttml"
-    };
+  <script>
+    // ÚNICAMENTE ENLACES DE RECURSOS (SIN LETRAS DENTRO DEL CÓDIGO)
+    const TTML_URL = "https://file.garden/aqbkhK4DJSCL_vig/Modo%20Oculto.ttml";
 
-    // Respaldo de TTML estructurado en caso de bloqueo CORS al abrir en local (file://)
-    const FALLBACK_TTML = `<?xml version="1.0" encoding="utf-8"?>
-<tt xmlns="http://www.w3.org/ns/ttml" xmlns:itunes="http://music.apple.com/lyric-ttml-internal">
-  <body>
-    <div>
-      <p begin="00:09.500" end="00:13.800" itunes:key="L1">
-        <span begin="00:09.500" end="00:10.200">Si </span>
-        <span begin="00:10.200" end="00:10.800">te </span>
-        <span begin="00:10.800" end="00:11.700">luce', </span>
-        <span begin="00:11.700" end="00:12.300">yo </span>
-        <span begin="00:12.300" end="00:12.800">me </span>
-        <span begin="00:12.800" end="00:13.800">luzco</span>
-      </p>
-      <p begin="00:13.850" end="00:17.400" itunes:key="L2">
-        <span begin="00:13.850" end="00:14.300">En </span>
-        <span begin="00:14.300" end="00:14.800">ti </span>
-        <span begin="00:14.800" end="00:15.300">vo'a </span>
-        <span begin="00:15.300" end="00:16.100">explotar </span>
-        <span begin="00:16.100" end="00:16.600">un </span>
-        <span begin="00:16.600" end="00:17.400">party</span>
-      </p>
-      <p begin="00:17.450" end="00:22.100" itunes:key="L3">
-        <span begin="00:17.450" end="00:18.100">Eso </span>
-        <span begin="00:18.100" end="00:18.600">no </span>
-        <span begin="00:18.600" end="00:19.200">es </span>
-        <span begin="00:19.200" end="00:19.800">na' </span>
-        <span begin="00:19.800" end="00:20.300">al </span>
-        <span begin="00:20.300" end="00:20.900">la'o </span>
-        <span begin="00:20.900" end="00:21.400">de </span>
-        <span begin="00:21.400" end="00:21.800">lo </span>
-        <span begin="00:21.800" end="00:22.100">que </span>
-        <span begin="00:22.100" end="00:22.300">yo </span>
-        <span begin="00:22.300" end="00:22.400">me </span>
-        <span begin="00:22.400" end="00:22.700">busco</span>
-      </p>
-      <p begin="00:22.200" end="00:26.400" itunes:key="L4">
-        <span begin="00:22.200" end="00:23.200">Siempre </span>
-        <span begin="00:23.200" end="00:23.900">modo </span>
-        <span begin="00:23.900" end="00:24.600">oculto, </span>
-        <span begin="00:24.600" end="00:25.500">nadie </span>
-        <span begin="00:25.500" end="00:26.000">nos </span>
-        <span begin="00:26.000" end="00:26.400">ve</span>
-      </p>
-      <p begin="00:26.500" end="00:30.600" itunes:key="L5">
-        <span begin="00:26.500" end="00:27.200">Yo </span>
-        <span begin="00:27.200" end="00:27.800">los </span>
-        <span begin="00:27.800" end="00:28.900">confundo, </span>
-        <span begin="00:28.900" end="00:29.500">se </span>
-        <span begin="00:29.500" end="00:30.100">creen </span>
-        <span begin="00:30.100" end="00:30.400">que </span>
-        <span begin="00:30.400" end="00:30.600">saben</span>
-      </p>
-      <p begin="00:30.700" end="00:34.900" itunes:key="L6">
-        <span begin="00:30.700" end="00:31.500">Y </span>
-        <span begin="00:31.500" end="00:32.100">no </span>
-        <span begin="00:32.100" end="00:32.800">saben </span>
-        <span begin="00:32.800" end="00:33.400">na', </span>
-        <span begin="00:33.400" end="00:34.000">no </span>
-        <span begin="00:34.000" end="00:34.500">saben </span>
-        <span begin="00:34.500" end="00:34.900">na'</span>
-      </p>
-      <p begin="00:35.000" end="00:39.200" itunes:key="L7">
-        <span begin="00:35.000" end="00:35.800">No </span>
-        <span begin="00:35.800" end="00:36.400">saben </span>
-        <span begin="00:36.400" end="00:37.000">na', </span>
-        <span begin="00:37.000" end="00:37.800">no </span>
-        <span begin="00:37.800" end="00:38.500">saben </span>
-        <span begin="00:38.500" end="00:39.200">na'</span>
-      </p>
-      <p begin="00:39.300" end="00:43.600" itunes:key="L8">
-        <span begin="00:39.300" end="00:40.000">Si </span>
-        <span begin="00:40.000" end="00:40.600">te </span>
-        <span begin="00:40.600" end="00:41.400">luce', </span>
-        <span begin="00:41.400" end="00:42.100">yo </span>
-        <span begin="00:42.100" end="00:42.700">me </span>
-        <span begin="00:42.700" end="00:43.600">luzco</span>
-      </p>
-      <p begin="00:43.700" end="00:47.900" itunes:key="L9">
-        <span begin="00:43.700" end="00:44.200">En </span>
-        <span begin="00:44.200" end="00:44.800">ti </span>
-        <span begin="00:44.800" end="00:45.300">vo'a </span>
-        <span begin="00:45.300" end="00:46.300">explotar </span>
-        <span begin="00:46.300" end="00:47.000">un </span>
-        <span begin="00:47.000" end="00:47.900">party</span>
-      </p>
-      <p begin="00:48.000" end="00:52.300" itunes:key="L10">
-        <span begin="00:48.000" end="00:48.800">Eso </span>
-        <span begin="00:48.800" end="00:49.400">no </span>
-        <span begin="00:49.400" end="00:50.000">es </span>
-        <span begin="00:50.000" end="00:50.600">na' </span>
-        <span begin="00:50.600" end="00:51.100">al </span>
-        <span begin="00:51.100" end="00:51.600">la'o </span>
-        <span begin="00:51.600" end="00:52.000">de </span>
-        <span begin="00:52.000" end="00:52.300">lo </span>
-        <span begin="00:52.300" end="00:52.600">que </span>
-        <span begin="00:52.600" end="00:52.800">yo </span>
-        <span border="0" begin="00:52.800" end="00:53.000">me </span>
-        <span begin="00:53.000" end="00:53.300">busco</span>
-      </p>
-      <p begin="00:53.400" end="00:57.300" itunes:key="L11">
-        <span begin="00:53.400" end="00:54.300">Siempre </span>
-        <span begin="00:54.300" end="00:55.000">modo </span>
-        <span begin="00:55.000" end="00:55.800">oculto, </span>
-        <span begin="00:55.800" end="00:56.500">nadie </span>
-        <span begin="00:56.500" end="00:57.000">nos </span>
-        <span begin="00:57.000" end="00:57.300">ve</span>
-      </p>
-      <p begin="00:57.400" end="01:01.600" itunes:key="L12">
-        <span begin="00:57.400" end="01:08.100">Yo </span>
-        <span begin="01:08.100" end="01:08.700">los </span>
-        <span begin="01:08.700" end="01:09.600">confundo, </span>
-        <span begin="01:09.600" end="01:10.200">se </span>
-        <span begin="01:10.200" end="01:10.800">creen </span>
-        <span begin="01:10.800" end="01:11.200">que </span>
-        <span begin="01:11.200" end="01:11.600">saben</span>
-      </p>
-      <p begin="01:11.700" end="01:16.000" itunes:key="L13">
-        <span begin="01:11.700" end="01:12.500">Y </span>
-        <span begin="01:12.500" end="01:13.200">no </span>
-        <span begin="01:13.200" end="01:13.900">saben </span>
-        <span begin="01:13.900" end="01:14.500">na', </span>
-        <span begin="01:14.500" end="01:15.200">no </span>
-        <span begin="01:15.200" end="01:15.800">saben </span>
-        <span begin="01:15.800" end="01:16.000">na'</span>
-      </p>
-      <p begin="01:16.100" end="01:21.000" itunes:key="L14">
-        <span begin="01:16.100" end="01:17.000">No </span>
-        <span begin="01:17.000" end="01:17.800">saben </span>
-        <span begin="01:17.800" end="01:18.600">na', </span>
-        <span begin="01:18.600" end="01:19.400">no </span>
-        <span begin="01:19.400" end="01:20.200">saben </span>
-        <span begin="01:20.200" end="01:21.000">na'</span>
-      </p>
-      <p begin="01:21.100" end="01:30.000" itunes:key="L15">
-        <span begin="01:21.100" end="01:23.000">Andamo' </span>
-        <span begin="01:23.000" end="01:24.500">en </span>
-        <span begin="01:24.500" end="01:26.000">modo </span>
-        <span begin="01:26.000" end="01:28.000">oculto...</span>
-      </p>
-      <p begin="01:30.500" end="01:42.000" itunes:key="L16">
-        <span begin="01:30.500" end="01:33.000">La </span>
-        <span begin="01:33.000" end="01:35.000">cuenta </span>
-        <span begin="01:35.000" end="01:37.000">se </span>
-        <span begin="01:37.000" end="01:40.000">duplica...</span>
-      </p>
-      <p begin="01:43.000" end="01:52.000" itunes:key="L17">
-        <span begin="01:43.000" end="01:45.000">Si </span>
-        <span begin="01:45.000" end="01:47.000">te </span>
-        <span begin="01:47.000" end="01:49.000">luce', </span>
-        <span begin="01:49.000" end="01:51.000">yo </span>
-        <span begin="01:51.000" end="01:52.000">me </span>
-        <span begin="01:52.000" end="01:53.000">luzco</span>
-      </p>
-      <p begin="01:53.500" end="02:05.000" itunes:key="L18">
-        <span begin="01:53.500" end="01:56.000">Siempre </span>
-        <span begin="01:56.000" end="01:58.000">modo </span>
-        <span begin="01:58.000" end="02:01.000">oculto, </span>
-        <span begin="02:01.000" end="02:03.000">nadie </span>
-        <span begin="02:03.000" end="02:05.000">nos </span>
-        <span begin="02:05.000" end="02:06.000">ve</span>
-      </p>
-      <p begin="02:06.500" end="02:20.000" itunes:key="L19">
-        <span begin="02:06.500" end="02:09.000">Y </span>
-        <span begin="02:09.000" end="02:11.000">no </span>
-        <span begin="02:11.000" end="02:13.000">saben </span>
-        <span begin="02:13.000" end="02:15.000">na', </span>
-        <span begin="02:15.000" end="02:17.000">no </span>
-        <span begin="02:17.000" end="02:19.000">saben </span>
-        <span begin="02:19.000" end="02:20.000">na'</span>
-      </p>
-      <p begin="02:20.500" end="02:44.000" itunes:key="L20">
-        <span begin="02:20.500" end="02:25.000">Yan Block... </span>
-        <span begin="02:25.000" end="02:30.000">Modo </span>
-        <span begin="02:30.000" end="02:35.000">Oculto</span>
-      </p>
-    </div>
-  </body>
-</tt>`;
-
-    // --- ELEMENTOS DEL DOM ---
+    // Elementos DOM
     const audio = document.getElementById('audioElement');
     const playPauseBtn = document.getElementById('playPauseBtn');
     const playIcon = document.getElementById('playIcon');
@@ -920,15 +698,14 @@
     const volumeFill = document.getElementById('volumeFill');
     const volumeMuteBtn = document.getElementById('volumeMuteBtn');
 
-    // Estado del reproductor
     let isPlaying = false;
-    let duration = 164; // Fallback ~2:44
+    let duration = 0;
     let parsedLyrics = [];
     let currentLineIndex = -1;
     let userScrolling = false;
     let scrollTimeout = null;
 
-    // --- PARSER DE TIEMPO TTML (Soporta mm:ss.ms, hh:mm:ss.ms, seg y ms) ---
+    // Convertidor de marcas de tiempo TTML (00:00.000 / 00:00:00.000 / ms / s) a milisegundos
     function parseTimeToMs(t) {
       if (!t) return 0;
       t = t.trim();
@@ -940,19 +717,19 @@
       } else if (parts.length === 2) {
         return (parseFloat(parts[0]) * 60 + parseFloat(parts[1])) * 1000;
       }
-      return parseFloat(t) * 1000;
+      return parseFloat(t) * 1000 || 0;
     }
 
-    // --- PARSER XML DE TTML (Compatible con spec AMLL) ---
-    function parseTTML(xmlText) {
+    // Analizador de archivo TTML (especificación AMLL / iTunes Lyric TTML)
+    function parseTTML(xmlString) {
       const parser = new DOMParser();
-      const xml = parser.parseFromString(xmlText, "application/xml");
-      const pElements = xml.querySelectorAll('p');
+      const xmlDoc = parser.parseFromString(xmlString, "application/xml");
+      const pElements = xmlDoc.querySelectorAll('p');
       const lines = [];
 
       pElements.forEach((p, idx) => {
-        const beginAttr = p.getAttribute('begin') || '0';
-        const endAttr = p.getAttribute('end') || '0';
+        const beginAttr = p.getAttribute('begin') || p.getAttribute('itunes:begin') || '0';
+        const endAttr = p.getAttribute('end') || p.getAttribute('itunes:end') || '0';
         const startMs = parseTimeToMs(beginAttr);
         const endMs = parseTimeToMs(endAttr);
 
@@ -970,7 +747,7 @@
             });
           });
         } else {
-          // Si no tiene spans individuales, se crea la línea completa
+          // Si el TTML no contiene spans por palabra, crea la unidad de la línea
           words.push({
             text: p.textContent.trim(),
             startTime: startMs,
@@ -979,7 +756,7 @@
         }
 
         lines.push({
-          id: p.getAttribute('itunes:key') || `L_${idx}`,
+          id: p.getAttribute('itunes:key') || `line_${idx}`,
           startTime: startMs,
           endTime: endMs,
           words: words
@@ -989,11 +766,11 @@
       return lines;
     }
 
-    // --- RENDERIZADOR DE LETRAS ESTILO APPLE MUSIC ---
+    // Renderizado en el DOM estilo Apple Music
     function renderLyrics(lines) {
       lyricsStage.innerHTML = '';
       if (!lines || lines.length === 0) {
-        lyricsStage.innerHTML = '<div class="lyric-row is-active">Letra instrumental o no disponible</div>';
+        lyricsStage.innerHTML = '<div class="lyric-row is-active">Letra no disponible</div>';
         return;
       }
 
@@ -1002,7 +779,6 @@
         row.className = 'lyric-row';
         row.dataset.index = lineIdx;
 
-        // Inyectar palabras con spans para animación por sílaba/palabra
         line.words.forEach((w, wIdx) => {
           const wordSpan = document.createElement('span');
           wordSpan.className = 'lyric-word word-future';
@@ -1011,10 +787,9 @@
           row.appendChild(wordSpan);
         });
 
-        // Clic en la línea: Salto instantáneo (Apple Music Seek)
+        // Al hacer clic en un verso: Salto instantáneo (Seek)
         row.addEventListener('click', () => {
-          const seekSec = (line.startTime / 1000);
-          audio.currentTime = seekSec;
+          audio.currentTime = (line.startTime / 1000);
           if (!isPlaying) togglePlay();
           highlightLine(lineIdx, true);
         });
@@ -1023,44 +798,41 @@
       });
     }
 
-    // --- CARGAR LETRA (INTENTO RED Y FALLBACK INMEDIATO) ---
-    async function initLyrics() {
-      let ttmlText = '';
+    // Descarga directa del enlace .ttml
+    async function loadLyricsFromUrl() {
+      lyricsStage.innerHTML = '<div class="lyric-row is-active">Cargando letra...</div>';
       try {
-        const res = await fetch(TRACK_DATA.ttmlUrl, { mode: 'cors' });
-        if (res.ok) {
-          ttmlText = await res.text();
-        } else {
-          ttmlText = FALLBACK_TTML;
-        }
+        const response = await fetch(TTML_URL);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const ttmlText = await response.text();
+        parsedLyrics = parseTTML(ttmlText);
+        renderLyrics(parsedLyrics);
       } catch (err) {
-        console.warn("Utilizando motor de letras con TTML estructurado integrado.", err);
-        ttmlText = FALLBACK_TTML;
+        console.error("Error al descargar el archivo TTML:", err);
+        lyricsStage.innerHTML = '<div class="lyric-row is-active">No se pudo cargar la letra desde el enlace TTML.</div>';
       }
-
-      parsedLyrics = parseTTML(ttmlText);
-      renderLyrics(parsedLyrics);
     }
 
-    // --- ACTUALIZACIÓN Y SINCRONIZACIÓN FLUIDA ---
+    // Actualización de tiempos y animación de palabras
     function updatePlayback(currentTimeSec) {
       const currentMs = currentTimeSec * 1000;
 
-      // 1. Actualizar barra de progreso y tiempos
-      const pct = (currentTimeSec / duration) * 100;
-      progressFill.style.width = `${Math.min(pct, 100)}%`;
-      currentTimeEl.textContent = formatTime(currentTimeSec);
+      if (duration > 0) {
+        const pct = (currentTimeSec / duration) * 100;
+        progressFill.style.width = `${Math.min(pct, 100)}%`;
+        currentTimeEl.textContent = formatTime(currentTimeSec);
 
-      const remSec = Math.max(0, duration - currentTimeSec);
-      remainingTimeEl.textContent = `-${formatTime(remSec)}`;
+        const remSec = Math.max(0, duration - currentTimeSec);
+        remainingTimeEl.textContent = `-${formatTime(remSec)}`;
+      }
 
-      // 2. Encontrar línea de letra activa
       if (parsedLyrics.length === 0) return;
 
+      // Localizar verso actual
       let activeIdx = -1;
       for (let i = 0; i < parsedLyrics.length; i++) {
         const line = parsedLyrics[i];
-        if (currentMs >= line.startTime && currentMs <= line.endTime + 400) {
+        if (currentMs >= line.startTime && currentMs <= line.endTime + 350) {
           activeIdx = i;
           break;
         } else if (currentMs < line.startTime) {
@@ -1072,14 +844,14 @@
         highlightLine(activeIdx, false);
       }
 
-      // 3. Sincronización de palabras en la línea activa
+      // Sincronización palabra por palabra de la línea activa
       if (currentLineIndex !== -1 && parsedLyrics[currentLineIndex]) {
         const activeLine = parsedLyrics[currentLineIndex];
-        const lineElement = lyricsStage.children[currentLineIndex];
-        if (lineElement) {
-          const wordElements = lineElement.querySelectorAll('.lyric-word');
+        const lineEl = lyricsStage.children[currentLineIndex];
+        if (lineEl) {
+          const wordEls = lineEl.querySelectorAll('.lyric-word');
           activeLine.words.forEach((w, wIdx) => {
-            const el = wordElements[wIdx];
+            const el = wordEls[wIdx];
             if (!el) return;
             if (currentMs >= w.endTime) {
               el.className = 'lyric-word word-passed';
@@ -1093,8 +865,7 @@
       }
     }
 
-    // Resaltar línea y centrado suave (Auto-Scroll Apple Music)
-    function highlightLine(index, forceScroll = false) {
+    function highlightLine(index, forceScroll) {
       currentLineIndex = index;
       const allRows = lyricsStage.querySelectorAll('.lyric-row');
       allRows.forEach((r, idx) => {
@@ -1102,21 +873,18 @@
           r.classList.add('is-active');
         } else {
           r.classList.remove('is-active');
-          // Limpiar clases de palabras en líneas inactivas
           r.querySelectorAll('.lyric-word').forEach(w => {
             w.className = 'lyric-word ' + (idx < index ? 'word-passed' : 'word-future');
           });
         }
       });
 
-      // Auto-scroll si el usuario no está desplazando manualmente
       if (!userScrolling || forceScroll) {
         const activeRow = allRows[index];
         if (activeRow) {
           const stageHeight = lyricsStage.clientHeight;
           const rowTop = activeRow.offsetTop;
           const rowHeight = activeRow.clientHeight;
-          // Enfoque a un tercio del panel (posición oficial de Apple Music)
           const scrollTarget = rowTop - (stageHeight * 0.35) + (rowHeight / 2);
           lyricsStage.scrollTo({
             top: Math.max(0, scrollTarget),
@@ -1126,31 +894,24 @@
       }
     }
 
-    // Pausa temporal de auto-scroll si el usuario desplaza las letras
     lyricsStage.addEventListener('wheel', () => {
       userScrolling = true;
       clearTimeout(scrollTimeout);
-      scrollTimeout = setTimeout(() => {
-        userScrolling = false;
-      }, 2600);
+      scrollTimeout = setTimeout(() => { userScrolling = false; }, 2600);
     });
 
     lyricsStage.addEventListener('touchstart', () => {
       userScrolling = true;
       clearTimeout(scrollTimeout);
-      scrollTimeout = setTimeout(() => {
-        userScrolling = false;
-      }, 2600);
+      scrollTimeout = setTimeout(() => { userScrolling = false; }, 2600);
     });
 
-    // --- FORMATEO DE TIEMPO MM:SS ---
     function formatTime(seconds) {
       const min = Math.floor(seconds / 60);
       const sec = Math.floor(seconds % 60);
       return `${min}:${sec < 10 ? '0' : ''}${sec}`;
     }
 
-    // --- CONTROL DE REPRODUCCIÓN (PLAY / PAUSA) ---
     function togglePlay() {
       if (audio.paused) {
         audio.play().then(() => {
@@ -1158,9 +919,7 @@
           document.body.classList.remove('is-paused');
           playIcon.style.display = 'none';
           pauseIcon.style.display = 'block';
-        }).catch(err => {
-          console.warn("Interacción requerida por el navegador para reproducir audio:", err);
-        });
+        }).catch(err => console.warn(err));
       } else {
         audio.pause();
         isPlaying = false;
@@ -1171,11 +930,8 @@
     }
 
     playPauseBtn.addEventListener('click', togglePlay);
-
-    // Click en la portada para reproducir / pausar
     document.getElementById('coverContainer').addEventListener('click', togglePlay);
 
-    // Eventos del elemento de audio
     audio.addEventListener('loadedmetadata', () => {
       if (audio.duration && !isNaN(audio.duration)) {
         duration = audio.duration;
@@ -1189,12 +945,10 @@
 
     audio.addEventListener('ended', () => {
       audio.currentTime = 0;
-      audio.play(); // Repetir por defecto
+      audio.play();
     });
 
-    // --- SCRUBBING (BÚSQUEDA EN LA BARRA DE PROGRESO) ---
-    let isScrubbing = false;
-
+    // Control de barra de progreso
     function handleScrub(e) {
       const rect = progressRail.getBoundingClientRect();
       const clientX = e.touches ? e.touches[0].clientX : e.clientX;
@@ -1205,16 +959,14 @@
     }
 
     progressRail.addEventListener('mousedown', (e) => {
-      isScrubbing = true;
       handleScrub(e);
       window.addEventListener('mousemove', handleScrub);
       window.addEventListener('mouseup', () => {
-        isScrubbing = false;
         window.removeEventListener('mousemove', handleScrub);
       }, { once: true });
     });
 
-    // --- CONTROL DE VOLUMEN ---
+    // Volumen
     function setVolume(pct) {
       pct = Math.max(0, Math.min(1, pct));
       audio.volume = pct;
@@ -1223,8 +975,7 @@
 
     volumeRail.addEventListener('click', (e) => {
       const rect = volumeRail.getBoundingClientRect();
-      const pct = (e.clientX - rect.left) / rect.width;
-      setVolume(pct);
+      setVolume((e.clientX - rect.left) / rect.width);
     });
 
     volumeMuteBtn.addEventListener('click', () => {
@@ -1236,21 +987,19 @@
       }
     });
 
-    // --- PANTALLA COMPLETA ---
+    // Pantalla completa
     function toggleFullScreen() {
       if (!document.fullscreenElement) {
         document.documentElement.requestFullscreen().catch(() => {});
       } else {
-        if (document.exitFullscreen) {
-          document.exitFullscreen();
-        }
+        if (document.exitFullscreen) document.exitFullscreen();
       }
     }
 
     fullScreenBtn.addEventListener('click', toggleFullScreen);
     zoomToggle.addEventListener('click', toggleFullScreen);
 
-    // --- ATAJOS DE TECLADO APPLE STYLE ---
+    // Atajos de teclado
     window.addEventListener('keydown', (e) => {
       if (e.target.tagName === 'INPUT') return;
       if (e.code === 'Space') {
@@ -1270,8 +1019,8 @@
       }
     });
 
-    // Iniciar carga de letra al iniciar
-    initLyrics();
+    // Cargar directamente la letra desde el enlace TTML
+    loadLyricsFromUrl();
     document.body.classList.add('is-paused');
   </script>
 </body>
