@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Musica de Manzana</title>
+  <title>Apple Music — CAPCANA COCOA (AMLL Engine)</title>
 
   <!-- Tipografía Apple SF Pro / Plus Jakarta Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -39,13 +39,13 @@
       --text-secondary: rgba(255, 255, 255, 0.70);
       --text-muted: rgba(255, 255, 255, 0.40);
 
-      /* Colores extraídos dinámicamente de la portada */
-      --cover-c1: rgb(24, 42, 68);
-      --cover-c2: rgb(52, 84, 122);
-      --cover-c3: rgb(15, 25, 42);
-      --cover-c4: rgb(76, 110, 152);
-      --cover-c5: rgb(35, 58, 86);
-      --app-bg-dark: #080d14;
+      /* Colores extraídos dinámicamente de la portada activa */
+      --cover-c1: rgb(30, 40, 55);
+      --cover-c2: rgb(60, 85, 120);
+      --cover-c3: rgb(18, 24, 35);
+      --cover-c4: rgb(80, 110, 150);
+      --cover-c5: rgb(40, 60, 90);
+      --app-bg-dark: #090e15;
       --accent-color: var(--cover-c2);
     }
 
@@ -65,7 +65,7 @@
       font-family: var(--font-family);
       color: var(--text-main);
       -webkit-font-smoothing: antialiased;
-      transition: background-color 1s ease;
+      transition: background-color 1.2s cubic-bezier(0.25, 1, 0.5, 1);
     }
 
     /* ============================================================
@@ -88,7 +88,7 @@
       background-position: center;
       filter: blur(95px) saturate(180%) brightness(0.65);
       transform-origin: center center;
-      transition: opacity 1.2s ease;
+      transition: opacity 1.2s ease, background-image 1.2s ease;
     }
 
     .bg-layer-1 {
@@ -103,7 +103,7 @@
       filter: blur(130px) saturate(210%) brightness(0.7);
     }
 
-    /* Orbes ambientales que usan ÚNICAMENTE los colores extraídos de la portada */
+    /* Orbes ambientales que usan ÚNICAMENTE los colores de la portada */
     .bg-orb {
       position: absolute;
       border-radius: 50%;
@@ -118,7 +118,6 @@
       height: 60vw;
       top: -10%;
       left: -5%;
-      background: radial-gradient(circle, rgba(52, 84, 122, 0.45) 0%, transparent 70%);
       animation: orbFloat1 26s infinite alternate ease-in-out;
     }
 
@@ -127,7 +126,6 @@
       height: 65vw;
       bottom: -15%;
       right: -10%;
-      background: radial-gradient(circle, rgba(24, 42, 68, 0.55) 0%, transparent 70%);
       animation: orbFloat2 32s infinite alternate ease-in-out;
     }
 
@@ -136,7 +134,6 @@
       height: 50vw;
       top: 30%;
       right: 25%;
-      background: radial-gradient(circle, rgba(76, 110, 152, 0.38) 0%, transparent 70%);
       animation: orbFloat3 38s infinite alternate ease-in-out;
     }
 
@@ -196,7 +193,6 @@
       -webkit-backdrop-filter: blur(20px);
     }
 
-    /* Barra Superior macOS */
     .top-mac-bar {
       height: 52px;
       padding: 0 28px;
@@ -324,6 +320,7 @@
       height: 100%;
       object-fit: cover;
       display: block;
+      transition: opacity 0.3s ease;
     }
 
     .track-details {
@@ -511,7 +508,7 @@
     }
 
     /* ============================================================
-       MOTOR OFICIAL DE LETRAS AMLL (amll-dev / tool.amll.dev)
+       MOTOR OFICIAL DE LETRAS AMLL (tool.amll.dev)
        ============================================================ */
     .right-lyrics-panel {
       position: relative;
@@ -538,7 +535,7 @@
       position: relative;
     }
 
-    /* Ajustes Oficiales de Tipografía y Relleno AMLL (Blanco Puro Radiante) */
+    /* Tipografía y Relleno AMLL con Máxima Blancura Radiante */
     #lyricsStage .amll-lyric-player {
       --amll-lp-color: rgba(255, 255, 255, 0.45) !important;
       --amll-lp-active-color: #ffffff !important;
@@ -619,14 +616,12 @@
 <body>
 
   <!-- ELEMENTO DE AUDIO NATIVO -->
-  <audio id="audioElement" preload="metadata" crossorigin="anonymous">
-    <source src="https://file.garden/aqbkhK4DJSCL_vig/Yan%20Block%20-%20Modo%20Oculto%20(Video%20Oficial)%20-%20Yan%20Block%20(youtube).mp3" type="audio/mpeg">
-  </audio>
+  <audio id="audioElement" preload="metadata" crossorigin="anonymous"></audio>
 
-  <!-- FONDO CONFORMADO 100% POR LA PORTADA -->
+  <!-- FONDO CONFORMADO 100% POR LA PORTADA DE LA CANCIÓN ACTIVA -->
   <div class="beautifier-bg" id="beautifierBg">
-    <div class="bg-layer bg-layer-1" id="bgLayer1" style="background-image: url('https://file.garden/aqbkhK4DJSCL_vig/MODO%20OCULTO.jpg');"></div>
-    <div class="bg-layer bg-layer-2" id="bgLayer2" style="background-image: url('https://file.garden/aqbkhK4DJSCL_vig/MODO%20OCULTO.jpg');"></div>
+    <div class="bg-layer bg-layer-1" id="bgLayer1"></div>
+    <div class="bg-layer bg-layer-2" id="bgLayer2"></div>
     <div class="bg-orb bg-orb-1" id="bgOrb1"></div>
     <div class="bg-orb bg-orb-2" id="bgOrb2"></div>
     <div class="bg-orb bg-orb-3" id="bgOrb3"></div>
@@ -647,7 +642,7 @@
         <svg class="apple-music-logo" viewBox="0 0 170 170">
           <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.69-3.04-7.69-7.85-12-14.44-6.19-9.45-11-20.28-14.42-32.51-3.42-12.22-5.13-23.77-5.13-34.64 0-14.78 3.59-27.18 10.77-37.21 7.18-10.02 16.32-15.17 27.42-15.44 5.33 0 10.89 1.34 16.68 4.02 5.79 2.68 9.53 4.08 11.22 4.2 1.48-.13 5.43-1.6 11.85-4.42 6.42-2.82 12.02-4.14 16.8-3.95 12.7.74 22.84 5.4 30.42 13.98-11.08 6.72-16.51 16.03-16.29 27.93.22 9.57 3.96 17.58 11.22 24.03 7.26 6.45 15.79 10.08 25.59 10.89-2.12 6.52-4.68 13.11-7.69 19.78zM119.22 31.05c0-7.39 2.66-14.38 7.98-20.97 5.32-6.59 11.93-10.42 19.83-11.48.21 1.06.32 2.01.32 2.85 0 7.39-2.77 14.59-8.31 21.6-5.54 7.01-12.24 11.03-20.1 12.06-.21-1.38-.32-2.74-.32-4.06z"/>
         </svg>
-        <span>Modo Oculto — Yan Block</span>
+        <span id="nowPlayingText">CAPCANA COCOA — Blessd & Anuel AA</span>
       </div>
 
       <div class="top-actions">
@@ -662,15 +657,15 @@
       <!-- PORTADA Y CONTROLES (IZQUIERDA) -->
       <section class="left-player-panel">
         <div class="cover-wrapper" id="coverContainer">
-          <img class="cover-img" id="trackCover" src="https://file.garden/aqbkhK4DJSCL_vig/MODO%20OCULTO.jpg" alt="Portada" crossorigin="anonymous">
+          <img class="cover-img" id="trackCover" src="" alt="Portada" crossorigin="anonymous">
         </div>
 
         <div class="track-details">
           <div class="track-title-row">
-            <h1 class="track-title">Modo Oculto</h1>
+            <h1 class="track-title" id="trackTitle">CAPCANA COCOA</h1>
             <span class="lossless-pill">Lossless</span>
           </div>
-          <div class="track-artist">Yan Block</div>
+          <div class="track-artist" id="trackArtist">Blessd & Anuel AA</div>
         </div>
 
         <div class="scrubber-container">
@@ -690,7 +685,7 @@
             <svg viewBox="0 0 24 24"><path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/></svg>
           </button>
 
-          <button class="icon-btn ctrl-secondary" id="prevBtn" title="Retroceder 10s">
+          <button class="icon-btn ctrl-secondary" id="prevBtn" title="Canción anterior">
             <svg viewBox="0 0 24 24"><path d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z"/></svg>
           </button>
 
@@ -699,7 +694,7 @@
             <svg id="pauseIcon" viewBox="0 0 24 24" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
           </button>
 
-          <button class="icon-btn ctrl-secondary" id="nextBtn" title="Adelantar 10s">
+          <button class="icon-btn ctrl-secondary" id="nextBtn" title="Siguiente canción">
             <svg viewBox="0 0 24 24"><path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"/></svg>
           </button>
 
@@ -731,9 +726,27 @@
   </div>
 
   <script>
-    const TTML_URL = "https://file.garden/aqbkhK4DJSCL_vig/Modo%20Oculto.ttml";
-    const COVER_URL = "https://file.garden/aqbkhK4DJSCL_vig/MODO%20OCULTO.jpg";
+    // LISTA DE CANCIONES (CAPCANA COCOA COMO PRIMARIA)
+    const playlist = [
+      {
+        title: "CAPCANA COCOA",
+        artist: "Blessd & Anuel AA",
+        cover: "https://file.garden/aqbkhK4DJSCL_vig/CAPCANA%20COCOA.jpg",
+        audio: "https://file.garden/aqbkhK4DJSCL_vig/BLESSD%20%E2%9D%8C%20ANUEL%20AA%20%20CAPCANA%20COCOA%20(Video%20Oficial)%20-%20SIEMPRE%20BLESSD%20%F0%9F%92%99%20(youtube).mp3",
+        ttml: "https://file.garden/aqbkhK4DJSCL_vig/CAPCANA%20COCOA.ttml"
+      },
+      {
+        title: "Modo Oculto",
+        artist: "Yan Block",
+        cover: "https://file.garden/aqbkhK4DJSCL_vig/MODO%20OCULTO.jpg",
+        audio: "https://file.garden/aqbkhK4DJSCL_vig/Yan%20Block%20-%20Modo%20Oculto%20(Video%20Oficial)%20-%20Yan%20Block%20(youtube).mp3",
+        ttml: "https://file.garden/aqbkhK4DJSCL_vig/Modo%20Oculto.ttml"
+      }
+    ];
 
+    let currentTrackIndex = 0;
+
+    // Elementos del DOM
     const audio = document.getElementById('audioElement');
     const playPauseBtn = document.getElementById('playPauseBtn');
     const playIcon = document.getElementById('playIcon');
@@ -750,6 +763,12 @@
     const volumeMuteBtn = document.getElementById('volumeMuteBtn');
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
+    const trackCover = document.getElementById('trackCover');
+    const trackTitle = document.getElementById('trackTitle');
+    const trackArtist = document.getElementById('trackArtist');
+    const nowPlayingText = document.getElementById('nowPlayingText');
+    const bgLayer1 = document.getElementById('bgLayer1');
+    const bgLayer2 = document.getElementById('bgLayer2');
 
     let isPlaying = false;
     let duration = 0;
@@ -757,7 +776,7 @@
     let lastFrameMs = null;
 
     // ============================================================
-    // 1. EXTRACTOR DINÁMICO DE COLORES EXCLUSIVO DE LA PORTADA
+    // 1. EXTRACTOR DE COLORES DE LA PORTADA ACTIVA
     // ============================================================
     function extractCoverPalette(imgUrl) {
       return new Promise((resolve) => {
@@ -808,26 +827,26 @@
               if (isDistinct) palette.push(c);
             }
             while (palette.length < 5) {
-              palette.push(palette[palette.length - 1] || { r: 15, g: 25, b: 40 });
+              palette.push(palette[palette.length - 1] || { r: 20, g: 30, b: 45 });
             }
             resolve(palette);
           } catch (e) {
             resolve([
-              { r: 24, g: 42, b: 68 },
-              { r: 52, g: 84, b: 122 },
-              { r: 15, g: 25, b: 42 },
-              { r: 76, g: 110, b: 152 },
-              { r: 35, g: 58, b: 86 }
+              { r: 35, g: 45, b: 65 },
+              { r: 70, g: 90, b: 125 },
+              { r: 20, g: 25, b: 40 },
+              { r: 90, g: 120, b: 160 },
+              { r: 45, g: 65, b: 95 }
             ]);
           }
         };
         img.onerror = () => {
           resolve([
-            { r: 24, g: 42, b: 68 },
-            { r: 52, g: 84, b: 122 },
-            { r: 15, g: 25, b: 42 },
-            { r: 76, g: 110, b: 152 },
-            { r: 35, g: 58, b: 86 }
+            { r: 35, g: 45, b: 65 },
+            { r: 70, g: 90, b: 125 },
+            { r: 20, g: 25, b: 40 },
+            { r: 90, g: 120, b: 160 },
+            { r: 45, g: 65, b: 95 }
           ]);
         };
         img.src = imgUrl;
@@ -963,9 +982,11 @@
     }
 
     // ============================================================
-    // 3. INICIALIZACIÓN DEL MOTOR AMLL CORE (tool.amll.dev)
+    // 3. INICIALIZACIÓN DEL MOTOR AMLL CORE
     // ============================================================
     async function initAMLLPlayer() {
+      if (lyricPlayer) return lyricPlayer;
+
       const LyricPlayerCtor = await window.__AMLLReady;
       if (!LyricPlayerCtor) return null;
 
@@ -997,13 +1018,13 @@
       return lyricPlayer;
     }
 
-    async function loadLyrics() {
+    async function loadLyricsForTrack(ttmlUrl) {
       let xmlText = '';
       try {
-        const response = await fetch(TTML_URL);
+        const response = await fetch(ttmlUrl);
         xmlText = await response.text();
       } catch (e) {
-        const proxyRes = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(TTML_URL)}`);
+        const proxyRes = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(ttmlUrl)}`);
         xmlText = await proxyRes.text();
       }
 
@@ -1016,8 +1037,63 @@
     }
 
     // ============================================================
-    // 4. CONTROLADOR DE AUDIO Y LOOP DE ANIMACIÓN A 60 FPS
+    // 4. CAMBIO DE CANCIÓN Y GESTIÓN DE REPRODUCCIÓN
     // ============================================================
+    async function loadTrack(index, autoPlay = false) {
+      currentTrackIndex = (index + playlist.length) % playlist.length;
+      const track = playlist[currentTrackIndex];
+
+      // 1. Actualizar metadatos y carátula
+      trackTitle.textContent = track.title;
+      trackArtist.textContent = track.artist;
+      nowPlayingText.textContent = `${track.title} — ${track.artist}`;
+      trackCover.src = track.cover;
+      bgLayer1.style.backgroundImage = `url('${track.cover}')`;
+      bgLayer2.style.backgroundImage = `url('${track.cover}')`;
+
+      // 2. Audio
+      audio.src = track.audio;
+      audio.load();
+      progressFill.style.width = '0%';
+      currentTimeEl.textContent = '0:00';
+      remainingTimeEl.textContent = '-0:00';
+
+      // 3. Extraer paleta genuina de la nueva portada
+      const palette = await extractCoverPalette(track.cover);
+      applyCoverColors(palette);
+
+      // 4. Cargar letras TTML correspondientes
+      lyricsStage.innerHTML = '<div class="lyrics-loader-msg">Cargando letras con motor AMLL...</div>';
+      await loadLyricsForTrack(track.ttml);
+
+      // 5. Auto-reproducir si estaba en curso
+      if (autoPlay) {
+        audio.play().then(() => {
+          isPlaying = true;
+          document.body.classList.remove('is-paused');
+          playIcon.style.display = 'none';
+          pauseIcon.style.display = 'block';
+        }).catch(() => {});
+      } else {
+        isPlaying = false;
+        document.body.classList.add('is-paused');
+        playIcon.style.display = 'block';
+        pauseIcon.style.display = 'none';
+      }
+    }
+
+    function nextTrack() {
+      loadTrack(currentTrackIndex + 1, isPlaying);
+    }
+
+    function prevTrack() {
+      if (audio.currentTime > 3) {
+        audio.currentTime = 0;
+      } else {
+        loadTrack(currentTrackIndex - 1, isPlaying);
+      }
+    }
+
     function formatTime(seconds) {
       const min = Math.floor(seconds / 60);
       const sec = Math.floor(seconds % 60);
@@ -1044,13 +1120,8 @@
     playPauseBtn.addEventListener('click', togglePlay);
     document.getElementById('coverContainer').addEventListener('click', togglePlay);
 
-    prevBtn.addEventListener('click', () => {
-      audio.currentTime = Math.max(0, audio.currentTime - 10);
-    });
-
-    nextBtn.addEventListener('click', () => {
-      audio.currentTime = Math.min(duration, audio.currentTime + 10);
-    });
+    prevBtn.addEventListener('click', prevTrack);
+    nextBtn.addEventListener('click', nextTrack);
 
     audio.addEventListener('loadedmetadata', () => {
       if (audio.duration && !isNaN(audio.duration)) {
@@ -1070,8 +1141,7 @@
     });
 
     audio.addEventListener('ended', () => {
-      audio.currentTime = 0;
-      audio.play();
+      nextTrack();
     });
 
     function handleScrub(e) {
@@ -1133,6 +1203,10 @@
         audio.currentTime = Math.min(duration, audio.currentTime + 5);
       } else if (e.code === 'ArrowLeft') {
         audio.currentTime = Math.max(0, audio.currentTime - 5);
+      } else if (e.code === 'KeyN') {
+        nextTrack();
+      } else if (e.code === 'KeyP') {
+        prevTrack();
       } else if (e.code === 'ArrowUp') {
         setVolume(audio.volume + 0.05);
       } else if (e.code === 'ArrowDown') {
@@ -1156,12 +1230,8 @@
 
     async function init() {
       document.body.classList.add('is-paused');
-      
-      const palette = await extractCoverPalette(COVER_URL);
-      applyCoverColors(palette);
-
-      await loadLyrics();
-
+      // Cargar canción inicial: "CAPCANA COCOA"
+      await loadTrack(0, false);
       requestAnimationFrame(animationLoop);
     }
 
