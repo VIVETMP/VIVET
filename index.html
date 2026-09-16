@@ -39,7 +39,7 @@
       --text-secondary: rgba(255, 255, 255, 0.70);
       --text-muted: rgba(255, 255, 255, 0.40);
 
-      /* Colores extraídos dinámicamente de la portada (Valores iniciales calculados de la portada) */
+      /* Colores extraídos dinámicamente de la portada */
       --cover-c1: rgb(24, 42, 68);
       --cover-c2: rgb(52, 84, 122);
       --cover-c3: rgb(15, 25, 42);
@@ -136,7 +136,7 @@
       height: 50vw;
       top: 30%;
       right: 25%;
-      background: radial-gradient(circle, rgba(76, 110, 152, 0.35) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(76, 110, 152, 0.38) 0%, transparent 70%);
       animation: orbFloat3 38s infinite alternate ease-in-out;
     }
 
@@ -520,7 +520,6 @@
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      /* Máscara de desvanecimiento Apple Music */
       mask-image: linear-gradient(to bottom, 
         transparent 0%, 
         rgba(0, 0, 0, 1) 10%, 
@@ -539,9 +538,9 @@
       position: relative;
     }
 
-    /* Ajustes Oficiales de Tipografía y Relleno AMLL */
+    /* Ajustes Oficiales de Tipografía y Relleno AMLL (Blanco Puro Radiante) */
     #lyricsStage .amll-lyric-player {
-      --amll-lp-color: rgba(255, 255, 255, 0.38) !important;
+      --amll-lp-color: rgba(255, 255, 255, 0.45) !important;
       --amll-lp-active-color: #ffffff !important;
       --amll-lp-font-size: clamp(28px, 2.7vw, 48px) !important;
       --amll-lp-hover-bg-color: rgba(255, 255, 255, 0.08);
@@ -553,17 +552,29 @@
       height: 100%;
     }
 
-    /* Relleno blanco brillante en las palabras activas */
+    /* Relleno blanco puro ultra-luminoso y sin opacidad */
     #lyricsStage .amll-lyric-player .amll-lyric-word {
       color: inherit;
-      transition: color 0.12s ease, text-shadow 0.2s ease;
+      transition: color 0.1s ease, text-shadow 0.15s ease, opacity 0.1s ease;
     }
 
+    /* Línea activa y palabras cantadas: 100% Blanco Puro de Máxima Luminosidad */
+    #lyricsStage .amll-lyric-player .amll-lyric-line.active,
+    #lyricsStage .amll-lyric-player .amll-lyric-line[data-active="true"] {
+      color: #ffffff !important;
+      opacity: 1 !important;
+      filter: blur(0px) drop-shadow(0 0 20px rgba(255, 255, 255, 0.8)) !important;
+    }
+
+    #lyricsStage .amll-lyric-player .amll-lyric-line.active .amll-lyric-word,
     #lyricsStage .amll-lyric-player .amll-lyric-word.active,
     #lyricsStage .amll-lyric-player .amll-lyric-word[data-active="true"],
-    #lyricsStage .amll-lyric-player .amll-lyric-line.active {
+    #lyricsStage .amll-lyric-player [class*="word-singing"],
+    #lyricsStage .amll-lyric-player [class*="word-done"] {
       color: #ffffff !important;
-      text-shadow: 0 0 24px rgba(255, 255, 255, 0.65);
+      -webkit-text-fill-color: #ffffff !important;
+      text-shadow: 0 0 28px rgba(255, 255, 255, 0.95), 0 0 12px #ffffff !important;
+      opacity: 1 !important;
     }
 
     #lyricsStage .amll-lyric-player .amll-lyric-line {
@@ -720,11 +731,9 @@
   </div>
 
   <script>
-    // URL DEL ARCHIVO TTML DE LA CANCIÓN
     const TTML_URL = "https://file.garden/aqbkhK4DJSCL_vig/Modo%20Oculto.ttml";
     const COVER_URL = "https://file.garden/aqbkhK4DJSCL_vig/MODO%20OCULTO.jpg";
 
-    // Elementos del DOM
     const audio = document.getElementById('audioElement');
     const playPauseBtn = document.getElementById('playPauseBtn');
     const playIcon = document.getElementById('playIcon');
@@ -839,13 +848,11 @@
       root.style.setProperty('--cover-c4', `rgb(${c4.r}, ${c4.g}, ${c4.b})`);
       root.style.setProperty('--cover-c5', `rgb(${c5.r}, ${c5.g}, ${c5.b})`);
 
-      // Tono de fondo oscuro derivado matemáticamente de la portada
       const darkR = Math.max(5, Math.min(18, Math.round(c1.r * 0.08)));
       const darkG = Math.max(6, Math.min(20, Math.round(c1.g * 0.09)));
       const darkB = Math.max(8, Math.min(26, Math.round(c1.b * 0.12)));
       root.style.setProperty('--app-bg-dark', `rgb(${darkR}, ${darkG}, ${darkB})`);
 
-      // Orbes animados alimentados exclusivamente por los colores extraídos
       document.getElementById('bgOrb1').style.background = `radial-gradient(circle, rgba(${c1.r}, ${c1.g}, ${c1.b}, 0.52) 0%, transparent 70%)`;
       document.getElementById('bgOrb2').style.background = `radial-gradient(circle, rgba(${c2.r}, ${c2.g}, ${c2.b}, 0.45) 0%, transparent 70%)`;
       document.getElementById('bgOrb3').style.background = `radial-gradient(circle, rgba(${c4.r}, ${c4.g}, ${c4.b}, 0.38) 0%, transparent 70%)`;
@@ -914,7 +921,6 @@
         }
 
         if (rawWords.length > 0) {
-          // Corrección de espaciado para que no se peguen las palabras ("vamos a escribir")
           for (let i = 0; i < rawWords.length - 1; i++) {
             let cur = rawWords[i];
             let next = rawWords[i + 1];
@@ -975,7 +981,6 @@
       lyricsStage.innerHTML = '';
       lyricsStage.appendChild(lyricPlayer.getElement());
 
-      // Seek al hacer clic en cualquier línea
       lyricPlayer.addEventListener('line-click', (evt) => {
         const lines = lyricPlayer.getLyricLines();
         const line = lines[evt.lineIndex];
@@ -998,7 +1003,6 @@
         const response = await fetch(TTML_URL);
         xmlText = await response.text();
       } catch (e) {
-        // Fallback CORS seguro si se prueba desde archivo local
         const proxyRes = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(TTML_URL)}`);
         xmlText = await proxyRes.text();
       }
@@ -1070,7 +1074,6 @@
       audio.play();
     });
 
-    // Scrubber
     function handleScrub(e) {
       const rect = progressRail.getBoundingClientRect();
       const clientX = e.touches ? e.touches[0].clientX : e.clientX;
@@ -1087,7 +1090,6 @@
       }, { once: true });
     });
 
-    // Volumen
     function setVolume(pct) {
       pct = Math.max(0, Math.min(1, pct));
       audio.volume = pct;
@@ -1108,7 +1110,6 @@
       }
     });
 
-    // Pantalla completa
     function toggleFullScreen() {
       if (!document.fullscreenElement) {
         document.documentElement.requestFullscreen().catch(() => {});
@@ -1120,7 +1121,6 @@
     fullScreenBtn.addEventListener('click', toggleFullScreen);
     zoomToggle.addEventListener('click', toggleFullScreen);
 
-    // Atajos de teclado
     window.addEventListener('keydown', (e) => {
       if (e.target.tagName === 'INPUT') return;
       if (e.code === 'Space') {
@@ -1140,7 +1140,6 @@
       }
     });
 
-    // Loop a 60 FPS coordinando AMLL con el Audio
     function animationLoop(now) {
       if (!lastFrameMs) lastFrameMs = now;
       const deltaMs = Math.min(100, now - lastFrameMs);
@@ -1148,25 +1147,21 @@
 
       if (lyricPlayer && !audio.paused) {
         const curMs = audio.currentTime * 1000;
-        lyricPlayer.setCurrentTime(curMs + 70); // Compensación de latencia visual
+        lyricPlayer.setCurrentTime(curMs + 70);
         lyricPlayer.update(deltaMs);
       }
 
       requestAnimationFrame(animationLoop);
     }
 
-    // Inicialización general
     async function init() {
       document.body.classList.add('is-paused');
       
-      // 1. Extraer y aplicar colores exclusivamente de la portada
       const palette = await extractCoverPalette(COVER_URL);
       applyCoverColors(palette);
 
-      // 2. Cargar letras TTML con AMLL Core
       await loadLyrics();
 
-      // 3. Iniciar loop visual
       requestAnimationFrame(animationLoop);
     }
 
