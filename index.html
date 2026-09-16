@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Apple Music - Sincronización AMLL 2026</title>
+  <title>SAIKO - COSAS QUE NO TE DIJE | Apple Music AMLL</title>
   
-  <!-- Tipografía SF Pro / Inter -->
+  <!-- Tipografía Apple SF Pro / Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
   <style>
     :root {
@@ -17,11 +17,11 @@
       --ease-apple: cubic-bezier(0.25, 1, 0.5, 1);
       --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.15);
       
-      --color-bg-fallback: #050508;
-      --color-inactive-text: rgba(255, 255, 255, 0.28);
-      --color-active-glow: rgba(255, 255, 255, 0.85);
+      --color-bg-dark: #050508;
+      --color-inactive-text: rgba(255, 255, 255, 0.30);
+      --color-active-glow: rgba(255, 255, 255, 0.90);
       --glass-surface: rgba(255, 255, 255, 0.08);
-      --glass-border: rgba(255, 255, 255, 0.12);
+      --glass-border: rgba(255, 255, 255, 0.14);
     }
 
     * {
@@ -33,9 +33,9 @@
     }
 
     body {
-      background-color: var(--color-bg-fallback);
+      background-color: var(--color-bg-dark);
       font-family: var(--font-display);
-      color: #fff;
+      color: #ffffff;
       height: 100vh;
       height: 100dvh;
       overflow: hidden;
@@ -45,7 +45,7 @@
     }
 
     /* ========================================================
-       1. AMBIENT GLOW & FLUID BACKGROUND (CANVAS + GRAIN)
+       1. AMBIENT GLOW FLUIDO (CANVAS + TEXTURA DE GRANO)
        ======================================================== */
     #ambient-container {
       position: fixed;
@@ -59,46 +59,45 @@
 
     #ambient-canvas {
       position: absolute;
-      inset: -20%;
-      width: 140%;
-      height: 140%;
-      filter: blur(80px) saturate(160%);
+      inset: -25%;
+      width: 150%;
+      height: 150%;
+      filter: blur(85px) saturate(180%);
       transform: translateZ(0);
       will-change: transform;
     }
 
-    /* Capa anti-banding con ruido estocástico */
     .grain-overlay {
       position: absolute;
       inset: 0;
-      opacity: 0.035;
+      opacity: 0.038;
       mix-blend-mode: overlay;
       pointer-events: none;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
     }
 
     .vignette-overlay {
       position: absolute;
       inset: 0;
-      background: radial-gradient(circle at 50% 50%, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.65) 100%);
+      background: radial-gradient(circle at 45% 50%, rgba(0,0,0,0.12) 0%, rgba(0,0,0,0.72) 100%);
     }
 
     /* ========================================================
-       ESTRUCTURA PRINCIPAL (SPLIT VIEW ESTILO MACOS/IPADOS)
+       ESTRUCTURA PRINCIPAL (SPLIT VIEW APPLE MUSIC)
        ======================================================== */
     .apple-music-app {
       position: relative;
       z-index: 10;
       width: 100%;
-      max-width: 1440px;
+      max-width: 1500px;
       height: 100%;
       display: grid;
-      grid-template-columns: 420px 1fr;
-      padding: clamp(24px, 4vh, 48px);
-      gap: clamp(24px, 4vw, 64px);
+      grid-template-columns: minmax(360px, 440px) 1fr;
+      padding: clamp(20px, 4vh, 48px);
+      gap: clamp(28px, 4vw, 72px);
     }
 
-    /* Panel Izquierdo: Reproductor y Carátula */
+    /* Panel Izquierdo: Artwork y Reproductor */
     .player-deck {
       display: flex;
       flex-direction: column;
@@ -110,16 +109,18 @@
 
     .album-cover-wrapper {
       position: relative;
-      width: min(100%, 360px);
+      width: min(100%, 380px);
       aspect-ratio: 1;
-      border-radius: 20px;
+      border-radius: 24px;
       overflow: hidden;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--glass-border);
-      transition: transform 0.5s var(--ease-apple);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.65), 0 0 0 1px var(--glass-border);
+      transition: transform 0.6s var(--ease-apple), box-shadow 0.6s ease;
+      cursor: pointer;
     }
 
     .album-cover-wrapper:hover {
-      transform: scale(1.02);
+      transform: scale(1.025);
+      box-shadow: 0 35px 80px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255,255,255,0.25);
     }
 
     .album-cover-wrapper img {
@@ -131,29 +132,48 @@
 
     .track-meta {
       width: 100%;
-      max-width: 360px;
+      max-width: 380px;
       margin-top: 28px;
     }
 
+    .track-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.12);
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 8px;
+      color: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
     .track-title {
-      font-size: 24px;
+      font-size: clamp(22px, 2.2vw, 28px);
       font-weight: 800;
-      letter-spacing: -0.02em;
+      letter-spacing: -0.025em;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      color: #fff;
     }
 
     .track-artist {
-      font-size: 16px;
+      font-size: 17px;
       font-weight: 600;
-      color: rgba(255, 255, 255, 0.65);
+      color: rgba(255, 255, 255, 0.72);
       margin-top: 4px;
+      letter-spacing: -0.01em;
     }
 
+    /* Controles de Reproducción */
     .playback-controls {
       width: 100%;
-      max-width: 360px;
+      max-width: 380px;
       margin-top: 24px;
       display: flex;
       flex-direction: column;
@@ -163,18 +183,24 @@
     .scrubber-container {
       width: 100%;
       height: 6px;
-      background: rgba(255, 255, 255, 0.15);
-      border-radius: 3px;
+      background: rgba(255, 255, 255, 0.18);
+      border-radius: 4px;
       position: relative;
       cursor: pointer;
+      transition: height 0.2s ease;
+    }
+
+    .scrubber-container:hover {
+      height: 8px;
     }
 
     .scrubber-fill {
       height: 100%;
       width: 0%;
-      background: #fff;
-      border-radius: 3px;
+      background: #ffffff;
+      border-radius: 4px;
       pointer-events: none;
+      transition: width 0.08s linear;
     }
 
     .time-indicators {
@@ -183,32 +209,56 @@
       font-family: var(--font-text);
       font-size: 11px;
       font-weight: 600;
-      color: rgba(255, 255, 255, 0.4);
+      color: rgba(255, 255, 255, 0.45);
       font-variant-numeric: tabular-nums;
     }
 
-    .btn-play-pause {
-      background: #fff;
+    .controls-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 28px;
+      margin-top: 8px;
+    }
+
+    .control-btn {
+      background: none;
       border: none;
-      color: #000;
-      width: 54px;
-      height: 54px;
+      color: rgba(255, 255, 255, 0.7);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s var(--ease-spring), color 0.2s ease;
+    }
+
+    .control-btn:hover {
+      color: #fff;
+      transform: scale(1.15);
+    }
+
+    .btn-play-pause {
+      background: #ffffff;
+      border: none;
+      color: #000000;
+      width: 60px;
+      height: 60px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: 12px auto 0;
       cursor: pointer;
-      box-shadow: 0 8px 24px rgba(255, 255, 255, 0.2);
-      transition: transform 0.2s var(--ease-spring);
+      box-shadow: 0 10px 30px rgba(255, 255, 255, 0.25);
+      transition: transform 0.2s var(--ease-spring), box-shadow 0.2s ease;
     }
 
     .btn-play-pause:hover {
       transform: scale(1.08);
+      box-shadow: 0 14px 40px rgba(255, 255, 255, 0.4);
     }
 
     .btn-play-pause:active {
-      transform: scale(0.94);
+      transform: scale(0.95);
     }
 
     /* ========================================================
@@ -219,15 +269,15 @@
       height: 100%;
       width: 100%;
       overflow: hidden;
-      mask-image: linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%);
-      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%);
+      mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
     }
 
     .lyrics-scroll-container {
       height: 100%;
       overflow-y: scroll;
       overflow-x: hidden;
-      padding: 35vh 0 50vh 0; /* Permite centrado del primer y último verso */
+      padding: 38vh 0 52vh 0;
       scroll-behavior: auto;
       scrollbar-width: none;
     }
@@ -239,21 +289,21 @@
     .lyrics-content {
       display: flex;
       flex-direction: column;
-      gap: clamp(24px, 4vh, 38px);
+      gap: clamp(24px, 3.8vh, 40px);
       width: 100%;
       will-change: transform;
     }
 
-    /* Estilos de Línea */
+    /* Estado Inactivo de Línea */
     .amll-line {
       position: relative;
-      font-size: clamp(32px, 3.8vw, 54px);
+      font-size: clamp(30px, 3.4vw, 50px);
       font-weight: 800;
-      line-height: 1.25;
+      line-height: 1.28;
       letter-spacing: -0.03em;
       color: var(--color-inactive-text);
       cursor: pointer;
-      opacity: 0.35;
+      opacity: 0.32;
       filter: blur(2px);
       transform-origin: left center;
       transform: scale(0.94) translateZ(0);
@@ -273,21 +323,11 @@
       opacity: 1;
       filter: blur(0px);
       transform: scale(1) translateZ(0);
-      color: #fff;
-    }
-
-    /* Soporte para Dueto */
-    .amll-line[data-singer="duet-right"] {
-      text-align: right;
-      transform-origin: right center;
-    }
-
-    .amll-line[data-singer="duet-right"] .amll-word {
-      background-position-x: right;
+      color: #ffffff;
     }
 
     /* ========================================================
-       BARIDO PROGRESIVO DE SÍLABAS/PALABRAS (SWIPE GRADIENT)
+       BARRIDO PROGRESIVO DE PALABRAS / SÍLABAS
        ======================================================== */
     .amll-word {
       display: inline-block;
@@ -297,13 +337,13 @@
         90deg,
         #ffffff 0%,
         #ffffff var(--word-progress, 0%),
-        rgba(255, 255, 255, 0.3) var(--word-progress, 0%),
-        rgba(255, 255, 255, 0.3) 100%
+        rgba(255, 255, 255, 0.35) var(--word-progress, 0%),
+        rgba(255, 255, 255, 0.35) 100%
       );
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       transform-origin: center bottom;
-      transition: transform 0.3s var(--ease-apple);
+      transition: transform 0.25s var(--ease-apple);
     }
 
     .amll-line.active .amll-word.current-word {
@@ -311,10 +351,21 @@
       filter: drop-shadow(0 0 16px var(--color-active-glow));
     }
 
+    /* Loader */
+    .lyrics-loader {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      font-size: 18px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.5);
+    }
+
     /* ========================================================
-       ADAPTATIVIDAD (MOBILE VIEW)
+       ADAPTATIVIDAD MOBILE
        ======================================================== */
-    @media (max-width: 900px) {
+    @media (max-width: 960px) {
       .apple-music-app {
         grid-template-columns: 1fr;
         grid-template-rows: auto 1fr;
@@ -327,19 +378,20 @@
         justify-content: flex-start;
         align-items: center;
         gap: 16px;
-        padding: 12px;
+        padding: 12px 16px;
         background: var(--glass-surface);
         border: 1px solid var(--glass-border);
-        border-radius: 16px;
-        backdrop-filter: blur(30px);
-        -webkit-backdrop-filter: blur(30px);
+        border-radius: 20px;
+        backdrop-filter: blur(40px);
+        -webkit-backdrop-filter: blur(40px);
         height: auto;
       }
 
       .album-cover-wrapper {
-        width: 56px;
-        height: 56px;
-        border-radius: 10px;
+        width: 64px;
+        height: 64px;
+        border-radius: 12px;
+        flex-shrink: 0;
       }
 
       .track-meta {
@@ -347,38 +399,45 @@
         flex: 1;
       }
 
+      .track-badge { display: none; }
       .track-title { font-size: 16px; }
       .track-artist { font-size: 13px; }
 
       .playback-controls { display: none; }
 
       .amll-line {
-        font-size: clamp(26px, 7vw, 36px);
+        font-size: clamp(26px, 6.8vw, 36px);
       }
     }
   </style>
 </head>
 <body>
 
-  <!-- Fondo Ambiental Reactivo -->
+  <!-- Fondo Ambiental Reactivo a 60 FPS -->
   <div id="ambient-container">
     <canvas id="ambient-canvas"></canvas>
     <div class="grain-overlay"></div>
     <div class="vignette-overlay"></div>
   </div>
 
-  <!-- Interfaz de la Aplicación -->
+  <!-- Audio Nativo -->
+  <audio id="audio-engine" preload="auto" crossorigin="anonymous">
+    <source src="https://file.garden/alq0ENqplE9QfqJV/COSAS%20QUE%20NO%20TE%20DIJE_spotdown.org.mp3" type="audio/mp3">
+  </audio>
+
+  <!-- Aplicación Principal -->
   <div class="apple-music-app">
     
-    <!-- Lado Izquierdo: Metadata y Controles -->
+    <!-- Lado Izquierdo: Reproductor & Portada -->
     <aside class="player-deck">
-      <div class="album-cover-wrapper">
-        <img id="cover-image" src="https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?w=800&auto=format&fit=crop&q=80" alt="Album Cover" crossorigin="anonymous" />
+      <div class="album-cover-wrapper" id="cover-btn">
+        <img id="cover-image" src="https://file.garden/alq0ENqplE9QfqJV/COSAS%20QUE%20NO%20TE%20DIJE_640x640.jpg" alt="Portada Saiko" crossorigin="anonymous" />
       </div>
 
       <div class="track-meta">
-        <h1 class="track-title">Starry Horizon</h1>
-        <h2 class="track-artist">Celestial Wave & Lumina (Duet)</h2>
+        <div class="track-badge">Lossless &bull; Apple Digital Master</div>
+        <h1 class="track-title">COSAS QUE NO TE DIJE</h1>
+        <h2 class="track-artist">SAIKO</h2>
       </div>
 
       <div class="playback-controls">
@@ -387,20 +446,33 @@
         </div>
         <div class="time-indicators">
           <span id="time-current">0:00</span>
-          <span id="time-total">0:00</span>
+          <span id="time-total">-0:00</span>
         </div>
-        <button class="btn-play-pause" id="btn-play-pause" aria-label="Play/Pause">
-          <svg id="play-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M8 5v14l11-7z"/>
-          </svg>
-        </button>
+        
+        <div class="controls-row">
+          <button class="control-btn" id="btn-rewind" title="Retroceder 10s">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z"/></svg>
+          </button>
+          
+          <button class="btn-play-pause" id="btn-play-pause" aria-label="Reproducir/Pausar">
+            <svg id="play-icon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
+          </button>
+
+          <button class="control-btn" id="btn-forward" title="Adelantar 10s">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"/></svg>
+          </button>
+        </div>
       </div>
     </aside>
 
-    <!-- Lado Derecho: Renderizado de Letras AMLL -->
+    <!-- Lado Derecho: Motor de Letras AMLL -->
     <main class="lyrics-deck">
       <div class="lyrics-scroll-container" id="lyrics-scroller">
-        <div class="lyrics-content" id="lyrics-mount"></div>
+        <div class="lyrics-content" id="lyrics-mount">
+          <div class="lyrics-loader">Cargando letras sincronizadas...</div>
+        </div>
       </div>
     </main>
 
@@ -408,18 +480,17 @@
 
   <script>
     /**
-     * MÓDULO 1: Extractor de Color y Fondo Ambiental Reactivo
-     * Genera orbes orgánicos basados en los colores dominantes de la carátula.
+     * MÓDULO 1: Extractor de Color & Fondo Fluido Apple Music 2026
      */
-    class AmbientBackground {
+    class AmbientEngine {
       constructor(canvasId, imageElement) {
         this.canvas = document.getElementById(canvasId);
         this.ctx = this.canvas.getContext('2d', { alpha: false });
         this.img = imageElement;
         
-        this.colors = ['#2D1F3D', '#5C2D91', '#1B1464', '#0F2027'];
+        // Paleta base de respaldo
+        this.colors = ['#1a2a6c', '#b21f1f', '#fdbb2d', '#130f40'];
         this.orbs = [];
-        this.targetOrbs = [];
         this.time = 0;
 
         this.initCanvas();
@@ -427,77 +498,71 @@
       }
 
       initCanvas() {
-        this.width = this.canvas.width = window.innerWidth * 0.5; // Resolución optimizada para blur
-        this.height = this.canvas.height = window.innerHeight * 0.5;
+        this.width = this.canvas.width = window.innerWidth * 0.45;
+        this.height = this.canvas.height = window.innerHeight * 0.45;
 
-        // Crear 4 orbes principales
         this.orbs = [
-          { x: this.width * 0.2, y: this.height * 0.3, r: this.width * 0.45, vx: 0.002, vy: 0.003, color: this.colors[0] },
-          { x: this.width * 0.8, y: this.height * 0.2, r: this.width * 0.5, vx: -0.003, vy: 0.002, color: this.colors[1] },
-          { x: this.width * 0.3, y: this.height * 0.8, r: this.width * 0.4, vx: 0.002, vy: -0.004, color: this.colors[2] },
-          { x: this.width * 0.7, y: this.height * 0.7, r: this.width * 0.55, vx: -0.002, vy: -0.003, color: this.colors[3] }
+          { x: this.width * 0.2, y: this.height * 0.3, r: this.width * 0.5, vx: 0.002, vy: 0.003, color: this.colors[0] },
+          { x: this.width * 0.8, y: this.height * 0.25, r: this.width * 0.55, vx: -0.003, vy: 0.0025, color: this.colors[1] },
+          { x: this.width * 0.35, y: this.height * 0.75, r: this.width * 0.45, vx: 0.0025, vy: -0.0035, color: this.colors[2] },
+          { x: this.width * 0.75, y: this.height * 0.8, r: this.width * 0.6, vx: -0.002, vy: -0.002, color: this.colors[3] }
         ];
 
         this.extractColors();
       }
 
       extractColors() {
-        if (!this.img.complete) {
-          this.img.onload = () => this.extractColors();
-          return;
-        }
+        const process = () => {
+          try {
+            const off = document.createElement('canvas');
+            const oCtx = off.getContext('2d');
+            off.width = 40;
+            off.height = 40;
+            oCtx.drawImage(this.img, 0, 0, 40, 40);
+            
+            const data1 = oCtx.getImageData(8, 8, 1, 1).data;
+            const data2 = oCtx.getImageData(32, 8, 1, 1).data;
+            const data3 = oCtx.getImageData(8, 32, 1, 1).data;
+            const data4 = oCtx.getImageData(32, 32, 1, 1).data;
 
-        try {
-          const offCanvas = document.createElement('canvas');
-          const offCtx = offCanvas.getContext('2d');
-          offCanvas.width = 30;
-          offCanvas.height = 30;
-          offCtx.drawImage(this.img, 0, 0, 30, 30);
-          
-          const p1 = offCtx.getImageData(5, 5, 1, 1).data;
-          const p2 = offCtx.getImageData(25, 5, 1, 1).data;
-          const p3 = offCtx.getImageData(5, 25, 1, 1).data;
-          const p4 = offCtx.getImageData(25, 25, 1, 1).data;
+            const rgb = (d) => `rgb(${d[0]}, ${d[1]}, ${d[2]})`;
+            this.colors = [rgb(data1), rgb(data2), rgb(data3), rgb(data4)];
+            this.orbs.forEach((orb, i) => orb.color = this.colors[i]);
+          } catch (e) {
+            console.warn("Extracción pixel fallida por CORS, usando paleta armónica.");
+          }
+        };
 
-          const toRGB = (p) => `rgb(${p[0]}, ${p[1]}, ${p[2]})`;
-          this.colors = [toRGB(p1), toRGB(p2), toRGB(p3), toRGB(p4)];
-
-          this.orbs.forEach((orb, i) => orb.color = this.colors[i]);
-        } catch (e) {
-          console.warn("Extracción CORS no disponible, usando paleta fallback");
-        }
+        if (this.img.complete) process();
+        else this.img.onload = process;
       }
 
       bindEvents() {
         window.addEventListener('resize', () => {
-          this.width = this.canvas.width = window.innerWidth * 0.5;
-          this.height = this.canvas.height = window.innerHeight * 0.5;
+          this.width = this.canvas.width = window.innerWidth * 0.45;
+          this.height = this.canvas.height = window.innerHeight * 0.45;
         });
       }
 
       render() {
-        this.time += 0.01;
-        this.ctx.fillStyle = '#050508';
+        this.time += 0.012;
+        this.ctx.fillStyle = '#06070a';
         this.ctx.fillRect(0, 0, this.width, this.height);
 
         this.orbs.forEach((orb, i) => {
-          // Movimiento elíptico continuo orgánico
-          const offsetX = Math.sin(this.time * 20 * orb.vx + i) * (this.width * 0.15);
-          const offsetY = Math.cos(this.time * 20 * orb.vy + i) * (this.height * 0.15);
-          const currentX = orb.x + offsetX;
-          const currentY = orb.y + offsetY;
+          const ox = Math.sin(this.time * 18 * orb.vx + i) * (this.width * 0.18);
+          const oy = Math.cos(this.time * 18 * orb.vy + i) * (this.height * 0.18);
+          const cx = orb.x + ox;
+          const cy = orb.y + oy;
 
-          const grad = this.ctx.createRadialGradient(
-            currentX, currentY, 0,
-            currentX, currentY, orb.r
-          );
+          const grad = this.ctx.createRadialGradient(cx, cy, 0, cx, cy, orb.r);
           grad.addColorStop(0, orb.color);
-          grad.addColorStop(1, 'rgba(5, 5, 8, 0)');
+          grad.addColorStop(1, 'rgba(6, 7, 10, 0)');
 
           this.ctx.globalCompositeOperation = 'screen';
           this.ctx.fillStyle = grad;
           this.ctx.beginPath();
-          this.ctx.arc(currentX, currentY, orb.r, 0, Math.PI * 2);
+          this.ctx.arc(cx, cy, orb.r, 0, Math.PI * 2);
           this.ctx.fill();
         });
 
@@ -506,77 +571,65 @@
     }
 
     /**
-     * MÓDULO 2: Dataset TTML y Parser de Sincronización AMLL
+     * MÓDULO 2: Parser de TTML para Apple Music Like Lyrics
      */
-    const TTML_DATA = `
-    <tt xmlns="http://www.w3.org/ns/ttml">
-      <body>
-        <div>
-          <p begin="00:01.000" end="00:04.500" singer="duet-left">
-            <span begin="00:01.000" end="00:01.800">We </span>
-            <span begin="00:01.800" end="00:02.500">ignite </span>
-            <span begin="00:02.500" end="00:03.200">the </span>
-            <span begin="00:03.200" end="00:04.500">atmosphere</span>
-          </p>
-          <p begin="00:05.000" end="00:08.800" singer="duet-right">
-            <span begin="00:05.000" end="00:05.800">Chasing </span>
-            <span begin="00:05.800" end="00:06.600">echoes </span>
-            <span begin="00:06.600" end="00:07.400">through </span>
-            <span begin="00:07.400" end="00:08.800">the night</span>
-          </p>
-          <p begin="00:09.200" end="00:13.600" singer="duet-left">
-            <span begin="00:09.200" end="00:09.800">Every </span>
-            <span begin="00:09.800" end="00:10.500">whisper </span>
-            <span begin="00:10.500" end="00:11.400">drawn </span>
-            <span begin="00:11.400" end="00:12.200">in </span>
-            <span begin="00:12.200" end="00:13.600">starlight</span>
-          </p>
-          <p begin="00:14.200" end="00:18.500" singer="duet-right">
-            <span begin="00:14.200" end="00:15.000">Floating </span>
-            <span begin="00:15.000" end="00:15.800">weightless </span>
-            <span begin="00:15.800" end="00:16.800">in </span>
-            <span begin="00:16.800" end="00:18.500">the calm</span>
-          </p>
-          <p begin="00:19.000" end="00:24.000" singer="duet-left">
-            <span begin="00:19.000" end="00:20.200">Forever </span>
-            <span begin="00:20.200" end="00:21.400">aligned </span>
-            <span begin="00:21.400" end="00:22.500">in </span>
-            <span begin="00:22.500" end="00:24.000">motion</span>
-          </p>
-        </div>
-      </body>
-    </tt>`;
-
-    function parseTime(timeStr) {
-      const [min, sec] = timeStr.split(':');
-      return parseFloat(min) * 60 + parseFloat(sec);
-    }
-
-    function parseTTML(xmlString) {
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(xmlString, "application/xml");
-      const paragraphs = Array.from(doc.querySelectorAll('p'));
-
-      return paragraphs.map((p, pIndex) => {
-        const lineStart = parseTime(p.getAttribute('begin'));
-        const lineEnd = parseTime(p.getAttribute('end'));
-        const singer = p.getAttribute('singer') || 'solo';
+    class TTMLParser {
+      static parseTime(timeStr) {
+        if (!timeStr) return 0;
+        timeStr = timeStr.trim();
+        if (timeStr.endsWith('ms')) return parseFloat(timeStr) / 1000;
+        if (timeStr.endsWith('s')) timeStr = timeStr.slice(0, -1);
         
-        const words = Array.from(p.querySelectorAll('span')).map((span, wIndex) => ({
-          id: `w-${pIndex}-${wIndex}`,
-          text: span.textContent,
-          start: parseTime(span.getAttribute('begin')),
-          end: parseTime(span.getAttribute('end'))
-        }));
+        const parts = timeStr.split(':');
+        if (parts.length === 3) {
+          return parseFloat(parts[0]) * 3600 + parseFloat(parts[1]) * 60 + parseFloat(parts[2]);
+        } else if (parts.length === 2) {
+          return parseFloat(parts[0]) * 60 + parseFloat(parts[1]);
+        }
+        return parseFloat(timeStr) || 0;
+      }
 
-        return {
-          id: `l-${pIndex}`,
-          start: lineStart,
-          end: lineEnd,
-          singer,
-          words
-        };
-      });
+      static async fetchAndParse(url) {
+        const response = await fetch(url);
+        const xmlString = await response.text();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(xmlString, "application/xml");
+        const paragraphs = Array.from(doc.querySelectorAll('p'));
+
+        return paragraphs.map((p, pIndex) => {
+          const lineStart = TTMLParser.parseTime(p.getAttribute('begin'));
+          const lineEnd = TTMLParser.parseTime(p.getAttribute('end'));
+          
+          const spans = Array.from(p.querySelectorAll('span'));
+          let words = [];
+
+          if (spans.length > 0) {
+            words = spans.map((span, wIndex) => ({
+              id: `w-${pIndex}-${wIndex}`,
+              text: span.textContent,
+              start: TTMLParser.parseTime(span.getAttribute('begin') || p.getAttribute('begin')),
+              end: TTMLParser.parseTime(span.getAttribute('end') || p.getAttribute('end'))
+            }));
+          } else {
+            // Si la línea no tiene spans, dividir por palabras
+            const rawWords = (p.textContent || "").split(" ");
+            const step = (lineEnd - lineStart) / Math.max(1, rawWords.length);
+            words = rawWords.map((txt, wIndex) => ({
+              id: `w-${pIndex}-${wIndex}`,
+              text: txt + " ",
+              start: lineStart + wIndex * step,
+              end: lineStart + (wIndex + 1) * step
+            }));
+          }
+
+          return {
+            id: `l-${pIndex}`,
+            start: lineStart,
+            end: lineEnd,
+            words
+          };
+        });
+      }
     }
 
     /**
@@ -595,7 +648,7 @@
         // Física de resorte (Spring)
         this.targetScrollTop = 0;
         this.currentScrollTop = 0;
-        this.springStiffness = 0.08;
+        this.springStiffness = 0.085;
         this.springDamping = 0.78;
         this.springVelocity = 0;
 
@@ -613,7 +666,6 @@
         this.lines.forEach((line, lIndex) => {
           const lineDiv = document.createElement('div');
           lineDiv.className = 'amll-line';
-          lineDiv.dataset.singer = line.singer;
           lineDiv.dataset.index = lIndex;
 
           line.words.forEach((w) => {
@@ -624,7 +676,7 @@
             lineDiv.appendChild(wordSpan);
           });
 
-          // Interacción: Click para hacer Seek
+          // Seek interactivo al hacer click en cualquier verso
           lineDiv.addEventListener('click', () => {
             if (this.onSeekCallback) {
               this.onSeekCallback(line.start);
@@ -637,14 +689,13 @@
       }
 
       bindEvents() {
-        // Detección de Scroll Manual del Usuario
         const handleUserScroll = () => {
           this.userScrolling = true;
           this.currentScrollTop = this.scroller.scrollTop;
           this.targetScrollTop = this.scroller.scrollTop;
 
           clearTimeout(this.userScrollTimeout);
-          // Reinicia el auto-scroll tras 3 segundos de inactividad
+          // Cooldown de 3 segundos para retomar el auto-scroll
           this.userScrollTimeout = setTimeout(() => {
             this.userScrolling = false;
             this.scrollToActiveLine();
@@ -664,7 +715,7 @@
         const scrollerRect = this.scroller.getBoundingClientRect();
         const elementRect = activeElement.getBoundingClientRect();
 
-        // Centrado exacto vertical al estilo Apple Music (~38% de la pantalla)
+        // Centrado áureo vertical (~38% desde arriba)
         const targetOffset = (elementRect.top - scrollerRect.top) + this.scroller.scrollTop - (scrollerRect.height * 0.38);
         this.targetScrollTop = Math.max(0, targetOffset);
       }
@@ -672,7 +723,6 @@
       startSpringLoop() {
         const updatePhysics = () => {
           if (!this.userScrolling) {
-            // Modelo de resorte amortiguado (Damped Spring)
             const force = (this.targetScrollTop - this.currentScrollTop) * this.springStiffness;
             this.springVelocity = (this.springVelocity + force) * this.springDamping;
             this.currentScrollTop += this.springVelocity;
@@ -689,19 +739,17 @@
       update(currentTime) {
         let currentLineIdx = -1;
 
-        // 1. Detectar Línea Activa
         for (let i = 0; i < this.lines.length; i++) {
           const line = this.lines[i];
           if (currentTime >= line.start && currentTime <= line.end + 0.3) {
             currentLineIdx = i;
             break;
           } else if (currentTime > line.end && (i === this.lines.length - 1 || currentTime < this.lines[i+1].start)) {
-            currentLineIdx = i; // Mantener activa hasta la siguiente
+            currentLineIdx = i;
             break;
           }
         }
 
-        // Si cambió la línea activa
         if (currentLineIdx !== this.activeLineIndex) {
           if (this.activeLineIndex !== -1 && this.lineElements[this.activeLineIndex]) {
             this.lineElements[this.activeLineIndex].classList.remove('active');
@@ -716,7 +764,7 @@
           }
         }
 
-        // 2. Animar Palabras / Sílabas de la Línea Activa (Swipe & Glow)
+        // Progreso de palabra a nivel de sub-píxel
         if (this.activeLineIndex !== -1) {
           const lineData = this.lines[this.activeLineIndex];
 
@@ -731,7 +779,6 @@
               wordEl.style.setProperty('--word-progress', `100%`);
               wordEl.classList.remove('current-word');
             } else {
-              // Progreso lineal normalizado en el interior de la sílaba
               const progress = ((currentTime - word.start) / (word.end - word.start)) * 100;
               wordEl.style.setProperty('--word-progress', `${progress.toFixed(2)}%`);
               wordEl.classList.add('current-word');
@@ -742,108 +789,114 @@
     }
 
     /**
-     * MÓDULO 4: Simulación de Audio y Enlace Global
+     * MÓDULO 4: Inicialización y Controlador de Audio Real
      */
-    class AudioEngineSimulation {
-      constructor(totalDuration = 26) {
-        this.duration = totalDuration;
-        this.currentTime = 0;
-        this.isPlaying = false;
-        this.lastFrameTime = performance.now();
-      }
+    window.addEventListener('DOMContentLoaded', async () => {
+      // 1. Iniciar Ambient Engine
+      const ambient = new AmbientEngine('ambient-canvas', document.getElementById('cover-image'));
+      ambient.render();
 
-      play() {
-        this.isPlaying = true;
-        this.lastFrameTime = performance.now();
-      }
-
-      pause() {
-        this.isPlaying = false;
-      }
-
-      seek(time) {
-        this.currentTime = Math.max(0, Math.min(this.duration, time));
-      }
-
-      tick() {
-        const now = performance.now();
-        const delta = (now - this.lastFrameTime) / 1000;
-        this.lastFrameTime = now;
-
-        if (this.isPlaying) {
-          this.currentTime += delta;
-          if (this.currentTime >= this.duration) {
-            this.currentTime = 0; // Loop demo
-          }
-        }
-
-        return {
-          currentTime: this.currentTime,
-          duration: this.duration,
-          isPlaying: this.isPlaying
-        };
-      }
-    }
-
-    // Inicialización del Sistema
-    window.addEventListener('DOMContentLoaded', () => {
-      // 1. Iniciar Canvas Fluido
-      const bg = new AmbientBackground('ambient-canvas', document.getElementById('cover-image'));
-      bg.render();
-
-      // 2. Parsear TTML
-      const parsedLyrics = parseTTML(TTML_DATA);
-
-      // 3. Iniciar Motor AMLL
-      const lyricsScroller = document.getElementById('lyrics-scroller');
-      const lyricsMount = document.getElementById('lyrics-mount');
-      const amll = new AMLLPlayer(parsedLyrics, lyricsMount, lyricsScroller);
-
-      // 4. Controlador de Reproducción
-      const audio = new AudioEngineSimulation(25);
-      amll.onSeekCallback = (seekTime) => audio.seek(seekTime);
-
+      // 2. Elementos del DOM y Audio
+      const audio = document.getElementById('audio-engine');
       const scrubber = document.getElementById('scrubber');
       const scrubberFill = document.getElementById('scrubber-fill');
       const timeCurrent = document.getElementById('time-current');
       const timeTotal = document.getElementById('time-total');
-      const btnPlay = document.getElementById('btn-play-pause');
+      const btnPlayPause = document.getElementById('btn-play-pause');
       const playIcon = document.getElementById('play-icon');
+      const btnRewind = document.getElementById('btn-rewind');
+      const btnForward = document.getElementById('btn-forward');
+      const coverBtn = document.getElementById('cover-btn');
 
-      const formatTime = (s) => {
-        const mins = Math.floor(s / 60);
-        const secs = Math.floor(s % 60);
+      const formatTime = (sec) => {
+        if (isNaN(sec) || sec < 0) return "0:00";
+        const mins = Math.floor(sec / 60);
+        const secs = Math.floor(sec % 60);
         return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
       };
 
-      btnPlay.addEventListener('click', () => {
-        if (audio.isPlaying) {
-          audio.pause();
-          playIcon.innerHTML = '<path d="M8 5v14l11-7z"/>';
+      // 3. Descargar y procesar TTML de SAIKO
+      const TTML_URL = 'https://file.garden/alq0ENqplE9QfqJV/SAIKO%20-%20COSAS%20QUE%20NO%20TE%20DIJE.ttml';
+      let amll = null;
+
+      try {
+        const parsedLines = await TTMLParser.fetchAndParse(TTML_URL);
+        const lyricsScroller = document.getElementById('lyrics-scroller');
+        const lyricsMount = document.getElementById('lyrics-mount');
+        
+        amll = new AMLLPlayer(parsedLines, lyricsMount, lyricsScroller);
+        amll.onSeekCallback = (seekTime) => {
+          audio.currentTime = seekTime;
+          if (audio.paused) audio.play();
+        };
+      } catch (err) {
+        console.error("Error al cargar TTML:", err);
+        document.getElementById('lyrics-mount').innerHTML = '<div class="lyrics-loader">No se pudieron cargar las letras.</div>';
+      }
+
+      // 4. Controles de Reproducción
+      const togglePlayback = () => {
+        if (audio.paused) {
+          audio.play().catch(e => console.log("Interacción requerida"));
         } else {
-          audio.play();
-          playIcon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+          audio.pause();
         }
+      };
+
+      btnPlayPause.addEventListener('click', togglePlayback);
+      coverBtn.addEventListener('click', togglePlayback);
+
+      audio.addEventListener('play', () => {
+        playIcon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+      });
+
+      audio.addEventListener('pause', () => {
+        playIcon.innerHTML = '<path d="M8 5v14l11-7z"/>';
+      });
+
+      btnRewind.addEventListener('click', () => {
+        audio.currentTime = Math.max(0, audio.currentTime - 10);
+      });
+
+      btnForward.addEventListener('click', () => {
+        audio.currentTime = Math.min(audio.duration, audio.currentTime + 10);
       });
 
       scrubber.addEventListener('click', (e) => {
         const rect = scrubber.getBoundingClientRect();
         const pct = (e.clientX - rect.left) / rect.width;
-        audio.seek(pct * audio.duration);
+        if (audio.duration) {
+          audio.currentTime = pct * audio.duration;
+        }
+      });
+
+      // Atajos de Teclado Apple (Barra espaciadora y Flechas)
+      window.addEventListener('keydown', (e) => {
+        if (e.code === 'Space') {
+          e.preventDefault();
+          togglePlayback();
+        } else if (e.code === 'ArrowLeft') {
+          audio.currentTime = Math.max(0, audio.currentTime - 5);
+        } else if (e.code === 'ArrowRight') {
+          audio.currentTime = Math.min(audio.duration, audio.currentTime + 5);
+        }
       });
 
       // 5. Loop Maestro de Sincronización (60 FPS)
       function masterLoop() {
-        const state = audio.tick();
+        const curTime = audio.currentTime;
+        const dur = audio.duration || 0;
 
-        // Actualizar AMLL
-        amll.update(state.currentTime);
+        if (amll) {
+          amll.update(curTime);
+        }
 
-        // Actualizar UI Controles
-        const pct = (state.currentTime / state.duration) * 100;
-        scrubberFill.style.width = `${pct}%`;
-        timeCurrent.textContent = formatTime(state.currentTime);
-        timeTotal.textContent = formatTime(state.duration);
+        if (dur > 0) {
+          const pct = (curTime / dur) * 100;
+          scrubberFill.style.width = `${pct}%`;
+          timeCurrent.textContent = formatTime(curTime);
+          timeTotal.textContent = `-${formatTime(dur - curTime)}`;
+        }
 
         requestAnimationFrame(masterLoop);
       }
