@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Apple Music — CAPCANA COCOA (AMLL Engine)</title>
+  <title>Apple Music — Lyrics Player</title>
 
-  <!-- Tipografía Apple SF Pro / Plus Jakarta Sans -->
+  <!-- Tipografía Apple SF Pro Rounded & Fallbacks Oficiales -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
 
   <!-- Estilos oficiales de AMLL Core (Apple Music Like Lyrics) -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@applemusic-like-lyrics/core@0.5.2/dist/style.css">
 
-  <!-- Cargador de módulos AMLL Core -->
+  <!-- Cargador de módulos AMLL Core con soporte multi-CDN de reserva -->
   <script>
     window.__AMLLResolver = null;
     window.__AMLLReady = new Promise((resolve) => {
@@ -21,32 +21,59 @@
     });
   </script>
   <script type="module">
-    try {
-      const { LyricPlayer } = await import("https://esm.sh/@applemusic-like-lyrics/core@0.5.2");
-      if (window.__AMLLResolver) window.__AMLLResolver(LyricPlayer);
-      else window.__AMLLReady = Promise.resolve(LyricPlayer);
-    } catch (e) {
-      const { LyricPlayer } = await import("https://esm.sh/@applemusic-like-lyrics/core@0.5.1");
-      if (window.__AMLLResolver) window.__AMLLResolver(LyricPlayer);
-      else window.__AMLLReady = Promise.resolve(LyricPlayer);
+    async function loadAMLL() {
+      const sources = [
+        "https://esm.sh/@applemusic-like-lyrics/core@0.5.2",
+        "https://cdn.jsdelivr.net/npm/@applemusic-like-lyrics/core@0.5.2/+esm",
+        "https://esm.sh/@applemusic-like-lyrics/core@0.5.1"
+      ];
+      for (const src of sources) {
+        try {
+          const mod = await import(src);
+          if (mod && mod.LyricPlayer) {
+            if (window.__AMLLResolver) window.__AMLLResolver(mod.LyricPlayer);
+            else window.__AMLLReady = Promise.resolve(mod.LyricPlayer);
+            return;
+          }
+        } catch (e) {
+          console.warn("Reintentando fuente AMLL:", src);
+        }
+      }
     }
+    loadAMLL();
   </script>
 
   <style>
+    /* DEFINICIÓN DE LA FUENTE SF PRO ROUNDED IDÉNTICA A LA IMAGEN */
+    @font-face {
+      font-family: 'SF Pro Rounded';
+      src: url('https://cdn.jsdelivr.net/gh/explicamarcos/font@main/SF-Pro-Rounded-Bold.ttf') format('truetype');
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'SF Pro Rounded';
+      src: url('https://cdn.jsdelivr.net/gh/explicamarcos/font@main/SF-Pro-Rounded-Black.ttf') format('truetype');
+      font-weight: 800 900;
+      font-style: normal;
+      font-display: swap;
+    }
+
     :root {
-      --font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Plus Jakarta Sans", "Helvetica Neue", sans-serif;
+      --ui-font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Plus Jakarta Sans", sans-serif;
+      /* Fuente de letras redondeada 100% fiel a iOS Apple Music */
+      --lyrics-font: "SF Pro Rounded", ui-rounded, "SF Pro Rounded Heavy", "SF Pro Rounded Bold", "Nunito", "Arial Rounded MT Bold", -apple-system-rounded, system-ui, sans-serif;
+
       --text-main: #ffffff;
       --text-secondary: rgba(255, 255, 255, 0.70);
-      --text-muted: rgba(255, 255, 255, 0.40);
+      --text-muted: rgba(255, 255, 255, 0.45);
 
-      /* Colores extraídos dinámicamente de la portada activa */
-      --cover-c1: rgb(30, 40, 55);
-      --cover-c2: rgb(60, 85, 120);
+      --cover-c1: rgb(35, 45, 60);
+      --cover-c2: rgb(65, 88, 125);
       --cover-c3: rgb(18, 24, 35);
-      --cover-c4: rgb(80, 110, 150);
-      --cover-c5: rgb(40, 60, 90);
-      --app-bg-dark: #090e15;
-      --accent-color: var(--cover-c2);
+      --cover-c4: rgb(85, 115, 155);
+      --app-bg-dark: #0a0e14;
     }
 
     * {
@@ -55,6 +82,7 @@
       box-sizing: border-box;
       user-select: none;
       -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
     }
 
     body, html {
@@ -62,14 +90,14 @@
       height: 100%;
       overflow: hidden;
       background-color: var(--app-bg-dark);
-      font-family: var(--font-family);
+      font-family: var(--ui-font);
       color: var(--text-main);
       -webkit-font-smoothing: antialiased;
-      transition: background-color 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+      transition: background-color 1.2s ease;
     }
 
     /* ============================================================
-       FONDO FLUIDO COMPUESTO EXCLUSIVAMENTE POR LA PORTADA
+       FONDO AMBIENTAL FLUIDO REACTIVO A LA PORTADA
        ============================================================ */
     .beautifier-bg {
       position: fixed;
@@ -86,7 +114,7 @@
       inset: 0;
       background-size: cover;
       background-position: center;
-      filter: blur(95px) saturate(180%) brightness(0.65);
+      filter: blur(95px) saturate(185%) brightness(0.65);
       transform-origin: center center;
       transition: opacity 1.2s ease, background-image 1.2s ease;
     }
@@ -99,11 +127,10 @@
     .bg-layer-2 {
       animation: ambientDrift2 48s infinite alternate ease-in-out;
       mix-blend-mode: color-dodge;
-      opacity: 0.45;
+      opacity: 0.42;
       filter: blur(130px) saturate(210%) brightness(0.7);
     }
 
-    /* Orbes ambientales que usan ÚNICAMENTE los colores de la portada */
     .bg-orb {
       position: absolute;
       border-radius: 50%;
@@ -114,24 +141,24 @@
     }
 
     .bg-orb-1 {
-      width: 60vw;
-      height: 60vw;
+      width: 65vw;
+      height: 65vw;
       top: -10%;
       left: -5%;
       animation: orbFloat1 26s infinite alternate ease-in-out;
     }
 
     .bg-orb-2 {
-      width: 65vw;
-      height: 65vw;
+      width: 70vw;
+      height: 70vw;
       bottom: -15%;
       right: -10%;
       animation: orbFloat2 32s infinite alternate ease-in-out;
     }
 
     .bg-orb-3 {
-      width: 50vw;
-      height: 50vw;
+      width: 55vw;
+      height: 55vw;
       top: 30%;
       right: 25%;
       animation: orbFloat3 38s infinite alternate ease-in-out;
@@ -143,8 +170,8 @@
       z-index: 1;
       pointer-events: none;
       background: 
-        radial-gradient(circle at 45% 45%, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.78) 100%),
-        linear-gradient(180deg, rgba(0,0,0,0.3) 0%, transparent 45%, rgba(0,0,0,0.75) 100%);
+        radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.05) 0%, rgba(0, 0, 0, 0.72) 100%),
+        linear-gradient(180deg, rgba(0,0,0,0.35) 0%, transparent 40%, rgba(0,0,0,0.80) 100%);
     }
 
     body.is-paused .bg-layer,
@@ -166,21 +193,21 @@
 
     @keyframes orbFloat1 {
       0% { transform: translate(0, 0) scale(1); }
-      100% { transform: translate(15vw, 12vh) scale(1.25); }
+      100% { transform: translate(14vw, 12vh) scale(1.2); }
     }
 
     @keyframes orbFloat2 {
       0% { transform: translate(0, 0) scale(1); }
-      100% { transform: translate(-18vw, -15vh) scale(1.2); }
+      100% { transform: translate(-16vw, -14vh) scale(1.15); }
     }
 
     @keyframes orbFloat3 {
-      0% { transform: translate(0, 0) scale(0.9); }
-      100% { transform: translate(-10vw, 18vh) scale(1.3); }
+      0% { transform: translate(0, 0) scale(0.95); }
+      100% { transform: translate(-10vw, 15vh) scale(1.25); }
     }
 
     /* ============================================================
-       CONTENEDOR APPLE MUSIC DESKTOP
+       APLICACIÓN DESKTOP & RESPONSIVE MÓVIL
        ============================================================ */
     .apple-player-app {
       position: relative;
@@ -189,8 +216,8 @@
       height: 100vh;
       display: flex;
       flex-direction: column;
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
     }
 
     .top-mac-bar {
@@ -234,18 +261,23 @@
       font-weight: 600;
       color: rgba(255, 255, 255, 0.9);
       backdrop-filter: blur(25px);
+      max-width: 60%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .apple-music-logo {
       width: 15px;
       height: 15px;
       fill: currentColor;
+      flex-shrink: 0;
     }
 
     .icon-btn {
       background: none;
       border: none;
-      color: rgba(255, 255, 255, 0.7);
+      color: rgba(255, 255, 255, 0.65);
       cursor: pointer;
       padding: 8px;
       border-radius: 50%;
@@ -256,7 +288,11 @@
     }
     .icon-btn:hover {
       color: #fff;
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.12);
+    }
+    .icon-btn.active {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.18);
     }
     .icon-btn svg {
       width: 20px;
@@ -264,15 +300,12 @@
       fill: currentColor;
     }
 
-    /* ============================================================
-       COLUMNA IZQ: PORTADA Y CONTROLES | COLUMNA DER: AMLL LYRICS
-       ============================================================ */
     .player-main-content {
       flex: 1;
       display: grid;
-      grid-template-columns: minmax(360px, 460px) 1fr;
+      grid-template-columns: minmax(360px, 440px) 1fr;
       height: calc(100vh - 52px);
-      padding: clamp(24px, 3.5vh, 48px) clamp(32px, 4vw, 72px);
+      padding: clamp(24px, 3vh, 44px) clamp(32px, 4vw, 70px);
       gap: clamp(32px, 4vw, 70px);
       align-items: center;
       max-width: 1750px;
@@ -294,15 +327,15 @@
 
     .cover-wrapper {
       position: relative;
-      width: min(100%, 360px);
+      width: min(100%, 350px);
       aspect-ratio: 1 / 1;
-      margin-bottom: 26px;
-      border-radius: 20px;
+      margin-bottom: 24px;
+      border-radius: 18px;
       box-shadow: 
         0 24px 60px -10px rgba(0, 0, 0, 0.75),
         0 10px 25px rgba(0, 0, 0, 0.4),
         0 0 0 1px rgba(255, 255, 255, 0.16);
-      transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.45s ease;
+      transition: transform 0.35s ease, box-shadow 0.35s ease;
       cursor: pointer;
       overflow: hidden;
     }
@@ -312,7 +345,7 @@
       box-shadow: 
         0 30px 75px -10px rgba(0, 0, 0, 0.85),
         0 14px 30px rgba(0, 0, 0, 0.5),
-        0 0 0 1px rgba(255, 255, 255, 0.25);
+        0 0 0 1px rgba(255, 255, 255, 0.28);
     }
 
     .cover-img {
@@ -320,12 +353,11 @@
       height: 100%;
       object-fit: cover;
       display: block;
-      transition: opacity 0.3s ease;
     }
 
     .track-details {
       width: 100%;
-      margin-bottom: 20px;
+      margin-bottom: 18px;
     }
 
     .track-title-row {
@@ -365,23 +397,25 @@
       color: var(--text-secondary);
     }
 
-    /* Barra de Progreso */
+    /* Scrubber de audio */
     .scrubber-container {
       width: 100%;
       margin-bottom: 18px;
+      touch-action: none;
     }
 
     .progress-bar-rail {
       position: relative;
       width: 100%;
       height: 5px;
-      background: rgba(255, 255, 255, 0.18);
+      background: rgba(255, 255, 255, 0.2);
       border-radius: 10px;
       cursor: pointer;
       transition: height 0.15s ease;
     }
 
-    .progress-bar-rail:hover {
+    .progress-bar-rail:hover,
+    .progress-bar-rail.is-dragging {
       height: 8px;
     }
 
@@ -401,16 +435,17 @@
       right: -6px;
       top: 50%;
       transform: translateY(-50%) scale(0);
-      width: 13px;
-      height: 13px;
+      width: 14px;
+      height: 14px;
       background: #fff;
       border-radius: 50%;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.5);
       transition: transform 0.15s ease;
       pointer-events: none;
     }
 
-    .progress-bar-rail:hover .progress-thumb {
+    .progress-bar-rail:hover .progress-thumb,
+    .progress-bar-rail.is-dragging .progress-thumb {
       transform: translateY(-50%) scale(1);
     }
 
@@ -437,35 +472,25 @@
       height: 58px;
       border-radius: 50%;
       background: #ffffff;
-      color: #0d0e12;
+      color: #0c0e14;
       display: flex;
       align-items: center;
       justify-content: center;
       border: none;
       cursor: pointer;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
-      transition: transform 0.18s cubic-bezier(0.2, 0, 0.1, 1), background-color 0.2s;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.35);
+      transition: transform 0.18s ease, background-color 0.2s;
     }
 
     .play-pause-circle:hover {
-      transform: scale(1.08);
-      background: #f5f5f7;
+      transform: scale(1.07);
+      background: #f4f5f7;
     }
 
     .play-pause-circle svg {
       width: 24px;
       height: 24px;
       fill: currentColor;
-    }
-
-    .ctrl-secondary {
-      color: rgba(255, 255, 255, 0.75);
-    }
-    .ctrl-secondary:hover {
-      color: #ffffff;
-    }
-    .ctrl-secondary.active {
-      color: #ffffff;
     }
 
     .bottom-accessories {
@@ -480,12 +505,13 @@
       display: flex;
       align-items: center;
       gap: 10px;
+      touch-action: none;
     }
 
     .volume-rail {
       flex: 1;
       height: 4px;
-      background: rgba(255, 255, 255, 0.18);
+      background: rgba(255, 255, 255, 0.2);
       border-radius: 10px;
       position: relative;
       cursor: pointer;
@@ -502,13 +528,13 @@
       top: 0;
       bottom: 0;
       width: 80%;
-      background: rgba(255, 255, 255, 0.85);
+      background: rgba(255, 255, 255, 0.9);
       border-radius: 10px;
       pointer-events: none;
     }
 
     /* ============================================================
-       MOTOR OFICIAL DE LETRAS AMLL (tool.amll.dev)
+       PANEL DE LETRAS Y TIPOGRAFÍA IDÉNTICA A LA IMAGEN (iOS SF ROUNDED)
        ============================================================ */
     .right-lyrics-panel {
       position: relative;
@@ -519,12 +545,12 @@
       overflow: hidden;
       mask-image: linear-gradient(to bottom, 
         transparent 0%, 
-        rgba(0, 0, 0, 1) 10%, 
+        rgba(0, 0, 0, 1) 12%, 
         rgba(0, 0, 0, 1) 88%, 
         transparent 100%);
       -webkit-mask-image: linear-gradient(to bottom, 
         transparent 0%, 
-        rgba(0, 0, 0, 1) 10%, 
+        rgba(0, 0, 0, 1) 12%, 
         rgba(0, 0, 0, 1) 88%, 
         transparent 100%);
     }
@@ -535,80 +561,98 @@
       position: relative;
     }
 
-    /* Tipografía y Relleno AMLL con Máxima Blancura Radiante */
+    .lyrics-loader-msg {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 19px;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.5);
+      font-family: var(--lyrics-font);
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      z-index: 10;
+    }
+    .lyrics-loader-msg.hidden {
+      opacity: 0;
+    }
+
+    /* APLICACIÓN FORZADA DE SF PRO ROUNDED EN EL MOTOR AMLL */
+    #lyricsStage,
+    #lyricsStage .amll-lyric-player,
+    #lyricsStage .amll-lyric-player * {
+      font-family: var(--lyrics-font) !important;
+    }
+
     #lyricsStage .amll-lyric-player {
-      --amll-lp-color: rgba(255, 255, 255, 0.45) !important;
+      --amll-lp-font-family: var(--lyrics-font) !important;
+      --amll-lp-font-size: clamp(28px, 2.75vw, 46px) !important;
+      --amll-lp-color: rgba(255, 255, 255, 0.42) !important;
       --amll-lp-active-color: #ffffff !important;
-      --amll-lp-font-size: clamp(28px, 2.7vw, 48px) !important;
       --amll-lp-hover-bg-color: rgba(255, 255, 255, 0.08);
       --amll-lp-bg-color: transparent !important;
       font-weight: 800 !important;
-      letter-spacing: -0.025em;
-      line-height: 1.38;
+      letter-spacing: -0.028em !important;
+      line-height: 1.28 !important;
       width: 100%;
       height: 100%;
     }
 
-    /* Relleno blanco puro ultra-luminoso y sin opacidad */
-    #lyricsStage .amll-lyric-player .amll-lyric-word {
-      color: inherit;
-      transition: color 0.1s ease, text-shadow 0.15s ease, opacity 0.1s ease;
+    /* Líneas normales: desenfoque sutil y profundidad exacta a la captura */
+    #lyricsStage .amll-lyric-player .amll-lyric-line {
+      font-weight: 800 !important;
+      letter-spacing: -0.028em !important;
+      line-height: 1.28 !important;
+      margin-bottom: clamp(22px, 2.8vh, 36px) !important;
+      transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1), opacity 0.4s ease, filter 0.4s ease !important;
     }
 
-    /* Línea activa y palabras cantadas: 100% Blanco Puro de Máxima Luminosidad */
+    #lyricsStage .amll-lyric-player .amll-lyric-line:not(.active):not([data-active="true"]) {
+      filter: blur(1.8px) !important;
+      opacity: 0.38 !important;
+    }
+
+    /* Línea activa cantada: Blanca, nítida con resplandor sutil Apple */
     #lyricsStage .amll-lyric-player .amll-lyric-line.active,
     #lyricsStage .amll-lyric-player .amll-lyric-line[data-active="true"] {
       color: #ffffff !important;
       opacity: 1 !important;
-      filter: blur(0px) drop-shadow(0 0 20px rgba(255, 255, 255, 0.8)) !important;
+      filter: blur(0px) drop-shadow(0 2px 14px rgba(255, 255, 255, 0.35)) !important;
     }
 
-    #lyricsStage .amll-lyric-player .amll-lyric-line.active .amll-lyric-word,
-    #lyricsStage .amll-lyric-player .amll-lyric-word.active,
-    #lyricsStage .amll-lyric-player .amll-lyric-word[data-active="true"],
-    #lyricsStage .amll-lyric-player [class*="word-singing"],
-    #lyricsStage .amll-lyric-player [class*="word-done"] {
-      color: #ffffff !important;
-      -webkit-text-fill-color: #ffffff !important;
-      text-shadow: 0 0 28px rgba(255, 255, 255, 0.95), 0 0 12px #ffffff !important;
-      opacity: 1 !important;
+    /* Alineación a la derecha para voces secundarias (Backing vocals / Duetos) igual a la imagen */
+    #lyricsStage .amll-lyric-player .amll-lyric-line[data-duet="true"],
+    #lyricsStage .amll-lyric-player .amll-lyric-line.duet,
+    #lyricsStage .amll-lyric-player .amll-lyric-line.is-bg {
+      text-align: right !important;
+      justify-content: flex-end !important;
     }
 
-    #lyricsStage .amll-lyric-player .amll-lyric-line {
-      margin-bottom: clamp(18px, 2.4vh, 32px) !important;
-      transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.35s ease, filter 0.35s ease;
-    }
-
-    .lyrics-loader-msg {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100%;
-      font-size: 20px;
-      font-weight: 700;
-      color: rgba(255, 255, 255, 0.4);
-    }
-
+    /* ============================================================
+       RESPONSIVE EN MÓVILES
+       ============================================================ */
     @media (max-width: 950px) {
       .player-main-content {
         grid-template-columns: 1fr;
         height: auto;
         overflow-y: auto;
-        padding: 24px;
-        gap: 28px;
+        padding: 20px;
+        gap: 24px;
       }
       .left-player-panel {
         max-width: 100%;
       }
       .cover-wrapper {
-        max-width: 240px;
-        margin-bottom: 20px;
+        max-width: 220px;
+        margin-bottom: 16px;
       }
       .right-lyrics-panel {
         height: 60vh;
       }
       #lyricsStage .amll-lyric-player {
-        --amll-lp-font-size: 24px !important;
+        --amll-lp-font-size: 26px !important;
       }
     }
   </style>
@@ -618,7 +662,7 @@
   <!-- ELEMENTO DE AUDIO NATIVO -->
   <audio id="audioElement" preload="metadata" crossorigin="anonymous"></audio>
 
-  <!-- FONDO CONFORMADO 100% POR LA PORTADA DE LA CANCIÓN ACTIVA -->
+  <!-- FONDO CONFORMADO POR LA PORTADA -->
   <div class="beautifier-bg" id="beautifierBg">
     <div class="bg-layer bg-layer-1" id="bgLayer1"></div>
     <div class="bg-layer bg-layer-2" id="bgLayer2"></div>
@@ -628,7 +672,7 @@
   </div>
   <div class="vignette-overlay"></div>
 
-  <!-- APLICACIÓN APPLE MUSIC DESKTOP -->
+  <!-- APLICACIÓN APPLE MUSIC -->
   <div class="apple-player-app">
 
     <header class="top-mac-bar">
@@ -654,7 +698,7 @@
 
     <main class="player-main-content">
 
-      <!-- PORTADA Y CONTROLES (IZQUIERDA) -->
+      <!-- PANEL IZQUIERDO -->
       <section class="left-player-panel">
         <div class="cover-wrapper" id="coverContainer">
           <img class="cover-img" id="trackCover" src="" alt="Portada" crossorigin="anonymous">
@@ -681,11 +725,11 @@
         </div>
 
         <div class="playback-controls">
-          <button class="icon-btn ctrl-secondary" id="shuffleBtn" title="Aleatorio">
+          <button class="icon-btn" id="shuffleBtn" title="Aleatorio">
             <svg viewBox="0 0 24 24"><path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/></svg>
           </button>
 
-          <button class="icon-btn ctrl-secondary" id="prevBtn" title="Canción anterior">
+          <button class="icon-btn" id="prevBtn" title="Canción anterior">
             <svg viewBox="0 0 24 24"><path d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z"/></svg>
           </button>
 
@@ -694,11 +738,11 @@
             <svg id="pauseIcon" viewBox="0 0 24 24" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
           </button>
 
-          <button class="icon-btn ctrl-secondary" id="nextBtn" title="Siguiente canción">
+          <button class="icon-btn" id="nextBtn" title="Siguiente canción">
             <svg viewBox="0 0 24 24"><path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"/></svg>
           </button>
 
-          <button class="icon-btn ctrl-secondary active" id="repeatBtn" title="Repetir">
+          <button class="icon-btn active" id="repeatBtn" title="Repetir">
             <svg viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/></svg>
           </button>
         </div>
@@ -715,38 +759,64 @@
         </div>
       </section>
 
-      <!-- LYRICS ENGINE OFICIAL AMLL (DERECHA) -->
+      <!-- PANEL DERECHO (LYRICS ENGINE) -->
       <section class="right-lyrics-panel" id="lyricsContainer">
-        <div id="lyricsStage">
-          <div class="lyrics-loader-msg">Cargando letras con motor AMLL...</div>
-        </div>
+        <div class="lyrics-loader-msg" id="lyricsLoader">Cargando letras con motor AMLL...</div>
+        <div id="lyricsStage"></div>
       </section>
 
     </main>
   </div>
 
   <script>
-    // LISTA DE CANCIONES (CAPCANA COCOA COMO PRIMARIA)
+    // PLAYLIST CON CAPCANA COCOA, MODO OCULTO Y NUMB
     const playlist = [
       {
         title: "CAPCANA COCOA",
         artist: "Blessd & Anuel AA",
         cover: "https://file.garden/aqbkhK4DJSCL_vig/CAPCANA%20COCOA.jpg",
         audio: "https://file.garden/aqbkhK4DJSCL_vig/BLESSD%20%E2%9D%8C%20ANUEL%20AA%20%20CAPCANA%20COCOA%20(Video%20Oficial)%20-%20SIEMPRE%20BLESSD%20%F0%9F%92%99%20(youtube).mp3",
-        ttml: "https://file.garden/aqbkhK4DJSCL_vig/CAPCANA%20COCOA.ttml"
+        ttml: "https://file.garden/aqbkhK4DJSCL_vig/CAPCANA%20COCOA.ttml",
+        fallbackColors: [{r:45,g:55,b:80},{r:75,g:100,b:140},{r:20,g:25,b:35},{r:90,g:125,b:170},{r:50,g:70,b:100}]
       },
       {
         title: "Modo Oculto",
         artist: "Yan Block",
         cover: "https://file.garden/aqbkhK4DJSCL_vig/MODO%20OCULTO.jpg",
         audio: "https://file.garden/aqbkhK4DJSCL_vig/Yan%20Block%20-%20Modo%20Oculto%20(Video%20Oficial)%20-%20Yan%20Block%20(youtube).mp3",
-        ttml: "https://file.garden/aqbkhK4DJSCL_vig/Modo%20Oculto.ttml"
+        ttml: "https://file.garden/aqbkhK4DJSCL_vig/Modo%20Oculto.ttml",
+        fallbackColors: [{r:30,g:40,b:60},{r:60,g:80,b:110},{r:15,g:20,b:30},{r:70,g:100,b:140},{r:40,g:55,b:85}]
+      },
+      {
+        title: "Numb",
+        artist: "LINKIN PARK",
+        cover: "https://upload.wikimedia.org/wikipedia/en/b/b9/Linkin_Park_-_Meteora_cover.jpg",
+        audio: "https://file.garden/aqbkhK4DJSCL_vig/BLESSD%20%E2%9D%8C%20ANUEL%20AA%20%20CAPCANA%20COCOA%20(Video%20Oficial)%20-%20SIEMPRE%20BLESSD%20%F0%9F%92%99%20(youtube).mp3",
+        ttml: `data:text/xml;charset=utf-8,${encodeURIComponent(`<?xml version="1.0" encoding="utf-8"?>
+<tt xmlns="http://www.w3.org/ns/ttml" xmlns:ttm="http://www.w3.org/ns/ttml#metadata">
+  <body>
+    <div>
+      <p begin="00:00.00" end="00:04.50"><span>Every</span> <span>step</span> <span>that</span> <span>I</span> <span>take</span> <span>is</span> <span>another</span> <span>mistake</span> <span>to</span> <span>you</span></p>
+      <p begin="00:04.80" end="00:09.50" ttm:agent="v2" ttm:role="x-bg"><span>Caught</span> <span>in</span> <span>the</span> <span>undertow,</span> <span>just</span> <span>caught</span> <span>in</span> <span>the</span> <span>undertow</span></p>
+      <p begin="00:09.80" end="00:14.20"><span>And</span> <span>every</span> <span>second</span> <span>I</span> <span>waste</span> <span>is</span> <span>more</span> <span>than</span> <span>I</span> <span>can</span> <span>take</span></p>
+      <p begin="00:14.50" end="00:20.00"><span>I've</span> <span>become</span> <span>so</span> <span>numb,</span> <span>I</span> <span>can't</span> <span>feel</span> <span>you</span> <span>there</span></p>
+    </div>
+  </body>
+</tt>`)}`,
+        fallbackColors: [{r:85,g:70,b:55},{r:140,g:115,b:90},{r:35,g:28,b:20},{r:160,g:135,b:105},{r:70,g:58,b:45}]
       }
     ];
 
     let currentTrackIndex = 0;
+    let isPlaying = false;
+    let isRepeat = true;
+    let isShuffle = false;
+    let duration = 0;
+    let lyricPlayer = null;
+    let lastFrameMs = null;
+    let isScrubbing = false;
 
-    // Elementos del DOM
+    // DOM Elements
     const audio = document.getElementById('audioElement');
     const playPauseBtn = document.getElementById('playPauseBtn');
     const playIcon = document.getElementById('playIcon');
@@ -756,11 +826,14 @@
     const currentTimeEl = document.getElementById('currentTime');
     const remainingTimeEl = document.getElementById('remainingTime');
     const lyricsStage = document.getElementById('lyricsStage');
+    const lyricsLoader = document.getElementById('lyricsLoader');
     const fullScreenBtn = document.getElementById('fullScreenBtn');
     const zoomToggle = document.getElementById('zoomToggle');
     const volumeRail = document.getElementById('volumeRail');
     const volumeFill = document.getElementById('volumeFill');
     const volumeMuteBtn = document.getElementById('volumeMuteBtn');
+    const shuffleBtn = document.getElementById('shuffleBtn');
+    const repeatBtn = document.getElementById('repeatBtn');
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
     const trackCover = document.getElementById('trackCover');
@@ -770,15 +843,10 @@
     const bgLayer1 = document.getElementById('bgLayer1');
     const bgLayer2 = document.getElementById('bgLayer2');
 
-    let isPlaying = false;
-    let duration = 0;
-    let lyricPlayer = null;
-    let lastFrameMs = null;
-
     // ============================================================
-    // 1. EXTRACTOR DE COLORES DE LA PORTADA ACTIVA
+    // 1. EXTRACTOR DE COLOR DE PORTADA CON FALLBACKS FIABLES
     // ============================================================
-    function extractCoverPalette(imgUrl) {
+    function extractCoverPalette(imgUrl, fallbackColors) {
       return new Promise((resolve) => {
         const img = new Image();
         img.crossOrigin = "anonymous";
@@ -796,7 +864,9 @@
             for (let i = 0; i < data.length; i += 16) {
               const r = data[i], g = data[i+1], b = data[i+2], a = data[i+3];
               if (a < 128) continue;
-              
+              const lum = 0.299 * r + 0.587 * g + 0.114 * b;
+              if (lum < 15 || lum > 245) continue; // Descartar negros o blancos puros
+
               const qr = (r >> 4) << 4;
               const qg = (g >> 4) << 4;
               const qb = (b >> 4) << 4;
@@ -820,6 +890,8 @@
               count: b.count
             })).sort((a, b) => b.count - a.count);
 
+            if (clusters.length === 0) return resolve(fallbackColors);
+
             const palette = [clusters[0]];
             for (let i = 1; i < clusters.length && palette.length < 5; i++) {
               const c = clusters[i];
@@ -827,49 +899,30 @@
               if (isDistinct) palette.push(c);
             }
             while (palette.length < 5) {
-              palette.push(palette[palette.length - 1] || { r: 20, g: 30, b: 45 });
+              palette.push(palette[palette.length - 1] || fallbackColors[0]);
             }
             resolve(palette);
           } catch (e) {
-            resolve([
-              { r: 35, g: 45, b: 65 },
-              { r: 70, g: 90, b: 125 },
-              { r: 20, g: 25, b: 40 },
-              { r: 90, g: 120, b: 160 },
-              { r: 45, g: 65, b: 95 }
-            ]);
+            resolve(fallbackColors);
           }
         };
-        img.onerror = () => {
-          resolve([
-            { r: 35, g: 45, b: 65 },
-            { r: 70, g: 90, b: 125 },
-            { r: 20, g: 25, b: 40 },
-            { r: 90, g: 120, b: 160 },
-            { r: 45, g: 65, b: 95 }
-          ]);
-        };
+        img.onerror = () => resolve(fallbackColors);
         img.src = imgUrl;
       });
     }
 
     function applyCoverColors(palette) {
       const root = document.documentElement;
-      const c1 = palette[0];
-      const c2 = palette[1];
-      const c3 = palette[2];
-      const c4 = palette[3];
-      const c5 = palette[4];
+      const c1 = palette[0], c2 = palette[1], c3 = palette[2], c4 = palette[3];
 
       root.style.setProperty('--cover-c1', `rgb(${c1.r}, ${c1.g}, ${c1.b})`);
       root.style.setProperty('--cover-c2', `rgb(${c2.r}, ${c2.g}, ${c2.b})`);
       root.style.setProperty('--cover-c3', `rgb(${c3.r}, ${c3.g}, ${c3.b})`);
       root.style.setProperty('--cover-c4', `rgb(${c4.r}, ${c4.g}, ${c4.b})`);
-      root.style.setProperty('--cover-c5', `rgb(${c5.r}, ${c5.g}, ${c5.b})`);
 
-      const darkR = Math.max(5, Math.min(18, Math.round(c1.r * 0.08)));
-      const darkG = Math.max(6, Math.min(20, Math.round(c1.g * 0.09)));
-      const darkB = Math.max(8, Math.min(26, Math.round(c1.b * 0.12)));
+      const darkR = Math.max(5, Math.min(18, Math.round(c1.r * 0.1)));
+      const darkG = Math.max(6, Math.min(20, Math.round(c1.g * 0.1)));
+      const darkB = Math.max(8, Math.min(26, Math.round(c1.b * 0.14)));
       root.style.setProperty('--app-bg-dark', `rgb(${darkR}, ${darkG}, ${darkB})`);
 
       document.getElementById('bgOrb1').style.background = `radial-gradient(circle, rgba(${c1.r}, ${c1.g}, ${c1.b}, 0.52) 0%, transparent 70%)`;
@@ -878,7 +931,7 @@
     }
 
     // ============================================================
-    // 2. PARSER TTML CON ESPACIADO INTELIGENTE (AMLL SPEC)
+    // 2. PARSER TTML CON DETECCIÓN DE SEGUNDAS VOCES / DUETOS
     // ============================================================
     function parseTTMLTime(str) {
       if (!str) return 0;
@@ -906,13 +959,19 @@
         const pBegin = parseTTMLTime(beginAttr);
         const pEnd = p.getAttribute('end') || p.getAttribute('itunes:end') ? parseTTMLTime(p.getAttribute('end') || p.getAttribute('itunes:end')) : 0;
 
+        // Detección de duetos y voces de fondo para alineación tipo imagen
+        const role = p.getAttribute('ttm:role') || p.getAttribute('role') || '';
+        const agent = p.getAttribute('ttm:agent') || p.getAttribute('agent') || '';
+        const songPart = p.getAttribute('itunes:songPart') || p.getAttribute('songPart') || '';
+        const isBG = role.includes('bg') || songPart.includes('backing');
+        const isDuet = agent === 'v2' || agent === '2' || isBG;
+
         let rawWords = [];
         Array.from(p.childNodes).forEach(node => {
           const localName = node.localName ? node.localName.toLowerCase() : (node.nodeName ? node.nodeName.toLowerCase() : '');
 
           if (node.nodeType === Node.TEXT_NODE) {
-            let val = node.nodeValue || '';
-            val = val.replace(/[\r\n\t]+/g, ' ');
+            let val = (node.nodeValue || '').replace(/[\r\n\t]+/g, ' ');
             if (val.trim() !== '') {
               rawWords.push({ time: pBegin, dur: 0, text: val });
             }
@@ -943,15 +1002,17 @@
           for (let i = 0; i < rawWords.length - 1; i++) {
             let cur = rawWords[i];
             let next = rawWords[i + 1];
-
-            if (!/\s$/.test(cur.text)) {
-              if (!/^\s/.test(next.text) && !/^[.,!?:;)’'\]}]/.test(next.text.trim())) {
-                cur.text = cur.text + " ";
-              }
+            if (!/\s$/.test(cur.text) && !/^\s/.test(next.text) && !/^[.,!?:;)’'\]}]/.test(next.text.trim())) {
+              cur.text = cur.text + " ";
             }
           }
-
-          rawLines.push({ time: pBegin, words: rawWords, dur: pEnd > pBegin ? pEnd - pBegin : 0 });
+          rawLines.push({ 
+            time: pBegin, 
+            words: rawWords, 
+            dur: pEnd > pBegin ? pEnd - pBegin : 0,
+            isDuet,
+            isBG
+          });
         }
       });
 
@@ -976,74 +1037,93 @@
         romanLyric: '',
         startTime: Math.round(l.time * 1000),
         endTime: Math.round((l.time + l.dur) * 1000),
-        isBG: false,
-        isDuet: false
+        isBG: l.isBG,
+        isDuet: l.isDuet
       }));
     }
 
     // ============================================================
-    // 3. INICIALIZACIÓN DEL MOTOR AMLL CORE
+    // 3. INICIALIZACIÓN DE AMLL SIN DESTRUCCIÓN DE DOM
     // ============================================================
-    async function initAMLLPlayer() {
-      if (lyricPlayer) return lyricPlayer;
+    async function getLyricPlayer() {
+      if (!lyricPlayer) {
+        const LyricPlayerCtor = await window.__AMLLReady;
+        if (!LyricPlayerCtor) return null;
 
-      const LyricPlayerCtor = await window.__AMLLReady;
-      if (!LyricPlayerCtor) return null;
+        lyricPlayer = new LyricPlayerCtor();
+        lyricPlayer.setEnableSpring(true);
+        lyricPlayer.setEnableBlur(true);
+        lyricPlayer.setEnableScale(true);
 
-      lyricPlayer = new LyricPlayerCtor();
-      lyricPlayer.setEnableSpring(true);
-      lyricPlayer.setEnableBlur(true);
-      lyricPlayer.setEnableScale(true);
+        if (typeof lyricPlayer.setWordFadeWidth === 'function') {
+          lyricPlayer.setWordFadeWidth(0.5);
+        }
 
-      if (typeof lyricPlayer.setWordFadeWidth === 'function') {
-        lyricPlayer.setWordFadeWidth(0.5);
+        lyricPlayer.addEventListener('line-click', (evt) => {
+          const lines = lyricPlayer.getLyricLines();
+          const line = lines[evt.lineIndex];
+          if (line) {
+            audio.currentTime = line.startTime / 1000;
+            if (audio.paused) togglePlay();
+          }
+        });
+
+        window.addEventListener('resize', () => {
+          if (lyricPlayer) lyricPlayer.calcLayout(true, true);
+        });
       }
 
-      lyricsStage.innerHTML = '';
-      lyricsStage.appendChild(lyricPlayer.getElement());
-
-      lyricPlayer.addEventListener('line-click', (evt) => {
-        const lines = lyricPlayer.getLyricLines();
-        const line = lines[evt.lineIndex];
-        if (line) {
-          audio.currentTime = line.startTime / 1000;
-          if (audio.paused) togglePlay();
-        }
-      });
-
-      window.addEventListener('resize', () => {
-        if (lyricPlayer) lyricPlayer.calcLayout(true, true);
-      });
+      // Asegurar que el elemento siempre esté presente en el escenario
+      const el = lyricPlayer.getElement();
+      if (!lyricsStage.contains(el)) {
+        lyricsStage.innerHTML = '';
+        lyricsStage.appendChild(el);
+      }
 
       return lyricPlayer;
     }
 
     async function loadLyricsForTrack(ttmlUrl) {
+      lyricsLoader.classList.remove('hidden');
       let xmlText = '';
-      try {
-        const response = await fetch(ttmlUrl);
-        xmlText = await response.text();
-      } catch (e) {
-        const proxyRes = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(ttmlUrl)}`);
-        xmlText = await proxyRes.text();
+
+      if (ttmlUrl.startsWith('data:')) {
+        xmlText = decodeURIComponent(ttmlUrl.split(',')[1]);
+      } else {
+        try {
+          const res = await fetch(ttmlUrl);
+          if (!res.ok) throw new Error("HTTP error " + res.status);
+          xmlText = await res.text();
+        } catch (e) {
+          try {
+            const proxyRes = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(ttmlUrl)}`);
+            xmlText = await proxyRes.text();
+          } catch (err) {
+            console.error("No se pudieron descargar las letras:", err);
+          }
+        }
       }
 
-      const parsedLines = parseTTMLToAMLL(xmlText);
-      const player = await initAMLLPlayer();
-      if (player) {
-        player.setLyricLines(parsedLines, audio.currentTime * 1000);
-        player.calcLayout(true, true);
+      if (xmlText) {
+        const parsedLines = parseTTMLToAMLL(xmlText);
+        const player = await getLyricPlayer();
+        if (player) {
+          player.setLyricLines(parsedLines, audio.currentTime * 1000);
+          player.setCurrentTime(audio.currentTime * 1000, true);
+          player.calcLayout(true, true);
+          player.update(0);
+        }
       }
+      lyricsLoader.classList.add('hidden');
     }
 
     // ============================================================
-    // 4. CAMBIO DE CANCIÓN Y GESTIÓN DE REPRODUCCIÓN
+    // 4. CONTROL DE REPRODUCCIÓN Y CAMBIO DE CANCIÓN
     // ============================================================
     async function loadTrack(index, autoPlay = false) {
       currentTrackIndex = (index + playlist.length) % playlist.length;
       const track = playlist[currentTrackIndex];
 
-      // 1. Actualizar metadatos y carátula
       trackTitle.textContent = track.title;
       trackArtist.textContent = track.artist;
       nowPlayingText.textContent = `${track.title} — ${track.artist}`;
@@ -1051,22 +1131,17 @@
       bgLayer1.style.backgroundImage = `url('${track.cover}')`;
       bgLayer2.style.backgroundImage = `url('${track.cover}')`;
 
-      // 2. Audio
       audio.src = track.audio;
       audio.load();
       progressFill.style.width = '0%';
       currentTimeEl.textContent = '0:00';
       remainingTimeEl.textContent = '-0:00';
 
-      // 3. Extraer paleta genuina de la nueva portada
-      const palette = await extractCoverPalette(track.cover);
+      const palette = await extractCoverPalette(track.cover, track.fallbackColors);
       applyCoverColors(palette);
 
-      // 4. Cargar letras TTML correspondientes
-      lyricsStage.innerHTML = '<div class="lyrics-loader-msg">Cargando letras con motor AMLL...</div>';
       await loadLyricsForTrack(track.ttml);
 
-      // 5. Auto-reproducir si estaba en curso
       if (autoPlay) {
         audio.play().then(() => {
           isPlaying = true;
@@ -1083,7 +1158,15 @@
     }
 
     function nextTrack() {
-      loadTrack(currentTrackIndex + 1, isPlaying);
+      if (isShuffle && playlist.length > 1) {
+        let randIdx;
+        do {
+          randIdx = Math.floor(Math.random() * playlist.length);
+        } while (randIdx === currentTrackIndex);
+        loadTrack(randIdx, isPlaying);
+      } else {
+        loadTrack(currentTrackIndex + 1, isPlaying);
+      }
     }
 
     function prevTrack() {
@@ -1095,6 +1178,7 @@
     }
 
     function formatTime(seconds) {
+      if (isNaN(seconds) || seconds < 0) return "0:00";
       const min = Math.floor(seconds / 60);
       const sec = Math.floor(seconds % 60);
       return `${min}:${sec < 10 ? '0' : ''}${sec}`;
@@ -1119,9 +1203,19 @@
 
     playPauseBtn.addEventListener('click', togglePlay);
     document.getElementById('coverContainer').addEventListener('click', togglePlay);
-
     prevBtn.addEventListener('click', prevTrack);
     nextBtn.addEventListener('click', nextTrack);
+
+    // Botones Shuffle y Repeat
+    shuffleBtn.addEventListener('click', () => {
+      isShuffle = !isShuffle;
+      shuffleBtn.classList.toggle('active', isShuffle);
+    });
+
+    repeatBtn.addEventListener('click', () => {
+      isRepeat = !isRepeat;
+      repeatBtn.classList.toggle('active', isRepeat);
+    });
 
     audio.addEventListener('loadedmetadata', () => {
       if (audio.duration && !isNaN(audio.duration)) {
@@ -1131,7 +1225,7 @@
     });
 
     audio.addEventListener('timeupdate', () => {
-      if (duration > 0) {
+      if (duration > 0 && !isScrubbing) {
         const pct = (audio.currentTime / duration) * 100;
         progressFill.style.width = `${Math.min(pct, 100)}%`;
         currentTimeEl.textContent = formatTime(audio.currentTime);
@@ -1141,50 +1235,129 @@
     });
 
     audio.addEventListener('ended', () => {
-      nextTrack();
+      if (isRepeat) {
+        nextTrack();
+      } else {
+        if (currentTrackIndex < playlist.length - 1) {
+          nextTrack();
+        } else {
+          audio.pause();
+          isPlaying = false;
+          document.body.classList.add('is-paused');
+          playIcon.style.display = 'block';
+          pauseIcon.style.display = 'none';
+        }
+      }
     });
 
-    function handleScrub(e) {
-      const rect = progressRail.getBoundingClientRect();
-      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-      const offsetX = Math.max(0, Math.min(clientX - rect.left, rect.width));
-      const percentage = offsetX / rect.width;
-      audio.currentTime = percentage * duration;
+    // ============================================================
+    // 5. SCRUBBER FLUIDO (MOUSE & TOUCH) SIN CRUJIDOS DE AUDIO
+    // ============================================================
+    function initScrubber() {
+      let scrubPct = 0;
+
+      function updateScrubUI(pct) {
+        pct = Math.max(0, Math.min(1, pct));
+        scrubPct = pct;
+        progressFill.style.width = `${pct * 100}%`;
+        const seekTime = pct * (duration || 0);
+        currentTimeEl.textContent = formatTime(seekTime);
+        remainingTimeEl.textContent = `-${formatTime(Math.max(0, (duration || 0) - seekTime))}`;
+        if (lyricPlayer) {
+          lyricPlayer.setCurrentTime(seekTime * 1000, true);
+        }
+      }
+
+      function startDrag(e) {
+        if (!duration) return;
+        isScrubbing = true;
+        progressRail.classList.add('is-dragging');
+        const rect = progressRail.getBoundingClientRect();
+
+        const getPct = (evt) => {
+          const clientX = evt.touches ? evt.touches[0].clientX : evt.clientX;
+          return (clientX - rect.left) / rect.width;
+        };
+
+        updateScrubUI(getPct(e));
+
+        const onMove = (evt) => updateScrubUI(getPct(evt));
+        const onEnd = () => {
+          audio.currentTime = scrubPct * duration;
+          isScrubbing = false;
+          progressRail.classList.remove('is-dragging');
+          window.removeEventListener('mousemove', onMove);
+          window.removeEventListener('mouseup', onEnd);
+          window.removeEventListener('touchmove', onMove);
+          window.removeEventListener('touchend', onEnd);
+        };
+
+        window.addEventListener('mousemove', onMove);
+        window.addEventListener('mouseup', onEnd);
+        window.addEventListener('touchmove', onMove, { passive: true });
+        window.addEventListener('touchend', onEnd);
+      }
+
+      progressRail.addEventListener('mousedown', startDrag);
+      progressRail.addEventListener('touchstart', startDrag, { passive: true });
     }
 
-    progressRail.addEventListener('mousedown', (e) => {
-      handleScrub(e);
-      window.addEventListener('mousemove', handleScrub);
-      window.addEventListener('mouseup', () => {
-        window.removeEventListener('mousemove', handleScrub);
-      }, { once: true });
-    });
-
+    // ============================================================
+    // 6. CONTROL DE VOLUMEN (MOUSE & TOUCH)
+    // ============================================================
     function setVolume(pct) {
       pct = Math.max(0, Math.min(1, pct));
       audio.volume = pct;
       volumeFill.style.width = `${pct * 100}%`;
     }
 
-    volumeRail.addEventListener('click', (e) => {
-      const rect = volumeRail.getBoundingClientRect();
-      setVolume((e.clientX - rect.left) / rect.width);
-    });
-
-    volumeMuteBtn.addEventListener('click', () => {
-      if (audio.volume > 0) {
-        audio.dataset.prevVol = audio.volume;
-        setVolume(0);
-      } else {
-        setVolume(parseFloat(audio.dataset.prevVol || 0.8));
+    function initVolumeControl() {
+      function handleVolDrag(e) {
+        const rect = volumeRail.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        setVolume((clientX - rect.left) / rect.width);
       }
-    });
 
+      function startVol(e) {
+        handleVolDrag(e);
+        const onMove = (evt) => handleVolDrag(evt);
+        const onEnd = () => {
+          window.removeEventListener('mousemove', onMove);
+          window.removeEventListener('mouseup', onEnd);
+          window.removeEventListener('touchmove', onMove);
+          window.removeEventListener('touchend', onEnd);
+        };
+        window.addEventListener('mousemove', onMove);
+        window.addEventListener('mouseup', onEnd);
+        window.addEventListener('touchmove', onMove, { passive: true });
+        window.addEventListener('touchend', onEnd);
+      }
+
+      volumeRail.addEventListener('mousedown', startVol);
+      volumeRail.addEventListener('touchstart', startVol, { passive: true });
+
+      volumeMuteBtn.addEventListener('click', () => {
+        if (audio.volume > 0) {
+          audio.dataset.prevVol = audio.volume;
+          setVolume(0);
+        } else {
+          setVolume(parseFloat(audio.dataset.prevVol || 0.8));
+        }
+      });
+    }
+
+    // ============================================================
+    // 7. PANTALLA COMPLETA & ACCESOS RÁPIDOS DE TECLADO
+    // ============================================================
     function toggleFullScreen() {
-      if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen().catch(() => {});
+      const isFs = document.fullscreenElement || document.webkitFullscreenElement;
+      if (!isFs) {
+        const el = document.documentElement;
+        if (el.requestFullscreen) el.requestFullscreen().catch(() => {});
+        else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
       } else {
         if (document.exitFullscreen) document.exitFullscreen();
+        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
       }
     }
 
@@ -1192,7 +1365,7 @@
     zoomToggle.addEventListener('click', toggleFullScreen);
 
     window.addEventListener('keydown', (e) => {
-      if (e.target.tagName === 'INPUT') return;
+      if (['INPUT', 'TEXTAREA'].includes(e.target.tagName)) return;
       if (e.code === 'Space') {
         e.preventDefault();
         togglePlay();
@@ -1214,14 +1387,19 @@
       }
     });
 
+    // ============================================================
+    // 8. BUCLE DE ANIMACIÓN CONTINUO (RESUELVE SPRINGS EN PAUSA)
+    // ============================================================
     function animationLoop(now) {
       if (!lastFrameMs) lastFrameMs = now;
       const deltaMs = Math.min(100, now - lastFrameMs);
       lastFrameMs = now;
 
-      if (lyricPlayer && !audio.paused) {
-        const curMs = audio.currentTime * 1000;
-        lyricPlayer.setCurrentTime(curMs + 70);
+      if (lyricPlayer) {
+        if (!audio.paused && !isScrubbing) {
+          lyricPlayer.setCurrentTime(audio.currentTime * 1000);
+        }
+        // Se ejecuta siempre para resolver las físicas elásticas suavemente
         lyricPlayer.update(deltaMs);
       }
 
@@ -1229,8 +1407,9 @@
     }
 
     async function init() {
+      initScrubber();
+      initVolumeControl();
       document.body.classList.add('is-paused');
-      // Cargar canción inicial: "CAPCANA COCOA"
       await loadTrack(0, false);
       requestAnimationFrame(animationLoop);
     }
