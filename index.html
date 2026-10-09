@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Apple Music — Lyrics Player</title>
+  <title>Apple Music — CAPCANA COCOA (AMLL Engine)</title>
 
-  <!-- Tipografía Apple SF Pro Rounded & Fallbacks Oficiales -->
+  <!-- Tipografía de Interfaz UI -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
 
   <!-- Estilos oficiales de AMLL Core (Apple Music Like Lyrics) -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@applemusic-like-lyrics/core@0.5.2/dist/style.css">
 
-  <!-- Cargador de módulos AMLL Core con soporte multi-CDN de reserva -->
+  <!-- Cargador de módulos AMLL Core -->
   <script>
     window.__AMLLResolver = null;
     window.__AMLLReady = new Promise((resolve) => {
@@ -44,26 +44,39 @@
   </script>
 
   <style>
-    /* DEFINICIÓN DE LA FUENTE SF PRO ROUNDED IDÉNTICA A LA IMAGEN */
+    /* ============================================================
+       DEFINICIÓN OFICIAL DE "HELVETICA NEUE 95 BLACK"
+       ============================================================ */
     @font-face {
-      font-family: 'SF Pro Rounded';
-      src: url('https://cdn.jsdelivr.net/gh/explicamarcos/font@main/SF-Pro-Rounded-Bold.ttf') format('truetype');
-      font-weight: 700;
+      font-family: 'Helvetica Neue 95 Black';
+      src: local('Helvetica Neue 95 Black'),
+           local('HelveticaNeue-95Black'),
+           local('Helvetica Neue Black'),
+           local('HelveticaNeue-Black'),
+           url('https://cdn.jsdelivr.net/gh/esurharun/hn_fonts@master/Helvetica%20LT%2095%20Black.ttf') format('truetype'),
+           url('https://cdn.jsdelivr.net/gh/EverGoebbels/HelveticaNeue@main/HelveticaNeue-Black.otf') format('opentype'),
+           url('https://cdn.jsdelivr.net/gh/zyh1102/fonts@master/helveticaneue-black.otf') format('opentype');
+      font-weight: 900;
       font-style: normal;
       font-display: swap;
     }
+
     @font-face {
-      font-family: 'SF Pro Rounded';
-      src: url('https://cdn.jsdelivr.net/gh/explicamarcos/font@main/SF-Pro-Rounded-Black.ttf') format('truetype');
-      font-weight: 800 900;
+      font-family: 'Helvetica Neue';
+      src: local('Helvetica Neue 95 Black'),
+           local('HelveticaNeue-95Black'),
+           local('Helvetica Neue Black'),
+           local('HelveticaNeue-Black'),
+           url('https://cdn.jsdelivr.net/gh/esurharun/hn_fonts@master/Helvetica%20LT%2095%20Black.ttf') format('truetype');
+      font-weight: 900;
       font-style: normal;
       font-display: swap;
     }
 
     :root {
       --ui-font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Plus Jakarta Sans", sans-serif;
-      /* Fuente de letras redondeada 100% fiel a iOS Apple Music */
-      --lyrics-font: "SF Pro Rounded", ui-rounded, "SF Pro Rounded Heavy", "SF Pro Rounded Bold", "Nunito", "Arial Rounded MT Bold", -apple-system-rounded, system-ui, sans-serif;
+      /* Fuente exacta solicitada para las letras */
+      --lyrics-font: 'Helvetica Neue 95 Black', 'Helvetica Neue Black', 'HelveticaNeue-95Black', 'HelveticaNeue-Black', 'Helvetica Neue LT Std 95 Black', 'Helvetica Neue', 'Arial Black', sans-serif;
 
       --text-main: #ffffff;
       --text-secondary: rgba(255, 255, 255, 0.70);
@@ -534,7 +547,7 @@
     }
 
     /* ============================================================
-       PANEL DE LETRAS Y TIPOGRAFÍA IDÉNTICA A LA IMAGEN (iOS SF ROUNDED)
+       PANEL DE LETRAS: HELVETICA NEUE 95 BLACK & RELLENO BLANCO VIVO
        ============================================================ */
     .right-lyrics-panel {
       position: relative;
@@ -568,7 +581,7 @@
       align-items: center;
       justify-content: center;
       font-size: 19px;
-      font-weight: 700;
+      font-weight: 900;
       color: rgba(255, 255, 255, 0.5);
       font-family: var(--lyrics-font);
       pointer-events: none;
@@ -579,50 +592,55 @@
       opacity: 0;
     }
 
-    /* APLICACIÓN FORZADA DE SF PRO ROUNDED EN EL MOTOR AMLL */
+    /* APLICACIÓN FORZADA DE HELVETICA NEUE 95 BLACK EN EL MOTOR AMLL */
     #lyricsStage,
     #lyricsStage .amll-lyric-player,
     #lyricsStage .amll-lyric-player * {
       font-family: var(--lyrics-font) !important;
+      font-weight: 900 !important;
     }
 
     #lyricsStage .amll-lyric-player {
+      /* Eliminamos el modo plus-lighter para evitar que el texto se vea pálido o translúcido */
+      mix-blend-mode: normal !important;
       --amll-lp-font-family: var(--lyrics-font) !important;
-      --amll-lp-font-size: clamp(28px, 2.75vw, 46px) !important;
-      --amll-lp-color: rgba(255, 255, 255, 0.42) !important;
+      --amll-lp-font-size: clamp(28px, 2.7vw, 45px) !important;
+      --amll-lp-color: rgba(255, 255, 255, 0.40) !important;
       --amll-lp-active-color: #ffffff !important;
       --amll-lp-hover-bg-color: rgba(255, 255, 255, 0.08);
       --amll-lp-bg-color: transparent !important;
-      font-weight: 800 !important;
-      letter-spacing: -0.028em !important;
-      line-height: 1.28 !important;
+      font-weight: 900 !important;
+      letter-spacing: -0.022em !important;
+      line-height: 1.25 !important;
       width: 100%;
       height: 100%;
     }
 
-    /* Líneas normales: desenfoque sutil y profundidad exacta a la captura */
+    /* Líneas inactivas: Desenfoque de fondo y contraste sutil */
     #lyricsStage .amll-lyric-player .amll-lyric-line {
-      font-weight: 800 !important;
-      letter-spacing: -0.028em !important;
-      line-height: 1.28 !important;
-      margin-bottom: clamp(22px, 2.8vh, 36px) !important;
+      font-weight: 900 !important;
+      letter-spacing: -0.022em !important;
+      line-height: 1.25 !important;
+      margin-bottom: clamp(20px, 2.7vh, 34px) !important;
       transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1), opacity 0.4s ease, filter 0.4s ease !important;
     }
 
     #lyricsStage .amll-lyric-player .amll-lyric-line:not(.active):not([data-active="true"]) {
-      filter: blur(1.8px) !important;
+      filter: blur(1.6px) !important;
       opacity: 0.38 !important;
     }
 
-    /* Línea activa cantada: Blanca, nítida con resplandor sutil Apple */
+    /* RELLENO BLANCO PURO, VIVO Y BRILLANTE PARA LA LÍNEA ACTIVA Y PALABRAS CANTADAS */
     #lyricsStage .amll-lyric-player .amll-lyric-line.active,
-    #lyricsStage .amll-lyric-player .amll-lyric-line[data-active="true"] {
+    #lyricsStage .amll-lyric-player .amll-lyric-line[data-active="true"],
+    #lyricsStage .amll-lyric-player [class*="active"] {
       color: #ffffff !important;
       opacity: 1 !important;
-      filter: blur(0px) drop-shadow(0 2px 14px rgba(255, 255, 255, 0.35)) !important;
+      filter: blur(0px) !important;
+      text-shadow: 0 0 18px rgba(255, 255, 255, 0.70), 0 2px 8px rgba(0, 0, 0, 0.45) !important;
     }
 
-    /* Alineación a la derecha para voces secundarias (Backing vocals / Duetos) igual a la imagen */
+    /* Alineación de segundas voces / coros a la derecha */
     #lyricsStage .amll-lyric-player .amll-lyric-line[data-duet="true"],
     #lyricsStage .amll-lyric-player .amll-lyric-line.duet,
     #lyricsStage .amll-lyric-player .amll-lyric-line.is-bg {
@@ -769,7 +787,7 @@
   </div>
 
   <script>
-    // PLAYLIST CON CAPCANA COCOA, MODO OCULTO Y NUMB
+    // LISTA DE CANCIONES
     const playlist = [
       {
         title: "CAPCANA COCOA",
@@ -816,7 +834,7 @@
     let lastFrameMs = null;
     let isScrubbing = false;
 
-    // DOM Elements
+    // Elementos DOM
     const audio = document.getElementById('audioElement');
     const playPauseBtn = document.getElementById('playPauseBtn');
     const playIcon = document.getElementById('playIcon');
@@ -844,7 +862,7 @@
     const bgLayer2 = document.getElementById('bgLayer2');
 
     // ============================================================
-    // 1. EXTRACTOR DE COLOR DE PORTADA CON FALLBACKS FIABLES
+    // 1. EXTRACTOR DE COLOR DE PORTADA
     // ============================================================
     function extractCoverPalette(imgUrl, fallbackColors) {
       return new Promise((resolve) => {
@@ -865,7 +883,7 @@
               const r = data[i], g = data[i+1], b = data[i+2], a = data[i+3];
               if (a < 128) continue;
               const lum = 0.299 * r + 0.587 * g + 0.114 * b;
-              if (lum < 15 || lum > 245) continue; // Descartar negros o blancos puros
+              if (lum < 15 || lum > 245) continue;
 
               const qr = (r >> 4) << 4;
               const qg = (g >> 4) << 4;
@@ -931,7 +949,7 @@
     }
 
     // ============================================================
-    // 2. PARSER TTML CON DETECCIÓN DE SEGUNDAS VOCES / DUETOS
+    // 2. PARSER TTML CON DETECCIÓN DE SEGUNDAS VOCES
     // ============================================================
     function parseTTMLTime(str) {
       if (!str) return 0;
@@ -959,7 +977,6 @@
         const pBegin = parseTTMLTime(beginAttr);
         const pEnd = p.getAttribute('end') || p.getAttribute('itunes:end') ? parseTTMLTime(p.getAttribute('end') || p.getAttribute('itunes:end')) : 0;
 
-        // Detección de duetos y voces de fondo para alineación tipo imagen
         const role = p.getAttribute('ttm:role') || p.getAttribute('role') || '';
         const agent = p.getAttribute('ttm:agent') || p.getAttribute('agent') || '';
         const songPart = p.getAttribute('itunes:songPart') || p.getAttribute('songPart') || '';
@@ -1043,7 +1060,7 @@
     }
 
     // ============================================================
-    // 3. INICIALIZACIÓN DE AMLL SIN DESTRUCCIÓN DE DOM
+    // 3. INICIALIZACIÓN DE AMLL SIN DESTRUCCIÓN DEL DOM
     // ============================================================
     async function getLyricPlayer() {
       if (!lyricPlayer) {
@@ -1073,7 +1090,6 @@
         });
       }
 
-      // Asegurar que el elemento siempre esté presente en el escenario
       const el = lyricPlayer.getElement();
       if (!lyricsStage.contains(el)) {
         lyricsStage.innerHTML = '';
@@ -1118,7 +1134,7 @@
     }
 
     // ============================================================
-    // 4. CONTROL DE REPRODUCCIÓN Y CAMBIO DE CANCIÓN
+    // 4. CONTROL DE REPRODUCCIÓN
     // ============================================================
     async function loadTrack(index, autoPlay = false) {
       currentTrackIndex = (index + playlist.length) % playlist.length;
@@ -1206,7 +1222,6 @@
     prevBtn.addEventListener('click', prevTrack);
     nextBtn.addEventListener('click', nextTrack);
 
-    // Botones Shuffle y Repeat
     shuffleBtn.addEventListener('click', () => {
       isShuffle = !isShuffle;
       shuffleBtn.classList.toggle('active', isShuffle);
@@ -1251,7 +1266,7 @@
     });
 
     // ============================================================
-    // 5. SCRUBBER FLUIDO (MOUSE & TOUCH) SIN CRUJIDOS DE AUDIO
+    // 5. SCRUBBER FLUIDO (MOUSE & TOUCH)
     // ============================================================
     function initScrubber() {
       let scrubPct = 0;
@@ -1303,7 +1318,7 @@
     }
 
     // ============================================================
-    // 6. CONTROL DE VOLUMEN (MOUSE & TOUCH)
+    // 6. CONTROL DE VOLUMEN
     // ============================================================
     function setVolume(pct) {
       pct = Math.max(0, Math.min(1, pct));
@@ -1347,7 +1362,7 @@
     }
 
     // ============================================================
-    // 7. PANTALLA COMPLETA & ACCESOS RÁPIDOS DE TECLADO
+    // 7. PANTALLA COMPLETA & ATAJOS DE TECLADO
     // ============================================================
     function toggleFullScreen() {
       const isFs = document.fullscreenElement || document.webkitFullscreenElement;
@@ -1388,7 +1403,7 @@
     });
 
     // ============================================================
-    // 8. BUCLE DE ANIMACIÓN CONTINUO (RESUELVE SPRINGS EN PAUSA)
+    // 8. BUCLE DE ANIMACIÓN CONTINUO
     // ============================================================
     function animationLoop(now) {
       if (!lastFrameMs) lastFrameMs = now;
@@ -1399,7 +1414,6 @@
         if (!audio.paused && !isScrubbing) {
           lyricPlayer.setCurrentTime(audio.currentTime * 1000);
         }
-        // Se ejecuta siempre para resolver las físicas elásticas suavemente
         lyricPlayer.update(deltaMs);
       }
 
