@@ -279,7 +279,7 @@
         .btn-fullscreen:hover { background: rgba(255,255,255,0.18); transform: scale(1.1); color: #fff; box-shadow: 0 10px 25px rgba(0,0,0,0.3); border-color: var(--accent-1); }
 
         /* ==================================================================
-           FULLSCREEN NOW PLAYING (ESTILO APPLE MUSIC & GLASSY MUSIC)
+           FULLSCREEN NOW PLAYING
            ================================================================== */
         #np-fs {
             position: fixed; inset: 0; z-index: 100; transform: translateY(100%); opacity: 0; visibility: hidden;
@@ -308,7 +308,7 @@
             .btn-collapse-mob { display: none; }
         }
 
-        /* Proporciones Desktop Apple Music */
+        /* Proporciones Desktop */
         @media (min-width: 1025px) {
             .np-layout { 
                 position: relative; z-index: 3; display: flex; 
@@ -444,32 +444,6 @@
             color: rgba(255,255,255,0.35); font-size: 32px; font-weight: 800;
         }
 
-        .amll-credits-footer {
-            margin-top: 80px;
-            padding: 40px 0 160px 0;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 15px;
-            line-height: 1.6;
-            font-family: var(--font-main);
-            text-align: left;
-            width: 100%;
-            box-sizing: border-box;
-            flex-shrink: 0;
-        }
-        .amll-credits-footer h3 {
-            font-size: 13px;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            margin-bottom: 12px;
-            color: var(--accent-1);
-            font-weight: 700;
-        }
-        .amll-credits-footer p {
-            font-weight: 500;
-            color: rgba(255, 255, 255, 0.7);
-        }
-
         /* ==================================================================
            RESPONSIVE MOBILE
            ================================================================== */
@@ -535,7 +509,6 @@
             #lyrics-content .amll-lyric-player { --amll-lp-font-size: 30px !important; }
             .np-progress-track { height: 4px; }
             .np-progress-track:hover { height: 7px; }
-            .amll-credits-footer { margin-top: 40px; padding: 24px 0 120px 0; font-size: 13px; }
         }
     </style>
 </head>
@@ -690,7 +663,7 @@
         </div>
     </div>
 
-    <!-- OVERLAY FULLSCREEN NOW PLAYING (PANTALLA COMPLETA INMERSIVA) -->
+    <!-- OVERLAY FULLSCREEN NOW PLAYING -->
     <div id="np-fs">
         <div class="np-bg-wrap">
             <canvas id="np-fluid-canvas" class="fluid-canvas"></canvas>
@@ -784,14 +757,13 @@
         ];
 
         /* ==================================================================
-           SISTEMA DE COLORES DINÁMICOS VIVOS (ESTILO GLASSY MUSIC & APPLE MUSIC)
+           SISTEMA DE COLORES DINÁMICOS VIVOS (ESTILO GLASSY MUSIC)
            ================================================================== */
-        // Paleta base ultra-vibrante optimizada para la portada de Modo Oculto
         let currentPalette = {
-            c1: { r: 0, g: 229, b: 255 },     // Cyan eléctrico
-            c2: { r: 157, g: 0, b: 255 },     // Violeta profundo
-            c3: { r: 255, g: 0, b: 128 },     // Magenta vibrante
-            c4: { r: 20, g: 30, b: 80 },      // Azul nocturno
+            c1: { r: 0, g: 229, b: 255 },
+            c2: { r: 157, g: 0, b: 255 },
+            c3: { r: 255, g: 0, b: 128 },
+            c4: { r: 20, g: 30, b: 80 },
             bg: "#07070e"
         };
 
@@ -806,7 +778,6 @@
                 this.height = 0;
                 this.time = 0;
 
-                // Definición de esferas de gradiente fluido (Mesh Orbs)
                 this.orbs = [
                     { x: 0.25, y: 0.25, r: 0.45, colorKey: 'c1', vx: 0.0006, vy: 0.0008, phase: 0 },
                     { x: 0.75, y: 0.35, r: 0.50, colorKey: 'c2', vx: -0.0007, vy: 0.0005, phase: 2.1 },
@@ -833,7 +804,6 @@
                 const ctx = this.ctx;
                 ctx.clearRect(0, 0, this.width, this.height);
 
-                // Base de color enriquecida
                 ctx.fillStyle = currentPalette.bg;
                 ctx.fillRect(0, 0, this.width, this.height);
 
@@ -871,7 +841,6 @@
             npFluid = new AppleMusicFluidMeshEngine('np-fluid-canvas');
         }
 
-        // Extractor inteligente de colores saturados desde imagen (CORS safe con fallback de alta fidelidad)
         function extractDynamicPaletteFromImage(imgUrl) {
             const img = new Image();
             img.crossOrigin = "anonymous";
@@ -892,13 +861,11 @@
                         const g = imgData[i+1];
                         const b = imgData[i+2];
 
-                        // Convertir a HSL para evaluar saturación y luminancia
                         const max = Math.max(r, g, b), min = Math.min(r, g, b);
                         const d = max - min;
                         const l = (max + min) / 510;
                         const s = d === 0 ? 0 : d / (1 - Math.abs(2 * l - 1)) / 255;
 
-                        // Filtrar colores con buena saturación que no sean blancos o negros puros
                         if (s > 0.25 && l > 0.15 && l < 0.85) {
                             colorBuckets.push({ r, g, b, s, l });
                         }
@@ -914,9 +881,7 @@
                         applyPaletteToUI();
                         return;
                     }
-                } catch (e) {
-                    // Fallback a los colores nativos de Modo Oculto si el navegador restringe getImageData
-                }
+                } catch (e) {}
                 setModoOcultoSignaturePalette();
             };
 
@@ -926,7 +891,6 @@
         }
 
         function boostVibrance(rgb) {
-            // Aumenta la saturación cromática para lograr el look vibrante de Glassy Music
             const r = rgb.r, g = rgb.g, b = rgb.b;
             const avg = (r + g + b) / 3;
             return {
@@ -938,10 +902,10 @@
 
         function setModoOcultoSignaturePalette() {
             targetPalette = {
-                c1: { r: 0, g: 229, b: 255 },     // Cyan neón intenso
-                c2: { r: 157, g: 0, b: 255 },     // Púrpura eléctrico
-                c3: { r: 255, g: 15, b: 125 },    // Rosa / Magenta neón
-                c4: { r: 10, g: 18, b: 45 },      // Azul noche
+                c1: { r: 0, g: 229, b: 255 },
+                c2: { r: 157, g: 0, b: 255 },
+                c3: { r: 255, g: 15, b: 125 },
+                c4: { r: 10, g: 18, b: 45 },
                 bg: "#070710"
             };
             applyPaletteToUI();
@@ -959,7 +923,6 @@
             root.style.setProperty('--bg-deep', targetPalette.bg);
         }
 
-        // Interpolación fluida de colores entre fotogramas
         function interpolatePalette() {
             ['c1', 'c2', 'c3', 'c4'].forEach(k => {
                 currentPalette[k].r += (targetPalette[k].r - currentPalette[k].r) * 0.05;
@@ -969,7 +932,7 @@
         }
 
         /* ==================================================================
-           ESTADO Y MOTOR DE AUDIO CON WEBAUDIO ANALYZER
+           ESTADO Y MOTOR DE AUDIO
            ================================================================== */
         let currentPlayingIndex = 0;
         let isNPOpen = false;
@@ -978,7 +941,6 @@
         activeAudio.crossOrigin = "anonymous";
         activeAudio.src = MODO_OCULTO_AUDIO;
 
-        // Recuperación automática de audio si el host externo restringe CORS
         activeAudio.onerror = () => {
             if (activeAudio.crossOrigin) {
                 console.warn("Retrying audio load without crossOrigin flag");
@@ -1026,7 +988,6 @@
         function getAudioEnergy() {
             if (!analyser || !freqData || activeAudio.paused) return 0;
             analyser.getByteFrequencyData(freqData);
-            // Medir la energía promedio en graves / bombos (primeras frecuencias)
             let bassSum = freqData[0] + freqData[1] + freqData[2] + freqData[3];
             return (bassSum / 4) / 255;
         }
@@ -1418,32 +1379,6 @@
             });
         }
 
-        function extractCreditsFromTTML(text) {
-            const writers = [];
-            let copyright = '';
-
-            try {
-                const nameRegex = /<(?:[a-z0-9\-]+:)?name[^>]*>([^<]+)<\/(?:[a-z0-9\-]+:)?name>/gi;
-                let match;
-                while ((match = nameRegex.exec(text)) !== null) {
-                    const name = match[1].trim();
-                    if (name && !writers.includes(name) && name.toLowerCase() !== 'vocals') writers.push(name);
-                }
-
-                const copyrightRegex = /<(?:[a-z0-9\-]+:)?copyright[^>]*>([^<]+)<\/(?:[a-z0-9\-]+:)?copyright>/i;
-                const copyMatch = text.match(copyrightRegex);
-                if (copyMatch) {
-                    copyright = copyMatch[1].trim()
-                        .replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&apos;/g, "'");
-                }
-            } catch (e) {}
-
-            return {
-                writers: writers.length > 0 ? writers : ["Yan Block", "SONAR LLC"],
-                copyright: copyright || "℗ 2026 SONAR LLC. Todos los derechos reservados."
-            };
-        }
-
         async function fetchLyrics(url) {
             const container = document.getElementById('lyrics-content');
             let player;
@@ -1453,9 +1388,6 @@
             } catch(e) {
                 return;
             }
-
-            const existingFooter = document.getElementById('lyric-credits-footer');
-            if (existingFooter) existingFooter.remove();
 
             let emptyState = document.getElementById('lyrics-empty-state');
             if(emptyState) emptyState.style.display = 'none';
@@ -1467,17 +1399,6 @@
                 
                 player.setLyricLines(lyricLines, activeAudio.currentTime * 1000);
                 player.calcLayout(true, true);
-
-                const creditsData = extractCreditsFromTTML(text);
-                const footer = document.createElement('div');
-                footer.id = 'lyric-credits-footer';
-                footer.className = 'amll-credits-footer';
-                footer.innerHTML = `
-                    <h3>Créditos</h3>
-                    <p>Compositor / Artista: ${creditsData.writers.join(', ')}</p>
-                    <p style="margin-top: 14px; font-size: 13px; opacity: 0.5;">${creditsData.copyright}</p>
-                `;
-                player.getElement().appendChild(footer);
 
             } catch(e) {
                 console.warn("Could not load TTML lyrics:", e);
@@ -1503,15 +1424,12 @@
         function renderLoop(rafTime) {
             if (!rafTime) rafTime = performance.now();
             
-            // 1. Obtener reactividad de frecuencia del audio
             const audioEnergy = getAudioEnergy();
 
-            // 2. Interpolar colores del gradiente y renderizar canvases
             interpolatePalette();
             if (bgFluid) bgFluid.render(audioEnergy);
             if (isNPOpen && npFluid) npFluid.render(audioEnergy);
 
-            // 3. Progreso de reproducción
             if (activeAudio.duration && !isNaN(activeAudio.duration)) {
                 let cur = activeAudio.currentTime; 
                 const now = performance.now();
@@ -1535,7 +1453,6 @@
                 document.getElementById('time-curr-np').innerText = fmt(cur);
                 document.getElementById('time-tot-np').innerText = "-" + fmt(dur - cur);
                 
-                // 4. Actualizar motor de letras de Apple Music
                 if (isNPOpen && lyricPlayer) { 
                     const visualTime = cur + 0.08;
                     const deltaMs = _lyricLastFrameMs ? Math.min(100, rafTime - _lyricLastFrameMs) : (1000 / 60);
@@ -1549,7 +1466,7 @@
         }
 
         /* ==================================================================
-           GESTOS TÁCTILES (DESLIZAR PARA CERRAR REPRODUCTOR)
+           GESTOS TÁCTILES
            ================================================================== */
         function setupGestures() {
             let sY = 0, cY = 0; 
@@ -1587,7 +1504,7 @@
         }
 
         /* ==================================================================
-           INICIALIZACIÓN DE LA APLICACIÓN
+           INICIALIZACIÓN
            ================================================================== */
         function init() {
             initFluidEngines();
