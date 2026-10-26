@@ -13,9 +13,6 @@
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Web Component Oficial de binimum/am-lyrics (AMLL Core) -->
-  <script type="module" src="https://cdn.jsdelivr.net/npm/@uimaxbai/am-lyrics@1.7.4/dist/src/am-lyrics.min.js"></script>
-
   <style>
     body {
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Plus Jakarta Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -56,41 +53,54 @@
 
     /* Máscara de desvanecimiento superior e inferior Apple Music Sing */
     .amll-stage-mask {
-      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 16%, black 84%, transparent 100%);
-      mask-image: linear-gradient(to bottom, transparent 0%, black 16%, black 84%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%);
+      mask-image: linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%);
     }
 
-    /* Variables oficiales para <am-lyrics> (binimum/am-lyrics) */
-    am-lyrics {
-      --am-lyrics-line-height: 1.28;
-      --am-lyrics-line-spacing: 30px;
-      --am-lyrics-wide-line-spacing: 36px;
-      --am-lyrics-font-size: 46px;
-      --am-lyrics-wide-font-size: 52px;
-      --am-lyrics-inactive-scale: 0.94;
-      --am-lyrics-wide-selected-position: 38%;
-      --am-lyrics-highlight-color: #ffffff;
-      --am-lyrics-progression-feather: 28px;
-      --am-lyrics-glow-radius: 14px;
-      --lyrics-scroll-padding-top: 38%;
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Plus Jakarta Sans", sans-serif;
+    /* FÍSICAS DE PROFUNDIDAD Y TIPOGRAFÍA APPLE MUSIC 2026 */
+    .am-line {
+      font-size: clamp(36px, 3.8vw, 54px);
       font-weight: 800;
-      width: 100%;
-      height: 100%;
-      display: block;
-    }
-
-    /* Transición Cinemática Apple Music con Física de Profundidad */
-    .amll-line {
-      transition: transform 0.48s cubic-bezier(0.2, 0.9, 0.3, 1),
-                  opacity 0.48s ease,
-                  filter 0.48s ease;
-      will-change: transform, opacity, filter;
+      line-height: 1.25;
+      letter-spacing: -0.025em;
       transform-origin: left center;
+      transition: transform 0.5s cubic-bezier(0.2, 0.9, 0.3, 1),
+                  opacity 0.5s ease,
+                  filter 0.5s ease;
+      will-change: transform, opacity, filter;
+      margin-bottom: 34px;
     }
 
-    /* Relleno silábico suave (Filling Animation tipo tool.amll.dev) */
-    .amll-word {
+    .am-line.is-active {
+      opacity: 1 !important;
+      filter: blur(0px) !important;
+      transform: scale(1.035) translateY(0) !important;
+      text-shadow: 0 0 35px rgba(255, 255, 255, 0.45);
+    }
+
+    .am-line.is-dist-1 {
+      opacity: 0.40 !important;
+      filter: blur(2.5px) !important;
+      transform: scale(0.96) !important;
+      text-shadow: none !important;
+    }
+
+    .am-line.is-dist-2 {
+      opacity: 0.20 !important;
+      filter: blur(5.0px) !important;
+      transform: scale(0.91) !important;
+      text-shadow: none !important;
+    }
+
+    .am-line.is-dist-3 {
+      opacity: 0.08 !important;
+      filter: blur(8.0px) !important;
+      transform: scale(0.86) !important;
+      text-shadow: none !important;
+    }
+
+    /* RELLENO SILÁBICO (FILLING FEATHER TIPO TOOL.AMLL.DEV) */
+    .am-word {
       display: inline-block;
       white-space: pre-wrap;
       background-clip: text;
@@ -100,7 +110,7 @@
       transition: color 0.08s linear, filter 0.15s ease;
     }
 
-    /* Scrubber Apple interactivo fino */
+    /* Scrubber interactivo fino Apple */
     input[type=range] {
       -webkit-appearance: none;
       appearance: none;
@@ -135,7 +145,7 @@
 </head>
 <body class="w-screen h-screen relative select-none">
 
-  <!-- Elemento de Audio Nativo HTML5 -->
+  <!-- Elemento de Audio Nativo HTML5: Única fuente de verdad -->
   <audio id="audio-engine" preload="auto"></audio>
 
   <!-- ======================================================== -->
@@ -158,7 +168,7 @@
       <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/80"></div>
     </div>
 
-    <!-- Micro-grano procedural anti-banding -->
+    <!-- Micro-grano textural procedural anti-banding -->
     <div class="absolute inset-0 opacity-[0.038] mix-blend-overlay pointer-events-none" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.8\' numOctaves=\'3\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\'/%3E%3C/svg%3E');"></div>
   </div>
 
@@ -204,7 +214,7 @@
   </div>
 
   <!-- ======================================================== -->
-  <!-- 3. INTERFAZ PRINCIPAL EXACTA A TU CAPTURA DE PANTALLA    -->
+  <!-- 3. INTERFAZ SPLIT IDÉNTICA A TU CAPTURA DE PANTALLA      -->
   <!-- ======================================================== -->
   <main class="relative z-20 grid grid-cols-1 lg:grid-cols-12 h-screen w-screen overflow-hidden">
     
@@ -220,10 +230,10 @@
           <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-white/10 pointer-events-none"></div>
         </div>
 
-        <!-- Área de Scrubber y Metadatos idéntica al screenshot -->
+        <!-- Área de Scrubber y Metadatos idéntica a tu foto -->
         <div class="w-full mt-7 space-y-3">
           
-          <!-- Fila de tiempo y Scrubber -->
+          <!-- Fila de tiempo y Scrubber fino -->
           <div class="space-y-1.5 scrubber-zone">
             <div class="flex justify-between text-[13px] font-medium text-white/70 tracking-tight">
               <span id="time-current">0:00</span>
@@ -238,7 +248,7 @@
             </div>
           </div>
 
-          <!-- Título y Artista / Álbum centrados -->
+          <!-- Título y Artista / Álbum centrados como en la imagen -->
           <div class="text-center pt-1">
             <h1 id="track-title" class="text-xl sm:text-2xl font-bold text-white tracking-tight truncate">Modo Oculto</h1>
             <p id="track-artist-album" class="text-sm sm:text-base font-semibold text-white/60 truncate mt-0.5">Yan Block — Modo Oculto</p>
@@ -263,29 +273,18 @@
       </div>
     </section>
 
-    <!-- COLUMNA DERECHA: Escenario de Lyrics AMLL (tool.amll.dev Filling & Apple Music Spatial Movement) -->
+    <!-- COLUMNA DERECHA: Escenario de Lyrics AMLL (tool.amll.dev Filling & Apple Music Spatial Blur) -->
     <section class="lg:col-span-7 relative h-full overflow-hidden amll-stage-mask flex items-center">
       
-      <!-- Botón Flotante para reanudar el autoscroll si el usuario desplazó manualmente -->
+      <!-- Botón Flotante para reanudar el autoscroll tras interacción manual -->
       <button id="btn-resume-scroll" class="hidden absolute bottom-8 right-8 z-30 flex items-center space-x-2 bg-white/20 hover:bg-white/30 backdrop-blur-2xl border border-white/25 text-white px-4 py-2 rounded-full text-xs font-bold shadow-2xl transition-all active:scale-95">
         <svg class="w-3.5 h-3.5 fill-current animate-spin" viewBox="0 0 24 24"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"/></svg>
         <span>Sincronizar letra</span>
       </button>
 
-      <!-- 1. Componente Web Oficial de binimum/am-lyrics (AMLL Core) -->
-      <am-lyrics
-        id="amll-web-component"
-        class="hidden w-full h-full"
-        song-title="Modo Oculto"
-        song-artist="Yan Block"
-        highlight-color="#ffffff"
-        autoscroll
-        interpolate
-      ></am-lyrics>
-
-      <!-- 2. Motor Cinemático Nativo AMLL (Profundidad Escalonada y Feather Filling) -->
-      <div id="amll-viewport" class="h-full w-full overflow-y-auto no-scrollbar px-6 sm:px-12 md:px-16 py-[42vh] space-y-8">
-        <!-- Los versos se inyectan tras descargar y analizar el TTML -->
+      <!-- Viewport de Lyrics con Lerp Cinemático y Profundidad Escalonada -->
+      <div id="amll-viewport" class="h-full w-full overflow-y-auto no-scrollbar px-6 sm:px-12 md:px-16 py-[42vh]">
+        <!-- Los versos se inyectan tras descargar y parsear el TTML -->
       </div>
     </section>
   </main>
@@ -629,7 +628,7 @@
         this.container.addEventListener('wheel', () => this.handleUserScroll(), { passive: true });
         this.container.addEventListener('touchmove', () => this.handleUserScroll(), { passive: true });
 
-        // Ciclo físico a 60 FPS
+        // Ciclo físico de actualización a 60 FPS
         const physicsLoop = () => {
           if (!this.isUserInteracting && this.activeLineIdx !== -1) {
             const diff = this.targetScrollY - this.currentScrollY;
@@ -675,26 +674,16 @@
 
         lines.forEach((line, idx) => {
           const lineDiv = document.createElement('div');
-          lineDiv.className = 'amll-line cursor-pointer';
-
-          // Tipografía masiva idéntica a tu captura (pesada y contundente)
-          const p = document.createElement('p');
-          p.className = `font-extrabold leading-[1.28] tracking-[-0.03em] ${
-            line.isBG 
-              ? 'text-2xl md:text-3xl italic text-white/50' 
-              : 'text-3xl sm:text-4xl md:text-5xl lg:text-[50px]'
-          }`;
+          lineDiv.className = 'am-line is-dist-3 cursor-pointer';
 
           const wordElements = [];
           line.words.forEach((w) => {
             const span = document.createElement('span');
-            span.className = 'amll-word';
+            span.className = 'am-word';
             span.textContent = w.word;
-            p.appendChild(span);
+            lineDiv.appendChild(span);
             wordElements.push({ el: span, word: w });
           });
-
-          lineDiv.appendChild(p);
 
           lineDiv.addEventListener('click', () => {
             this.onSeek(line.startTime);
@@ -707,36 +696,22 @@
         this.applySpatialDepth(-1);
       }
 
-      // Profundidad de campo escalonada Apple Music (Multi-Depth of Field)
+      // Profundidad de campo escalonada Apple Music (Multi-Depth Gaussian Blur)
       applySpatialDepth(activeIdx) {
         this.lineDoms.forEach((item, idx) => {
           const dist = Math.abs(idx - activeIdx);
           const el = item.el;
 
+          el.classList.remove('is-active', 'is-dist-1', 'is-dist-2', 'is-dist-3');
+
           if (idx === activeIdx) {
-            // Verso cantándose actualmente
-            el.style.opacity = '1';
-            el.style.filter = 'blur(0px)';
-            el.style.transform = 'scale(1.04) translateY(0)';
-            el.style.textShadow = '0 0 35px rgba(255, 255, 255, 0.35)';
+            el.classList.add('is-active');
           } else if (dist === 1) {
-            // Inmediatamente arriba o abajo
-            el.style.opacity = '0.36';
-            el.style.filter = 'blur(1.8px)';
-            el.style.transform = 'scale(0.96) translateY(0)';
-            el.style.textShadow = 'none';
+            el.classList.add('is-dist-1');
           } else if (dist === 2) {
-            // Dos versos de distancia
-            el.style.opacity = '0.20';
-            el.style.filter = 'blur(3.2px)';
-            el.style.transform = 'scale(0.91) translateY(0)';
-            el.style.textShadow = 'none';
+            el.classList.add('is-dist-2');
           } else {
-            // Lejanos
-            el.style.opacity = '0.10';
-            el.style.filter = 'blur(4.8px)';
-            el.style.transform = 'scale(0.86) translateY(0)';
-            el.style.textShadow = 'none';
+            el.classList.add('is-dist-3');
           }
         });
       }
@@ -745,6 +720,7 @@
         if (this.activeLineIdx === -1 || !this.lineDoms[this.activeLineIdx]) return;
         const activeEl = this.lineDoms[this.activeLineIdx].el;
         const viewportHeight = this.container.clientHeight;
+        // Posición focal áurea Apple Music: ~38% desde arriba
         const target = activeEl.offsetTop - (viewportHeight * 0.38) + (activeEl.clientHeight / 2);
         this.targetScrollY = Math.max(0, target);
       }
@@ -769,8 +745,8 @@
             prev.words.forEach(item => {
               item.el.style.backgroundImage = 'none';
               item.el.style.color = '#ffffff';
-              item.el.style.webkitTextFillColor = 'initial';
-              item.el.style.filter = 'none';
+              item.el.style.webkitTextFillColor = '#ffffff';
+              item.el.style.filter = 'drop-shadow(0 0 6px rgba(255, 255, 255, 0.35))';
             });
           }
 
@@ -789,24 +765,27 @@
         if (this.activeWordDoms.length > 0) {
           this.activeWordDoms.forEach(({ el, word }) => {
             if (currentMs >= word.endTime) {
+              // Palabra cantada
               el.style.backgroundImage = 'none';
               el.style.color = '#ffffff';
-              el.style.webkitTextFillColor = 'initial';
-              el.style.filter = 'none';
+              el.style.webkitTextFillColor = '#ffffff';
+              el.style.filter = 'drop-shadow(0 0 6px rgba(255, 255, 255, 0.35))';
             } else if (currentMs < word.startTime) {
+              // Palabra no alcanzada
               el.style.backgroundImage = 'none';
               el.style.color = 'rgba(255, 255, 255, 0.32)';
               el.style.webkitTextFillColor = 'transparent';
               el.style.filter = 'none';
             } else {
+              // Cantándose activamente
               const dur = Math.max(1, word.endTime - word.startTime);
               const progress = Math.min(100, Math.max(0, ((currentMs - word.startTime) / dur) * 100));
               
-              // Gradiente suave de barrido con halo luminoso activo
-              el.style.backgroundImage = `linear-gradient(90deg, #ffffff 0%, #ffffff ${progress}%, rgba(255, 255, 255, 0.32) calc(${progress}% + 14px), rgba(255, 255, 255, 0.32) 100%)`;
+              // Gradiente suave de barrido con halo luminoso activo (Feathered Sweep)
+              el.style.backgroundImage = `linear-gradient(90deg, #ffffff 0%, #ffffff ${progress}%, rgba(255, 255, 255, 0.32) calc(${progress}% + 18px), rgba(255, 255, 255, 0.32) 100%)`;
               el.style.webkitBackgroundClip = 'text';
               el.style.webkitTextFillColor = 'transparent';
-              el.style.filter = 'drop-shadow(0 0 10px rgba(255, 255, 255, 0.65))';
+              el.style.filter = 'drop-shadow(0 0 16px rgba(255, 255, 255, 0.85)) drop-shadow(0 0 30px rgba(255, 255, 255, 0.4))';
             }
           });
         }
@@ -822,7 +801,6 @@
         this.currentIndex = 0;
         this.isPlaying = false;
         this.activeBgLayer = 'a';
-        this.useWebComponent = false;
 
         this.coverEl = document.getElementById('track-cover');
         this.titleEl = document.getElementById('track-title');
@@ -840,12 +818,10 @@
         this.hudPlayback = document.getElementById('hud-playback-controls');
         this.hudTimer = null;
 
-        // Web Component oficial binimum/am-lyrics y motor nativo AMLL
-        this.amLyricsComponent = document.getElementById('amll-web-component');
+        // Inicializar escenario AMLL
         const lyricsViewport = document.getElementById('amll-viewport');
         this.amllEngine = new AMLLCinematicEngine(lyricsViewport, (ms) => this.seek(ms / 1000));
 
-        this.initWebComponentSupport();
         this.initEvents();
         this.initHUDAutoHide();
         this.initQueueUI();
@@ -855,33 +831,12 @@
         const loop = () => {
           if (this.audio && !this.audio.paused) {
             const currentMs = Math.round(this.audio.currentTime * 1000);
-            if (this.useWebComponent && this.amLyricsComponent) {
-              this.amLyricsComponent.currentTime = currentMs;
-            } else {
-              this.amllEngine.update(currentMs);
-            }
+            this.amllEngine.update(currentMs);
             this.updatePlayerUI();
           }
           requestAnimationFrame(loop);
         };
         requestAnimationFrame(loop);
-      }
-
-      initWebComponentSupport() {
-        customElements.whenDefined('am-lyrics').then(() => {
-          this.useWebComponent = true;
-          this.amLyricsComponent.classList.remove('hidden');
-          document.getElementById('amll-viewport').classList.add('hidden');
-          this.amLyricsComponent.addEventListener('line-click', (e) => {
-            const ms = e.detail?.timestamp ?? e.detail;
-            if (ms !== undefined) {
-              this.seek(ms / 1000);
-              this.audio.play();
-            }
-          });
-        }).catch(() => {
-          this.useWebComponent = false;
-        });
       }
 
       showToast(text, duration = 3000) {
@@ -1026,14 +981,6 @@
         this.showToast(`Cargando lyrics de "${track.title}"...`);
         try {
           const rawTTML = await TTMLNetworkEngine.fetchRawTTML(track.ttmlUrl);
-          
-          if (this.amLyricsComponent) {
-            this.amLyricsComponent.setAttribute('song-title', track.title);
-            this.amLyricsComponent.setAttribute('song-artist', track.artist);
-            this.amLyricsComponent.setAttribute('ttml', rawTTML);
-            this.amLyricsComponent.ttml = rawTTML;
-          }
-
           const lines = TTMLNetworkEngine.parseXML(rawTTML);
           this.amllEngine.load(lines);
           this.showToast(`Letras sincronizadas (${lines.length} versos)`);
